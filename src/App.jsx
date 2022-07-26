@@ -1,9 +1,16 @@
-import './App.css';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './app.css';
+import Header from './components/header';
+import Main from './components/main';
 
-function App() {
+export default function App() {
   return (
-    <h1>HNTECH HOMEPAGE</h1>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path='/' element={<Main />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
