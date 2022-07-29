@@ -2,7 +2,7 @@ import React from 'react';
 import './style.css';
 import { Box, Button, Stack, Typography } from '@mui/material';
 
-export default function Footer(props) {
+export default function Footer() {
   // 관리자 모드 변경 이벤트
   const onChangeMode = () => { console.log('관리자모드') };
 
