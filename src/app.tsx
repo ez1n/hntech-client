@@ -7,7 +7,7 @@ import Footer from './components/footer';
 
 export default function App() {
   return (
-    <Box sx={{maxWidth: '1350px', m: 'auto'}}>
+    <Box sx={{ maxWidth: '1350px', m: 'auto' }}>
       <BrowserRouter>
         <Header />
 
@@ -20,5 +20,5 @@ export default function App() {
         <Footer />
       </BrowserRouter>
     </Box>
-  )
-};
+  );
+}

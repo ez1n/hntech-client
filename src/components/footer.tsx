@@ -2,7 +2,7 @@ import React from 'react';
 import './style.css';
 import { Box, Button, Stack, Typography } from '@mui/material';
 
-export default function Footer(props) {
+export default function Footer() {
   // 관리자 모드 변경 이벤트
   const onChangeMode = () => { console.log('관리자모드') };
 
@@ -25,8 +25,8 @@ export default function Footer(props) {
       </Stack>
 
       {/* 회사 정보 */}
-      <Stack direction='row' spacing={5} sx={{ justifyContent: 'center' }}>
-        <Box sx={{ width: 'max-content', flex: 0.4 }}>
+      <Stack direction='row' sx={{ width: '60%', m: 'auto' }}>
+        <Box sx={{ width: 'max-content', flex: 0.7 }}>
           <Typography sx={{ color: '#FCFCFC', opacity: 0.8, mb: 1 }}>
             본사 : 경기도 용인시 처인구 모현읍 외개일로 20번길 9-14
           </Typography>
@@ -51,7 +51,7 @@ export default function Footer(props) {
         </Box>
 
         {/* FAMILY SITE */}
-        <Box sx={{ flex: 0.2, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <Box sx={{ flex: 0.3, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Typography sx={{ color: '#FCFCFC', opacity: 0.8, mb: 1 }}>
             FAMILY SITE
           </Typography>
