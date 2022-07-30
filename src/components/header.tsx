@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import './style.css';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../app/hooks';
+import {
+  mouseOverCompany,
+  mouseOverProduct,
+  mouseOverService,
+  mouseLeaveCompany,
+  mouseLeaveProduct,
+  mouseLeaveService
+} from '../app/reducers/menusSlice';
 import { Toolbar, Typography, Button, Stack, Box, Paper } from '@mui/material';
 
 export default function Header() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch(); 
 
-  // 드롭다운 메뉴 open state
-  const [openCompany, setOpenCompany] = useState(false);
-  const [openProduct, setOpenProduct] = useState(false);
-  const [openService, setOpenService] = useState(false);
+  const openCompany = useAppSelector((state) => state.company.value); // 회사소개 state
+  const openProduct = useAppSelector((state) => state.product.value); // 제품소개 state
+  const openService = useAppSelector((state) => state.service.value); // 고객지원 state
 
-  // 페이지 이동 이벤트
-  const onClickMenu = (menu: string) => { navigate(menu) };
+  const onClickMenu = (menu: string) => { navigate(menu) }; // 페이지 이동 이벤트
 
   return (
     <Toolbar sx={{ pt: 2, pb: 2, position: 'sticky', top: 0 }}>
@@ -26,9 +34,9 @@ export default function Header() {
       {/* 메뉴 */}
       <Stack direction='row' sx={{ width: '100%', justifyContent: 'space-around' }}>
         {/* 회사소개 */}
-        <Box onMouseLeave={() => setOpenCompany(!openCompany)}>
+        <Box onMouseLeave={() => dispatch(mouseLeaveCompany())}>
           <Button
-            onMouseOver={() => setOpenCompany(!openCompany)}
+            onMouseOver={() => dispatch(mouseOverCompany())}
             sx={{ fontSize: '1.3em', color: '#0F0F0F' }}>
             회사소개
           </Button>
@@ -99,9 +107,9 @@ export default function Header() {
         </Box>
 
         {/* 제품소개 */}
-        <Box onMouseLeave={() => setOpenProduct(false)}>
+        <Box onMouseLeave={() => dispatch(mouseLeaveProduct())}>
           <Button
-            onMouseOver={() => setOpenProduct(true)}
+            onMouseOver={() => dispatch(mouseOverProduct())}
             sx={{ fontSize: '1.3em', color: '#0F0F0F' }}>
             제품소개
           </Button>
@@ -150,9 +158,9 @@ export default function Header() {
         </Box>
 
         {/* 고객지원 */}
-        <Box onMouseLeave={() => setOpenService(!openService)}>
+        <Box onMouseLeave={() => dispatch(mouseLeaveService())}>
           <Button
-            onMouseOver={() => setOpenService(!openService)}
+            onMouseOver={() => dispatch(mouseOverService())}
             sx={{ fontSize: '1.3em', color: '#0F0F0F' }}>
             고객지원
           </Button>

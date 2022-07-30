@@ -3,9 +3,6 @@ import './style.css';
 import { Box, Button, Stack, Typography } from '@mui/material';
 
 export default function Footer() {
-  // 관리자 모드 변경 이벤트
-  const onChangeMode = () => { console.log('관리자모드') };
-
   return (
     // 아마 footer 정보도 서버에서 받아와야하지 않을까
     <Box sx={{ p: 3, pb: 0, backgroundColor: '#042709' }}>
@@ -68,7 +65,6 @@ export default function Footer() {
 
       {/* 관리자 모드 버튼 */}
       <Box
-        onClick={onChangeMode}
         sx={{
           display: 'flex',
           justifyContent: 'flex-end'
