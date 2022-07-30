@@ -1,18 +1,43 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import './style.css';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../app/hooks';
+import {
+  mouseOverCompany,
+  mouseOverProduct,
+  mouseOverService,
+  mouseLeaveCompany,
+  mouseLeaveProduct,
+  mouseLeaveService
+} from '../app/reducers/menusSlice';
 import { Toolbar, Typography, Button, Stack, Box, Paper } from '@mui/material';
 
 export default function Header() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  // 드롭다운 메뉴 open state
-  const [openCompany, setOpenCompany] = useState(false);
-  const [openProduct, setOpenProduct] = useState(false);
-  const [openService, setOpenService] = useState(false);
+  const openCompany = useAppSelector(state => state.company.value); // 회사소개 state
+  const openProduct = useAppSelector(state => state.product.value); // 제품소개 state
+  const openService = useAppSelector(state => state.service.value); // 고객지원 state
 
-  // 페이지 이동 이벤트
-  const onClickMenu = (menu: string) => { navigate(menu) };
+  const onClickMenu = (menu: string) => { navigate(menu) }; // 페이지 이동 이벤트
+
+  function DropdownMenu(menu: string) {
+    return (
+      <Button
+        sx={{
+          justifyContent: 'center',
+          fontSize: 13,
+          color: '#0F0F0F',
+          transition: 'ease-in 0.5s',
+          '&:hover': {
+            backgroundColor: 'rgba(57, 150, 82, 0.2)',
+          },
+        }}>
+        {menu}
+      </Button>
+    )
+  };
 
   return (
     <Toolbar sx={{ pt: 2, pb: 2, position: 'sticky', top: 0 }}>
@@ -26,10 +51,18 @@ export default function Header() {
       {/* 메뉴 */}
       <Stack direction='row' sx={{ width: '100%', justifyContent: 'space-around' }}>
         {/* 회사소개 */}
-        <Box onMouseLeave={() => setOpenCompany(!openCompany)}>
+        <Box onMouseLeave={() => dispatch(mouseLeaveCompany())}>
           <Button
-            onMouseOver={() => setOpenCompany(!openCompany)}
-            sx={{ fontSize: '1.3em', color: '#0F0F0F' }}>
+            onMouseOver={() => dispatch(mouseOverCompany())}
+            sx={{
+              fontSize: '1.3em',
+              color: '#0F0F0F',
+              transition: '0.5s',
+              '&:hover': {
+                backgroundColor: 'rgba(57, 150, 82, 0.1)',
+                transform: 'scale(1.02)'
+              }
+            }}>
             회사소개
           </Button>
           {openCompany &&
@@ -39,70 +72,28 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute'
               }}>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                인사말
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                회사 연혁
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                조직도
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                CI 소개
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                찾아오시는 길
-              </Button>
+              {DropdownMenu('인사말')}
+              {DropdownMenu('회사 연혁')}
+              {DropdownMenu('조직도')}
+              {DropdownMenu('CI 소개')}
+              {DropdownMenu('찾아오시는 길')}
             </Paper>
           }
         </Box>
 
         {/* 제품소개 */}
-        <Box onMouseLeave={() => setOpenProduct(false)}>
+        <Box onMouseLeave={() => dispatch(mouseLeaveProduct())}>
           <Button
-            onMouseOver={() => setOpenProduct(true)}
-            sx={{ fontSize: '1.3em', color: '#0F0F0F' }}>
+            onMouseOver={() => dispatch(mouseOverProduct())}
+            sx={{
+              fontSize: '1.3em',
+              color: '#0F0F0F',
+              transition: '0.5s',
+              '&:hover': {
+                backgroundColor: 'rgba(57, 150, 82, 0.1)',
+                transform: 'scale(1.02)'
+              }
+            }}>
             제품소개
           </Button>
           {openProduct &&
@@ -112,48 +103,26 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                스프링클러헤드
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                유수제어밸브
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                기타
-              </Button>
+              {DropdownMenu('스프링클러헤드')}
+              {DropdownMenu('유수제어밸브')}
+              {DropdownMenu('기타')}
             </Paper>
           }
         </Box>
 
         {/* 고객지원 */}
-        <Box onMouseLeave={() => setOpenService(!openService)}>
+        <Box onMouseLeave={() => dispatch(mouseLeaveService())}>
           <Button
-            onMouseOver={() => setOpenService(!openService)}
-            sx={{ fontSize: '1.3em', color: '#0F0F0F' }}>
+            onMouseOver={() => dispatch(mouseOverService())}
+            sx={{
+              fontSize: '1.3em',
+              color: '#0F0F0F',
+              transition: '0.5s',
+              '&:hover': {
+                backgroundColor: 'rgba(57, 150, 82, 0.1)',
+                transform: 'scale(1.02)'
+              }
+            }}>
             고객지원
           </Button>
           {openService &&
@@ -163,39 +132,9 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                카다록 및 자재승인서
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                자료실
-              </Button>
-              <Button
-                sx={{
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: '#0F0F0F',
-                  '&:hover': {
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-                  },
-                }}>
-                고객문의
-              </Button>
+              {DropdownMenu('카다록 및 자재승인서')}
+              {DropdownMenu('자료실')}
+              {DropdownMenu('고객문의')}
             </Paper>
           }
         </Box>
