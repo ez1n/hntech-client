@@ -7,8 +7,7 @@ export const store = configureStore({
     product: ProductSlice.reducer,
     service: ServiceSlice.reducer,
   }
-}
-);
+});
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

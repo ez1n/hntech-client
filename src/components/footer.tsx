@@ -4,7 +4,6 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 
 export default function Footer() {
   return (
-    // 아마 footer 정보도 서버에서 받아와야하지 않을까
     <Box sx={{ p: 3, pb: 0, backgroundColor: '#042709' }}>
       {/* 로고 */}
       <Stack
