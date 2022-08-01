@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material';
 import Header from './components/header';
-import Main from './components/main';
+import Main from './components/main/main';
 import Footer from './components/footer';
 
 export default function App() {

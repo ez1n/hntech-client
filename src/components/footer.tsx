@@ -1,10 +1,14 @@
 import React from 'react';
 import './style.css';
+import { useAppDispatch } from '../app/hooks';
+import { clickChangeMode } from '../app/reducers/menusSlice';
 import { Box, Button, Stack, Typography } from '@mui/material';
 
 export default function Footer() {
+  const dispatch = useAppDispatch();
+
   return (
-    <Box sx={{ p: 3, pb: 0, backgroundColor: '#042709' }}>
+    <Box sx={{ p: 3, pb: 0, mt: 10, backgroundColor: '#042709' }}>
       {/* 로고 */}
       <Stack
         direction='row'
@@ -64,6 +68,7 @@ export default function Footer() {
 
       {/* 관리자 모드 버튼 */}
       <Box
+        onClick={() => dispatch(clickChangeMode())}
         sx={{
           display: 'flex',
           justifyContent: 'flex-end'
