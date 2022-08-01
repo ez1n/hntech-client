@@ -1,11 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { CompanySlice, ProductSlice, ServiceSlice } from './reducers/menusSlice';
+import { MenuSlice, ModeSlice } from './reducers/menusSlice';
 
 export const store = configureStore({
   reducer: {
-    company: CompanySlice.reducer,
-    product: ProductSlice.reducer,
-    service: ServiceSlice.reducer,
+    menu: MenuSlice.reducer,
+    mode: ModeSlice.reducer,
   }
 });
 
