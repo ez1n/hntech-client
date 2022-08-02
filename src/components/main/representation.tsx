@@ -53,7 +53,7 @@ export default function Representation() {
     },
     '&:hover': {
       '& .MuiImageBackdrop-root': {
-        opacity: 0.4
+        opacity: 0.3
       },
       '& .MuiTypography-root': {
         border: '5px solid #FCFCFC',
@@ -72,6 +72,7 @@ export default function Representation() {
     bottom: 0,
     backgroundColor: '#0F0F0F',
     opacity: 0,
+    borderRadius: 10,
     transition: theme.transitions.create('opacity')
   })) as typeof Container;
 
@@ -105,7 +106,6 @@ export default function Representation() {
               width: image.width,
               height: 200
             }}
-            sx={{ m: 1 }}
           >
             {/* 버튼 이미지 */}
             <Container
@@ -128,7 +128,7 @@ export default function Representation() {
               justifyContent: 'center',
               color: '#FCFCFC'
             }}>
-              <Typography sx={{ position: 'relative', p: 2, fontSize: 18, display: 'none' }}>
+              <Typography sx={{ position: 'relative', p: 2, fontSize: 18, fontWeight: 'bold', display: 'none' }}>
                 {image.title}
               </Typography>
             </Container>

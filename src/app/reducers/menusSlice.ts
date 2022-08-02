@@ -12,11 +12,11 @@ const MenuInitialState: menuInitialState = {
   service: false,
 };
 
-interface modeInitialState {
+interface managerInitialState {
   managerMode: boolean
 };
 
-const ModeInitialState: modeInitialState = {
+const ManagerInitialState: managerInitialState = {
   managerMode: false
 };
 
@@ -33,16 +33,13 @@ export const MenuSlice = createSlice({
   }
 });
 
-export const ModeSlice = createSlice({
+export const ManagerSlice = createSlice({
   name: 'mode',
-  initialState: ModeInitialState,
+  initialState: ManagerInitialState,
   reducers: {
-    clickChangeMode: (state) => {
-      state.managerMode = !(state.managerMode);
-      console.log(state.managerMode)
-    }
+    clickChangeMode: (state) => { state.managerMode = !(state.managerMode) }
   }
 });
 
 export const { mouseOverCompany, mouseLeaveCompany, mouseOverProduct, mouseLeaveProduct, mouseOverService, mouseLeaveService } = MenuSlice.actions;
-export const { clickChangeMode } = ModeSlice.actions;
+export const { clickChangeMode } = ManagerSlice.actions;
