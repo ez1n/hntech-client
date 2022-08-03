@@ -1,19 +1,20 @@
 import React from 'react';
 import './style.css';
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { Toolbar, Typography, Button, Stack, Box, Paper } from '@mui/material';
 import {
   mouseOverCompany,
   mouseOverProduct,
+  mouseOverArchive,
   mouseOverService,
   mouseLeaveCompany,
   mouseLeaveProduct,
+  mouseLeaveArchive,
   mouseLeaveService
 } from '../app/reducers/menusSlice';
 import {
-  clickChangeCompany,
   clickChangeIntroduce,
   clickChangeHistory,
   clickChangeOrgChart,
@@ -27,22 +28,20 @@ export default function Header() {
 
   const openCompany = useAppSelector(state => state.menu.company); // 회사소개 state
   const openProduct = useAppSelector(state => state.menu.product); // 제품소개 state
+  const openArchive = useAppSelector(state => state.menu.archive); // 고객지원 state
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
 
-  // 하위 메뉴 버튼
-  const DropdownMenu = styled(Button)(() => ({
-    justifyContent: 'center',
-    fontSize: 13,
-    color: '#0F0F0F',
-    transition: 'ease-in 0.5s',
-    '&:hover': {
-      backgroundColor: 'rgba(57, 150, 82, 0.2)',
-    },
-  })) as typeof Button;
-
   return (
-    <Toolbar sx={{ zIndex: 2, pt: 2, pb: 2, position: 'sticky', top: 0, backgroundColor: `${managerMode ? '#B5C3B3' : '#FFFFFF'}` }}>
+    <Toolbar
+      sx={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        pt: 2,
+        pb: 2,
+        backgroundColor: `${managerMode ? '#B5C3B3' : '#FCFCFC'}`
+      }}>
       {/* 로고 */}
       <Button sx={{ pl: 5, pr: 5 }} onClick={() => navigate('/')}>
         <Stack direction='column'>
@@ -71,23 +70,15 @@ export default function Header() {
       <Stack direction='row' sx={{ width: '100%', justifyContent: 'space-around' }}>
         {/* 회사소개 */}
         <Box onMouseLeave={() => dispatch(mouseLeaveCompany())}>
-          <Button
+          <MainMenu
             onMouseOver={() => dispatch(mouseOverCompany())}
             onClick={() => {
               navigate('/company');
-              dispatch(clickChangeCompany());
+              dispatch(clickChangeIntroduce());
             }}
-            sx={{
-              fontSize: '1.3em',
-              color: '#0F0F0F',
-              transition: '0.5s',
-              '&:hover': {
-                backgroundColor: 'rgba(57, 150, 82, 0.1)',
-                transform: 'scale(1.02)'
-              }
-            }}>
+          >
             회사소개
-          </Button>
+          </MainMenu>
           {openCompany &&
             <Paper
               sx={{
@@ -136,20 +127,12 @@ export default function Header() {
 
         {/* 제품소개 */}
         <Box onMouseLeave={() => dispatch(mouseLeaveProduct())}>
-          <Button
+          <MainMenu
             onMouseOver={() => dispatch(mouseOverProduct())}
             onClick={() => navigate('/product')}
-            sx={{
-              fontSize: '1.3em',
-              color: '#0F0F0F',
-              transition: '0.5s',
-              '&:hover': {
-                backgroundColor: 'rgba(57, 150, 82, 0.1)',
-                transform: 'scale(1.02)'
-              }
-            }}>
+          >
             제품소개
-          </Button>
+          </MainMenu>
           {openProduct &&
             <Paper
               sx={{
@@ -179,22 +162,14 @@ export default function Header() {
           }
         </Box>
 
-        {/* 고객지원 */}
-        <Box onMouseLeave={() => dispatch(mouseLeaveService())}>
-          <Button
-            onMouseOver={() => dispatch(mouseOverService())}
-            sx={{
-              fontSize: '1.3em',
-              color: '#0F0F0F',
-              transition: '0.5s',
-              '&:hover': {
-                backgroundColor: 'rgba(57, 150, 82, 0.1)',
-                transform: 'scale(1.02)'
-              }
-            }}>
-            고객지원
-          </Button>
-          {openService &&
+        {/* 자료실 */}
+        <Box onMouseLeave={() => dispatch(mouseLeaveArchive())}>
+          <MainMenu
+            onMouseOver={() => dispatch(mouseOverArchive())}
+          >
+            자료실
+          </MainMenu>
+          {openArchive &&
             <Paper
               sx={{
                 display: 'flex',
@@ -202,7 +177,25 @@ export default function Header() {
                 position: 'absolute',
               }}>
               <DropdownMenu onClick={() => console.log('#')}>카다록 및 자재승인서</DropdownMenu>
-              <DropdownMenu onClick={() => console.log('#')}>자료실</DropdownMenu>
+              <DropdownMenu onClick={() => console.log('#')}>고객 자료실</DropdownMenu>
+            </Paper>
+          }
+        </Box>
+
+        {/* 고객지원 */}
+        <Box onMouseLeave={() => dispatch(mouseLeaveService())}>
+          <MainMenu
+            onMouseOver={() => dispatch(mouseOverService())}
+          >
+            고객지원
+          </MainMenu>
+          {openService &&
+            <Paper
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'absolute',
+              }}>
               <DropdownMenu onClick={() => console.log('#')}>고객문의</DropdownMenu>
             </Paper>
           }
@@ -211,3 +204,24 @@ export default function Header() {
     </Toolbar>
   )
 };
+
+// 상위 메뉴 버튼
+const MainMenu = styled(Button)(() => ({
+  fontSize: '1.3em',
+  color: '#0F0F0F',
+  transition: '0.5s',
+  '&:hover': {
+    backgroundColor: 'rgba(57, 150, 82, 0.1)',
+    transform: 'scale(1.02)'
+  }
+})) as typeof Button;
+
+// 하위 메뉴 버튼
+const DropdownMenu = styled(Button)(() => ({
+  justifyContent: 'center',
+  fontSize: 13,
+  color: '#0F0F0F',
+  '&:hover': {
+    backgroundColor: 'rgba(57, 150, 82, 0.2)',
+  },
+})) as typeof Button;

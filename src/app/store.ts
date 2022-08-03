@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { MenuSlice, ManagerSlice } from './reducers/menusSlice';
+import MenuReducer from './reducers/menusSlice';
+import ManagerReducer from './reducers/managerModeSlice';
 import CompanyReducer from './reducers/companySlice';
 
 export const store = configureStore({
   reducer: {
-    menu: MenuSlice.reducer,
-    manager: ManagerSlice.reducer,
+    menu: MenuReducer,
+    manager: ManagerReducer,
     company: CompanyReducer,
   }
 });

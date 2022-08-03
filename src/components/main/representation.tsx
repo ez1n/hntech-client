@@ -40,42 +40,6 @@ export default function Representation() {
     },
   ];
 
-  // 메인 버튼
-  const RepProductionButton = styled(ButtonBase)(({ theme }) => ({
-    // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
-    [theme.breakpoints.down('md')]: {
-      width: '50% !important',
-      height: 100
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '100% !important',
-      height: 100
-    },
-    '&:hover': {
-      '& .MuiImageBackdrop-root': {
-        opacity: 0.3
-      },
-      '& .MuiTypography-root': {
-        border: '5px solid #FCFCFC',
-        borderRadius: 10,
-        display: 'block'
-      },
-    },
-  })) as typeof ButtonBase;
-
-  // 이미지 커버(배경)
-  const ImageBackdrop = styled(Container)(({ theme }) => ({
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: '#0F0F0F',
-    opacity: 0,
-    borderRadius: 10,
-    transition: theme.transitions.create('opacity')
-  })) as typeof Container;
-
   // 제품 버튼 클릭 이벤트 (페이지 이동)
   const onClickButton = (mode: string) => {
     console.log(mode); // state 업데이트
@@ -138,3 +102,39 @@ export default function Representation() {
     </Container>
   )
 };
+
+// 메인 버튼
+const RepProductionButton = styled(ButtonBase)(({ theme }) => ({
+  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
+  [theme.breakpoints.down('md')]: {
+    width: '50% !important',
+    height: 100
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100% !important',
+    height: 100
+  },
+  '&:hover': {
+    '& .MuiImageBackdrop-root': {
+      opacity: 0.3
+    },
+    '& .MuiTypography-root': {
+      border: '5px solid #FCFCFC',
+      borderRadius: 10,
+      display: 'block'
+    },
+  },
+})) as typeof ButtonBase;
+
+// 이미지 커버(배경)
+const ImageBackdrop = styled(Container)(({ theme }) => ({
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  top: 0,
+  bottom: 0,
+  backgroundColor: '#0F0F0F',
+  opacity: 0,
+  borderRadius: 10,
+  transition: theme.transitions.create('opacity')
+})) as typeof Container;

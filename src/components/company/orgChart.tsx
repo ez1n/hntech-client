@@ -1,24 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAppSelector } from '../../app/hooks';
-import { Box, Button, Container, styled, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import { Box, Container, Typography } from '@mui/material';
+import EditButton from '../editButton';
 
 export default function OrgChart() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
 
-  const Spacing = styled(Container)(() => ({
-    height: 50
-  })) as typeof Container;
-
-  // 정보 수정 버튼
-  const ModifyButton = styled(Button)(() => ({
-    color: '#2E7D32',
-    border: '1px solid rgba(46, 125, 50, 0.5)',
-    borderRadius: 10,
-    backgroundColor: 'rgba(46, 125, 50, 0.1)'
-  })) as typeof Button;
-
   return (
-    <Box p={5}>
+    <Box p={5} sx={{ flex: 0.8 }}>
       {/* 소제목 */}
       <Container sx={{ display: 'flex', justifyContent: 'center' }}>
         <Typography
@@ -34,7 +24,7 @@ export default function OrgChart() {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode ? <ModifyButton>수정</ModifyButton> : ''}
+        {managerMode && EditButton('수정')}
       </Spacing>
 
       {/* 조직도 삽입 */}
@@ -43,4 +33,8 @@ export default function OrgChart() {
       </Container>
     </Box>
   )
-}
+};
+
+const Spacing = styled(Container)(() => ({
+  height: 50
+})) as typeof Container;
