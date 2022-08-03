@@ -3,21 +3,15 @@ import { createSlice } from "@reduxjs/toolkit";
 interface menuInitialState {
   company: boolean,
   product: boolean,
+  archive: boolean,
   service: boolean,
 };
 
 const MenuInitialState: menuInitialState = {
   company: false,
   product: false,
+  archive: false,
   service: false,
-};
-
-interface managerInitialState {
-  managerMode: boolean
-};
-
-const ManagerInitialState: managerInitialState = {
-  managerMode: false
 };
 
 export const MenuSlice = createSlice({
@@ -28,18 +22,20 @@ export const MenuSlice = createSlice({
     mouseLeaveCompany: (state) => { state.company = false },
     mouseOverProduct: (state) => { state.product = true },
     mouseLeaveProduct: (state) => { state.product = false },
+    mouseOverArchive: (state) => { state.archive = true },
+    mouseLeaveArchive: (state) => { state.archive = false },
     mouseOverService: (state) => { state.service = true },
     mouseLeaveService: (state) => { state.service = false }
   }
 });
 
-export const ManagerSlice = createSlice({
-  name: 'mode',
-  initialState: ManagerInitialState,
-  reducers: {
-    clickChangeMode: (state) => { state.managerMode = !(state.managerMode) }
-  }
-});
-
-export const { mouseOverCompany, mouseLeaveCompany, mouseOverProduct, mouseLeaveProduct, mouseOverService, mouseLeaveService } = MenuSlice.actions;
-export const { clickChangeMode } = ManagerSlice.actions;
+export const {
+  mouseOverCompany,
+  mouseLeaveCompany,
+  mouseOverProduct,
+  mouseLeaveProduct,
+  mouseOverArchive,
+  mouseLeaveArchive,
+  mouseOverService,
+  mouseLeaveService } = MenuSlice.actions;
+export default MenuSlice.reducer;

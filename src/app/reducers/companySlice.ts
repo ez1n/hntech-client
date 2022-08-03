@@ -5,14 +5,13 @@ interface modeInitialState {
 };
 
 const ModeInitialState: modeInitialState = {
-  mode: 'COMPANY'
+  mode: 'INTRODUCE'
 };
 
 export const ModeSlice = createSlice({
   name: 'mode',
   initialState: ModeInitialState,
   reducers: {
-    clickChangeCompany: state => { state.mode = 'COMPANY' },
     clickChangeIntroduce: state => { state.mode = 'INTRODUCE' },
     clickChangeHistory: state => { state.mode = 'HISTORY' },
     clickChangeOrgChart: state => { state.mode = 'CHART' },
@@ -21,5 +20,5 @@ export const ModeSlice = createSlice({
   }
 });
 
-export const { clickChangeCompany, clickChangeIntroduce, clickChangeHistory, clickChangeOrgChart, clickChangeInfo, clickChangeLocation } = ModeSlice.actions;
+export const { clickChangeIntroduce, clickChangeHistory, clickChangeOrgChart, clickChangeInfo, clickChangeLocation } = ModeSlice.actions;
 export default ModeSlice.reducer;

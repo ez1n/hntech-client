@@ -1,7 +1,10 @@
 import React from 'react';
+import ProductCategories from './productCategories';
 
 export default function Products() {
   return (
-    <h1>제품 카테고리</h1>
+    <>
+      <ProductCategories />
+    </>
   )
 }

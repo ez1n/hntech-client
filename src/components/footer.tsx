@@ -1,7 +1,7 @@
 import React from 'react';
 import './style.css';
 import { useAppDispatch } from '../app/hooks';
-import { clickChangeMode } from '../app/reducers/menusSlice';
+import { clickChangeMode } from '../app/reducers/managerModeSlice';
 import { Box, Button, Stack, Typography } from '@mui/material';
 
 export default function Footer() {

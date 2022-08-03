@@ -7,12 +7,14 @@ import Footer from './components/footer';
 import Company from './components/company/company';
 import Products from './components/products/products';
 import ProductDetail from './components/productDetail/productDetail';
+import SideMenu from './components/sideMenu';
 
 export default function App() {
   return (
     <Box sx={{ maxWidth: '1350px', m: 'auto' }}>
       <BrowserRouter>
         <Header />
+        <SideMenu />
 
         <Routes>
           <Route path='/' element={
