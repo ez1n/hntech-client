@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Container, styled, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import { Button, Typography } from '@mui/material';
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -27,13 +28,13 @@ export default function SideMenu() {
 }
 
 // Media Query
-const SideButtonContainer = styled(Container)(({ theme }) => ({
+const SideButtonContainer = styled('div')(({ theme }) => ({
   // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('md')]: {
     display: 'none',
   },
   display: 'block'
-})) as typeof Container;
+}));
 
 // 버튼 스타일
 const SideButton = styled(Button)(() => ({
