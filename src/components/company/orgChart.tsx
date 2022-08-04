@@ -7,8 +7,11 @@ import EditButton from '../editButton';
 export default function OrgChart() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
 
+  // 임시
+  const image = '/images/organizationChart.png';
+
   return (
-    <Box p={5} sx={{ flex: 0.8 }}>
+    <Box p={5}>
       {/* 소제목 */}
       <Container sx={{ display: 'flex', justifyContent: 'center' }}>
         <Typography
@@ -27,10 +30,10 @@ export default function OrgChart() {
         {managerMode && EditButton('수정')}
       </Spacing>
 
-      {/* 조직도 삽입 */}
-      <Container>
-
-      </Container>
+      {/* 조직도 */}
+      <Box sx={{ textAlign: 'center' }}>
+        <img className='orgChartImage' src={image} />
+      </Box>
     </Box>
   )
 };

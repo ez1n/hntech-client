@@ -67,7 +67,7 @@ export default function Representation() {
             onClick={() => onClickButton(image.mode)}
             key={image.title}
             style={{
-              width: image.width,
+              width: '31.7%',
               height: 200
             }}
           >

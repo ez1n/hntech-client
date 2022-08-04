@@ -8,7 +8,7 @@ export default function Location() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
 
   return (
-    <Box p={5} sx={{ flex: 0.8 }}>
+    <Box p={5}>
       {/* 소제목 */}
       <Container sx={{ display: 'flex', justifyContent: 'center' }}>
         <Typography
@@ -27,7 +27,7 @@ export default function Location() {
         {managerMode && EditButton('수정')}
       </Spacing>
 
-      {/* 회사 연혁 삽입 */}
+      {/* 지도 */}
       <Container>
 
       </Container>

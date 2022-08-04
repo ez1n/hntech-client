@@ -18,6 +18,7 @@ export default function CompanySideMenu() {
   return (
     <Box sx={{ flex: 0.2 }}>
       <Box sx={{
+        mt: 8,
         pt: 1,
         pb: 1,
         pl: 2,

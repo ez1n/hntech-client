@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
-import { Container } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import CompanySideMenu from './companySideMenu';
 import Introduce from './introduce';
 import History from './history';
@@ -16,16 +16,29 @@ export default function Company() {
       {/* 회사소개 사이드 메뉴 */}
       <CompanySideMenu />
 
-      {/* 컴포넌트 (페이지) */}
-      {mode === 'INTRODUCE' && <Introduce />}
+      <Box sx={{ flex: 0.8 }}>
 
-      {mode === 'HISTORY' && <History />}
+        {/* 회사 이념 (?) - 보류 */}
+        <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+          <img className='CIImage' src='/images/logo-letter.png' />
+          <Box sx={{ ml: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <Typography sx={{ color: '#2B5835', fontSize: 20, fontWeight: 'bold' }}>화재안전 보국을 가치로 사람과 기술을 소중히하여</Typography>
+            <Typography sx={{ color: '#2B5835', fontSize: 20, fontWeight: 'bold' }}>안심과 안전을 담보로 사회에 공헌하겠습니다.</Typography>
+          </Box>
+        </Container>
 
-      {mode === 'CHART' && <OrgChart />}
+        <Container sx={{ backgroundImage: 'url(../)' }}></Container>
+        {/* 컴포넌트 (페이지) */}
+        {mode === 'INTRODUCE' && <Introduce />}
 
-      {mode === 'INFORMATION' && <CompanyInfo />}
+        {mode === 'HISTORY' && <History />}
 
-      {mode === 'LOCATION' && <Location />}
+        {mode === 'CHART' && <OrgChart />}
+
+        {mode === 'INFORMATION' && <CompanyInfo />}
+
+        {mode === 'LOCATION' && <Location />}
+      </Box>
     </Container>
   )
 };
