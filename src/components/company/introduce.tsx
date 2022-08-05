@@ -37,13 +37,14 @@ export default function Introduce() {
           <Typography sx={{
             fontSize: 18,
             mb: 3,
+            textAlign: 'center'
           }}
             key={index}>
             {value}
           </Typography>
         ))}
 
-        <Typography sx={{ fontSize: 18, m: 10, textAlign: 'center' }}>
+        <Typography sx={{ fontSize: 18, mt: 10, textAlign: 'center' }}>
           - 주식회사 에이치엔테크 임직원 일동 -
         </Typography>
 

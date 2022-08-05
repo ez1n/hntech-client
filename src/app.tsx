@@ -11,7 +11,7 @@ import SideMenu from './components/sideMenu';
 
 export default function App() {
   return (
-    <Box sx={{ maxWidth: '1350px', m: 'auto' }}>
+    <Box>
       <BrowserRouter>
         <Header />
         <SideMenu />

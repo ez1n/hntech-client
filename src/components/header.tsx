@@ -21,6 +21,10 @@ import {
   clickChangeInfo,
   clickChangeLocation
 } from '../app/reducers/companySlice';
+import {
+  selectCategoryTrue,
+  selectCategoryFalse
+} from '../app/reducers/productSlice';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -31,6 +35,9 @@ export default function Header() {
   const openArchive = useAppSelector(state => state.menu.archive); // 고객지원 state
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+
+  // 임시 데이터 (제품 카테고리)
+  const categoryMenus = ['스프링쿨러헤드', '유수베어밸브', '유리벌브', '기타'];
 
   return (
     <Toolbar
@@ -129,10 +136,14 @@ export default function Header() {
         <Box onMouseLeave={() => dispatch(mouseLeaveProduct())}>
           <MainMenu
             onMouseOver={() => dispatch(mouseOverProduct())}
-            onClick={() => navigate('/product')}
+            onClick={() => {
+              navigate('/product');
+              dispatch(selectCategoryFalse());
+            }}
           >
             제품소개
           </MainMenu>
+          {/* 통신으로 목록 받아오기 */}
           {openProduct &&
             <Paper
               sx={{
@@ -140,24 +151,15 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              <DropdownMenu
-                onClick={() => {
-                  navigate('/product-detail')
-                }}>
-                스프링클러헤드
-              </DropdownMenu>
-              <DropdownMenu
-                onClick={() => {
-                  navigate('/product-detail')
-                }}>
-                유수제어밸브
-              </DropdownMenu>
-              <DropdownMenu
-                onClick={() => {
-                  navigate('/product-detail')
-                }}>
-                기타
-              </DropdownMenu>
+              {categoryMenus.map(item => (
+                <DropdownMenu
+                  onClick={() => {
+                    navigate('/product');
+                    dispatch(selectCategoryTrue());
+                  }}>
+                  {item}
+                </DropdownMenu>
+              ))}
             </Paper>
           }
         </Box>

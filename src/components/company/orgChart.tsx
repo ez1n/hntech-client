@@ -32,7 +32,7 @@ export default function OrgChart() {
 
       {/* 조직도 */}
       <Box sx={{ textAlign: 'center' }}>
-        <img className='orgChartImage' src={image} />
+        <img className='orgChartImage' src={image} alt='조직도' />
       </Box>
     </Box>
   )
