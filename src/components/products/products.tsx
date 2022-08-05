@@ -1,25 +1,46 @@
 import React from 'react';
-import { Box, Container, Typography } from '@mui/material';
+import { useAppSelector } from '../../app/hooks';
+import { Box } from '@mui/material';
 import ProductCategories from './productCategories';
+import ProductItem from './productItem';
 
 export default function Products() {
-  return (
-    <Box sx={{ p: 5 }}>
-      {/* 소제목 */}
-      <Container sx={{ display: 'flex', justifyContent: 'center', mb: 5 }}>
-        <Typography
-          variant='h5'
-          sx={{
-            p: 1,
-            width: 'max-content',
-            borderBottom: '3px solid #2E7D32',
-          }}>
-          제품 소개
-        </Typography>
-      </Container>
+  const categorySelected = useAppSelector(state => state.category.selected); // 카테고리 선택 state
 
-      {/* 카테고리 */}
-      <ProductCategories />
+  return (
+    <Box sx={{ display: 'flex' }}>
+      {/* default */}
+      {!categorySelected &&
+        <Box sx={{ p: 5 }}>
+          {/* 카테고리 */}
+          <ProductCategories />
+        </Box>
+      }
+
+      {/* category selected */}
+      {categorySelected &&
+        <>
+          {/* 사이드 메뉴 */}
+          <Box sx={{ flex: 0.2 }}>
+            <Box sx={{
+              ml: '50%',
+              pt: 1,
+              pb: 1,
+              mt: 5,
+              borderLeft: '4px solid rgb(46, 125, 50)',
+              minWidth: '130px'
+            }}>
+              <ProductCategories />
+            </Box>
+          </Box>
+
+          {/* 제품 목록 */}
+          <Box sx={{ flex: 0.8, pt: 5, mr: '10%' }}>
+            <ProductItem />
+          </Box>
+        </>
+      }
     </Box>
   )
-}
+};
+

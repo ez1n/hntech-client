@@ -7,7 +7,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 
 export default function SideMenu() {
   return (
-    <SideButtonContainer style={{ padding: 0 }} sx={{ display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
+    <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 2000, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
       <SideButton>
         <DescriptionIcon sx={{ fontSize: 30, mb: 1 }} />
         <Typography sx={{ fontSize: 13 }}>카다록</Typography>
