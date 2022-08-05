@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// 메뉴 hover state
 interface menuInitialState {
   company: boolean,
   product: boolean,
@@ -14,6 +15,7 @@ const MenuInitialState: menuInitialState = {
   service: false,
 };
 
+// 하위 메뉴 open (hover) 업데이트
 export const MenuSlice = createSlice({
   name: 'menu',
   initialState: MenuInitialState,

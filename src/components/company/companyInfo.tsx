@@ -24,7 +24,7 @@ export default function CompanyInfo() {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && EditButton('수정')}
+        {managerMode && EditButton('수정', console.log('#'))}
       </Spacing>
 
       {/* CI */}

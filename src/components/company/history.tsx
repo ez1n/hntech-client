@@ -23,7 +23,7 @@ export default function History() {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && EditButton('수정')}
+        {managerMode && EditButton('수정', console.log('#'))}
       </Spacing>
 
       {/* 회사 연혁 */}

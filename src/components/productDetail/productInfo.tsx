@@ -23,8 +23,8 @@ export default function ProductInfo() {
       <Typography sx={{ textAlign: 'start' }}>
         {productName}
       </Typography>
-      {images.map(item => (
-        <img src={item.url} width='100px' alt={`${productName}`} />
+      {images.map((item, index) => (
+        <img key={index} src={item.url} width='100px' alt={`${productName}`} />
       ))}
       <Typography>
         아파트와 같은 주거공간의 발코니에 설치되는 제품
