@@ -1,12 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { selectCategoryTrue } from '../../app/reducers/productSlice';
 import { Box, Button, Container, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { selectCategoryTrue } from '../../app/reducers/productSlice';
 
 export default function ProductCategories() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
@@ -57,7 +59,7 @@ export default function ProductCategories() {
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', ml: '10%', mr: '10%' }}>
             {images.map((value, index) => (
-              <CategoryButton key={index} onClick={() => dispatch(selectCategoryTrue())}>
+              <CategoryButton key={index} onClick={() => { dispatch(selectCategoryTrue()) }}>
 
                 {/* 수정 버튼 */}
                 {managerMode &&
@@ -73,7 +75,15 @@ export default function ProductCategories() {
 
                 {/* 목록 버튼 */}
                 <img className='categoryImage' src={value.url} width={10} alt='카테고리 이미지' />
-                <Typography sx={{ width: '100%', borderRadius: 1, backgroundColor: 'rgba(57, 150, 82, 0.2)' }}>{value.title}</Typography>
+                <Typography sx={{
+                  width: '100%',
+                  pt: 1,
+                  pb: 1,
+                  borderRadius: 1,
+                  backgroundColor: 'rgba(57, 150, 82, 0.2)'
+                }}>
+                  {value.title}
+                </Typography>
 
               </CategoryButton>
             ))}
@@ -110,6 +120,7 @@ export default function ProductCategories() {
 
             {images.map((value, index) => (
               <MenuButton key={index} onClick={() => {
+                navigate('/product');
                 dispatch(selectCategoryTrue());
               }}>
                 <Typography sx={{ m: 1, textAlign: 'center' }}>{value.title}</Typography>

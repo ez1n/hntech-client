@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Button, Typography } from '@mui/material';
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
@@ -6,15 +7,17 @@ import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import DescriptionIcon from '@mui/icons-material/Description';
 
 export default function SideMenu() {
+  const navigate = useNavigate();
+
   return (
     <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 2000, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
-      <SideButton>
+      <SideButton onClick={() => navigate('/data')}>
         <DescriptionIcon sx={{ fontSize: 30, mb: 1 }} />
         <Typography sx={{ fontSize: 13 }}>카다록</Typography>
         <Typography sx={{ fontSize: 13 }}>자재승인서</Typography>
       </SideButton>
 
-      <SideButton>
+      <SideButton onClick={() => navigate('/question')}>
         <SmsRoundedIcon sx={{ fontSize: 30, mb: 1 }} />
         <Typography sx={{ fontSize: 13 }}>문의사항</Typography>
       </SideButton>

@@ -8,6 +8,9 @@ import Company from './components/company/company';
 import Products from './components/products/products';
 import ProductDetail from './components/productDetail/productDetail';
 import SideMenu from './components/sideMenu';
+import Questions from './components/questions/questions';
+import MainData from './components/mainData';
+import QuestionForm from './components/questionForm/questionForm';
 
 export default function App() {
   return (
@@ -31,6 +34,18 @@ export default function App() {
 
           <Route path='/product-detail' element={
             <ProductDetail />
+          }></Route>
+
+          <Route path='/data' element={
+            <MainData />
+          }></Route>
+
+          <Route path='/question' element={
+            <Questions />
+          }></Route>
+
+          <Route path='/question-form' element={
+            <QuestionForm />
           }></Route>
         </Routes>
 

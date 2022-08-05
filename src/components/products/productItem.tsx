@@ -75,7 +75,11 @@ export default function ProductItem() {
           }
 
           <img className='productImage' src={item.url} width='100%' alt='제품 이미지' />
-          <Typography sx={{ width: '100%', borderRadius: 1, backgroundColor: 'rgba(57, 150, 82, 0.2)' }}>
+          <Typography sx={{
+            width: '100%',
+            borderRadius: 1,
+            backgroundColor: 'rgba(57, 150, 82, 0.2)'
+          }}>
             {item.title}
           </Typography>
         </ProductButton>

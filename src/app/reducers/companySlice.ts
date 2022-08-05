@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// 회사소개 하위메뉴 state
 interface modeInitialState {
   mode: string
 };
@@ -8,6 +9,7 @@ const ModeInitialState: modeInitialState = {
   mode: 'INTRODUCE'
 };
 
+// 회사소개 카테고리(컴포넌트 교체) 업데이트
 export const ModeSlice = createSlice({
   name: 'mode',
   initialState: ModeInitialState,

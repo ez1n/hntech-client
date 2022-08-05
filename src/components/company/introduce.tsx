@@ -28,7 +28,7 @@ export default function Introduce() {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && EditButton('수정')}
+        {managerMode && EditButton('수정', console.log('#'))}
       </Spacing>
 
       {/* 내용 */}

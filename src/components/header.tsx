@@ -151,8 +151,9 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              {categoryMenus.map(item => (
+              {categoryMenus.map((item, index) => (
                 <DropdownMenu
+                  key={index}
                   onClick={() => {
                     navigate('/product');
                     dispatch(selectCategoryTrue());
@@ -168,6 +169,7 @@ export default function Header() {
         <Box onMouseLeave={() => dispatch(mouseLeaveArchive())}>
           <MainMenu
             onMouseOver={() => dispatch(mouseOverArchive())}
+            onClick={() => console.log('#')}
           >
             자료실
           </MainMenu>
@@ -178,8 +180,8 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              <DropdownMenu onClick={() => console.log('#')}>카다록 및 자재승인서</DropdownMenu>
               <DropdownMenu onClick={() => console.log('#')}>고객 자료실</DropdownMenu>
+              <DropdownMenu onClick={() => navigate('/data')}>카다록 및 자재승인서</DropdownMenu>
             </Paper>
           }
         </Box>
@@ -188,6 +190,7 @@ export default function Header() {
         <Box onMouseLeave={() => dispatch(mouseLeaveService())}>
           <MainMenu
             onMouseOver={() => dispatch(mouseOverService())}
+            onClick={() => navigate('/question')}
           >
             고객지원
           </MainMenu>
@@ -198,12 +201,12 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              <DropdownMenu onClick={() => console.log('#')}>고객문의</DropdownMenu>
+              <DropdownMenu onClick={() => navigate('/question')}>고객문의</DropdownMenu>
             </Paper>
           }
         </Box>
       </Stack>
-    </Toolbar>
+    </Toolbar >
   )
 };
 
