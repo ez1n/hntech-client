@@ -2,18 +2,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Pagination, Stack, styled, Typography } from '@mui/material';
 
-export default function QuestionItem() {
+export default function ArchiveItem() {
   const navigate = useNavigate();
 
   // data type
-  interface dataType { number: string | number, title: string, status: string, writer: string, date: string }
+  interface dataType { number: string | number, class: string, title: string, date: string }
 
   // 임시데이터
   const data: dataType[] = [
-    { number: '[자주하는 질문]', title: 'XXX 안내', status: '', writer: '관리자', date: '2022-07-23' },
-    { number: 3, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '전예진', date: '2022-08-05' },
-    { number: 2, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '배성흥', date: '2022-08-05' },
-    { number: 1, title: 'ㅇㅇㅇ문의합니다', status: '답변완료', writer: '이태민', date: '2022-08-03' },
+    { number: '[공지]', class: '일반자료', title: '제목', date: '2022-07-23' },
+    { number: '4', class: '일반자료', title: '제목', date: '2022-07-23' },
+    { number: '3', class: '일반자료', title: '제목', date: '2022-07-23' },
+    { number: '2', class: '일반자료', title: '제목', date: '2022-07-23' },
+    { number: '1', class: '일반자료', title: '제목', date: '2022-07-23' },
   ]
 
   return (
@@ -22,20 +23,28 @@ export default function QuestionItem() {
         {/* 분류 */}
         <Box sx={{ display: 'flex', flex: 1, p: 2, borderBottom: '3px solid #3B6C46' }}>
           <Title sx={{ flex: 0.1 }}>번호</Title>
-          <Title sx={{ flex: 0.5 }}>제목</Title>
-          <Title sx={{ flex: 0.1 }}>처리상태</Title>
-          <Title sx={{ flex: 0.1 }}>작성자</Title>
+          <Title sx={{ flex: 0.1 }}>분류</Title>
+          <Title sx={{ flex: 0.6 }}>제목</Title>
           <Title sx={{ flex: 0.2 }}>작성일</Title>
         </Box>
 
         {/* 목록 */}
         {data.map((item, index) => (
-          <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: `${item.number === '[자주하는 질문]' && 'rgba(46, 125, 50, 0.1)'}` }}>
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              flex: 1,
+              p: 1.5,
+              borderBottom: '1px solid #3B6C46',
+              backgroundColor: `${item.number === '[공지]' && 'rgba(46, 125, 50, 0.1)'}`
+            }}>
             <List sx={{ flex: 0.1 }}>{item.number}</List>
+            <List sx={{ flex: 0.1 }}>{item.class}</List>
             <List
-              onClick={() => navigate('/question-detail')}
+              onClick={() => navigate('/archive-detail')}
               sx={{
-                flex: 0.5,
+                flex: 0.6,
                 cursor: 'pointer',
                 '&: hover': {
                   color: 'blue' // 색깔 보류.
@@ -43,9 +52,8 @@ export default function QuestionItem() {
               }}>
               {item.title}
             </List>
-            <List sx={{ flex: 0.1 }}>{item.status}</List>
-            <List sx={{ flex: 0.1 }}>{item.writer}</List>
             <List sx={{ flex: 0.2 }}>{item.date}</List>
+
           </Box>
         ))}
       </Box>

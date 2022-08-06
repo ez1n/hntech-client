@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, styled, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import QuestionItem from './questionItem';
 
@@ -23,8 +23,6 @@ export default function Questions() {
         문의사항
       </Typography>
 
-      <Spacing />
-
       {/* 버튼 */}
       <Box
         onClick={() => {
@@ -33,17 +31,14 @@ export default function Questions() {
             console.log('customer')
         }}
         sx={{ textAlign: 'end' }}>
-        {EditButton(`${managerMode ? '글쓰기' : '문의하기'}`, () => navigate('/question-form'))}
+        {managerMode ?
+          EditButton('글쓰기', () => navigate('/notice-form')) :
+          EditButton('문의하기', () => navigate('/question-form'))
+        }
       </Box>
-
-      <Spacing />
 
       {/* 문의 목록 */}
       <QuestionItem />
     </Container>
   )
 };
-
-const Spacing = styled(Container)(() => ({
-  height: 20
-})) as typeof Container;

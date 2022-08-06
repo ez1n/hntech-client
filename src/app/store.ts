@@ -3,6 +3,7 @@ import MenuReducer from './reducers/menusSlice';
 import ManagerReducer from './reducers/managerModeSlice';
 import CompanyReducer from './reducers/companySlice';
 import ProductReducer from './reducers/productSlice';
+import QuestionReducer from './reducers/questionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     manager: ManagerReducer,
     company: CompanyReducer,
     category: ProductReducer,
+    question: QuestionReducer,
   }
 });
 

@@ -16,7 +16,7 @@ import {
 import EditButton from '../editButton';
 import Form from './form';
 
-export default function QuestionForm() {
+export default function NoticeForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -25,11 +25,11 @@ export default function QuestionForm() {
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>문의하기</Typography>
+      <Typography variant='h5' p={1}>공지사항</Typography>
 
       <Spacing />
 
-      {/* 문의 글쓰기 폼 */}
+      {/* 공지사항 글쓰기 폼 */}
       <Form />
 
       <Spacing />
@@ -37,10 +37,7 @@ export default function QuestionForm() {
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
         {EditButton('취소', () => dispatch(clickGoBack()))}
-        {EditButton('작성완료', () => {
-          navigate('/question');
-          console.log('게시글 전송 이벤트');
-        })}
+        {EditButton('작성완료', () => navigate('/question'))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

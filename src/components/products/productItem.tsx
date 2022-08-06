@@ -86,7 +86,7 @@ export default function ProductItem() {
       ))}
 
       {managerMode &&
-        <AddButton>
+        <AddButton onClick={() => navigate('/product-form')}>
           <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
         </AddButton>
       }

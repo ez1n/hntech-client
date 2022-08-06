@@ -12,7 +12,7 @@ export default function Introduce() {
     항상 안전과 안심을 담보로 세상이 필요로하고 가치를 인정받는 제품으로 사회에 공헌하겠습니다.`
 
   return (
-    <Box sx={{ p: 5 }}>
+    <Box p={5}>
       {/* 소제목 */}
       <Container sx={{ display: 'flex', justifyContent: 'center' }}>
         <Typography
