@@ -6,6 +6,7 @@ export default function EditButton(name: string, onClick: any) {
     <Button
       onClick={onClick}
       sx={{
+        m: 1,
         color: '#2E7D32',
         border: '1px solid rgba(46, 125, 50, 0.5)',
         borderRadius: 2,

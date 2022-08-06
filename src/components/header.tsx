@@ -169,7 +169,7 @@ export default function Header() {
         <Box onMouseLeave={() => dispatch(mouseLeaveArchive())}>
           <MainMenu
             onMouseOver={() => dispatch(mouseOverArchive())}
-            onClick={() => console.log('#')}
+            onClick={() => navigate('/archive')}
           >
             자료실
           </MainMenu>
@@ -180,7 +180,7 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              <DropdownMenu onClick={() => console.log('#')}>고객 자료실</DropdownMenu>
+              <DropdownMenu onClick={() => navigate('/archive')}>고객 자료실</DropdownMenu>
               <DropdownMenu onClick={() => navigate('/data')}>카다록 및 자재승인서</DropdownMenu>
             </Paper>
           }
