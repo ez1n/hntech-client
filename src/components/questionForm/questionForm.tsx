@@ -48,7 +48,7 @@ export default function QuestionForm() {
         open={cancel}
         onClose={() => dispatch(clickGoBack())}>
         <DialogTitle>
-          {'작성 취소'}
+          작성 취소
         </DialogTitle>
         <DialogContent>
           <DialogContentText>

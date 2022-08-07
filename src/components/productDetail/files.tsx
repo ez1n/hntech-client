@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, styled } from '@mui/material';
+import { Box, Button, styled } from '@mui/material';
 
 export default function Files() {
   const data = [
@@ -7,12 +7,12 @@ export default function Files() {
     { name: '도면' },
   ]
   return (
-    <>
+    <Box>
       {data.map((item, index) =>
         <FileButton key={index}>
           {item.name}
         </FileButton>)}
-    </>
+    </Box>
   )
 };
 

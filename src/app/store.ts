@@ -4,6 +4,7 @@ import ManagerReducer from './reducers/managerModeSlice';
 import CompanyReducer from './reducers/companySlice';
 import ProductReducer from './reducers/productSlice';
 import QuestionReducer from './reducers/questionSlice';
+import ProductImageReducer from './reducers/productInfoSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     company: CompanyReducer,
     category: ProductReducer,
     question: QuestionReducer,
+    product: ProductImageReducer,
   }
 });
 

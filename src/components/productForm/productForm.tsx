@@ -29,7 +29,7 @@ export default function ProductForm() {
 
       <Spacing />
 
-      {/* 공지사항 글쓰기 폼 */}
+      {/* 제품 등록 폼 */}
       <Form />
 
       <Spacing />
@@ -37,7 +37,7 @@ export default function ProductForm() {
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
         {EditButton('취소', () => dispatch(clickGoBack()))}
-        {EditButton('작성완료', () => navigate('/question'))}
+        {EditButton('작성완료', () => navigate('/product'))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
@@ -59,7 +59,7 @@ export default function ProductForm() {
         <DialogActions>
           <Button onClick={() => {
             dispatch(clickGoBack());
-            navigate('/question');
+            navigate('/product');
           }}
           >
             네

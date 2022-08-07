@@ -21,7 +21,7 @@ export default function Products() {
       {categorySelected &&
         <>
           {/* 사이드 메뉴 */}
-          <Box sx={{ flex: 0.2 }}>
+          <Box sx={{ flex: 0.3 }}>
             <Box sx={{
               ml: '50%',
               pt: 1,
@@ -35,7 +35,7 @@ export default function Products() {
           </Box>
 
           {/* 제품 목록 */}
-          <Box sx={{ flex: 0.8, pt: 5, mr: '10%' }}>
+          <Box sx={{ flex: 0.7, pt: 5, mr: '10%' }}>
             <ProductItem />
           </Box>
         </>

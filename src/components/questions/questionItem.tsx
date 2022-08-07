@@ -1,9 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, Pagination, Stack, styled, Typography } from '@mui/material';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Pagination, Stack, styled, TextField, Typography } from '@mui/material';
+import { openDetail } from '../../app/reducers/questionSlice';
 
 export default function QuestionItem() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const onLogin = useAppSelector(state => state.question.onLogin);
 
   // data type
   interface dataType { number: string | number, title: string, status: string, writer: string, date: string }
@@ -14,7 +19,19 @@ export default function QuestionItem() {
     { number: 3, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '전예진', date: '2022-08-05' },
     { number: 2, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '배성흥', date: '2022-08-05' },
     { number: 1, title: 'ㅇㅇㅇ문의합니다', status: '답변완료', writer: '이태민', date: '2022-08-03' },
-  ]
+  ];
+
+  // 이름 마스킹
+  const masking = (name: string) => {
+    if (name === '관리자') {
+      return name
+    }
+    switch (name.length) {
+      case 2: return name.replace(name.substring(1,), "*");
+      case 3: return name.replace(name.substring(1,), "**");
+      default: return name.replace(name.substring(1,), "***");
+    }
+  };
 
   return (
     <>
@@ -33,7 +50,7 @@ export default function QuestionItem() {
           <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: `${item.number === '[자주하는 질문]' && 'rgba(46, 125, 50, 0.1)'}` }}>
             <List sx={{ flex: 0.1 }}>{item.number}</List>
             <List
-              onClick={() => navigate('/question-detail')}
+              onClick={item.writer === '관리자' ? () => navigate('/question-detail') : () => dispatch(openDetail())}
               sx={{
                 flex: 0.5,
                 cursor: 'pointer',
@@ -44,7 +61,7 @@ export default function QuestionItem() {
               {item.title}
             </List>
             <List sx={{ flex: 0.1 }}>{item.status}</List>
-            <List sx={{ flex: 0.1 }}>{item.writer}</List>
+            <List sx={{ flex: 0.1 }}>{masking(item.writer)}</List>
             <List sx={{ flex: 0.2 }}>{item.date}</List>
           </Box>
         ))}
@@ -55,6 +72,29 @@ export default function QuestionItem() {
       <Stack>
         <Pagination count={10} sx={{ m: '0 auto' }} />
       </Stack>
+
+      {/* dialog */}
+      <Dialog
+        open={onLogin}
+        onClose={() => dispatch(openDetail())}
+        sx={{ textAlign: 'center' }}>
+        <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
+        <DialogContent>
+          <TextField type={'password'} size={'small'} inputProps={{ maxLength: 4 }} />
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button onClick={() => {
+            dispatch(openDetail());
+            navigate('/question-detail');
+            // 비밀번호 확인 이벤트 + 틀린경우 에러 메시지
+          }}
+          >
+            확인
+          </Button>
+          <Button onClick={() => dispatch(openDetail())}>취소</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 };
