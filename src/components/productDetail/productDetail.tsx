@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Container, styled } from '@mui/material';
 import ProductCategories from '../products/productCategories';
 import ProductInfo from './productInfo';
 import Files from './files';
@@ -8,7 +8,8 @@ import Specification from './specification';
 export default function ProductDetail() {
   return (
     <Box sx={{ display: 'flex' }}>
-      <Box sx={{ flex: 0.2 }}>
+      {/* 카테고리 */}
+      <Box sx={{ flex: 0.3 }}>
         <Box sx={{
           ml: '50%',
           pt: 1,
@@ -21,11 +22,22 @@ export default function ProductDetail() {
         </Box>
       </Box>
 
-      <Box sx={{ flex: 0.8, pt: 5, mr: '10%', textAlign: 'center' }}>
+      {/* 제품 정보 */}
+      <Box sx={{ flex: 0.7, pt: 5, mr: '10%', textAlign: 'center' }}>
         <ProductInfo />
+
+        <Spacing />
+
         <Files />
+
+        <Spacing />
+
         <Specification />
       </Box>
     </Box>
   )
-}
+};
+
+const Spacing = styled(Container)(() => ({
+  height: 50
+})) as typeof Container;

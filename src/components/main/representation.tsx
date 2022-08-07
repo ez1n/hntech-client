@@ -64,7 +64,10 @@ export default function Representation() {
         {/* 제품 버튼 */}
         {images.map((image) => (
           <RepProductionButton
-            onClick={() => onClickButton(image.mode)}
+            onClick={() => {
+              onClickButton(image.mode);
+              navigate('/product');
+            }}
             key={image.title}
             style={{
               width: '31.7%',
@@ -99,7 +102,7 @@ export default function Representation() {
           </RepProductionButton>
         ))}
       </Box>
-    </Container>
+    </Container >
   )
 };
 
