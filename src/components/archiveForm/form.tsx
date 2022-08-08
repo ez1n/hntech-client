@@ -1,13 +1,29 @@
 import React from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import CategorySelect from '../categorySelect';
 import {
   Box,
   Checkbox,
   FormControlLabel,
-  TextField
+  Stack,
+  TextField,
+  Typography
 } from '@mui/material';
-import CategorySelect from '../categorySelect';
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import { addArchiveFile, deleteArchiveFile } from '../../app/reducers/archiveFileSlide';
 
 export default function Form() {
+  const dispatch = useAppDispatch();
+
+  const file = useAppSelector(state => state.archiveFile.file); // 파일 state
+
+  // 파일 이름 미리보기
+  const selectFile = (event: any) => {
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(addArchiveFile({ item: event.target.files[i].name }))
+    }
+  };
+
   return (
     <>
       <Box sx={{
@@ -74,15 +90,34 @@ export default function Form() {
         </Box>
 
         {/* 첨부파일 */}
-        <Box sx={{ p: 2 }}>
-          <TextField
-            type="file"
-            inputProps={{
-              multiple: true
-            }}
-            sx={{ width: '100%' }}
-          />
-        </Box>
+        <Stack direction='row' spacing={2} sx={{ p: 2 }}>
+          <Box sx={{
+            pl: 2,
+            width: '100%',
+            border: '1.8px solid lightgrey',
+            borderRadius: 1,
+            color: 'darkgrey',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <Stack>
+              {file.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>}
+              {file.map((item, index) => (
+                <Stack direction='row'>
+                  <Typography key={index}>{item}</Typography>
+                  <ClearRoundedIcon
+                    onClick={() => dispatch(deleteArchiveFile({ num: index }))}
+                    fontSize='small'
+                    sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
+                </Stack>
+              ))}
+            </Stack>
+          </Box>
+          <label className='fileUploadButton' htmlFor='archiveFile' onChange={(event) => selectFile(event)}>
+            업로드
+            <input type='file' id='archiveFile' multiple style={{ display: 'none' }} />
+          </label>
+        </Stack>
       </Box>
     </>
   )

@@ -1,25 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// 문의 취소 state
+// 문의사항 비밀번호 입력 state
 interface questionInitialState {
-  cancel: boolean,
   onLogin: boolean
 };
 
 const QuestionInitialState: questionInitialState = {
-  cancel: false,
   onLogin: false
 };
 
-// 문의하기 취소 dialog 업데이트
+// 문의사항 게시글 열기
 export const QuestionSlice = createSlice({
-  name: 'cancel',
+  name: 'question',
   initialState: QuestionInitialState,
   reducers: {
-    clickGoBack: (state) => { state.cancel = !state.cancel },
     openDetail: (state) => { state.onLogin = !state.onLogin }
   }
 });
 
-export const { clickGoBack, openDetail } = QuestionSlice.actions;
+export const { openDetail } = QuestionSlice.actions;
 export default QuestionSlice.reducer;

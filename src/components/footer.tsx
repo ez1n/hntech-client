@@ -97,7 +97,7 @@ export default function Footer() {
         open={managerLogin}
         onClose={() => dispatch(clickManagerLogin())}>
         <DialogTitle>
-          관리자 모드
+          관리자 모드 로그인
         </DialogTitle>
 
         <DialogContent>
@@ -106,7 +106,6 @@ export default function Footer() {
         </DialogContent>
 
         <DialogActions>
-          {/* 로그인 확인 이벤트 추가해야함 */}
           <Button onClick={() => {
             dispatch(clickChangeMode());
             dispatch(clickManagerLogin());

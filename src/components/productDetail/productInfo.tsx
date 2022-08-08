@@ -69,7 +69,7 @@ export default function ProductInfo() {
         <Box
           sx={{
             width: 300,
-            height: 290,
+            height: 250,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center'
@@ -99,7 +99,7 @@ export default function ProductInfo() {
       <Spacing />
 
       {/* 부가 설명 */}
-      <Typography>
+      <Typography sx={{ fontSize: 20 }}>
         {data.info}
       </Typography>
     </Container>
