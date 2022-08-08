@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickGoBack } from '../../app/reducers/questionSlice';
+import { clickGoBack } from '../../app/reducers/dialogSlice';
 import {
   Container,
   styled,
@@ -20,7 +20,7 @@ export default function ArchiveForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const cancel = useAppSelector(state => state.question.cancel); // 글쓰기 취소 state
+  const cancel = useAppSelector(state => state.dialog.cancel); // 글쓰기 취소 state
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -45,7 +45,7 @@ export default function ArchiveForm() {
         open={cancel}
         onClose={() => dispatch(clickGoBack())}>
         <DialogTitle>
-          {'작성 취소'}
+          작성 취소
         </DialogTitle>
         <DialogContent>
           <DialogContentText>

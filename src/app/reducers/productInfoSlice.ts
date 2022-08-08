@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// 제품 카테고리 선택 state
+// 제품 사진 state
 interface productImageInitialState {
   activeStep: number
 };
@@ -9,7 +9,7 @@ const ProductImageInitialState: productImageInitialState = {
   activeStep: 0
 };
 
-// 카테고리 선택 업데이트
+// 제품 사진 업데이트
 export const ProductImageSlice = createSlice({
   name: 'product',
   initialState: ProductImageInitialState,

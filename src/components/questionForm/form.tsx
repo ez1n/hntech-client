@@ -55,14 +55,15 @@ export default function Form() {
             sx={{ mr: 2, width: '15%' }}
           />
           <TextField
-            type='text'
+            type='password'
             required={true}
             placeholder='비밀번호'
             size='small'
             inputProps={{
               style: {
                 fontSize: 20
-              }
+              },
+              maxLength: 4
             }}
             sx={{ width: '15%' }}
           />
