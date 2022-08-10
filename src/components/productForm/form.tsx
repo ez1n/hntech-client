@@ -200,7 +200,7 @@ export default function Form() {
                   {item.name ? <ClearRoundedIcon onClick={() => dispatch(deleteFile({ key: item.key }))} fontSize='small' sx={{ ml: 1, cursor: 'pointer' }} /> : '파일'}
                 </>
               </Typography>
-              <label className='fileUploadButton' htmlFor={`inputFile${item.key}`} onChange={(event) => { selectFile(item.key, event); console.log(file) }}>
+              <label className='fileUploadButton' htmlFor={`inputFile${item.key}`} onChange={(event) => { selectFile(item.key, event) }}>
                 업로드
                 <input className='productInput' type='file' id={`inputFile${item.key}`} multiple accept='.pdf, .doc, .docx, .hwp, .hwpx' />
               </label>
