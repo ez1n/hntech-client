@@ -66,7 +66,7 @@ export default function ProductInfo() {
       <Spacing sx={{ textAlign: 'end' }}>
         {managerMode &&
           <>
-            {EditButton('수정', () => console.log('#'))}
+            {EditButton('수정', () => navigate('/product-modify'))}
             {EditButton('삭제', () => dispatch(clickGoBack()))}
           </>
         }

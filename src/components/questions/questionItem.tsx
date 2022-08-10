@@ -8,17 +8,17 @@ export default function QuestionItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const onLogin = useAppSelector(state => state.question.onLogin);
+  const onLogin = useAppSelector(state => state.question.onLogin); // 관리자 로그인 state
 
   // data type
-  interface dataType { number: string | number, title: string, status: string, writer: string, date: string }
+  interface dataType { number: number, title: string, status: string, writer: string, date: string, new: boolean }
 
   // 임시데이터
   const data: dataType[] = [
-    { number: '[자주하는 질문]', title: 'XXX 안내', status: '', writer: '관리자', date: '2022-07-23' },
-    { number: 3, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '전예진', date: '2022-08-05' },
-    { number: 2, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '배성흥', date: '2022-08-05' },
-    { number: 1, title: 'ㅇㅇㅇ문의합니다', status: '답변완료', writer: '이태민', date: '2022-08-03' },
+    { number: 0, title: 'XXX 안내', status: '', writer: '관리자', date: '2022. 7. 23.', new: false },
+    { number: 3, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '전예진', date: '2022-08-08', new: true },
+    { number: 2, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '배성흥', date: '2022-08-07', new: false },
+    { number: 1, title: 'ㅇㅇㅇ문의합니다', status: '답변완료', writer: '이태민', date: '2022-08-03', new: false },
   ];
 
   // 이름 마스킹
@@ -47,18 +47,34 @@ export default function QuestionItem() {
 
         {/* 목록 */}
         {data.map((item, index) => (
-          <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: `${item.number === '[자주하는 질문]' && 'rgba(46, 125, 50, 0.1)'}` }}>
-            <List sx={{ flex: 0.1 }}>{item.number}</List>
+          <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: `${item.number === 0 && 'rgba(46, 125, 50, 0.1)'}` }}>
+            <List sx={{ flex: 0.1 }}>{item.number === 0 ? '[자주하는 질문]' : item.number}</List>
             <List
               onClick={item.writer === '관리자' ? () => navigate('/question-detail') : () => dispatch(openDetail())}
               sx={{
                 flex: 0.5,
+                display: 'flex',
+                justifyContent: 'center',
                 cursor: 'pointer',
                 '&: hover': {
                   color: 'blue' // 색깔 보류.
                 }
               }}>
-              {item.title}
+              <Typography>
+                {item.title}
+              </Typography>
+              {item.new &&
+                <Typography
+                  sx={{
+                    ml: 1,
+                    fontSize: 'small',
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: 'lightseagreen'
+                  }}>
+                  [new]
+                </Typography>
+              }
             </List>
             <List sx={{ flex: 0.1 }}>{item.status}</List>
             <List sx={{ flex: 0.1 }}>{masking(item.writer)}</List>
@@ -112,5 +128,5 @@ const Title = styled(Typography)(() => ({
 
 const List = styled(Typography)(() => ({
   textAlign: 'center',
-  fontSize: 15,
+  fontSize: 15
 })) as typeof Typography;

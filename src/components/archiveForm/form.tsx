@@ -3,6 +3,7 @@ import '../style.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { updateArchiveTitle, updateArchiveContent } from '../../app/reducers/formContentSlice';
 import CategorySelect from '../categorySelect';
 import {
   Box,
@@ -45,6 +46,7 @@ export default function Form() {
             required={true}
             autoFocus={true}
             placeholder='제목을 입력해 주세요'
+            onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
             inputProps={{
               style: {
                 fontSize: 20
@@ -88,6 +90,7 @@ export default function Form() {
             onChange={(event: any, editor: { getData: () => any; }) => {
               const data = editor.getData();
               console.log({ event, editor, data });
+              dispatch(updateArchiveContent({ content: data }));
             }}
             onBlur={(editor: any) => {
               console.log('Blur.', editor);

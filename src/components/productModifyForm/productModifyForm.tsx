@@ -14,34 +14,29 @@ import {
   Typography
 } from '@mui/material';
 import EditButton from '../editButton';
-import Form from './form';
+import Form from './modifyForm';
 
-export default function NoticeForm() {
+export default function ProductModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const cancel = useAppSelector(state => state.dialog.cancel); // 글쓰기 취소 state
-  const noticeContent = useAppSelector(state => state.formContent.noticeContent); // 공지사항 글쓰기 내용 state
-
 
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>공지사항</Typography>
+      <Typography variant='h5' p={1}>제품 정보 수정</Typography>
 
       <Spacing />
 
-      {/* 공지사항 글쓰기 폼 */}
+      {/* 제품 등록 폼 */}
       <Form />
 
       <Spacing />
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', () => {
-          console.log(noticeContent); // 보내면됨
-          navigate('/question');
-        })}
+        {EditButton('수정', () => navigate(-1))}
         {EditButton('취소', () => dispatch(clickGoBack()))}
       </Spacing>
 
@@ -50,11 +45,11 @@ export default function NoticeForm() {
         open={cancel}
         onClose={() => dispatch(clickGoBack())}>
         <DialogTitle>
-          {'작성 취소'}
+          {'수정 취소'}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            작성중인 내용이 사라집니다.
+            수정중인 내용이 사라집니다.
           </DialogContentText>
           <DialogContentText>
             취소하시겠습니까?
@@ -64,7 +59,7 @@ export default function NoticeForm() {
         <DialogActions>
           <Button onClick={() => {
             dispatch(clickGoBack());
-            navigate('/question');
+            navigate(-1);
           }}
           >
             네

@@ -1,5 +1,11 @@
 import React from 'react';
-import { Box, ButtonBase, Container, Typography, styled } from '@mui/material';
+import {
+  Box,
+  ButtonBase,
+  Container,
+  Typography,
+  styled
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 export default function Representation() {
@@ -78,13 +84,13 @@ export default function Representation() {
         </Container>
 
         {/* 제품 버튼 */}
-        {images.map((image) => (
+        {images.map((image, index) => (
           <RepProductionButton
             onClick={() => {
               onClickButton(image.mode);
               navigate('/product');
             }}
-            key={image.title}
+            key={index}
             style={{
               width: '33%',
               height: 200
@@ -111,7 +117,14 @@ export default function Representation() {
               justifyContent: 'center',
               color: '#FCFCFC'
             }}>
-              <Typography sx={{ position: 'relative', p: 2, fontSize: 18, fontWeight: 'bold', display: 'none' }}>
+              <Typography
+                sx={{
+                  p: 2,
+                  position: 'relative',
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  display: 'none'
+                }}>
                 {image.title}
               </Typography>
             </Container>

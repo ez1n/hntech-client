@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useAppDispatch } from '../../app/hooks';
+import { selectCategoryTrue } from '../../app/reducers/productSlice';
 import { Box, Container, styled } from '@mui/material';
 import ProductCategories from '../products/productCategories';
 import ProductInfo from './productInfo';
@@ -6,6 +8,12 @@ import Files from './files';
 import Specification from './specification';
 
 export default function ProductDetail() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(selectCategoryTrue());
+  }, [])
+
   return (
     <Box sx={{ display: 'flex' }}>
       {/* 카테고리 */}

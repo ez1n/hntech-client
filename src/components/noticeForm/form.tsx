@@ -1,6 +1,11 @@
 import React from 'react';
+import '../style.css';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { addNoticeFile, deleteNoticeFile } from '../../app/reducers/noticeFileSlice';
+import { updateNoticeTitle, updateNoticeContent } from '../../app/reducers/formContentSlice';
+
 import {
   Box,
   TextField,
@@ -39,6 +44,7 @@ export default function Form() {
             required={true}
             autoFocus={true}
             placeholder='제목을 입력해 주세요'
+            onChange={event => dispatch(updateNoticeTitle({ title: event.target.value }))}
             inputProps={{
               style: {
                 fontSize: 20
@@ -59,21 +65,29 @@ export default function Form() {
           <Typography sx={{ color: 'darkgrey' }}>작성자 | 관리자</Typography>
         </Box>
 
-        {/* 문의 내용 */}
+        {/* 공지 내용 */}
         <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
-          <TextField
-            type='text'
-            multiline
-            minRows={15}
-            required={true}
-            placeholder='공지사항을 작성해 주세요'
-            inputProps={{
-              style: {
-                fontSize: 20,
-              }
+          <CKEditor
+            editor={ClassicEditor}
+            config={{
+              placeholder: '공지사항을 작성해 주세요',
             }}
-            sx={{ width: '100%' }}
+            onReady={(editor: any) => {
+              console.log('Editor is ready to use!', editor);
+            }}
+            onChange={(event: any, editor: { getData: () => any; }) => {
+              const data = editor.getData();
+              console.log('Change', { event, editor, data });
+              dispatch(updateNoticeContent({ content: data }));
+            }}
+            onBlur={(editor: any) => {
+              console.log('Blur.', editor);
+            }}
+            onFocus={(editor: any) => {
+              console.log('Focus.', editor);
+            }}
           />
+
         </Box>
 
         {/* 첨부파일 */}
