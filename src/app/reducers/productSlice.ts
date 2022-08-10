@@ -15,7 +15,7 @@ export const ProductSlice = createSlice({
   initialState: ProductInitialState,
   reducers: {
     selectCategoryTrue: (state) => { state.selected = true },
-    selectCategoryFalse: (state) => { state.selected = false }
+    selectCategoryFalse: (state) => { state.selected = false },
   }
 });
 

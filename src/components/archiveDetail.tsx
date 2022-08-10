@@ -1,16 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../app/hooks';
-import { Box, Button, Container, Stack, styled, Typography } from '@mui/material';
+import { useAppSelector, useAppDispatch } from '../app/hooks';
+import { clickGoBack } from '../app/reducers/dialogSlice';
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, styled, Typography } from '@mui/material';
 import EditButton from './editButton';
 
 export default function ArchiveDetail() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const cancel = useAppSelector(state => state.dialog.cancel); // 게시글 삭제 취소 state
 
   // 임시데이터
-  const data = { title: 'ㅇㅇㅇ 자료', date: '2022.08.05', content: '설명' }
+  const data = { title: 'ㅇㅇㅇ 자료', date: '2022.08.05', content: '설명' };
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -29,7 +32,7 @@ export default function ArchiveDetail() {
         {managerMode &&
           <Box sx={{ textAlign: 'end' }}>
             {EditButton('수정', () => console.log('#'))}
-            {EditButton('삭제', () => console.log('#'))}
+            {EditButton('삭제', () => dispatch(clickGoBack()))}
           </Box>
         }
       </Spacing>
@@ -93,6 +96,34 @@ export default function ArchiveDetail() {
           목록
         </Button>
       </Box>
+
+      {/* 삭제 버튼 Dialog */}
+      <Dialog
+        open={cancel}
+        onClose={() => dispatch(clickGoBack())}>
+        <DialogTitle>
+          게시글 삭제
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            삭제된 게시글은 복구할 수 없습니다.
+          </DialogContentText>
+          <DialogContentText>
+            삭제하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => {
+            dispatch(clickGoBack());
+            navigate('/archive');
+          }}
+          >
+            네
+          </Button>
+          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   )
 };

@@ -1,6 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, ButtonBase, Container, Typography } from '@mui/material';
+import { Box, ButtonBase, Container, Typography, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 export default function Representation() {
@@ -38,6 +37,23 @@ export default function Representation() {
       width: '31.7%',
       mode: '알람밸브 버터부착형'
     },
+    {
+      url: '/images/mainButtons/알람밸브조립.jpg',
+      title: '알람밸브 버터부착형',
+      width: '31.7%',
+      mode: '알람밸브 버터부착형'
+    },
+    {
+      url: '/images/mainButtons/알람밸브조립.jpg',
+      title: '알람밸브 버터부착형',
+      width: '31.7%',
+      mode: '알람밸브 버터부착형'
+    }, {
+      url: '/images/mainButtons/알람밸브조립.jpg',
+      title: '알람밸브 버터부착형',
+      width: '31.7%',
+      mode: '알람밸브 버터부착형'
+    },
   ];
 
   // 제품 버튼 클릭 이벤트 (페이지 이동)
@@ -70,7 +86,7 @@ export default function Representation() {
             }}
             key={image.title}
             style={{
-              width: '31.7%',
+              width: '33%',
               height: 200
             }}
           >

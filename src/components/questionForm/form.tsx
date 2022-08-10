@@ -1,4 +1,7 @@
 import React from 'react';
+import '../style.css';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {
   Box,
   List,
@@ -76,18 +79,24 @@ export default function Form() {
 
         {/* 문의 내용 */}
         <Box p={2}>
-          <TextField
-            type='text'
-            multiline
-            minRows={15}
-            required={true}
-            placeholder='문의사항을 작성해 주세요'
-            inputProps={{
-              style: {
-                fontSize: 20,
-              }
+          <CKEditor
+            editor={ClassicEditor}
+            config={{
+              placeholder: '문의사항을 작성해 주세요',
             }}
-            sx={{ width: '100%' }}
+            onReady={(editor: any) => {
+              console.log('Editor is ready to use!', editor);
+            }}
+            onChange={(event: any, editor: { getData: () => any; }) => {
+              const data = editor.getData();
+              console.log({ event, editor, data });
+            }}
+            onBlur={(editor: any) => {
+              console.log('Blur.', editor);
+            }}
+            onFocus={(editor: any) => {
+              console.log('Focus.', editor);
+            }}
           />
         </Box>
       </Box>

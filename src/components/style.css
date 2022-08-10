@@ -5,11 +5,13 @@
   height: 3rem;
 }
 
+
 /* footer */
 
 .logoKor {
   height: 2.3rem;
 }
+
 
 /* orgChart */
 
@@ -21,11 +23,13 @@
   width: 100%;
 }
 
+
 /* products */
 
 .categoryImage {
   width: 100%;
 }
+
 
 /* productForm */
 
@@ -49,4 +53,11 @@
 
 .fileUploadButton:hover {
   background-color: rgba(239, 245, 241, 0.5);
+}
+
+
+/* archiveForm, questionForm */
+
+.ck-editor__editable {
+  min-height: 400px;
 }

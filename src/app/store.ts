@@ -9,6 +9,7 @@ import ProductImageReducer from './reducers/productInfoSlice';
 import { GradeImageReducer, InfoImageReducer } from './reducers/infoImageSlice';
 import InfoFileReducer from './reducers/infoFileSlice';
 import ArchiveFileReducer from './reducers/archiveFileSlide';
+import NoticeFileReducer from './reducers/noticeFileSlice';
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     gradeImage: GradeImageReducer,
     productFile: InfoFileReducer,
     archiveFile: ArchiveFileReducer,
+    noticeFile: NoticeFileReducer,
   }
 });
 
