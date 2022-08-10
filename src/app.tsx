@@ -2,21 +2,21 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material';
 import Header from './components/header';
-import Main from './components/main/main';
+import SideMenu from './components/sideMenu';
 import Footer from './components/footer';
+import Main from './components/main/main';
 import Company from './components/company/company';
 import Products from './components/products/products';
 import ProductDetail from './components/productDetail/productDetail';
-import SideMenu from './components/sideMenu';
-import Questions from './components/questions/questions';
+import ProductForm from './components/productForm/productForm';
 import MainData from './components/mainData';
+import Questions from './components/questions/questions';
 import QuestionForm from './components/questionForm/questionForm';
+import NoticeForm from './components/noticeForm/noticeForm';
 import QuestionDetail from './components/questionDetail/questionDetail';
 import Archives from './components/archives/archives';
-import ArchiveDetail from './components/archiveDetail';
-import NoticeForm from './components/noticeForm/noticeForm';
 import ArchiveForm from './components/archiveForm/archiveForm';
-import ProductForm from './components/productForm/productForm';
+import ArchiveDetail from './components/archiveDetail';
 
 export default function App() {
   return (
@@ -82,5 +82,5 @@ export default function App() {
         <Footer />
       </BrowserRouter>
     </Box>
-  );
-}
+  )
+};
