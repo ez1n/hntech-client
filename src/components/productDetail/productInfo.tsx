@@ -1,19 +1,26 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { nextImage, prevImage, clickGoBack } from '../../app/reducers/productInfoSlice';
 import {
   Box,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   MobileStepper,
   styled,
   Typography
 } from '@mui/material';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@mui/icons-material/NavigateBeforeRounded';
-import { nextImage, prevImage } from '../../app/reducers/productInfoSlice';
 import EditButton from '../editButton';
 
 export default function ProductInfo() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   // 임시데이터
@@ -32,9 +39,10 @@ export default function ProductInfo() {
   // 임시 데이터
   const data = { name: '플러쉬', info: '아파트와 같은 주거공간의 발코니에 설치되는 제품' };
 
-  const managerMode = useAppSelector(state => state.manager.managerMode);
-  const activeStep = useAppSelector(state => state.product.activeStep);
-  const maxSteps = images.length;
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const cancel = useAppSelector(state => state.product.dialog); // 제품 삭제 dialog state
+  const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
+  const maxSteps = images.length; // 이미지 갯수
 
   return (
     <Container
@@ -59,7 +67,7 @@ export default function ProductInfo() {
         {managerMode &&
           <>
             {EditButton('수정', () => console.log('#'))}
-            {EditButton('삭제', () => console.log('#'))}
+            {EditButton('삭제', () => dispatch(clickGoBack()))}
           </>
         }
       </Spacing>
@@ -102,6 +110,34 @@ export default function ProductInfo() {
       <Typography sx={{ fontSize: 20 }}>
         {data.info}
       </Typography>
+
+      {/* 삭제 버튼 Dialog */}
+      <Dialog
+        open={cancel}
+        onClose={() => dispatch(clickGoBack())}>
+        <DialogTitle>
+          제품 삭제
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            해당 제품이 삭제됩니다.
+          </DialogContentText>
+          <DialogContentText>
+            삭제하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => {
+            dispatch(clickGoBack());
+            navigate('/product');
+          }}
+          >
+            네
+          </Button>
+          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   )
 };

@@ -1,6 +1,19 @@
 import React from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Container, styled, Typography } from '@mui/material';
+import { clickGoBack } from '../../app/reducers/dialogSlice';
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  styled,
+  Typography
+} from '@mui/material';
 import EditButton from '../editButton';
 import QuestionContent from './questionContent';
 import Comment from './comment';
@@ -8,6 +21,9 @@ import CommentForm from './commentForm';
 
 export default function QuestionDetail() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const cancel = useAppSelector(state => state.dialog.cancel); // 게시글 삭제 취소 state
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -25,7 +41,7 @@ export default function QuestionDetail() {
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {EditButton('수정', () => console.log('#'))}
-        {EditButton('삭제', () => console.log('#'))}
+        {EditButton('삭제', () => dispatch(clickGoBack()))}
       </Spacing>
 
 
@@ -59,6 +75,34 @@ export default function QuestionDetail() {
 
       {/* 댓글 폼 */}
       <CommentForm />
+
+      {/* 삭제 버튼 Dialog */}
+      <Dialog
+        open={cancel}
+        onClose={() => dispatch(clickGoBack())}>
+        <DialogTitle>
+          게시글 삭제
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            삭제된 게시글은 복구할 수 없습니다.
+          </DialogContentText>
+          <DialogContentText>
+            삭제하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => {
+            dispatch(clickGoBack());
+            navigate('/question');
+          }}
+          >
+            네
+          </Button>
+          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   )
 };

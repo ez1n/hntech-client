@@ -1,14 +1,28 @@
 import React from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { Box, Button, styled, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { clickGoBack } from '../../app/reducers/dialogSlice';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  styled,
+  Typography
+} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { useNavigate } from 'react-router-dom';
 
 export default function ProductItem() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const cancel = useAppSelector(state => state.dialog.cancel); // 제품 삭제 dialog
 
   // 임시데이터
   const items = [

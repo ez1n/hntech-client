@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectCategoryTrue } from '../../app/reducers/productSlice';
-import { Box, Button, Container, styled, Typography } from '@mui/material';
+import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -13,6 +14,7 @@ export default function ProductCategories() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const categorySelected = useAppSelector(state => state.category.selected); // 카테고리 선택 state
+  const cancel = useAppSelector(state => state.dialog.cancel); // 카테고리 삭제 dialog
 
   // 임시데이터
   const images = [
@@ -59,33 +61,33 @@ export default function ProductCategories() {
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', ml: '10%', mr: '10%' }}>
             {images.map((value, index) => (
-              <CategoryButton key={index} onClick={() => { dispatch(selectCategoryTrue()) }}>
+              <ContainerBox sx={{ width: '23%', m: 1 }}>
+                <CategoryButton key={index} onClick={() => { dispatch(selectCategoryTrue()) }}>
+                  {/* 목록 버튼 */}
+                  <img className='categoryImage' src={value.url} alt='카테고리 이미지' />
+                  <Typography sx={{
+                    width: '100%',
+                    pt: 1,
+                    pb: 1,
+                    borderRadius: 1,
+                    backgroundColor: 'rgba(57, 150, 82, 0.2)'
+                  }}>
+                    {value.title}
+                  </Typography>
+                </CategoryButton>
 
                 {/* 수정 버튼 */}
                 {managerMode &&
-                  <>
-                    <DeleteButton>
-                      <RemoveCircleRoundedIcon sx={{ fontSize: 35 }} />
-                    </DeleteButton>
-                    <EditButton>
-                      <CreateRoundedIcon sx={{ fontSize: 35 }} />
-                    </EditButton>
-                  </>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+                    <Button onClick={() => dispatch(clickGoBack())} sx={{ color: 'red' }}>
+                      <RemoveCircleRoundedIcon sx={{ fontSize: 30 }} />
+                    </Button>
+                    <Button sx={{ color: 'darkgreen' }}>
+                      <CreateRoundedIcon sx={{ fontSize: 30 }} />
+                    </Button>
+                  </Box>
                 }
-
-                {/* 목록 버튼 */}
-                <img className='categoryImage' src={value.url} width={10} alt='카테고리 이미지' />
-                <Typography sx={{
-                  width: '100%',
-                  pt: 1,
-                  pb: 1,
-                  borderRadius: 1,
-                  backgroundColor: 'rgba(57, 150, 82, 0.2)'
-                }}>
-                  {value.title}
-                </Typography>
-
-              </CategoryButton>
+              </ContainerBox>
             ))}
 
             {managerMode &&
@@ -129,12 +131,40 @@ export default function ProductCategories() {
           </Box >
         </>
       }
+
+      {/* 삭제 버튼 Dialog */}
+      <Dialog
+        open={cancel}
+        onClose={() => dispatch(clickGoBack())}>
+        <DialogTitle>
+          카테고리 삭제
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            해당 카테고리가 삭제됩니다.
+          </DialogContentText>
+          <DialogContentText>
+            삭제하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => {
+            dispatch(clickGoBack());
+            navigate('/product');
+          }}
+          >
+            네
+          </Button>
+          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 };
 
-// Image 버튼
-const CategoryButton = styled(Button)(({ theme }) => ({
+const ContainerBox = styled(Box)(({ theme }) => ({
+  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('lg')]: {
     width: '30% !important'
   },
@@ -144,8 +174,13 @@ const CategoryButton = styled(Button)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '90% !important'
   },
-  margin: 10,
   width: '23%',
+  margin: 1
+}));
+
+// Image 버튼
+const CategoryButton = styled(Button)(() => ({
+  width: '100%',
   color: '#0F0F0F',
   display: 'flex',
   flexDirection: 'column',
@@ -156,37 +191,11 @@ const CategoryButton = styled(Button)(({ theme }) => ({
     transform: 'scale(1.04)',
     fontWeight: 'bold'
   }
-}));
-
-// 삭제 버튼
-const DeleteButton = styled(Button)(() => ({
-  color: 'red',
-  position: 'absolute',
-  top: 5,
-  right: 0,
-}));
-
-// 편집 버튼
-const EditButton = styled(Button)(() => ({
-  color: 'green',
-  position: 'absolute',
-  top: 5,
-  right: 50,
-}));
+})) as typeof Button;
 
 // 추가 버튼
-const AddButton = styled(Button)(({ theme }) => ({
-  [theme.breakpoints.down('lg')]: {
-    width: '30% !important'
-  },
-  [theme.breakpoints.down('md')]: {
-    width: '45% !important'
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: '90% !important'
-  },
+const AddButton = styled(Button)(() => ({
   margin: 10,
-  width: '23%',
   color: '#0F0F0F',
   backgroundColor: 'rgba(57, 150, 82, 0.1)',
   borderRadius: 10,
@@ -195,7 +204,7 @@ const AddButton = styled(Button)(({ theme }) => ({
     transform: 'scale(1.02)',
     backgroundColor: 'rgba(57, 150, 82, 0.2)',
   }
-}));
+})) as typeof Button;
 
 // Text 버튼
 const MenuButton = styled(Button)(() => ({
@@ -209,4 +218,4 @@ const MenuButton = styled(Button)(() => ({
     transform: 'scale(1.02)',
     fontWeight: 'bold'
   }
-}));
+})) as typeof Button;
