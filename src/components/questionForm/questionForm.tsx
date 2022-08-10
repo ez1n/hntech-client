@@ -36,11 +36,10 @@ export default function QuestionForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('취소', () => dispatch(clickGoBack()))}
         {EditButton('작성완료', () => {
           navigate('/question');
-          console.log('게시글 전송 이벤트');
         })}
+        {EditButton('취소', () => dispatch(clickGoBack()))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

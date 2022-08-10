@@ -21,6 +21,7 @@ export default function ArchiveForm() {
   const dispatch = useAppDispatch();
 
   const cancel = useAppSelector(state => state.dialog.cancel); // 글쓰기 취소 state
+  const archiveContent = useAppSelector(state => state.formContent.archiveContent); // 자료실 글쓰기 내용 state
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -36,8 +37,11 @@ export default function ArchiveForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
+        {EditButton('작성완료', () => {
+          console.log(archiveContent); //보내기
+          navigate('/archive');
+        })}
         {EditButton('취소', () => dispatch(clickGoBack()))}
-        {EditButton('작성완료', () => navigate('/archive'))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

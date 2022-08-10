@@ -3,11 +3,11 @@ import { Box, Button, Container, Stack, styled, Typography } from '@mui/material
 
 export default function MainData() {
   return (
-    <Box sx={{ p: 5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box sx={{ p: 5, pt: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Container sx={{
         display: 'flex',
         justifyContent: 'center',
-        mb: 5
+        mb: 10
       }}>
         <Typography
           variant='h5'

@@ -10,7 +10,7 @@ export default function SideMenu() {
   const navigate = useNavigate();
 
   return (
-    <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 2000, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
+    <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 100, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
       <SideButton onClick={() => navigate('/data')}>
         <DescriptionIcon sx={{ fontSize: 30, mb: 1 }} />
         <Typography sx={{ fontSize: 13 }}>카다록</Typography>

@@ -1,13 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Container, styled, Typography } from '@mui/material';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
 import CategorySelect from '../categorySelect';
+import { clickGoBack } from '../../app/reducers/dialogSlice';
+import EditCategory from './editCategory';
 
 export default function Archives() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
 
@@ -28,7 +31,7 @@ export default function Archives() {
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {managerMode &&
           <>
-            {EditButton('카테고리 수정', () => console.log('#'))}
+            {EditButton('카테고리 수정', () => dispatch(clickGoBack()))}
             {EditButton('글쓰기', () => navigate('/archive-form'))}
           </>
         }
@@ -37,6 +40,8 @@ export default function Archives() {
 
       {/* 자료 목록 */}
       <ArchiveItem />
+
+      <EditCategory />
     </Container>
   )
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useAppSelector } from './app/hooks';
 import { Box } from '@mui/material';
 import Header from './components/header';
 import SideMenu from './components/sideMenu';
@@ -17,8 +18,12 @@ import QuestionDetail from './components/questionDetail/questionDetail';
 import Archives from './components/archives/archives';
 import ArchiveForm from './components/archiveForm/archiveForm';
 import ArchiveDetail from './components/archiveDetail';
+import FloatingButton from './components/floatingButton';
+import ProductModifyForm from './components/productModifyForm/productModifyForm';
 
 export default function App() {
+  const managerMode = useAppSelector(state => state.manager.managerMode);
+
   return (
     <Box>
       <BrowserRouter>
@@ -43,7 +48,11 @@ export default function App() {
           }></Route>
 
           <Route path='/product-form' element={
-            <ProductForm />
+            managerMode && <ProductForm />
+          }></Route>
+
+          <Route path='/product-modify' element={
+            managerMode && <ProductModifyForm />
           }></Route>
 
           <Route path='/data' element={
@@ -59,7 +68,7 @@ export default function App() {
           }></Route>
 
           <Route path='/notice-form' element={
-            <NoticeForm />
+            managerMode && <NoticeForm />
           }></Route>
 
           <Route path='/question-detail' element={
@@ -71,7 +80,7 @@ export default function App() {
           }></Route>
 
           <Route path='/archive-form' element={
-            <ArchiveForm />
+            managerMode && <ArchiveForm />
           }></Route>
 
           <Route path='/archive-detail' element={
@@ -79,6 +88,7 @@ export default function App() {
           }></Route>
         </Routes>
 
+        <FloatingButton />
         <Footer />
       </BrowserRouter>
     </Box>
