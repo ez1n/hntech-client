@@ -1,3 +1,0 @@
-# hntech-client
-
-``` npm install ```
