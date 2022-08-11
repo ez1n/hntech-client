@@ -5,7 +5,7 @@ import ProductCategories from './productCategories';
 import ProductItem from './productItem';
 
 export default function Products() {
-  const categorySelected = useAppSelector(state => state.category.selected); // 카테고리 선택 state
+  const categorySelected = useAppSelector(state => state.selectCategory.selected); // 카테고리 선택 state
 
   return (
     <Box sx={{ display: 'flex' }}>

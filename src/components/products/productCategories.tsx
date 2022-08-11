@@ -13,7 +13,7 @@ export default function ProductCategories() {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const categorySelected = useAppSelector(state => state.category.selected); // 카테고리 선택 state
+  const categorySelected = useAppSelector(state => state.selectCategory.selected); // 카테고리 선택 state
   const cancel = useAppSelector(state => state.dialog.cancel); // 카테고리 삭제 dialog
 
   // 임시데이터

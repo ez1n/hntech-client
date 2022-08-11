@@ -6,7 +6,7 @@ import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
 import CategorySelect from '../categorySelect';
 import { clickGoBack } from '../../app/reducers/dialogSlice';
-import EditCategory from './editCategory';
+import EditArchiveCategory from './editArchiveCategory';
 
 export default function Archives() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function Archives() {
       {/* 자료 목록 */}
       <ArchiveItem />
 
-      <EditCategory />
+      <EditArchiveCategory />
     </Container>
   )
 };
