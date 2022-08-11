@@ -2,13 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // 제품 사진 state
 interface productImageInitialState {
-  activeStep: number,
-  dialog: boolean
+  activeStep: number
 };
 
 const ProductImageInitialState: productImageInitialState = {
-  activeStep: 0,
-  dialog: false
+  activeStep: 0
 };
 
 // 제품 사진 업데이트
@@ -17,10 +15,9 @@ export const ProductImageSlice = createSlice({
   initialState: ProductImageInitialState,
   reducers: {
     nextImage: (state) => { state.activeStep = state.activeStep + 1 },
-    prevImage: (state) => { state.activeStep = state.activeStep - 1 },
-    clickGoBack: (state) => { state.dialog = !(state.dialog) }
+    prevImage: (state) => { state.activeStep = state.activeStep - 1 }
   }
 });
 
-export const { nextImage, prevImage, clickGoBack } = ProductImageSlice.actions;
+export const { nextImage, prevImage } = ProductImageSlice.actions;
 export default ProductImageSlice.reducer;

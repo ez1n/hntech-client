@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { clickChangeInfo } from '../app/reducers/managerModeSlice';
+import { clickEditGoBack } from '../app/reducers/dialogSlice';
 import {
   Drawer,
   Fab,
@@ -19,14 +19,14 @@ export default function FloatingButton() {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
-  const changeInfo = useAppSelector(state => state.manager.changeInfo);
+  const editState = useAppSelector(state => state.dialog.editState); // dialog open state
 
   return (
     <>
       {managerMode &&
         <Fab
           variant="extended"
-          onClick={() => dispatch(clickChangeInfo())}
+          onClick={() => dispatch(clickEditGoBack())}
           sx={{
             position: 'fixed',
             right: 50,
@@ -39,8 +39,8 @@ export default function FloatingButton() {
 
       <Drawer
         anchor='right'
-        open={changeInfo}
-        onClose={() => dispatch(clickChangeInfo())} >
+        open={editState}
+        onClose={() => dispatch(clickEditGoBack())} >
         <Stack spacing={2} sx={{ m: 5 }}>
           <Typography
             variant='h5'
@@ -110,7 +110,7 @@ export default function FloatingButton() {
 
         <Stack direction='row' sx={{ justifyContent: 'center', mt: 2 }}>
           {EditButton('변경', () => console.log('정보 수정'))}
-          {EditButton('취소', () => dispatch(clickChangeInfo()))}
+          {EditButton('취소', () => dispatch(clickEditGoBack()))}
         </Stack>
       </Drawer>
     </>

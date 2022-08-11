@@ -5,7 +5,7 @@ import { Container, styled, Typography } from '@mui/material';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
 import CategorySelect from '../categorySelect';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { archivesGoBack } from '../../app/reducers/dialogSlice';
 import EditArchiveCategory from './editArchiveCategory';
 
 export default function Archives() {
@@ -13,7 +13,7 @@ export default function Archives() {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-
+  //// 읭 이거 archivesState는 어디서 써? (cancel)
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
@@ -31,7 +31,7 @@ export default function Archives() {
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {managerMode &&
           <>
-            {EditButton('카테고리 수정', () => dispatch(clickGoBack()))}
+            {EditButton('카테고리 수정', () => dispatch(archivesGoBack()))}
             {EditButton('글쓰기', () => navigate('/archive-form'))}
           </>
         }

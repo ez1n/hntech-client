@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { clickQuestionDetailGoBack } from '../../app/reducers/dialogSlice';
 import {
   Box,
   Button,
@@ -23,7 +23,7 @@ export default function QuestionDetail() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const cancel = useAppSelector(state => state.dialog.cancel); // 게시글 삭제 취소 state
+  const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -41,7 +41,7 @@ export default function QuestionDetail() {
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {EditButton('수정', () => console.log('#'))}
-        {EditButton('삭제', () => dispatch(clickGoBack()))}
+        {EditButton('삭제', () => dispatch(clickQuestionDetailGoBack()))}
       </Spacing>
 
 
@@ -78,8 +78,8 @@ export default function QuestionDetail() {
 
       {/* 삭제 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={questionDetailState}
+        onClose={() => dispatch(clickQuestionDetailGoBack())}>
         <DialogTitle>
           게시글 삭제
         </DialogTitle>
@@ -94,13 +94,13 @@ export default function QuestionDetail() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(clickQuestionDetailGoBack());
             navigate('/question');
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(clickQuestionDetailGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { clickQuestionFormGoBack } from '../../app/reducers/dialogSlice';
 import {
   Container,
   styled,
@@ -20,7 +20,7 @@ export default function QuestionForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const cancel = useAppSelector(state => state.dialog.cancel); // 글쓰기 취소 state
+  const questionFormState = useAppSelector(state => state.dialog.questionFormState); // 글쓰기 취소 state
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -39,13 +39,13 @@ export default function QuestionForm() {
         {EditButton('작성완료', () => {
           navigate('/question');
         })}
-        {EditButton('취소', () => dispatch(clickGoBack()))}
+        {EditButton('취소', () => dispatch(clickQuestionFormGoBack()))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={questionFormState}
+        onClose={() => dispatch(clickQuestionFormGoBack())}>
         <DialogTitle>
           작성 취소
         </DialogTitle>
@@ -60,13 +60,13 @@ export default function QuestionForm() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(clickQuestionFormGoBack());
             navigate('/question');
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(clickQuestionFormGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container >

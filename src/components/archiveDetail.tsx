@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { clickGoBack } from '../app/reducers/dialogSlice';
+import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
 import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, styled, Typography } from '@mui/material';
 import EditButton from './editButton';
 
@@ -10,7 +10,7 @@ export default function ArchiveDetail() {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const cancel = useAppSelector(state => state.dialog.cancel); // 게시글 삭제 취소 state
+  const archiveDetailState = useAppSelector(state => state.dialog.archiveDetailState); // 게시글 삭제 취소 state
 
   // 임시데이터
   const data = { title: 'ㅇㅇㅇ 자료', date: '2022.08.05', content: '설명' };
@@ -32,7 +32,7 @@ export default function ArchiveDetail() {
         {managerMode &&
           <Box sx={{ textAlign: 'end' }}>
             {EditButton('수정', () => console.log('#'))}
-            {EditButton('삭제', () => dispatch(clickGoBack()))}
+            {EditButton('삭제', () => dispatch(archiveDetailGoBack()))}
           </Box>
         }
       </Spacing>
@@ -99,8 +99,8 @@ export default function ArchiveDetail() {
 
       {/* 삭제 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={archiveDetailState}
+        onClose={() => dispatch(archiveDetailGoBack())}>
         <DialogTitle>
           게시글 삭제
         </DialogTitle>
@@ -115,13 +115,13 @@ export default function ArchiveDetail() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(archiveDetailGoBack());
             navigate('/archive');
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(archiveDetailGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container>

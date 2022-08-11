@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { editArchiveCategoryGoBack } from '../../app/reducers/dialogSlice';
 import {
   getArchiveCategory,
   updateArchiveCategory,
@@ -25,7 +25,7 @@ export default function EditArchiveCategory() {
 
   const inputRef: any = useRef(); // 카테고리 input ref
 
-  const cancel = useAppSelector(state => state.dialog.cancel); // dialog state
+  const editArchiveCategoryState = useAppSelector(state => state.dialog.editArchiveCategoryState); // dialog state
   const archiveCategory = useAppSelector(state => state.archiveCategory.category); // 카테고리 목록 state
 
   // 임시데이터
@@ -37,7 +37,7 @@ export default function EditArchiveCategory() {
   }, [])
 
   return (
-    <Dialog open={cancel} onClose={() => dispatch(clickGoBack())}>
+    <Dialog open={editArchiveCategoryState} onClose={() => dispatch(editArchiveCategoryGoBack())}>
       <DialogTitle fontSize={30} sx={{ textAlign: 'center' }}>
         카테고리 수정
       </DialogTitle>
@@ -77,7 +77,7 @@ export default function EditArchiveCategory() {
       <DialogActions sx={{ justifyContent: 'center' }}>
         {/* 수정된 카테고리 보내기 */}
         {EditButton('수정', () => console.log(archiveCategory))}
-        {EditButton('취소', () => dispatch(clickGoBack()))}
+        {EditButton('취소', () => dispatch(editArchiveCategoryGoBack()))}
       </DialogActions>
     </Dialog >
   )

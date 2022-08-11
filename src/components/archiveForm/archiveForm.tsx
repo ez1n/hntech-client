@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { archiveFormGoBack } from '../../app/reducers/dialogSlice';
 import {
   Container,
   styled,
@@ -20,7 +20,7 @@ export default function ArchiveForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const cancel = useAppSelector(state => state.dialog.cancel); // 글쓰기 취소 state
+  const archiveFormState = useAppSelector(state => state.dialog.archiveFormState); // 글쓰기 취소 state
   const archiveContent = useAppSelector(state => state.formContent.archiveContent); // 자료실 글쓰기 내용 state
 
   return (
@@ -41,13 +41,13 @@ export default function ArchiveForm() {
           console.log(archiveContent); //보내기
           navigate('/archive');
         })}
-        {EditButton('취소', () => dispatch(clickGoBack()))}
+        {EditButton('취소', () => dispatch(archiveFormGoBack()))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={archiveFormState}
+        onClose={() => dispatch(archiveFormGoBack())}>
         <DialogTitle>
           작성 취소
         </DialogTitle>
@@ -62,13 +62,13 @@ export default function ArchiveForm() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(archiveFormGoBack());
             navigate('/archive');
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(archiveFormGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container >

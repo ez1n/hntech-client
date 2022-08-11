@@ -2,8 +2,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectCategoryTrue } from '../../app/reducers/productSlice';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, styled, Typography } from '@mui/material';
+import { clickProductCategoryGoBack } from '../../app/reducers/dialogSlice';
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  styled,
+  Typography
+} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -14,7 +25,7 @@ export default function ProductCategories() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const categorySelected = useAppSelector(state => state.selectCategory.selected); // 카테고리 선택 state
-  const cancel = useAppSelector(state => state.dialog.cancel); // 카테고리 삭제 dialog
+  const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
 
   // 임시데이터
   const images = [
@@ -79,7 +90,7 @@ export default function ProductCategories() {
                 {/* 수정 버튼 */}
                 {managerMode &&
                   <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <Button onClick={() => dispatch(clickGoBack())} sx={{ color: 'red' }}>
+                    <Button onClick={() => dispatch(clickProductCategoryGoBack())} sx={{ color: 'red' }}>
                       <RemoveCircleRoundedIcon sx={{ fontSize: 30 }} />
                     </Button>
                     <Button sx={{ color: 'darkgreen' }}>
@@ -134,8 +145,8 @@ export default function ProductCategories() {
 
       {/* 삭제 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={productCategoryState}
+        onClose={() => dispatch(clickProductCategoryGoBack())}>
         <DialogTitle>
           카테고리 삭제
         </DialogTitle>
@@ -150,13 +161,13 @@ export default function ProductCategories() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(clickProductCategoryGoBack());
             navigate('/product');
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(clickProductCategoryGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </>
