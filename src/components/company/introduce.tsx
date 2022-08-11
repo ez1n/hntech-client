@@ -3,6 +3,7 @@ import { useAppSelector } from '../../app/hooks';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
+import { api } from '../../network/network';
 
 export default function Introduce() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
@@ -28,7 +29,7 @@ export default function Introduce() {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && EditButton('수정', console.log('#'))}
+        {managerMode && EditButton('수정', () => console.log('#'))}
       </Spacing>
 
       {/* 내용 */}

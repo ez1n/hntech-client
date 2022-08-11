@@ -12,6 +12,7 @@ import ArchiveFileReducer from './reducers/archiveFileSlide';
 import NoticeFileReducer from './reducers/noticeFileSlice';
 import FormContentReducer from './reducers/formContentSlice';
 import ArchiveCategoryReducer from './reducers/archiveCategorySlice';
+import QuestionDetailReducer from './reducers/questionDetailSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
     selectCategory: ProductReducer,
     dialog: DialogReducer,
     question: QuestionReducer,
+    questionDetail: QuestionDetailReducer,
     product: ProductImageReducer,
     infoImage: InfoImageReducer,
     gradeImage: GradeImageReducer,

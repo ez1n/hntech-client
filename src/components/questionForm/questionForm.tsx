@@ -15,12 +15,14 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import Form from './form';
+import { api } from '../../network/network';
 
 export default function QuestionForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const questionFormState = useAppSelector(state => state.dialog.questionFormState); // 글쓰기 취소 state
+  const createQuestionForm = useAppSelector(state => state.formContent.createQuestionForm);
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -37,6 +39,7 @@ export default function QuestionForm() {
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
         {EditButton('작성완료', () => {
+          api.postCreateQuestion(createQuestionForm);
           navigate('/question');
         })}
         {EditButton('취소', () => dispatch(clickQuestionFormGoBack()))}

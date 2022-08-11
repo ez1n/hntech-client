@@ -1,4 +1,5 @@
 import React from 'react';
+import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
 import { clickQuestionDetailGoBack } from '../../app/reducers/dialogSlice';
@@ -24,6 +25,12 @@ export default function QuestionDetail() {
   const dispatch = useAppDispatch();
 
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
+  const data = useAppSelector(state => state.questionDetail.data);
+
+  const deleteQuestion = (id: number) => {
+    api.deleteQuestion(id) // id 꺼내서 보내기
+      .then(res => dispatch(clickQuestionDetailGoBack()));
+  };
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -41,7 +48,7 @@ export default function QuestionDetail() {
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {EditButton('수정', () => console.log('#'))}
-        {EditButton('삭제', () => dispatch(clickQuestionDetailGoBack()))}
+        {EditButton('삭제', () => deleteQuestion(data.id))}
       </Spacing>
 
 

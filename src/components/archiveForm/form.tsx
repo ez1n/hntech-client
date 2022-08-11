@@ -1,9 +1,11 @@
 import React from 'react';
 import '../style.css';
+import axios from 'axios';
+import FormData from 'form-data';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { updateArchiveTitle, updateArchiveContent } from '../../app/reducers/formContentSlice';
+import { updateArchiveTitle, updateArchiveContent, updateArchiveNoticeChecked } from '../../app/reducers/formContentSlice';
 import CategorySelect from '../categorySelect';
 import {
   Box,
@@ -19,7 +21,8 @@ import { addArchiveFile, deleteArchiveFile } from '../../app/reducers/archiveFil
 export default function Form() {
   const dispatch = useAppDispatch();
 
-  const file = useAppSelector(state => state.archiveFile.file); // 파일 state
+  const fileData = new FormData(); // 첨부파일 데이터
+  const file = useAppSelector(state => state.archiveFile.file); // 첨부파일 이름 목록 state
 
   // 파일 이름 미리보기
   const selectFile = (event: any) => {
@@ -27,6 +30,21 @@ export default function Form() {
       dispatch(addArchiveFile({ item: event.target.files[i].name }))
     }
   };
+
+  // 파일 첨부 (update)
+  const addFileData = () => {
+    // const filename = image.split('/').pop();
+    // fileData.append('file', { uri: image, type: 'multipart/form-data', name: filename });
+  }
+
+  // 파일 전송
+  const postFileData = async () => {
+    await axios.post('', fileData, {
+      headers: {
+        'Content-Type': `multipart/form-data`,
+      }
+    })
+  }
 
   return (
     <>
@@ -72,8 +90,9 @@ export default function Form() {
                 color: 'green',
               },
             }} />}
+            onChange={event => dispatch(updateArchiveNoticeChecked({ isNotice: event.target?.checked }))}
             label='공지사항 표시'
-            labelPlacement="start"
+            labelPlacement='start'
             sx={{ color: 'darkgrey' }} />
         </Box>
 
@@ -115,8 +134,8 @@ export default function Form() {
             <Stack>
               {file.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>}
               {file.map((item, index) => (
-                <Stack direction='row'>
-                  <Typography key={index}>{item}</Typography>
+                <Stack direction='row' key={index}>
+                  <Typography>{item}</Typography>
                   <ClearRoundedIcon
                     onClick={() => dispatch(deleteArchiveFile({ num: index }))}
                     fontSize='small'
@@ -125,7 +144,9 @@ export default function Form() {
               ))}
             </Stack>
           </Box>
-          <label className='fileUploadButton' htmlFor='archiveFile' onChange={(event) => selectFile(event)}>
+          <label className='fileUploadButton' htmlFor='archiveFile' onChange={(event) => {
+            selectFile(event);
+          }}>
             업로드
             <input type='file' id='archiveFile' multiple style={{ display: 'none' }} />
           </label>

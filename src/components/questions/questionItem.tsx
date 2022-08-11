@@ -1,25 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Pagination, Stack, styled, TextField, Typography } from '@mui/material';
-import { openDetail } from '../../app/reducers/questionSlice';
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Pagination,
+  Stack,
+  styled,
+  TextField,
+  Typography
+} from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
+import { getAllQuestions, postPassword, inputPassword, getFaq } from '../../app/reducers/questionSlice';
+import { setDetailData } from '../../app/reducers/questionDetailSlice';
 
 export default function QuestionItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const onLogin = useAppSelector(state => state.question.onLogin); // 관리자 로그인 state
+  const passwordState = useAppSelector(state => state.question.passwordState); // 비밀번호 state
+  const pw = useAppSelector(state => state.question.pw);
+  const questions = useAppSelector(state => state.question.questions);
+  const totalPage = useAppSelector(state => state.question.totalPage);
+  const currentPage = useAppSelector(state => state.question.currentPage);
+  const faq = useAppSelector(state => state.question.faq);
 
-  // data type
-  interface dataType { number: number, title: string, status: string, writer: string, date: string, new: boolean }
+  useEffect(() => {
+    // 문의 목록 받아오기
+    api.getAllQuestions(0)
+      .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })));
 
-  // 임시데이터
-  const data: dataType[] = [
-    { number: 0, title: 'XXX 안내', status: '', writer: '관리자', date: '2022. 7. 23.', new: false },
-    { number: 3, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '전예진', date: '2022-08-08', new: true },
-    { number: 2, title: 'ㅇㅇㅇ문의합니다', status: '대기', writer: '배성흥', date: '2022-08-07', new: false },
-    { number: 1, title: 'ㅇㅇㅇ문의합니다', status: '답변완료', writer: '이태민', date: '2022-08-03', new: false },
-  ];
+    // 자주하는 질문 목록 받아오기
+    api.getFAQ()
+      .then(res => { dispatch(getFaq({ faq: res.questions })) });
+  }, [])
 
   // 이름 마스킹
   const masking = (name: string) => {
@@ -31,6 +51,15 @@ export default function QuestionItem() {
       case 3: return name.replace(name.substring(1,), "**");
       default: return name.replace(name.substring(1,), "***");
     }
+  };
+
+  const onClick = (id: number) => {
+    api.postPassword(id, pw)
+      .then(res => {
+        dispatch(inputPassword());
+        dispatch(setDetailData(res));
+        navigate('/question-detail');
+      })
   };
 
   return (
@@ -45,12 +74,12 @@ export default function QuestionItem() {
           <Title sx={{ flex: 0.2 }}>작성일</Title>
         </Box>
 
-        {/* 목록 */}
-        {data.map((item, index) => (
-          <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: `${item.number === 0 && 'rgba(46, 125, 50, 0.1)'}` }}>
-            <List sx={{ flex: 0.1 }}>{item.number === 0 ? '[자주하는 질문]' : item.number}</List>
+        {/* FAQ */}
+        {faq.map((item, index) => (
+          <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: 'rgba(46, 125, 50, 0.1)' }}>
+            <List sx={{ flex: 0.1 }}><ErrorIcon /></List>
             <List
-              onClick={item.writer === '관리자' ? () => navigate('/question-detail') : () => dispatch(openDetail())}
+              onClick={item.writer === '관리자' ? () => navigate('/question-detail') : () => dispatch(inputPassword())}
               sx={{
                 flex: 0.5,
                 display: 'flex',
@@ -63,7 +92,7 @@ export default function QuestionItem() {
               <Typography>
                 {item.title}
               </Typography>
-              {item.new &&
+              {item.new == 'true' &&
                 <Typography
                   sx={{
                     ml: 1,
@@ -78,43 +107,82 @@ export default function QuestionItem() {
             </List>
             <List sx={{ flex: 0.1 }}>{item.status}</List>
             <List sx={{ flex: 0.1 }}>{masking(item.writer)}</List>
-            <List sx={{ flex: 0.2 }}>{item.date}</List>
+            <List sx={{ flex: 0.2 }}>{item.createTime}</List>
           </Box>
+        ))}
+
+        {/* 목록 */}
+        {questions.map((item, index) => (
+          <>
+            <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46' }}>
+              <List sx={{ flex: 0.1 }}>{item.id}</List>
+              <List
+                onClick={item.writer === '관리자' ? () => navigate('/question-detail') : () => dispatch(inputPassword())}
+                sx={{
+                  flex: 0.5,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  '&: hover': {
+                    color: 'blue' // 색깔 보류.
+                  }
+                }}>
+                <Typography>
+                  {item.title}
+                </Typography>
+                {item.new == 'true' &&
+                  <Typography
+                    sx={{
+                      ml: 1,
+                      fontSize: 'small',
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: 'lightseagreen'
+                    }}>
+                    [new]
+                  </Typography>
+                }
+              </List>
+              <List sx={{ flex: 0.1 }}>{item.status}</List>
+              <List sx={{ flex: 0.1 }}>{masking(item.writer)}</List>
+              <List sx={{ flex: 0.2 }}>{item.createTime}</List>
+            </Box>
+
+            {/* dialog */}
+            <Dialog
+              open={passwordState}
+              onClose={() => dispatch(inputPassword())}
+              sx={{ textAlign: 'center' }}>
+              <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
+              <DialogContent>
+                <TextField
+                  type={'password'}
+                  size={'small'}
+                  inputProps={{ maxLength: 4 }}
+                  onChange={event => dispatch(postPassword({ password: event.target.value }))} />
+              </DialogContent>
+
+              <DialogActions sx={{ justifyContent: 'center' }}>
+                <Button onClick={() => {
+                  onClick(item.id)
+                }}>
+                  확인
+                </Button>
+                <Button onClick={() => dispatch(inputPassword())}>취소</Button>
+              </DialogActions>
+            </Dialog>
+          </>
         ))}
       </Box>
 
       <Spacing />
 
       <Stack>
-        <Pagination count={10} sx={{ m: '0 auto' }} />
+        <Pagination count={totalPage} sx={{ m: '0 auto' }} />
       </Stack>
-
-      {/* dialog */}
-      <Dialog
-        open={onLogin}
-        onClose={() => dispatch(openDetail())}
-        sx={{ textAlign: 'center' }}>
-        <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
-        <DialogContent>
-          <TextField type={'password'} size={'small'} inputProps={{ maxLength: 4 }} />
-        </DialogContent>
-
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button onClick={() => {
-            dispatch(openDetail());
-            navigate('/question-detail');
-            // 비밀번호 확인 이벤트 + 틀린경우 에러 메시지
-          }}
-          >
-            확인
-          </Button>
-          <Button onClick={() => dispatch(openDetail())}>취소</Button>
-        </DialogActions>
-      </Dialog>
     </>
   )
 };
-
 
 const Spacing = styled(Container)(() => ({
   height: 50

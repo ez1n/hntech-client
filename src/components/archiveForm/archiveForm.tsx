@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { archiveFormGoBack } from '../../app/reducers/dialogSlice';
+import { resetArchiveState } from '../../app/reducers/formContentSlice';
 import {
   Container,
   styled,
@@ -39,6 +40,7 @@ export default function ArchiveForm() {
       <Spacing sx={{ textAlign: 'center' }}>
         {EditButton('작성완료', () => {
           console.log(archiveContent); //보내기
+          dispatch(resetArchiveState());
           navigate('/archive');
         })}
         {EditButton('취소', () => dispatch(archiveFormGoBack()))}

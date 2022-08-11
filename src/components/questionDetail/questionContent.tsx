@@ -1,9 +1,9 @@
 import { Box, Stack, Typography } from '@mui/material';
 import React from 'react';
+import { useAppSelector } from '../../app/hooks';
 
 export default function QuestionContent() {
-  // 임시데이터
-  const data = { title: 'ㅇㅇㅇ 관련 문의', writer: '전예진', date: '2022.08.05', content: '어쩌구저쩌구' }
+  const data = useAppSelector(state => state.questionDetail.data); // 문의 정보 (데이터)
 
   return (
     <Box sx={{
@@ -33,7 +33,7 @@ export default function QuestionContent() {
         }}>
         <Typography sx={{ fontSize: 18 }}>작성자 {data.writer}</Typography>
         <Typography sx={{ fontSize: 18 }}>|</Typography>
-        <Typography sx={{ fontSize: 18 }}>작성일 {data.date}</Typography>
+        <Typography sx={{ fontSize: 18 }}>작성일 {data.createTime}</Typography>
       </Stack>
 
       {/* 문의 내용 */}
