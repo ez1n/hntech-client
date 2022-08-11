@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { clickProductModifyFormGoBack } from '../../app/reducers/dialogSlice';
 import {
   Container,
   styled,
@@ -20,7 +20,7 @@ export default function ProductModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const cancel = useAppSelector(state => state.dialog.cancel); // 글쓰기 취소 state
+  const productModifyFormState = useAppSelector(state => state.dialog.productModifyFormState); // 글쓰기 취소 state
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -37,13 +37,13 @@ export default function ProductModifyForm() {
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
         {EditButton('수정', () => navigate(-1))}
-        {EditButton('취소', () => dispatch(clickGoBack()))}
+        {EditButton('취소', () => dispatch(clickProductModifyFormGoBack()))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={productModifyFormState}
+        onClose={() => dispatch(clickProductModifyFormGoBack())}>
         <DialogTitle>
           {'수정 취소'}
         </DialogTitle>
@@ -58,13 +58,13 @@ export default function ProductModifyForm() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(clickProductModifyFormGoBack());
             navigate(-1);
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(clickProductModifyFormGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container >

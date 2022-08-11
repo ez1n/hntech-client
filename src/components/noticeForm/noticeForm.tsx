@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { clickNoticeFormGoBack } from '../../app/reducers/dialogSlice';
 import {
   Container,
   styled,
@@ -20,7 +20,7 @@ export default function NoticeForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const cancel = useAppSelector(state => state.dialog.cancel); // 글쓰기 취소 state
+  const noticeFormState = useAppSelector(state => state.dialog.noticeFormState); // 글쓰기 취소 state
   const noticeContent = useAppSelector(state => state.formContent.noticeContent); // 공지사항 글쓰기 내용 state
 
 
@@ -42,13 +42,13 @@ export default function NoticeForm() {
           console.log(noticeContent); // 보내면됨
           navigate('/question');
         })}
-        {EditButton('취소', () => dispatch(clickGoBack()))}
+        {EditButton('취소', () => dispatch(clickNoticeFormGoBack()))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={noticeFormState}
+        onClose={() => dispatch(clickNoticeFormGoBack())}>
         <DialogTitle>
           {'작성 취소'}
         </DialogTitle>
@@ -63,13 +63,13 @@ export default function NoticeForm() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(clickNoticeFormGoBack());
             navigate('/question');
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(clickNoticeFormGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container >

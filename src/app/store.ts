@@ -11,13 +11,14 @@ import InfoFileReducer from './reducers/infoFileSlice';
 import ArchiveFileReducer from './reducers/archiveFileSlide';
 import NoticeFileReducer from './reducers/noticeFileSlice';
 import FormContentReducer from './reducers/formContentSlice';
+import ArchiveCategoryReducer from './reducers/archiveCategorySlice';
 
 export const store = configureStore({
   reducer: {
     menu: MenuReducer,
     manager: ManagerReducer,
     company: CompanyReducer,
-    category: ProductReducer,
+    selectCategory: ProductReducer,
     dialog: DialogReducer,
     question: QuestionReducer,
     product: ProductImageReducer,
@@ -27,6 +28,7 @@ export const store = configureStore({
     archiveFile: ArchiveFileReducer,
     noticeFile: NoticeFileReducer,
     formContent: FormContentReducer,
+    archiveCategory: ArchiveCategoryReducer,
   }
 });
 

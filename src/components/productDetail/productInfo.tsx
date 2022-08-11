@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { nextImage, prevImage, clickGoBack } from '../../app/reducers/productInfoSlice';
+import { nextImage, prevImage } from '../../app/reducers/productInfoSlice';
+import { clickProductInfoGoBack } from '../../app/reducers/dialogSlice';
 import {
   Box,
   Button,
@@ -40,7 +41,7 @@ export default function ProductInfo() {
   const data = { name: '플러쉬', info: '아파트와 같은 주거공간의 발코니에 설치되는 제품' };
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const cancel = useAppSelector(state => state.product.dialog); // 제품 삭제 dialog state
+  const productInfoState = useAppSelector(state => state.dialog.productInfoState); // 제품 삭제 dialog state
   const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
   const maxSteps = images.length; // 이미지 갯수
 
@@ -67,7 +68,7 @@ export default function ProductInfo() {
         {managerMode &&
           <>
             {EditButton('수정', () => navigate('/product-modify'))}
-            {EditButton('삭제', () => dispatch(clickGoBack()))}
+            {EditButton('삭제', () => dispatch(clickProductInfoGoBack()))}
           </>
         }
       </Spacing>
@@ -113,8 +114,8 @@ export default function ProductInfo() {
 
       {/* 삭제 버튼 Dialog */}
       <Dialog
-        open={cancel}
-        onClose={() => dispatch(clickGoBack())}>
+        open={productInfoState}
+        onClose={() => dispatch(clickProductInfoGoBack())}>
         <DialogTitle>
           제품 삭제
         </DialogTitle>
@@ -129,13 +130,13 @@ export default function ProductInfo() {
 
         <DialogActions>
           <Button onClick={() => {
-            dispatch(clickGoBack());
+            dispatch(clickProductInfoGoBack());
             navigate('/product');
           }}
           >
             네
           </Button>
-          <Button onClick={() => dispatch(clickGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(clickProductInfoGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container>

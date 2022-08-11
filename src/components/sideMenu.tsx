@@ -1,13 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { Button, Typography } from '@mui/material';
+import { Button, Tooltip, Typography } from '@mui/material';
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import DescriptionIcon from '@mui/icons-material/Description';
 
 export default function SideMenu() {
   const navigate = useNavigate();
+
+  //임시데이터
+  const data = { as: '000-000-0000' }
 
   return (
     <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 100, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
@@ -22,10 +25,12 @@ export default function SideMenu() {
         <Typography sx={{ fontSize: 13 }}>문의사항</Typography>
       </SideButton>
 
-      <SideButton disabled={true}>
-        <BuildRoundedIcon sx={{ fontSize: 30, mb: 1, color: '#FCFCFC' }} />
-        <Typography sx={{ fontSize: 13, color: '#FCFCFC' }}>A/S</Typography>
-      </SideButton>
+      <Tooltip title={data.as} arrow placement='right'>
+        <SideButton>
+          <BuildRoundedIcon sx={{ fontSize: 30, mb: 1, color: '#FCFCFC' }} />
+          <Typography sx={{ fontSize: 13, color: '#FCFCFC' }}>A/S</Typography>
+        </SideButton>
+      </Tooltip>
     </SideButtonContainer>
   )
 }

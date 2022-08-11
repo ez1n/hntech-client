@@ -11,7 +11,7 @@ const ProductInitialState: productInitialState = {
 
 // 카테고리 선택 업데이트
 export const ProductSlice = createSlice({
-  name: 'category',
+  name: 'selectCategory',
   initialState: ProductInitialState,
   reducers: {
     selectCategoryTrue: (state) => { state.selected = true },
