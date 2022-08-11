@@ -1,4 +1,11 @@
 import React from 'react';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import {
+  updateQuestionTitle,
+  updateQuestionName,
+  updateQuestionPassword,
+  updateQuestionContent
+} from '../../app/reducers/formContentSlice';
 import {
   Box,
   List,
@@ -7,6 +14,10 @@ import {
 } from '@mui/material';
 
 export default function Form() {
+  const dispatch = useAppDispatch();
+
+  const createQuestionForm = useAppSelector(state => state.formContent.createQuestionForm);
+
   return (
     <>
       <Box sx={{
@@ -24,6 +35,7 @@ export default function Form() {
             type='text'
             required={true}
             autoFocus={true}
+            onChange={event => dispatch(updateQuestionTitle({ title: event?.target.value }))}
             placeholder='제목을 입력해 주세요'
             inputProps={{
               style: {
@@ -46,6 +58,7 @@ export default function Form() {
             type='text'
             required={true}
             placeholder='이름'
+            onChange={event => dispatch(updateQuestionName({ writer: event.target.value }))}
             size='small'
             inputProps={{
               style: {
@@ -58,6 +71,7 @@ export default function Form() {
             type='password'
             required={true}
             placeholder='비밀번호'
+            onChange={event => dispatch(updateQuestionPassword({ password: event.target.value }))}
             size='small'
             inputProps={{
               style: {
@@ -81,6 +95,10 @@ export default function Form() {
             multiline
             minRows={15}
             required={true}
+            onChange={event => {
+              dispatch(updateQuestionContent({ content: event.target.value }));
+              console.log(createQuestionForm)
+            }}
             placeholder='문의사항을 작성해 주세요'
             inputProps={{
               style: {
