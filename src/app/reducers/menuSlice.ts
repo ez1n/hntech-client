@@ -1,6 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// 메뉴 hover state
+// 메뉴
+
+/**
+ * company : 회사소개
+ * product : 제품소개
+ * archive : 자료실
+ * service : 고객지원
+ */
+
+/** 하위메뉴
+ * mouseOverCompany : 회사소개 open
+ * mouseLeaveCompany : 회사소개 close
+ * mouseOverProduct : 제품소개 open
+ * mouseLeaveProduct : 제품소개 close
+ * mouseOverArchive : 자료실 open
+ * mouseLeaveArchive : 자료실 close
+ * mouseOverService : 고객지원 open
+ * mouseLeaveService : 고객지원 close
+ */
+
 interface menuInitialState {
   company: boolean,
   product: boolean,
@@ -15,7 +34,6 @@ const MenuInitialState: menuInitialState = {
   service: false,
 };
 
-// 하위 메뉴 open (hover) 업데이트
 export const MenuSlice = createSlice({
   name: 'menu',
   initialState: MenuInitialState,

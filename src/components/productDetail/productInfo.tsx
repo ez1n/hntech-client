@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { nextImage, prevImage } from '../../app/reducers/productInfoSlice';
+import { getProductDetail, nextImage, prevImage } from '../../app/reducers/productSlice';
 import { clickProductInfoGoBack } from '../../app/reducers/dialogSlice';
 import {
   Box,
@@ -24,26 +24,39 @@ export default function ProductInfo() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // 임시데이터
-  const images = [
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg'
-    },
-    {
-      url: '/images/mainButtons/건식퓨지블링크.jpg'
-    },
-    {
-      url: '/images/mainButtons/유리벌브.jpg'
-    }
-  ];
-
   // 임시 데이터
-  const data = { name: '플러쉬', info: '아파트와 같은 주거공간의 발코니에 설치되는 제품' };
+  const productData = {
+    image: [
+      '/images/mainButtons/알람밸브조립.jpg',
+      '/images/mainButtons/건식퓨지블링크.jpg',
+      '/images/mainButtons/유리벌브.jpg'
+    ],
+    data: { name: '플러쉬', info: '아파트와 같은 주거공간의 발코니에 설치되는 제품' }
+  };
+
+  // 제품 정보 받아오기
+  useEffect(() => {
+    dispatch(getProductDetail({ detail: productData }));
+    console.log(productDetail)
+  }, []);
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productInfoState = useAppSelector(state => state.dialog.productInfoState); // 제품 삭제 dialog state
+  const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
-  const maxSteps = images.length; // 이미지 갯수
+  const maxSteps = productDetail.image.length; // 이미지 개수
+
+  // 제품 삭제
+  const deleteProduct = () => {
+    dispatch(clickProductInfoGoBack());
+    navigate('/product');
+  };
+
+  // 수정 요청
+  const modifyProduct = () => {
+    navigate('/product-modify');
+    // 뭐 보내야 정보 받아올거아냐
+  };
 
   return (
     <Container
@@ -61,13 +74,13 @@ export default function ProductInfo() {
           borderBottom: '3px solid #2E7D32',
           textAlign: 'start'
         }}>
-        {data.name}
+        {productDetail.data.name}
       </Typography>
 
       <Spacing sx={{ textAlign: 'end' }}>
         {managerMode &&
           <>
-            {EditButton('수정', () => navigate('/product-modify'))}
+            {EditButton('수정', modifyProduct)}
             {EditButton('삭제', () => dispatch(clickProductInfoGoBack()))}
           </>
         }
@@ -83,7 +96,7 @@ export default function ProductInfo() {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-          <img src={images[activeStep].url} alt={data.name} width={300} />
+          <img src={productDetail.image[activeStep]} alt={productDetail.data.name} width={300} />
         </Box>
         <MobileStepper
           steps={maxSteps}
@@ -109,7 +122,7 @@ export default function ProductInfo() {
 
       {/* 부가 설명 */}
       <Typography sx={{ fontSize: 20 }}>
-        {data.info}
+        {productDetail.data.info}
       </Typography>
 
       {/* 삭제 버튼 Dialog */}
@@ -129,13 +142,7 @@ export default function ProductInfo() {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => {
-            dispatch(clickProductInfoGoBack());
-            navigate('/product');
-          }}
-          >
-            네
-          </Button>
+          <Button onClick={deleteProduct}>네</Button>
           <Button onClick={() => dispatch(clickProductInfoGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>

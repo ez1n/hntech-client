@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { archiveFormGoBack } from '../../app/reducers/dialogSlice';
-import { resetArchiveState } from '../../app/reducers/archiveSlice';
+import { clickArchiveModifyFormGoBack } from '../../app/reducers/dialogSlice';
+import { copyDetailData, getDetailData, resetArchiveState } from '../../app/reducers/archiveSlice';
 import {
   Container,
   styled,
@@ -15,21 +15,21 @@ import {
   Typography
 } from '@mui/material';
 import EditButton from '../editButton';
-import Form from './form';
+import ModifyForm from './modifyForm';
 
-export default function ArchiveForm() {
+export default function ArchiveModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const archiveFormState = useAppSelector(state => state.dialog.archiveFormState); // 글쓰기 취소 state
+  const archiveModifyFormState = useAppSelector(state => state.dialog.archiveModifyFormState); // 글쓰기 취소 state
   const archiveContent = useAppSelector(state => state.archive.archiveContent); // 자료실 글쓰기 내용 state
+  const detail = useAppSelector(state => state.archive.detail); // 자료실 상세 자료
 
-  const postArchiveForm = () => {
+  const putArchiveForm = () => {
     console.log(archiveContent); //보내기
-    dispatch(resetArchiveState());
-    alert('등록되었습니다.')
+    alert('변경되었습니다.');
     navigate('/archive');
-  }
+  };
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -39,26 +39,26 @@ export default function ArchiveForm() {
       <Spacing />
 
       {/* 공지사항 글쓰기 폼 */}
-      <Form />
+      <ModifyForm />
 
       <Spacing />
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', postArchiveForm)}
-        {EditButton('취소', () => dispatch(archiveFormGoBack()))}
+        {EditButton('작성완료', putArchiveForm)}
+        {EditButton('취소', () => dispatch(clickArchiveModifyFormGoBack()))}
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <Dialog
-        open={archiveFormState}
-        onClose={() => dispatch(archiveFormGoBack())}>
+        open={archiveModifyFormState}
+        onClose={() => dispatch(clickArchiveModifyFormGoBack())}>
         <DialogTitle>
-          작성 취소
+          변경 취소
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            작성중인 내용이 사라집니다.
+            변경중인 내용이 사라집니다.
           </DialogContentText>
           <DialogContentText>
             취소하시겠습니까?
@@ -67,10 +67,11 @@ export default function ArchiveForm() {
 
         <DialogActions>
           <Button onClick={() => {
+            resetArchiveState();
+            dispatch(clickArchiveModifyFormGoBack());
             navigate(-1);
-            dispatch(archiveFormGoBack());
           }}>네</Button>
-          <Button onClick={() => dispatch(archiveFormGoBack())}>아니오</Button>
+          <Button onClick={() => dispatch(clickArchiveModifyFormGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
     </Container >

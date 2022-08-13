@@ -3,7 +3,7 @@ import React from 'react';
 import { useAppSelector } from '../../app/hooks';
 
 export default function QuestionContent() {
-  const data = useAppSelector(state => state.questionDetail.data); // 문의 정보 (데이터)
+  const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
 
   return (
     <Box sx={{
@@ -17,7 +17,7 @@ export default function QuestionContent() {
           fontWeight: 'bold',
           textAlign: 'center'
         }}>
-          {data.title}
+          {detail.title}
         </Typography>
       </Box>
 
@@ -31,14 +31,14 @@ export default function QuestionContent() {
           justifyContent: 'flex-end',
           borderBottom: '1px solid #3B6C46'
         }}>
-        <Typography sx={{ fontSize: 18 }}>작성자 {data.writer}</Typography>
+        <Typography sx={{ fontSize: 18 }}>작성자 {detail.writer}</Typography>
         <Typography sx={{ fontSize: 18 }}>|</Typography>
-        <Typography sx={{ fontSize: 18 }}>작성일 {data.createTime}</Typography>
+        <Typography sx={{ fontSize: 18 }}>작성일 {detail.createTime}</Typography>
       </Stack>
 
       {/* 문의 내용 */}
       <Box sx={{ p: 3, minHeight: 300 }}>
-        {data.content.split('\n').map((value, index) => (
+        {detail.content.split('\n').map((value, index) => (
           <Typography key={index} sx={{ fontSize: 18 }}>
             {value}
           </Typography>

@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { getArchiveCategory } from '../../app/reducers/archiveCategorySlice';
+import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
 import { Container, styled, Typography } from '@mui/material';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
-import CategorySelect from '../categorySelect';
-import { archivesGoBack } from '../../app/reducers/dialogSlice';
+import CategorySelect from '../archiveCategorySelect';
 import EditArchiveCategory from './editArchiveCategory';
 
 export default function Archives() {
@@ -31,16 +32,19 @@ export default function Archives() {
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {managerMode &&
           <>
-            {EditButton('카테고리 수정', () => dispatch(archivesGoBack()))}
+            {EditButton('카테고리 수정', () => dispatch(clickArchivesGoBack()))}
             {EditButton('글쓰기', () => navigate('/archive-form'))}
           </>
         }
-        <CategorySelect />
+
+        {/* 카테고리 */}
+        {CategorySelect('전체')}
       </Spacing>
 
       {/* 자료 목록 */}
       <ArchiveItem />
 
+      {/* 카테고리 수정 */}
       <EditArchiveCategory />
     </Container>
   )

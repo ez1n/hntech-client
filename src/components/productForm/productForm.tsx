@@ -21,6 +21,13 @@ export default function ProductForm() {
   const dispatch = useAppDispatch();
 
   const productFormState = useAppSelector(state => state.dialog.productFormState); // 글쓰기 취소 state
+  const productContent = useAppSelector(state => state.productContent.productContent); // 제품 등록 내용
+
+  const postProduct = () => {
+    navigate(-1);
+    alert('등록되었습니다.')
+    console.log(productContent);
+  };
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -36,7 +43,7 @@ export default function ProductForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', () => navigate(-1))}
+        {EditButton('작성완료', postProduct)}
         {EditButton('취소', () => dispatch(clickProductFormGoBack()))}
       </Spacing>
 

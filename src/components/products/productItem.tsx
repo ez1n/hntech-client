@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clickGoBack } from '../../app/reducers/dialogSlice';
+import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
+import { getProductList } from '../../app/reducers/productSlice';
 import {
   Box,
   Button,
@@ -22,13 +23,14 @@ export default function ProductItem() {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const cancel = useAppSelector(state => state.dialog.cancel); // 제품 삭제 dialog
+  const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
+  const productList = useAppSelector(state => state.product.productList); // 제품 목록
 
   // 임시데이터
   const items = [
     {
       url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
+      title: '스프링클러'
     },
     {
       url: '/images/mainButtons/알람밸브조립.jpg',
@@ -44,7 +46,7 @@ export default function ProductItem() {
     },
     {
       url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
+      title: '알람밸브'
     },
     {
       url: '/images/mainButtons/알람밸브조립.jpg',
@@ -72,31 +74,81 @@ export default function ProductItem() {
     }
   ];
 
-  return (
-    <TotalBox>
-      {items.map((item, index) => (
-        <ProductButton key={index} onClick={() => navigate('/product-detail')}>
-          {/* 수정 버튼 */}
-          {managerMode &&
-            <>
-              <DeleteButton>
-                <RemoveCircleRoundedIcon sx={{ fontSize: 35 }} />
-              </DeleteButton>
-              <EditButton>
-                <CreateRoundedIcon sx={{ fontSize: 35 }} />
-              </EditButton>
-            </>
-          }
+  useEffect(() => {
+    dispatch(getProductList({ productList: items }));
+  }, []);
 
-          <img className='productImage' src={item.url} width='100%' alt='제품 이미지' />
-          <Typography sx={{
-            width: '100%',
-            borderRadius: 1,
-            backgroundColor: 'rgba(57, 150, 82, 0.2)'
-          }}>
-            {item.title}
-          </Typography>
-        </ProductButton>
+  // 제품 삭제
+  const deleteProduct = () => {
+    // 삭제 요청
+    dispatch(clickProductItemGoBack());
+  };
+
+  // 수정 요청
+  const modifyProduct = () => {
+    navigate('/product-modify');
+    // 뭐 보내야 정보 받아올거아냐
+  };
+
+  return (
+    <Box sx={{
+      p: 1,
+      display: 'flex',
+      flexWrap: 'wrap'
+    }}>
+      {productList.map((item, index) => (
+        <>
+          <ContainerBox sx={{ m: 1 }}>
+            <ProductButton key={index} onClick={() => navigate('/product-detail')}>
+              <img className='productImage' src={item.url} width='100%' alt='제품 이미지' />
+              <Typography sx={{
+                width: '100%',
+                borderRadius: 1,
+                backgroundColor: 'rgba(57, 150, 82, 0.2)'
+              }}>
+                {item.title}
+              </Typography>
+            </ProductButton>
+
+            {/* 수정 버튼 */}
+            {managerMode &&
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Button
+                  onClick={() => dispatch(clickProductItemGoBack())}
+                  sx={{ color: 'red', padding: 0 }}>
+                  <RemoveCircleRoundedIcon sx={{ fontSize: 25 }} />
+                </Button>
+                <Button
+                  onClick={modifyProduct}
+                  sx={{ color: 'green', padding: 0 }}>
+                  <CreateRoundedIcon sx={{ fontSize: 25 }} />
+                </Button>
+              </Box>
+            }
+          </ContainerBox>
+
+          {/* 삭제 버튼 Dialog */}
+          <Dialog
+            open={productItemState}
+            onClose={() => dispatch(clickProductItemGoBack())}>
+            <DialogTitle>
+              제품 삭제
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                해당 제품이 삭제됩니다.
+              </DialogContentText>
+              <DialogContentText>
+                삭제하시겠습니까?
+              </DialogContentText>
+            </DialogContent>
+
+            <DialogActions>
+              <Button onClick={deleteProduct}>네</Button>
+              <Button onClick={() => dispatch(clickProductItemGoBack())}>아니오</Button>
+            </DialogActions>
+          </Dialog>
+        </>
       ))}
 
       {managerMode &&
@@ -104,22 +156,11 @@ export default function ProductItem() {
           <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
         </AddButton>
       }
-    </TotalBox>
+    </Box>
   )
 };
 
-const TotalBox = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column'
-  },
-  padding: 10,
-  paddingLeft: 30,
-  display: 'flex',
-  flexWrap: 'wrap'
-}));
-
-// Item 버튼
-const ProductButton = styled(Button)(({ theme }) => ({
+const ContainerBox = styled(Box)(({ theme }) => ({
   // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('lg')]: {
     width: '30% !important'
@@ -130,8 +171,16 @@ const ProductButton = styled(Button)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '90% !important'
   },
+  width: '18%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
+})) as typeof Box;
+
+// Item 버튼
+const ProductButton = styled(Button)(() => ({
   margin: 10,
-  width: '20%',
+  width: '100%',
   color: '#0F0F0F',
   display: 'flex',
   flexDirection: 'column',
@@ -142,23 +191,7 @@ const ProductButton = styled(Button)(({ theme }) => ({
     transform: 'scale(1.04)',
     fontWeight: 'bold'
   }
-}));
-
-// 삭제 버튼
-const DeleteButton = styled(Button)(() => ({
-  color: 'red',
-  position: 'absolute',
-  top: 5,
-  right: 0,
-}));
-
-// 편집 버튼
-const EditButton = styled(Button)(() => ({
-  color: 'green',
-  position: 'absolute',
-  top: 5,
-  right: 50,
-}));
+})) as typeof Button;
 
 // 추가 버튼
 const AddButton = styled(Button)(({ theme }) => ({
@@ -172,7 +205,7 @@ const AddButton = styled(Button)(({ theme }) => ({
     width: '90% !important'
   },
   margin: 10,
-  width: '20%',
+  width: '18%',
   color: '#0F0F0F',
   backgroundColor: 'rgba(57, 150, 82, 0.1)',
   borderRadius: 10,
@@ -181,4 +214,4 @@ const AddButton = styled(Button)(({ theme }) => ({
     transform: 'scale(1.02)',
     backgroundColor: 'rgba(57, 150, 82, 0.2)',
   }
-}));
+})) as typeof Button;

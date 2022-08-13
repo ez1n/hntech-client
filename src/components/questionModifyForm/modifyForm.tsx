@@ -1,11 +1,9 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
-  updateQuestionTitle,
-  updateQuestionName,
-  updateQuestionPassword,
-  updateQuestionContent
-} from '../../app/reducers/questionContentSlice';
+  modifyQuestionTitle,
+  modifyQuestionContent
+} from '../../app/reducers/questionSlice';
 import {
   Box,
   List,
@@ -13,10 +11,10 @@ import {
   TextField
 } from '@mui/material';
 
-export default function Form() {
+export default function ModifyForm() {
   const dispatch = useAppDispatch();
 
-  const createQuestionForm = useAppSelector(state => state.questionContent.questionContent);
+  const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
 
   return (
     <>
@@ -33,9 +31,9 @@ export default function Form() {
         }}>
           <TextField
             type='text'
+            value={detail.title}
             required={true}
-            autoFocus={true}
-            onChange={event => dispatch(updateQuestionTitle({ title: event?.target.value }))}
+            onChange={event => dispatch(modifyQuestionTitle({ title: event?.target.value }))}
             placeholder='제목을 입력해 주세요'
             inputProps={{
               style: {
@@ -56,9 +54,8 @@ export default function Form() {
         }}>
           <TextField
             type='text'
-            required={true}
-            placeholder='이름'
-            onChange={event => dispatch(updateQuestionName({ writer: event.target.value }))}
+            disabled
+            value={detail.writer}
             size='small'
             inputProps={{
               style: {
@@ -69,9 +66,8 @@ export default function Form() {
           />
           <TextField
             type='password'
-            required={true}
-            placeholder='비밀번호'
-            onChange={event => dispatch(updateQuestionPassword({ password: event.target.value }))}
+            disabled
+            value={detail.password}
             size='small'
             inputProps={{
               style: {
@@ -92,13 +88,11 @@ export default function Form() {
         <Box p={2}>
           <TextField
             type='text'
+            value={detail.content}
             multiline
             minRows={15}
             required={true}
-            onChange={event => {
-              dispatch(updateQuestionContent({ content: event.target.value }));
-              console.log(createQuestionForm)
-            }}
+            onChange={event => { dispatch(modifyQuestionContent({ content: event?.target.value })) }}
             placeholder='문의사항을 작성해 주세요'
             inputProps={{
               style: {

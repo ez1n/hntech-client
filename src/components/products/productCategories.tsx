@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectCategoryTrue } from '../../app/reducers/productSlice';
+import { selectCategoryTrue } from '../../app/reducers/productCategorySlice';
 import { clickProductCategoryGoBack } from '../../app/reducers/dialogSlice';
 import {
   Box,
@@ -24,7 +24,7 @@ export default function ProductCategories() {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const categorySelected = useAppSelector(state => state.selectCategory.selected); // 카테고리 선택 state
+  const categorySelected = useAppSelector(state => state.productCategory.selected); // 카테고리 선택 state
   const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
 
   // 임시데이터
@@ -187,7 +187,7 @@ const ContainerBox = styled(Box)(({ theme }) => ({
   },
   width: '23%',
   margin: 1
-}));
+})) as typeof Box;
 
 // Image 버튼
 const CategoryButton = styled(Button)(() => ({

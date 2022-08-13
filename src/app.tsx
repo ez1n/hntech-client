@@ -20,6 +20,9 @@ import ArchiveForm from './components/archiveForm/archiveForm';
 import ArchiveDetail from './components/archiveDetail';
 import FloatingButton from './components/floatingButton';
 import ProductModifyForm from './components/productModifyForm/productModifyForm';
+import QuestionModifyForm from './components/questionModifyForm/questionModifyForm';
+import NoticeModifyForm from './components/noticeModifyForm/noticeModifyForm';
+import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
 
 export default function App() {
   const managerMode = useAppSelector(state => state.manager.managerMode);
@@ -67,8 +70,16 @@ export default function App() {
             <QuestionForm />
           }></Route>
 
+          <Route path='/question-modify' element={
+            <QuestionModifyForm />
+          }></Route>
+
           <Route path='/notice-form' element={
             managerMode && <NoticeForm />
+          }></Route>
+
+          <Route path='/notice-modify' element={
+            managerMode && <NoticeModifyForm />
           }></Route>
 
           <Route path='/question-detail' element={
@@ -81,6 +92,10 @@ export default function App() {
 
           <Route path='/archive-form' element={
             managerMode && <ArchiveForm />
+          }></Route>
+
+          <Route path='/archive-modify' element={
+            managerMode && <ArchiveModifyForm />
           }></Route>
 
           <Route path='/archive-detail' element={

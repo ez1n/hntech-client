@@ -1,29 +1,69 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, Pagination, Stack, styled, Typography } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { getAllArchives, getNotice, getDetailData } from '../../app/reducers/archiveSlice';
+import {
+  Box,
+  Container,
+  Pagination,
+  Stack,
+  styled,
+  Typography
+} from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 
 export default function ArchiveItem() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  // data type
-  interface dataType { number: number, class: string, title: string, date: string, new: boolean }
+  const TotalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
+  const currentPage = useAppSelector(state => state.archive.currentPage); // 현재 페이지
+  const archives = useAppSelector(state => state.archive.archives); // 자료실 글 목록
+  const notice = useAppSelector(state => state.archive.notice); // 공지 목록
 
   // 임시데이터
-  const data: dataType[] = [
-    { number: 0, class: '일반자료', title: '제목', date: '2022-08-10', new: true },
-    { number: 0, class: '일반자료', title: '제목', date: '2022-08-9', new: true },
-    { number: 0, class: '일반자료', title: '제목', date: '2022-08-03', new: false },
-    { number: 0, class: '일반자료', title: '제목', date: '2022-07-29', new: false },
-    { number: 9, class: '일반자료', title: '제목', date: '2022-08-09', new: true },
-    { number: 8, class: '일반자료', title: '제목', date: '2022-08-09', new: true },
-    { number: 7, class: '일반자료', title: '제목', date: '2022-08-08', new: true },
-    { number: 6, class: '일반자료', title: '제목', date: '2022-08-04', new: false },
-    { number: 5, class: '일반자료', title: '제목', date: '2022-08-03', new: false },
-    { number: 4, class: '일반자료', title: '제목', date: '2022-08-02', new: false },
-    { number: 3, class: '일반자료', title: '제목', date: '2022-07-30', new: false },
-    { number: 2, class: '일반자료', title: '제목', date: '2022-07-30', new: false },
-    { number: 1, class: '일반자료', title: '제목', date: '2022-07-23', new: false },
+  const data = [
+    { id: 9, category: '일반자료', title: '제목', createDate: '2022-08-09', new: 'true' },
+    { id: 8, category: '일반자료', title: '제목', createDate: '2022-08-09', new: 'true' },
+    { id: 7, category: '일반자료', title: '제목', createDate: '2022-08-08', new: 'true' },
+    { id: 6, category: '일반자료', title: '제목', createDate: '2022-08-04', new: 'false' },
+    { id: 5, category: '일반자료', title: '제목', createDate: '2022-08-03', new: 'false' },
+    { id: 4, category: '일반자료', title: '제목', createDate: '2022-08-02', new: 'false' },
+    { id: 3, category: '일반자료', title: '제목', createDate: '2022-07-30', new: 'false' },
+    { id: 2, category: '일반자료', title: '제목', createDate: '2022-07-30', new: 'false' },
+    { id: 1, category: '일반자료', title: '제목', createDate: '2022-07-23', new: 'false' },
   ];
+
+  // 임시 데이터
+  const noticeData = [
+    { id: 5, category: '일반자료', title: '제목', createDate: '2022-08-10', new: 'true' },
+    { id: 4, category: '일반자료', title: '제목', createDate: '2022-08-9', new: 'true' },
+    { id: 3, category: '일반자료', title: '제목', createDate: '2022-08-03', new: 'false' },
+  ];
+
+  // 임시 데이터
+  const detailData = {
+    id: 0,
+    title: 'ㅇㅇㅇ자료',
+    createDate: '2022-08-10',
+    content: 'ㅎㅎㅎ입니다',
+    category: '전체',
+    notice: 'true'
+  };
+
+  useEffect(() => {
+    // 자료 목록 받아오기
+    dispatch(getAllArchives({ archives: data, totalPage: 3, currentPage: 0 }));
+
+    // 공지 목록 받아오기
+    dispatch(getNotice({ notice: noticeData }));
+  }, []);
+
+  // 게시글 보기 (정보 받아오기)
+  const openDetail = (id: number) => {
+    dispatch(getDetailData({ detail: detailData }));
+    navigate('/archive-detail');
+  };
 
   return (
     <>
@@ -36,8 +76,8 @@ export default function ArchiveItem() {
           <Title sx={{ flex: 0.2 }}>작성일</Title>
         </Box>
 
-        {/* 목록 */}
-        {data.map((item, index) => (
+        {/* 공지 목록 */}
+        {notice.map((item, index) => (
           <Box
             key={index}
             sx={{
@@ -45,25 +85,25 @@ export default function ArchiveItem() {
               flex: 1,
               p: 1.5,
               borderBottom: '1px solid #3B6C46',
-              backgroundColor: `${item.number === 0 && 'rgba(46, 125, 50, 0.1)'}`
+              backgroundColor: 'rgba(46, 125, 50, 0.1)'
             }}>
-            <List sx={{ flex: 0.1 }}>{item.number === 0 ? '[공지]' : item.number}</List>
-            <List sx={{ flex: 0.1 }}>{item.class}</List>
+            <List sx={{ flex: 0.1 }}><ErrorIcon sx={{ color: 'darkgreen' }} /></List>
+            <List sx={{ flex: 0.1 }}>{item.category}</List>
             <List
-              onClick={() => navigate('/archive-detail')}
+              onClick={() => openDetail(item.id)}
               sx={{
                 flex: 0.6,
                 cursor: 'pointer',
                 display: 'flex',
                 justifyContent: 'center',
                 '&: hover': {
-                  color: 'blue' // 색깔 보류.
+                  color: 'blue'
                 }
               }}>
               <Typography>
                 {item.title}
               </Typography>
-              {item.new &&
+              {item.new == 'true' &&
                 <Typography
                   sx={{
                     ml: 1,
@@ -76,7 +116,51 @@ export default function ArchiveItem() {
                 </Typography>
               }
             </List>
-            <List sx={{ flex: 0.2 }}>{item.date}</List>
+            <List sx={{ flex: 0.2 }}>{item.createDate}</List>
+
+          </Box>
+        ))}
+
+        {/* 자료 목록 */}
+        {archives.map((item, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              flex: 1,
+              p: 1.5,
+              borderBottom: '1px solid #3B6C46'
+            }}>
+            <List sx={{ flex: 0.1 }}>{item.id}</List>
+            <List sx={{ flex: 0.1 }}>{item.category}</List>
+            <List
+              onClick={() => navigate('/archive-detail')}
+              sx={{
+                flex: 0.6,
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                '&: hover': {
+                  color: 'blue'
+                }
+              }}>
+              <Typography>
+                {item.title}
+              </Typography>
+              {item.new == 'true' &&
+                <Typography
+                  sx={{
+                    ml: 1,
+                    fontSize: 'small',
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: 'lightseagreen'
+                  }}>
+                  [new]
+                </Typography>
+              }
+            </List>
+            <List sx={{ flex: 0.2 }}>{item.createDate}</List>
 
           </Box>
         ))}
@@ -85,7 +169,7 @@ export default function ArchiveItem() {
       <Spacing />
 
       <Stack>
-        <Pagination count={10} sx={{ m: '0 auto' }} />
+        <Pagination count={TotalPage} sx={{ m: '0 auto' }} />
       </Stack>
     </>
   )

@@ -14,13 +14,19 @@ import {
   Typography
 } from '@mui/material';
 import EditButton from '../editButton';
-import Form from './modifyForm';
+import ModifyForm from './modifyForm';
 
 export default function ProductModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const productModifyFormState = useAppSelector(state => state.dialog.productModifyFormState); // 글쓰기 취소 state
+
+  // 제품 정보 수정
+  const putProduct = () => {
+    navigate(-1);
+    alert('수정되었습니다.')
+  }
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -30,13 +36,13 @@ export default function ProductModifyForm() {
       <Spacing />
 
       {/* 제품 등록 폼 */}
-      <Form />
+      <ModifyForm />
 
       <Spacing />
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('수정', () => navigate(-1))}
+        {EditButton('수정', putProduct)}
         {EditButton('취소', () => dispatch(clickProductModifyFormGoBack()))}
       </Spacing>
 
@@ -45,7 +51,7 @@ export default function ProductModifyForm() {
         open={productModifyFormState}
         onClose={() => dispatch(clickProductModifyFormGoBack())}>
         <DialogTitle>
-          {'수정 취소'}
+          수정 취소
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
