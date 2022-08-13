@@ -16,20 +16,25 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import {
+  getAllQuestions,
+  setPassword,
+  inputPassword,
+  getFaq
+} from '../../app/reducers/questionSlice';
+import { setDetailData } from '../../app/reducers/questionSlice';
 import ErrorIcon from '@mui/icons-material/Error';
-import { getAllQuestions, postPassword, inputPassword, getFaq } from '../../app/reducers/questionSlice';
-import { setDetailData } from '../../app/reducers/questionDetailSlice';
 
 export default function QuestionItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const passwordState = useAppSelector(state => state.question.passwordState); // 비밀번호 state
-  const pw = useAppSelector(state => state.question.pw);
-  const questions = useAppSelector(state => state.question.questions);
-  const totalPage = useAppSelector(state => state.question.totalPage);
-  const currentPage = useAppSelector(state => state.question.currentPage);
-  const faq = useAppSelector(state => state.question.faq);
+  const passwordState = useAppSelector(state => state.question.passwordState); // 비밀번호 dialog state
+  const pw = useAppSelector(state => state.question.pw); // 비밀번호 state (정보)
+  const questions = useAppSelector(state => state.question.questions); // 문의 목록 state
+  const totalPage = useAppSelector(state => state.question.totalPage); // 전체 페이지 state
+  const currentPage = useAppSelector(state => state.question.currentPage); // 현재 페이지 state
+  const faq = useAppSelector(state => state.question.faq); // FAQ 목록 state
 
   useEffect(() => {
     // 문의 목록 받아오기
@@ -53,13 +58,20 @@ export default function QuestionItem() {
     }
   };
 
-  const onClick = (id: number) => {
+  // 비밀번호 입력
+  const openDetail = (id: number) => {
     api.postPassword(id, pw)
       .then(res => {
         dispatch(inputPassword());
         dispatch(setDetailData(res));
         navigate('/question-detail');
       })
+  };
+
+  // 페이지 전환
+  const changePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    api.getAllQuestions(value)
+      .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })));
   };
 
   return (
@@ -77,16 +89,16 @@ export default function QuestionItem() {
         {/* FAQ */}
         {faq.map((item, index) => (
           <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: 'rgba(46, 125, 50, 0.1)' }}>
-            <List sx={{ flex: 0.1 }}><ErrorIcon /></List>
+            <List sx={{ flex: 0.1 }}><ErrorIcon sx={{ color: 'darkgreen' }} /></List>
             <List
-              onClick={item.writer === '관리자' ? () => navigate('/question-detail') : () => dispatch(inputPassword())}
+              onClick={() => navigate('/question-detail')}
               sx={{
                 flex: 0.5,
                 display: 'flex',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 '&: hover': {
-                  color: 'blue' // 색깔 보류.
+                  color: 'blue'
                 }
               }}>
               <Typography>
@@ -117,14 +129,14 @@ export default function QuestionItem() {
             <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46' }}>
               <List sx={{ flex: 0.1 }}>{item.id}</List>
               <List
-                onClick={item.writer === '관리자' ? () => navigate('/question-detail') : () => dispatch(inputPassword())}
+                onClick={() => dispatch(inputPassword())}
                 sx={{
                   flex: 0.5,
                   display: 'flex',
                   justifyContent: 'center',
                   cursor: 'pointer',
                   '&: hover': {
-                    color: 'blue' // 색깔 보류.
+                    color: 'blue'
                   }
                 }}>
                 <Typography>
@@ -159,13 +171,11 @@ export default function QuestionItem() {
                   type={'password'}
                   size={'small'}
                   inputProps={{ maxLength: 4 }}
-                  onChange={event => dispatch(postPassword({ password: event.target.value }))} />
+                  onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => dispatch(setPassword({ password: event.target.value }))} />
               </DialogContent>
 
               <DialogActions sx={{ justifyContent: 'center' }}>
-                <Button onClick={() => {
-                  onClick(item.id)
-                }}>
+                <Button onClick={() => { openDetail(item.id) }}>
                   확인
                 </Button>
                 <Button onClick={() => dispatch(inputPassword())}>취소</Button>
@@ -178,7 +188,10 @@ export default function QuestionItem() {
       <Spacing />
 
       <Stack>
-        <Pagination count={totalPage} sx={{ m: '0 auto' }} />
+        <Pagination
+          count={totalPage}
+          onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(event, value)}
+          sx={{ m: '0 auto' }} />
       </Stack>
     </>
   )

@@ -5,13 +5,13 @@ import {
   deleteProductImagePath,
   addGradeImagePath,
   deleteGradeImagePath
-} from '../../app/reducers/infoImageSlice';
+} from '../../app/reducers/productContentSlice';
 import {
   addFile,
   deleteFile,
   addUploadButton,
   deleteUploadButton
-} from '../../app/reducers/infoFileSlice';
+} from '../../app/reducers/productFileSlice';
 import {
   Box,
   Button,
@@ -20,20 +20,21 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import CategorySelect from '../categorySelect';
+import ProductCategorySelect from '../productCategorySelect';
 import EditButton from '../editButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export default function Form() {
+export default function ModifyForm() {
   const dispatch = useAppDispatch();
 
   // 제품, 규격 사진 Ref
   const photoInputRef: any = useRef();
   const gradeInputRef: any = useRef();
 
-  const productImage = useAppSelector(state => state.infoImage.productPath); // 제품 사진 state
-  const gradeImage = useAppSelector(state => state.gradeImage.gradePath); // 규격 사진 state
+  const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
+  const productImage = useAppSelector(state => state.productContent.productPath); // 제품 사진 state
+  const gradeImage = useAppSelector(state => state.productContent.gradePath); // 규격 사진 state
   const file = useAppSelector(state => state.productFile.file); // 파일 state
 
   // input - button 연결(input 숨기기)
@@ -70,8 +71,8 @@ export default function Form() {
       }}>
         <TextField
           type='text'
+          value={productDetail.data.name}
           required={true}
-          autoFocus={true}
           placeholder='제품명'
           inputProps={{
             style: {
@@ -106,7 +107,7 @@ export default function Form() {
           {EditButton('제품 사진 추가', () => selectInput(photoInputRef))}
           {EditButton('규격 사진 추가', () => selectInput(gradeInputRef))}
         </Box>
-        <CategorySelect />
+        {ProductCategorySelect(productDetail.data.category)}
       </Box>
 
       {/* 제품 사진 미리보기 */}
@@ -140,6 +141,7 @@ export default function Form() {
           placeholder='제품 설명'
           multiline
           minRows={3}
+          value={productDetail.data.info}
           inputProps={{
             style: {
               fontSize: 18

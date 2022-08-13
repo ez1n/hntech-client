@@ -1,18 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+/**
+ * file : 공지사항 첨부파일
+ */
+
+/**
+ * addNoticeFile : 파일 첨부
+ * deleteNoticeFile : 파일 삭제
+ */
+
 // 공지사항 파일 state
-interface fileInitialState {
+interface noticeInitialState {
   file: string[]
 };
 
-const FileInitialState: fileInitialState = {
+const NoticeInitialState: noticeInitialState = {
   file: []
 };
 
 // 공지사항 파일 업로드
-export const NoticeFileSlice = createSlice({
-  name: 'noticeFile',
-  initialState: FileInitialState,
+export const NoticeSlice = createSlice({
+  name: 'notice',
+  initialState: NoticeInitialState,
   reducers: {
     addNoticeFile: (
       state,
@@ -31,5 +40,5 @@ export const NoticeFileSlice = createSlice({
   }
 });
 
-export const { addNoticeFile, deleteNoticeFile } = NoticeFileSlice.actions;
-export default NoticeFileSlice.reducer;
+export const { addNoticeFile, deleteNoticeFile } = NoticeSlice.actions;
+export default NoticeSlice.reducer;

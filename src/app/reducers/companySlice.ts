@@ -1,6 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// 회사소개 하위메뉴 state
+// 회사소개
+
+/**
+ * mode : 회사소개 하위 메뉴 (인사말, 회사연혁, 조직도, CI소개, 찾아오시는 길)
+ */
+
+/**
+ * clickChangeIntroduce : 인사말 (default)
+ * clickChangeHistory : 회사연혁
+ * clickChangeOrgChart : 조직도
+ * clickChangeInfo : CI소개
+ * clickChangeLocation : 찾아오시는 길
+ */
+
 interface modeInitialState {
   mode: string
 };
@@ -9,7 +22,6 @@ const ModeInitialState: modeInitialState = {
   mode: 'INTRODUCE'
 };
 
-// 회사소개 카테고리(컴포넌트 교체) 업데이트
 export const ModeSlice = createSlice({
   name: 'mode',
   initialState: ModeInitialState,

@@ -45,6 +45,48 @@ class Api {
     const response = await this.api.delete(`/question/${questionId}`);
     return response.data;
   };
+
+  ////////////////////// 여기서부터 다시 해야댐 //////////////////////
+
+  // 문의사항 글 수정 (변경 요청) (state => createQuestionForm)
+  async updateQuestion(updateQuestionForm: {}) {
+    const response = await this.api.put(`/question`, updateQuestionForm);
+    return response.data;
+  };
+
+  // 문의사항 댓글 등록 (state => commentSlice)
+  async postComment(comment: string) {
+    const response = await this.api.post(``, comment);
+    return response.data;
+  };
+
+  // 문의사항 댓글 수정
+  async putComment() {
+    const response = await this.api.put(``,);
+    return response.data;
+  };
+
+  // 문의사항 댓글 삭제
+  async deleteComment() {
+    const response = await this.api.delete(``,);
+    return response.data;
+  };
+
+  // 문의게시판 공지사항 글쓰기 (state => formContentSlice noticeContent)
+  async postCreateNotice(createNoticeForm: {}) {
+    const response = await this.api.post('', createNoticeForm);
+    if (response.status !== SUCCESS) {
+      console.error(response.data);
+      return;
+    }
+    console.log(response.data);
+  };
+
+  // 관리자 정보 변경
+  async putManagerData() {
+    const response = await this.api.put('',);
+    return response.data;
+  };
 };
 
 export const api = new Api();

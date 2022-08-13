@@ -25,11 +25,14 @@ export default function QuestionDetail() {
   const dispatch = useAppDispatch();
 
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
-  const data = useAppSelector(state => state.questionDetail.data);
+  const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
 
+  // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
-    api.deleteQuestion(id) // id 꺼내서 보내기
+    api.deleteQuestion(id)
       .then(res => dispatch(clickQuestionDetailGoBack()));
+    dispatch(clickQuestionDetailGoBack());
+    navigate('/question');
   };
 
   return (
@@ -47,8 +50,8 @@ export default function QuestionDetail() {
 
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        {EditButton('수정', () => console.log('#'))}
-        {EditButton('삭제', () => deleteQuestion(data.id))}
+        {EditButton('수정', () => navigate('/question-modify'))}
+        {EditButton('삭제', () => dispatch(clickQuestionDetailGoBack()))}
       </Spacing>
 
 
@@ -100,11 +103,7 @@ export default function QuestionDetail() {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => {
-            dispatch(clickQuestionDetailGoBack());
-            navigate('/question');
-          }}
-          >
+          <Button onClick={() => deleteQuestion(detail.id)}>
             네
           </Button>
           <Button onClick={() => dispatch(clickQuestionDetailGoBack())}>아니오</Button>

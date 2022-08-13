@@ -1,18 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// 자료실 파일 state
-interface fileInitialState {
+// 자료실 (첨부파일)
+
+/**
+ * file : 첨부파일
+ */
+
+/**
+ * addArchiveFile : 파일 추가
+ * deleteArchiveFile : 파일 삭제
+ */
+
+interface archiveFileInitialState {
   file: string[]
 };
 
-const FileInitialState: fileInitialState = {
+const ArchiveFileInitialState: archiveFileInitialState = {
   file: []
 };
 
-// 자료실 파일 업로드
 export const ArchiveFileSlice = createSlice({
   name: 'archiveFile',
-  initialState: FileInitialState,
+  initialState: ArchiveFileInitialState,
   reducers: {
     addArchiveFile: (
       state,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './style.css';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +13,7 @@ import {
   mouseLeaveProduct,
   mouseLeaveArchive,
   mouseLeaveService
-} from '../app/reducers/menusSlice';
+} from '../app/reducers/menuSlice';
 import {
   clickChangeIntroduce,
   clickChangeHistory,
@@ -23,8 +23,9 @@ import {
 } from '../app/reducers/companySlice';
 import {
   selectCategoryTrue,
-  selectCategoryFalse
-} from '../app/reducers/productSlice';
+  selectCategoryFalse,
+  getProductCategory
+} from '../app/reducers/productCategorySlice';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -35,9 +36,15 @@ export default function Header() {
   const openArchive = useAppSelector(state => state.menu.archive); // 고객지원 state
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const categoryList = useAppSelector(state => state.productCategory.categoryList); // 제품 카테고리 state
 
   // 임시 데이터 (제품 카테고리)
   const categoryMenus = ['스프링쿨러헤드', '유수베어밸브', '유리벌브', '기타'];
+
+  useEffect(() => {
+    // 카테고리 목록 받아오기
+    dispatch(getProductCategory({ categories: categoryMenus }));
+  }, [])
 
   return (
     <Toolbar
@@ -151,7 +158,7 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              {categoryMenus.map((item, index) => (
+              {categoryList.map((item, index) => (
                 <DropdownMenu
                   key={index}
                   onClick={() => {

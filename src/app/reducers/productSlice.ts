@@ -1,23 +1,53 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// 제품 카테고리 선택 state
+// 제품 상세보기
+
+/**
+ * productList : 제품 목록
+ * productDetail : 제품 정보
+ * activeStep : 보여지는 제품 이미지 번호
+ */
+
+/**
+ * getProductList : 제품 목록 받아오기
+ * getProductDetail : 제품 정보 받아오기
+ * nextImage : 다음 이미지
+ * prevImage : 이전 이미지
+ */
+
 interface productInitialState {
-  selected: boolean
+  productList: { url: string, title: string }[],
+  productDetail: { image: string[], data: { name: string, info: string, category: string } },
+  activeStep: number
 };
 
 const ProductInitialState: productInitialState = {
-  selected: false
+  productList: [],
+  productDetail: { image: [], data: { name: '', info: '', category: '' } },
+  activeStep: 0
 };
 
-// 카테고리 선택 업데이트
 export const ProductSlice = createSlice({
-  name: 'selectCategory',
+  name: 'product',
   initialState: ProductInitialState,
   reducers: {
-    selectCategoryTrue: (state) => { state.selected = true },
-    selectCategoryFalse: (state) => { state.selected = false },
+    getProductList: (
+      state,
+      action: PayloadAction<{ productList: { url: string, title: string }[] }>
+    ) => { state.productList = action.payload.productList },
+    getProductDetail: (
+      state,
+      action: PayloadAction<{ detail: { image: string[], data: { name: string, info: string, category: string } } }>
+    ) => { state.productDetail = action.payload.detail },
+    nextImage: (state) => { state.activeStep = state.activeStep + 1 },
+    prevImage: (state) => { state.activeStep = state.activeStep - 1 }
   }
-});
+}
+);
 
-export const { selectCategoryTrue, selectCategoryFalse } = ProductSlice.actions;
+export const {
+  getProductList,
+  getProductDetail,
+  nextImage,
+  prevImage } = ProductSlice.actions;
 export default ProductSlice.reducer;

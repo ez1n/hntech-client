@@ -14,15 +14,16 @@ import {
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 
-export default function Form() {
+export default function ModifyForm() {
   const dispatch = useAppDispatch();
 
   const file = useAppSelector(state => state.notice.file); // 파일 state
+  const noticeContent = useAppSelector(state => state.questionContent.questionContent); // 공지사항 폼 내용 state
 
   // 파일 이름 미리보기
   const selectFile = (event: any) => {
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addNoticeFile({ item: event.target.files[i].name }))
+      dispatch(addNoticeFile({ item: event.target.files[i].name }));
     }
   };
 
@@ -41,8 +42,8 @@ export default function Form() {
         }}>
           <TextField
             type='text'
+            value={noticeContent.title}
             required={true}
-            autoFocus={true}
             placeholder='제목을 입력해 주세요'
             onChange={event => dispatch(updateNoticeTitle({ title: event.target.value }))}
             inputProps={{
@@ -69,6 +70,7 @@ export default function Form() {
         <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
           <CKEditor
             editor={ClassicEditor}
+            data={noticeContent.content}
             config={{
               placeholder: '공지사항을 작성해 주세요',
             }}

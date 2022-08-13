@@ -27,6 +27,7 @@ export default function Form() {
 
   const fileData = new FormData(); // 첨부파일 데이터
   const file = useAppSelector(state => state.archiveFile.file); // 첨부파일 이름 목록 state
+  const archiveContent = useAppSelector(state => state.archive.archiveContent); // 자료실 글쓰기 내용 state
 
   // 파일 이름 미리보기
   const selectFile = (event: any) => {
@@ -65,10 +66,10 @@ export default function Form() {
         }}>
           <TextField
             type='text'
+            value={archiveContent.title}
             required={true}
-            autoFocus={true}
+            onChange={event => dispatch(updateArchiveTitle({ title: event?.target.value }))}
             placeholder='제목을 입력해 주세요'
-            onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
             inputProps={{
               style: {
                 fontSize: 20
@@ -86,40 +87,34 @@ export default function Form() {
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
           pl: 1
         }}>
-          {ArchiveCategorySelect('전체')}
+          {ArchiveCategorySelect(archiveContent.category)}
           <FormControlLabel
-            control={<Checkbox sx={{
-              color: 'darkgrey',
-              '&.Mui-checked': {
-                color: 'green',
-              },
-            }} />}
-            onChange={event => dispatch(updateArchiveNoticeChecked({ isNotice: Boolean(event.target) }))}
+            control={<Checkbox
+              defaultChecked={archiveContent.notice === 'true' ? true : false}
+              onChange={event => dispatch(updateArchiveNoticeChecked({ isNotice: event?.target.checked }))}
+              sx={{
+                color: 'darkgrey',
+                '&.Mui-checked': {
+                  color: 'green',
+                },
+              }} />}
             label='공지사항 표시'
             labelPlacement='start'
             sx={{ color: 'darkgrey' }} />
         </Box>
 
         {/* 문의 내용 */}
-        <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
+        <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)' }}>
           <CKEditor
             editor={ClassicEditor}
+            data={archiveContent.content}
             config={{
               placeholder: '내용을 입력하세요',
             }}
-            onReady={(editor: any) => {
-              console.log('Editor is ready to use!', editor);
-            }}
-            onChange={(event: any, editor: { getData: () => any; }) => {
+            onChange={(event: any, editor: { getData: () => any }) => {
               const data = editor.getData();
               console.log({ event, editor, data });
               dispatch(updateArchiveContent({ content: data }));
-            }}
-            onBlur={(editor: any) => {
-              console.log('Blur.', editor);
-            }}
-            onFocus={(editor: any) => {
-              console.log('Focus.', editor);
             }}
           />
         </Box>

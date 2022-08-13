@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import { selectCategoryTrue } from '../../app/reducers/productSlice';
+import { selectCategoryTrue } from '../../app/reducers/productCategorySlice';
 import { Box, Container, styled } from '@mui/material';
 import ProductCategories from '../products/productCategories';
 import ProductInfo from './productInfo';

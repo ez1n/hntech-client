@@ -1,17 +1,19 @@
 import React, { useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
+  updateProductName,
+  updateProductDescription,
   addProductImagePath,
   deleteProductImagePath,
   addGradeImagePath,
   deleteGradeImagePath
-} from '../../app/reducers/infoImageSlice';
+} from '../../app/reducers/productContentSlice';
 import {
   addFile,
   deleteFile,
   addUploadButton,
   deleteUploadButton
-} from '../../app/reducers/infoFileSlice';
+} from '../../app/reducers/productFileSlice';
 import {
   Box,
   Button,
@@ -20,7 +22,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import CategorySelect from '../categorySelect';
+import ProductCategorySelect from '../productCategorySelect';
 import EditButton from '../editButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -32,8 +34,8 @@ export default function Form() {
   const photoInputRef: any = useRef();
   const gradeInputRef: any = useRef();
 
-  const productImage = useAppSelector(state => state.infoImage.productPath); // 제품 사진 state
-  const gradeImage = useAppSelector(state => state.gradeImage.gradePath); // 규격 사진 state
+  const productImage = useAppSelector(state => state.productContent.productPath); // 제품 사진 state
+  const gradeImage = useAppSelector(state => state.productContent.gradePath); // 규격 사진 state
   const file = useAppSelector(state => state.productFile.file); // 파일 state
 
   // input - button 연결(input 숨기기)
@@ -73,6 +75,7 @@ export default function Form() {
           required={true}
           autoFocus={true}
           placeholder='제품명'
+          onChange={(event) => dispatch(updateProductName({ name: event?.target.value }))}
           inputProps={{
             style: {
               fontSize: 20
@@ -106,7 +109,7 @@ export default function Form() {
           {EditButton('제품 사진 추가', () => selectInput(photoInputRef))}
           {EditButton('규격 사진 추가', () => selectInput(gradeInputRef))}
         </Box>
-        <CategorySelect />
+        {ProductCategorySelect('스프링쿨러헤드')}
       </Box>
 
       {/* 제품 사진 미리보기 */}
@@ -140,6 +143,7 @@ export default function Form() {
           placeholder='제품 설명'
           multiline
           minRows={3}
+          onChange={event => dispatch(updateProductDescription({ description: event.target.value }))}
           inputProps={{
             style: {
               fontSize: 18

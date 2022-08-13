@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickNoticeFormGoBack } from '../../app/reducers/dialogSlice';
+import { resetNoticeContent } from '../../app/reducers/questionContentSlice';
 import {
   Container,
   styled,
@@ -21,8 +22,12 @@ export default function NoticeForm() {
   const dispatch = useAppDispatch();
 
   const noticeFormState = useAppSelector(state => state.dialog.noticeFormState); // 글쓰기 취소 state
-  const noticeContent = useAppSelector(state => state.formContent.noticeContent); // 공지사항 글쓰기 내용 state
+  const noticeContent = useAppSelector(state => state.questionContent.noticeContent); // 공지사항 글쓰기 내용 state
 
+  const postNotice = () => {
+    console.log(noticeContent); // 보내면됨
+    navigate('/question');
+  };
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -38,10 +43,7 @@ export default function NoticeForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', () => {
-          console.log(noticeContent); // 보내면됨
-          navigate('/question');
-        })}
+        {EditButton('작성완료', postNotice)}
         {EditButton('취소', () => dispatch(clickNoticeFormGoBack()))}
       </Spacing>
 
@@ -64,7 +66,8 @@ export default function NoticeForm() {
         <DialogActions>
           <Button onClick={() => {
             dispatch(clickNoticeFormGoBack());
-            navigate('/question');
+            dispatch(resetNoticeContent());
+            navigate(-1);
           }}
           >
             네

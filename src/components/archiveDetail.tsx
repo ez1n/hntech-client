@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
 import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, styled, Typography } from '@mui/material';
 import EditButton from './editButton';
+import { copyDetailData } from '../app/reducers/archiveSlice';
 
 export default function ArchiveDetail() {
   const navigate = useNavigate();
@@ -11,9 +12,19 @@ export default function ArchiveDetail() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const archiveDetailState = useAppSelector(state => state.dialog.archiveDetailState); // 게시글 삭제 취소 state
+  const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
 
-  // 임시데이터
-  const data = { title: 'ㅇㅇㅇ 자료', date: '2022.08.05', content: '설명' };
+  useEffect(() => {
+    dispatch(copyDetailData({ detail: detail })); // 수정 정보 만들기
+    // 정보 받아오기 (detail.id 이용)
+  }, []);
+
+  // 게시글 삭제
+  const deleteArchive = () => {
+    // 삭제 요청
+    dispatch(archiveDetailGoBack());
+    navigate('/archive');
+  };
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -31,7 +42,7 @@ export default function ArchiveDetail() {
       <Spacing>
         {managerMode &&
           <Box sx={{ textAlign: 'end' }}>
-            {EditButton('수정', () => console.log('#'))}
+            {EditButton('수정', () => navigate('/archive-modify'))}
             {EditButton('삭제', () => dispatch(archiveDetailGoBack()))}
           </Box>
         }
@@ -48,7 +59,7 @@ export default function ArchiveDetail() {
             fontWeight: 'bold',
             textAlign: 'center'
           }}>
-            {data.title}
+            {detail.title}
           </Typography>
         </Box>
 
@@ -59,7 +70,7 @@ export default function ArchiveDetail() {
             color: 'darkgrey',
             borderBottom: '1px solid #3B6C46'
           }}>
-          <Typography sx={{ fontSize: 18, textAlign: 'end' }}>작성일 {data.date}</Typography>
+          <Typography sx={{ fontSize: 18, textAlign: 'end' }}>작성일 {detail.createDate}</Typography>
         </Box>
 
         {/* 동영상 */}
@@ -69,7 +80,7 @@ export default function ArchiveDetail() {
 
         {/* 자료 부가 설명 */}
         <Box sx={{ p: 3, minHeight: 200, borderBottom: '1px solid #3B6C46' }}>
-          {data.content.split('\n').map((value, index) => (
+          {detail.content.split('\n').map((value, index) => (
             <Typography key={index} sx={{ fontSize: 18 }}>
               {value}
             </Typography>
@@ -114,13 +125,7 @@ export default function ArchiveDetail() {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => {
-            dispatch(archiveDetailGoBack());
-            navigate('/archive');
-          }}
-          >
-            네
-          </Button>
+          <Button onClick={deleteArchive}>네</Button>
           <Button onClick={() => dispatch(archiveDetailGoBack())}>아니오</Button>
         </DialogActions>
       </Dialog>
