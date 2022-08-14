@@ -7,6 +7,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * productFormState : 
  * productModifyFormState : 
  * productInfoState : 
+ * productCategoryFormState : 제품 카테고리 폼 등록 / 수정
  * questionFormState : 
  * noticeFormState : 
  * questionDetailState : 
@@ -24,6 +25,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * clickProductFormGoBack : 
  * clickProductModifyFormGoBack : 
  * clickProductInfoGoBack : 
+ * clickProductCategoryFormGoBack : 제품 카테고리 등록 / 수정 취소
  * clickQuestionFormGoBack : 
  * clickNoticeFormGoBack : 
  * clickQuestionDetailGoBack : 
@@ -42,6 +44,7 @@ interface dialogInitialState {
   productModifyFormState: boolean,
   productInfoState: boolean,
   productItemState: boolean,
+  productCategoryFormState: boolean,
   questionFormState: boolean,
   noticeFormState: boolean,
   questionDetailState: boolean,
@@ -61,6 +64,7 @@ const DialogInitialState: dialogInitialState = {
   productModifyFormState: false,
   productInfoState: false,
   productItemState: false,
+  productCategoryFormState: false,
   questionFormState: false,
   noticeFormState: false,
   questionDetailState: false,
@@ -83,6 +87,7 @@ export const DialogSlice = createSlice({
     clickProductModifyFormGoBack: (state) => { state.productModifyFormState = !state.productModifyFormState },
     clickProductInfoGoBack: (state) => { state.productInfoState = !state.productInfoState },
     clickProductItemGoBack: (state) => { state.productItemState = !state.productItemState },
+    clickProductCategoryFormGoBack: (state) => { state.productCategoryFormState = !state.productCategoryFormState },
     clickQuestionFormGoBack: (state) => { state.questionFormState = !state.questionFormState },
     clickNoticeFormGoBack: (state) => { state.noticeFormState = !state.noticeFormState },
     clickQuestionDetailGoBack: (state) => { state.questionDetailState = !state.questionDetailState },
@@ -103,6 +108,7 @@ export const {
   clickProductModifyFormGoBack,
   clickProductInfoGoBack,
   clickProductItemGoBack,
+  clickProductCategoryFormGoBack,
   clickQuestionFormGoBack,
   clickNoticeFormGoBack,
   clickQuestionDetailGoBack,

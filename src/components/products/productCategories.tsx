@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectCategoryTrue } from '../../app/reducers/productCategorySlice';
+import { selectCategoryTrue, setCurrentCategory } from '../../app/reducers/productCategorySlice';
 import { clickProductCategoryGoBack } from '../../app/reducers/dialogSlice';
 import {
   Box,
@@ -25,27 +26,19 @@ export default function ProductCategories() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const categorySelected = useAppSelector(state => state.productCategory.selected); // 카테고리 선택 state
+  const categories = useAppSelector(state => state.productCategory.categories); // 카테고리 목록 state
+  const currentCategory = useAppSelector(state => state.productCategory.currentCategory); // 선택된 카테고리 정보 state
   const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
 
-  // 임시데이터
-  const images = [
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    },
-    {
-      url: '/images/mainButtons/건식퓨지블링크.jpg',
-      title: '건식퓨지블링크'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    }
-  ];
+  // 카테고리 삭제
+  const deleteCategory = (categoryId: number) => {
+    // api.deleteCategory(categoryId)
+    //   .then(res => {
+    //     dispatch(clickProductCategoryGoBack());
+    //   });
+    console.log(categoryId)
+    dispatch(clickProductCategoryGoBack());
+  };
 
   return (
     <>
@@ -71,11 +64,11 @@ export default function ProductCategories() {
 
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', ml: '10%', mr: '10%' }}>
-            {images.map((value, index) => (
+            {categories.map((value, index) => (
               <ContainerBox sx={{ width: '23%', m: 1 }}>
                 <CategoryButton key={index} onClick={() => { dispatch(selectCategoryTrue()) }}>
                   {/* 목록 버튼 */}
-                  <img className='categoryImage' src={value.url} alt='카테고리 이미지' />
+                  <img className='categoryImage' src={value.image.originalFilename} alt='카테고리 이미지' />
                   <Typography sx={{
                     width: '100%',
                     pt: 1,
@@ -83,17 +76,24 @@ export default function ProductCategories() {
                     borderRadius: 1,
                     backgroundColor: 'rgba(57, 150, 82, 0.2)'
                   }}>
-                    {value.title}
+                    {value.categoryName}
                   </Typography>
                 </CategoryButton>
 
                 {/* 수정 버튼 */}
                 {managerMode &&
                   <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <Button onClick={() => dispatch(clickProductCategoryGoBack())} sx={{ color: 'red' }}>
+                    <Button
+                      onClick={() => {
+                        dispatch(setCurrentCategory({ category: value }));
+                        dispatch(clickProductCategoryGoBack());
+                      }}
+                      sx={{ color: 'red' }}>
                       <RemoveCircleRoundedIcon sx={{ fontSize: 30 }} />
                     </Button>
-                    <Button sx={{ color: 'darkgreen' }}>
+                    <Button
+                      onClick={() => dispatch(setCurrentCategory({ category: value }))}
+                      sx={{ color: 'darkgreen' }}>
                       <CreateRoundedIcon sx={{ fontSize: 30 }} />
                     </Button>
                   </Box>
@@ -101,8 +101,9 @@ export default function ProductCategories() {
               </ContainerBox>
             ))}
 
+            {/* 추가 버튼 */}
             {managerMode &&
-              <AddButton>
+              <AddButton onClick={() => navigate('/productCategory-form')}>
                 <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
               </AddButton>
             }
@@ -131,12 +132,12 @@ export default function ProductCategories() {
             flexDirection: 'column'
           }}>
 
-            {images.map((value, index) => (
+            {categories.map((value, index) => (
               <MenuButton key={index} onClick={() => {
                 navigate('/product');
                 dispatch(selectCategoryTrue());
               }}>
-                <Typography sx={{ m: 1, textAlign: 'center' }}>{value.title}</Typography>
+                <Typography sx={{ m: 1, textAlign: 'center' }}>{value.categoryName}</Typography>
               </MenuButton>
             ))}
           </Box >
@@ -160,11 +161,7 @@ export default function ProductCategories() {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => {
-            dispatch(clickProductCategoryGoBack());
-            navigate('/product');
-          }}
-          >
+          <Button onClick={() => deleteCategory(currentCategory.id)}>
             네
           </Button>
           <Button onClick={() => dispatch(clickProductCategoryGoBack())}>아니오</Button>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,7 @@ import EditButton from '../editButton';
 import QuestionContent from './questionContent';
 import Comment from './comment';
 import CommentForm from './commentForm';
+import { setCurrentQuestion } from '../../app/reducers/questionSlice';
 
 export default function QuestionDetail() {
   const navigate = useNavigate();
@@ -27,12 +28,19 @@ export default function QuestionDetail() {
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
 
+  // 수정 데이터 업데이트
+  useEffect(() => {
+    dispatch(setCurrentQuestion({ content: detail.content, title: detail.title }));
+  }, [])
+
   // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
     api.deleteQuestion(id)
-      .then(res => dispatch(clickQuestionDetailGoBack()));
-    dispatch(clickQuestionDetailGoBack());
-    navigate('/question');
+      .then(res => {
+        dispatch(clickQuestionDetailGoBack());
+        navigate('/question');
+        alert('삭제되었습니다.');
+      });
   };
 
   return (

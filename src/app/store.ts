@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import menuSlice from './reducers/menuSlice';
 import managerModeSlice from './reducers/managerModeSlice';
 import companySlice from './reducers/companySlice';
+import companyModifySlice from './reducers/companyModifySlice';
 import productCategorySlice from './reducers/productCategorySlice';
 import dialogSlice from './reducers/dialogSlice';
 import questionSlice from './reducers/questionSlice';
@@ -14,12 +15,14 @@ import archiveSlice from './reducers/archiveSlice';
 import archiveCategorySlice from './reducers/archiveCategorySlice';
 import archiveFileSlice from './reducers/archiveFileSlice';
 import noticeSlice from './reducers/noticeSlice';
+import productCategoryContentSlice from './reducers/productCategoryContentSlice';
 
 export const store = configureStore({
   reducer: {
     menu: menuSlice,
     manager: managerModeSlice,
     company: companySlice,
+    companyModify: companyModifySlice,
     productCategory: productCategorySlice,
     dialog: dialogSlice,
     question: questionSlice,
@@ -27,6 +30,7 @@ export const store = configureStore({
     product: productSlice,
     productContent: productContentSlice,
     productFile: productFileSlice,
+    productCategoryContent: productCategoryContentSlice,
     archive: archiveSlice,
     archiveFile: archiveFileSlice,
     notice: noticeSlice,

@@ -55,7 +55,7 @@ interface archiveInitialState {
     content: string,
     category: string,
     notice: string
-  } // 자료실
+  }
 };
 
 const ArchiveInitialState: archiveInitialState = {

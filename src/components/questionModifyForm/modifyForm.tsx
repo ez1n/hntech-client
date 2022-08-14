@@ -92,7 +92,7 @@ export default function ModifyForm() {
             multiline
             minRows={15}
             required={true}
-            onChange={event => { dispatch(modifyQuestionContent({ content: event?.target.value })) }}
+            onChange={event => dispatch(modifyQuestionContent({ content: event?.target.value }))}
             placeholder='문의사항을 작성해 주세요'
             inputProps={{
               style: {

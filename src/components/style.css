@@ -13,16 +13,40 @@
 }
 
 
-/* orgChart */
+/* orgChart, history */
 
 .CIImage {
-  width: 20%;
+  width: 15%;
 }
 
-.orgChartImage {
-  width: 100%;
+.companyImage {
+  width: 80%;
 }
 
+.imageUploadButton {
+  color: #2E7D32;
+  border: 1px solid rgba(46, 125, 50, 0.5);
+  border-radius: 8px;
+  background-color: rgba(46, 125, 50, 0.1);
+  cursor: pointer;
+  width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
+}
+
+.imageUploadButton:hover {
+  background-color: rgba(239, 245, 241, 0.5);
+}
+
+#orgChartInput {
+  display: none;
+}
+
+#historyInput {
+  display: none;
+}
 
 /* products */
 
@@ -52,6 +76,29 @@
 }
 
 .fileUploadButton:hover {
+  background-color: rgba(239, 245, 241, 0.5);
+}
+
+/* productCategoryForm */
+#productCategoryInput {
+  display: none;
+}
+
+.categoryUploadButton {
+  color: #2E7D32;
+  border: 1px solid rgba(46, 125, 50, 0.5);
+  border-radius: 8px;
+  background-color: rgba(46, 125, 50, 0.1);
+  cursor: pointer;
+  width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  padding: 5px
+}
+
+.categoryUploadButton:hover {
   background-color: rgba(239, 245, 241, 0.5);
 }
 

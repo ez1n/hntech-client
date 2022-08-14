@@ -1,7 +1,13 @@
 import React from 'react';
+import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickCommentRemoveGoBack } from '../../app/reducers/dialogSlice';
-import { resetAnchor, setAnchor } from '../../app/reducers/commentSlice';
+import {
+  resetAnchor,
+  setAnchor,
+  setCurrentComment,
+  updateCommentState
+} from '../../app/reducers/commentSlice';
 import {
   Box,
   Button,
@@ -22,7 +28,9 @@ export default function Comment() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
   const comments = useAppSelector(state => state.question.detail.comments); // 댓글 정보 (데이터) state
+  const currentComment = useAppSelector(state => state.comment.currentComment); // 선택한 댓글 정보
   const commentAnchor = useAppSelector(state => state.comment.commentAnchor); // 댓글 메뉴 위치 state 
+  const commentModifyState = useAppSelector(state => state.comment.commentModifyState); // 댓글 수정 state
   const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제 state
   const commentMenuOpen = Boolean(commentAnchor); // 댓글 메뉴 open
 
@@ -34,11 +42,14 @@ export default function Comment() {
   };
 
   // 댓글 삭제
-  const deleteComment = () => {
-    //댓글삭제
-    console.log('삭제');
-    dispatch(clickCommentRemoveGoBack());
-    dispatch(resetAnchor());
+  const deleteComment = (commentId: number) => {
+    // api.deleteComment(commentId)
+    //   .then(res => {
+    //     dispatch(clickCommentRemoveGoBack());
+    //     dispatch(resetAnchor());
+    //     alert('삭제되었습니다.')
+    // })
+    console.log(commentId)
   };
 
   return (
@@ -68,9 +79,12 @@ export default function Comment() {
           {/* 수정, 삭제 버튼 */}
           {managerMode ?
             // 관리자 댓글
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            < Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Button
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => { dispatch(setAnchor({ anchor: event.currentTarget })) }}
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  dispatch(setAnchor({ anchor: event.currentTarget }));
+                  dispatch(setCurrentComment({ content: item.content, id: item.id }));
+                }}
                 sx={{ color: '#0F0F0F' }}>
                 <MoreVertTwoToneIcon sx={{ fontSize: 30 }} />
               </Button>
@@ -80,7 +94,10 @@ export default function Comment() {
                 open={commentMenuOpen}
                 onClose={() => dispatch(resetAnchor())}
               >
-                <MenuItem onClick={() => dispatch(resetAnchor())}>
+                <MenuItem onClick={() => {
+                  dispatch(updateCommentState());
+                  dispatch(resetAnchor());
+                }}>
                   수정
                 </MenuItem>
                 <MenuItem onClick={() => {
@@ -95,7 +112,10 @@ export default function Comment() {
             // 문의 댓글
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Button
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => dispatch(setAnchor({ anchor: event.currentTarget }))}
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  dispatch(setAnchor({ anchor: event.currentTarget }));
+                  dispatch(setCurrentComment({ content: item.content, id: item.id }));
+                }}
                 sx={{ color: '#0F0F0F', display: `${item.writer === '관리자' && 'none'}` }}>
                 <MoreVertTwoToneIcon sx={{ fontSize: 30 }} />
               </Button>
@@ -105,7 +125,10 @@ export default function Comment() {
                 open={commentMenuOpen}
                 onClose={() => dispatch(resetAnchor())}
               >
-                <MenuItem onClick={() => dispatch(resetAnchor())}>
+                <MenuItem onClick={() => {
+                  dispatch(updateCommentState());
+                  dispatch(resetAnchor());
+                }}>
                   수정
                 </MenuItem>
                 <MenuItem onClick={() => {
@@ -135,7 +158,7 @@ export default function Comment() {
             </DialogContent>
 
             <DialogActions>
-              <Button onClick={deleteComment}>
+              <Button onClick={() => { deleteComment(currentComment.id) }}>
                 네
               </Button>
               <Button onClick={() => dispatch(clickCommentRemoveGoBack())}>

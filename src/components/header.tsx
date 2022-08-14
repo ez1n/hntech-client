@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import './style.css';
+import { api } from '../network/network';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { Toolbar, Typography, Button, Stack, Box, Paper } from '@mui/material';
 import {
   mouseOverCompany,
   mouseOverProduct,
@@ -24,8 +24,9 @@ import {
 import {
   selectCategoryTrue,
   selectCategoryFalse,
-  getProductCategory
+  setAllCategories
 } from '../app/reducers/productCategorySlice';
+import { Toolbar, Typography, Button, Stack, Box, Paper } from '@mui/material';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -36,15 +37,54 @@ export default function Header() {
   const openArchive = useAppSelector(state => state.menu.archive); // 고객지원 state
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const categoryList = useAppSelector(state => state.productCategory.categoryList); // 제품 카테고리 state
+  const categories = useAppSelector(state => state.productCategory.categories); // 제품 카테고리 state
 
-  // 임시 데이터 (제품 카테고리)
-  const categoryMenus = ['스프링쿨러헤드', '유수베어밸브', '유리벌브', '기타'];
+  // 임시데이터
+  const data = [
+    {
+      categoryName: '건식퓨지블링크',
+      id: 1,
+      image: {
+        id: 1,
+        originalFilename: '/images/mainButtons/건식퓨지블링크.jpg',
+        serverFilename: ''
+      }
+    },
+    {
+      categoryName: '유리벌브',
+      id: 2,
+      image: {
+        id: 2,
+        originalFilename: '/images/mainButtons/알람밸브조립.jpg',
+        serverFilename: ''
+      }
+    },
+    {
+      categoryName: '스프링클러',
+      id: 3,
+      image: {
+        id: 3,
+        originalFilename: '/images/mainButtons/알람밸브조립.jpg',
+        serverFilename: ''
+      }
+    },
+    {
+      categoryName: '유리벌브',
+      id: 3,
+      image: {
+        id: 3,
+        originalFilename: '/images/mainButtons/알람밸브조립.jpg',
+        serverFilename: ''
+      }
+    },
+  ];
 
+  // 카테고리 목록 받아오기
   useEffect(() => {
-    // 카테고리 목록 받아오기
-    dispatch(getProductCategory({ categories: categoryMenus }));
-  }, [])
+    // api.getAllCategories()
+    // .then(res => dispatch(setAllCategories({categories: res.data})));
+    dispatch(setAllCategories({ categories: data }));
+  }, []);
 
   return (
     <Toolbar
@@ -158,14 +198,14 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              {categoryList.map((item, index) => (
+              {categories.map((item, index) => (
                 <DropdownMenu
                   key={index}
                   onClick={() => {
                     navigate('/product');
                     dispatch(selectCategoryTrue());
                   }}>
-                  {item}
+                  {item.categoryName}
                 </DropdownMenu>
               ))}
             </Paper>

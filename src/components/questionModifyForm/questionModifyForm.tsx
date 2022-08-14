@@ -22,13 +22,16 @@ export default function QuestionModifyForm() {
   const dispatch = useAppDispatch();
 
   const questionModifyFormState = useAppSelector(state => state.dialog.questionModifyFormState); // 글쓰기 취소 state
-  const createQuestionForm = useAppSelector(state => state.formContent.createQuestionForm); // 문의사항 폼 정보 state
+  const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
+  const currentQuestion = useAppSelector(state => state.question.currentQuestion); // 수정용 정보
 
   // 문의사항 변경하기
-  const putCreateQuestion = () => {
-    // 문의사항 변경 요청 (createQuestionForm)
-    navigate(-1);
-    alert('변경되었습니다.')
+  const putCreateQuestion = (questionId: number) => {
+    api.putQuestion(questionId, currentQuestion)
+      .then(res => {
+        navigate(-1);
+        alert('변경되었습니다.')
+      })
   };
 
   return (
@@ -45,7 +48,7 @@ export default function QuestionModifyForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('변경완료', putCreateQuestion)}
+        {EditButton('변경완료', () => putCreateQuestion(detail.id))}
         {EditButton('변경취소', () => dispatch(clickQuestionModifyFormGoBack()))}
       </Spacing>
 
