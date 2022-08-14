@@ -22,12 +22,15 @@ export default function QuestionForm() {
   const dispatch = useAppDispatch();
 
   const questionFormState = useAppSelector(state => state.dialog.questionFormState); // 글쓰기 취소 state
-  const createQuestionForm = useAppSelector(state => state.formContent.createQuestionForm); // 문의사항 폼 정보 state
+  const questionContent = useAppSelector(state => state.questionContent.questionContent); // 문의사항 폼 정보 state
 
   // 문의사항 작성하기
   const postCreateQuestion = () => {
-    api.postCreateQuestion(createQuestionForm)
-      .then(res => navigate('/question'));
+    api.postCreateQuestion(questionContent)
+      .then(res => {
+        alert('등록되었습니다.');
+        navigate('/question');
+      });
   };
 
   return (
@@ -44,9 +47,7 @@ export default function QuestionForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', () => {
-
-        })}
+        {EditButton('작성완료', postCreateQuestion)}
         {EditButton('취소', () => dispatch(clickQuestionFormGoBack()))}
       </Spacing>
 
@@ -67,7 +68,10 @@ export default function QuestionForm() {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={postCreateQuestion}>
+          <Button onClick={() => {
+            navigate(-1);
+            dispatch(clickQuestionFormGoBack());
+          }}>
             네
           </Button>
           <Button onClick={() => dispatch(clickQuestionFormGoBack())}>아니오</Button>

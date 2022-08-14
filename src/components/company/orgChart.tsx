@@ -1,14 +1,41 @@
-import React from 'react';
-import { useAppSelector } from '../../app/hooks';
+import React, { useEffect } from 'react';
+import { api } from '../../network/network';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { updateOrgChart, previewOrgChart } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
 
 export default function OrgChart() {
+  const dispatch = useAppDispatch();
+
+  const orgChartForm = new FormData(); // 조직도 (전송 데이터)
+
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const orgChart = useAppSelector(state => state.companyModify.orgChart); // 조직도 state (받아온 데이터)
+  const orgChartPreview = useAppSelector(state => state.companyModify.orgChartPreview); // 조직도 미리보기 state
 
   // 임시
   const image = '/images/organizationChart.png';
+
+  // 조직도 받아오기
+  useEffect(() => {
+    dispatch(updateOrgChart({ orgChart: image }));
+    dispatch(previewOrgChart({ path: orgChart.updatedServerFilename }));
+  }, []);
+
+  // 조직도 사진 업로드 -> 됐는지 확인해야함
+  const updateOrgChartImage = (event: any) => {
+    dispatch(previewOrgChart({ path: URL.createObjectURL(event.target.files[0]) }));
+    orgChartForm.append('file', event?.target.files[0]);
+    orgChartForm.append('where', 'orgChart');
+  };
+
+  // 조직도 변경 요청
+  const putOrgChart = () => {
+    api.putOrgChart(orgChartForm)
+      .then(res => console.log(res));
+  };
 
   return (
     <Box p={5}>
@@ -26,13 +53,35 @@ export default function OrgChart() {
       </Container>
 
       {/* 수정 버튼 */}
-      <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && EditButton('수정', console.log('#'))}
+      <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        {managerMode &&
+          <>
+            <label className='imageUploadButton' htmlFor='orgChartInput'>
+              이미지 가져오기
+              <input
+                type='file'
+                accept='image*'
+                id='orgChartInput'
+                onChange={event => updateOrgChartImage(event)} />
+            </label>
+            {EditButton('수정', putOrgChart)}
+          </>}
       </Spacing>
 
       {/* 조직도 */}
       <Box sx={{ textAlign: 'center' }}>
-        <img className='orgChartImage' src={image} alt='조직도' />
+        {managerMode ?
+          <Container
+            sx={{
+              border: '2px solid lightgrey',
+              borderRadius: 1,
+              alignItems: 'center',
+              minHeight: 300
+            }}>
+            <img src={orgChartPreview} alt='조직도' width={'80%'} />
+          </Container> :
+          <img className='companyImage' src={orgChart.updatedServerFilename} alt='조직도' />
+        }
       </Box>
     </Box>
   )

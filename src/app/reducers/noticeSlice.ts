@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+// 문의게시판 공지사항
+
 /**
  * file : 공지사항 첨부파일
  */

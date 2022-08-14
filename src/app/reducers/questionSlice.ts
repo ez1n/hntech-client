@@ -10,6 +10,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * questions : 문의 목록
  * faq : FAQ 목록
  * detail : 문의사항 상세보기 정보
+ * currentQuestion : 현재 문의사항 글 정보
  */
 
 /**
@@ -18,6 +19,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * getAllQuestions : 전체 문의 목록 받아오기
  * getFaq : 전체 FAQ 목록 받아오기
  * setDetailData : 문의사항 상세보기 정보 받아오기
+ * setCurrentQuestion : 현재 정보 받아오기 (수정용)
  * updateQuestionTitle : 문의사항 제목 수정
  * updateQuestionContent : 문의사항 내용 수정
  */
@@ -57,7 +59,8 @@ interface questionInitialState {
     title: string,
     updateTime: string,
     writer: string
-  }
+  },
+  currentQuestion: { title: string, content: string }
 };
 
 const QuestionInitialState: questionInitialState = {
@@ -68,7 +71,7 @@ const QuestionInitialState: questionInitialState = {
   questions: [],
   faq: [],
   detail: {
-    comments: [{ content: '안녕하세요', id: 0, sequence: 0, writer: '작성자' }, { content: '안녕하세요', id: 0, sequence: 0, writer: '관리자' }],
+    comments: [{ content: '안녕하세요', id: 1, sequence: 0, writer: '작성자' }, { content: '안녕하세요', id: 2, sequence: 0, writer: '관리자' }],
     content: '',
     createTime: '',
     id: 0,
@@ -76,7 +79,8 @@ const QuestionInitialState: questionInitialState = {
     title: '',
     updateTime: '',
     writer: ''
-  }
+  },
+  currentQuestion: { title: '', content: '' }
 };
 
 export const QuestionSlice = createSlice({
@@ -117,14 +121,21 @@ export const QuestionSlice = createSlice({
         }
       }>
     ) => { state.detail = action.payload.detail },
+    setCurrentQuestion: (
+      state,
+      action: PayloadAction<{ content: string, title: string }>
+    ) => {
+      state.currentQuestion.content = action.payload.content;
+      state.currentQuestion.title = action.payload.title;
+    },
     modifyQuestionTitle: (
       state,
       action: PayloadAction<{ title: string }>
-    ) => { state.detail.title = action.payload.title },
+    ) => { state.currentQuestion.title = action.payload.title },
     modifyQuestionContent: (
       state,
       action: PayloadAction<{ content: string }>
-    ) => { state.detail.content = action.payload.content },
+    ) => { state.currentQuestion.content = action.payload.content },
   }
 });
 
@@ -134,6 +145,7 @@ export const {
   getAllQuestions,
   getFaq,
   setDetailData,
+  setCurrentQuestion,
   modifyQuestionTitle,
   modifyQuestionContent } = QuestionSlice.actions;
 export default QuestionSlice.reducer;
