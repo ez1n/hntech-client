@@ -15,7 +15,7 @@ export default function Introduce() {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const introduce = useAppSelector(state => state.companyModify.introduce);
+  const introduce = useAppSelector(state => state.companyModify.introduce); // 인사말 state
 
   // 임시
   const comment = `
@@ -35,9 +35,10 @@ export default function Introduce() {
   const putIntroduce = () => {
     api.putIntroduce(introduce)
       .then(res => {
-        dispatch(updateIntroduce({ newIntroduce: res.data.newIntroduce }));
+        dispatch(updateIntroduce({ newIntroduce: res.newIntroduce }));
         alert('수정되었습니다.');
       })
+      .catch(error => console.log(error))
   };
 
   return (

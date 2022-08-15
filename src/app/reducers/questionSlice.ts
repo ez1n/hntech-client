@@ -10,15 +10,18 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * questions : 문의 목록
  * faq : FAQ 목록
  * detail : 문의사항 상세보기 정보
- * currentQuestion : 현재 문의사항 글 정보
+ * currentId: 현재 문의사항 id
+ * currentQuestion : 현재 문의사항 글 정보 (수정)
  */
 
 /**
- * postPassword : 비밀번호 전송 (자세히 보기 요청)
- * inputPassword : 비밀번호 입력
+ * inputPassword : 비밀번호 입력여부 (boolean)
+ * setPassword : 비밀번호 입력
+ * setCurrentId : 선택한 문의사항 id 업데이트
  * getAllQuestions : 전체 문의 목록 받아오기
  * getFaq : 전체 FAQ 목록 받아오기
  * setDetailData : 문의사항 상세보기 정보 받아오기
+ * updateCommentData : 댓글 업데이트
  * setCurrentQuestion : 현재 정보 받아오기 (수정용)
  * updateQuestionTitle : 문의사항 제목 수정
  * updateQuestionContent : 문의사항 내용 수정
@@ -29,6 +32,7 @@ interface questionInitialState {
   passwordState: boolean,
   totalPage: number,
   currentPage: number,
+  currentId: number,
   questions: {
     id: number,
     title: string,
@@ -68,6 +72,7 @@ const QuestionInitialState: questionInitialState = {
   passwordState: false,
   totalPage: 0,
   currentPage: 0,
+  currentId: 0,
   questions: [],
   faq: [],
   detail: {
@@ -92,6 +97,10 @@ export const QuestionSlice = createSlice({
       state,
       action: PayloadAction<{ password: string }>
     ) => { state.pw.password = action.payload.password },
+    setCurrentId: (
+      state,
+      action: PayloadAction<{ id: number }>
+    ) => { state.currentId = action.payload.id },
     getAllQuestions: (
       state,
       action: PayloadAction<{ questions: [], totalPage: number, currentPage: number }>
@@ -121,6 +130,12 @@ export const QuestionSlice = createSlice({
         }
       }>
     ) => { state.detail = action.payload.detail },
+    updateCommentData: (
+      state,
+      action: PayloadAction<{ comments: [] }>
+    ) => {
+      state.detail.comments = action.payload.comments
+    },
     setCurrentQuestion: (
       state,
       action: PayloadAction<{ content: string, title: string }>
@@ -142,8 +157,10 @@ export const QuestionSlice = createSlice({
 export const {
   inputPassword,
   setPassword,
+  setCurrentId,
   getAllQuestions,
   getFaq,
+  updateCommentData,
   setDetailData,
   setCurrentQuestion,
   modifyQuestionTitle,

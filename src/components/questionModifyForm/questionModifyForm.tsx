@@ -1,6 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { api } from '../../network/network';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickQuestionModifyFormGoBack } from '../../app/reducers/dialogSlice';
 import {
@@ -26,11 +26,11 @@ export default function QuestionModifyForm() {
   const currentQuestion = useAppSelector(state => state.question.currentQuestion); // 수정용 정보
 
   // 문의사항 변경하기
-  const putCreateQuestion = (questionId: number, currentQuestion: {}) => {
+  const putQuestion = (questionId: number, currentQuestion: {}) => {
     api.putQuestion(questionId, currentQuestion)
       .then(res => {
-        navigate(-1);
-        alert('변경되었습니다.')
+        alert('변경되었습니다.');
+        navigate('/question-detail');
       })
       .catch(error => console.log(error))
   };
@@ -49,7 +49,7 @@ export default function QuestionModifyForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('변경완료', () => putCreateQuestion(detail.id, currentQuestion))}
+        {EditButton('변경완료', () => putQuestion(detail.id, currentQuestion))}
         {EditButton('변경취소', () => dispatch(clickQuestionModifyFormGoBack()))}
       </Spacing>
 
@@ -71,7 +71,7 @@ export default function QuestionModifyForm() {
 
         <DialogActions>
           <Button onClick={() => {
-            navigate(-1);
+            navigate('/question-detail');
             dispatch(clickQuestionModifyFormGoBack());
           }}>
             네

@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // 문의게시판 공지사항, 문의사항
 
 /**
- * noticeContent : 문의게시판 공지사항
+ * noticeContent : 문의게시판 공지사항 (faq)
  * createQuestionForm : 문의사항
  */
 

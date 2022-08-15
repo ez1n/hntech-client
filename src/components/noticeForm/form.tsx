@@ -3,7 +3,7 @@ import '../style.css';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { addNoticeFile, deleteNoticeFile } from '../../app/reducers/noticeSlice';
+import { addNoticeFile, deleteNoticeFile, updateFiles } from '../../app/reducers/noticeSlice';
 import { updateNoticeTitle, updateNoticeContent } from '../../app/reducers/questionContentSlice';
 
 import {
@@ -19,10 +19,15 @@ export default function Form() {
 
   const file = useAppSelector(state => state.notice.file); // 파일 state
 
-  // 파일 이름 미리보기
   const selectFile = (event: any) => {
+    // 파일 이름 미리보기
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addNoticeFile({ item: event.target.files[i].name }))
+      dispatch(addNoticeFile({ item: event.target.files[i].name }));
+    }
+
+    // 전송할 파일 추가하기
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(updateFiles({ file: event.target.files[i] }));
     }
   };
 

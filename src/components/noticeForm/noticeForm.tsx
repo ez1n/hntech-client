@@ -1,4 +1,5 @@
 import React from 'react';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickNoticeFormGoBack } from '../../app/reducers/dialogSlice';
@@ -21,12 +22,21 @@ export default function NoticeForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const fileForm = new FormData();
+
   const noticeFormState = useAppSelector(state => state.dialog.noticeFormState); // 글쓰기 취소 state
   const noticeContent = useAppSelector(state => state.questionContent.noticeContent); // 공지사항 글쓰기 내용 state
+  const files = useAppSelector(state => state.notice.files); // 전송할 파일 state
 
   const postNotice = () => {
-    console.log(noticeContent); // 보내면됨
-    navigate('/question');
+    files.map(item => fileForm.append('files', item))
+    api.postUploadAllFiles(fileForm)
+      .then(res => {
+        console.log(resizeBy);
+        alert('등록되었습니다.');
+        console.log(noticeContent); // 보내기
+        navigate('/question');
+      })
   };
 
   return (

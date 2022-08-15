@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { previewHistory, updateHistory } from '../../app/reducers/companyModifySlice';
+import { previewHistory, updateCompanyData, updateHistory } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
@@ -14,11 +14,12 @@ export default function History() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const history = useAppSelector(state => state.companyModify.history); // 회사 연혁 state (받아온 데이터)
   const historyPreview = useAppSelector(state => state.companyModify.historyPreview); // 회사 연혁 미리보기 state
+  const newData = useAppSelector(state => state.companyModify.newData); // 업로드한 데이터
 
   // 임시
   const image = '/images/organizationChart.png';
 
-  // 조직도 받아오기
+  // 회사 연혁 받아오기
   useEffect(() => {
     dispatch(updateHistory({ history: image }));
     dispatch(previewHistory({ path: history.updatedServerFilename }));
@@ -27,14 +28,18 @@ export default function History() {
   // 회사 연혁 사진 업로드 -> 됐는지 확인해야함
   const updateHistoryImage = (event: any) => {
     dispatch(previewHistory({ path: URL.createObjectURL(event.target.files[0]) }));
-    historyForm.append('file', event?.target.files[0]);
-    historyForm.append('where', 'orgChart');
+    dispatch(updateCompanyData({ data: event.target.files[0] }))
   };
 
-  // 조직도 변경 요청
+  // 회사연혁 변경 요청
   const putHistory = () => {
+    historyForm.append('file', newData);
+    historyForm.append('where', 'companyHistory');
     api.putHistory(historyForm)
-      .then(res => console.log(res));
+      .then(res => {
+        console.log(res); // get 요청 어떻게 하는지?
+        alert('등록되었습니다.');
+      })
   };
 
   return (
