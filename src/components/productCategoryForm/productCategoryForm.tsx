@@ -1,8 +1,9 @@
 import React from 'react';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
-import { setSingleFile } from '../../app/reducers/fileSlice';
+import { addCategoryImage } from '../../app/reducers/productCategoryContentSlice';
 import {
   Button,
   Container,
@@ -16,8 +17,6 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import Form from './form';
-import { api } from '../../network/network';
-import { addCategoryImage } from '../../app/reducers/productCategoryContentSlice';
 
 export default function ProductCategoryForm() {
   const navigate = useNavigate();
@@ -28,8 +27,8 @@ export default function ProductCategoryForm() {
   const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
   const categoryName = useAppSelector(state => state.productCategoryContent.categoryName); // 카테고리 이름 state
   const categoryImage = useAppSelector(state => state.productCategoryContent.categoryImage); // 카테고리 이미지 state
-  const singleFile = useAppSelector(state => state.file.singleFile); // 업로드한 파일 정보
 
+  // 카테고리 등록
   const postProductCategory = () => {
     productCategoryForm.append('file', categoryImage);
     api.postUploadFile(productCategoryForm)
@@ -41,7 +40,7 @@ export default function ProductCategoryForm() {
         })
           .then(res => {
             alert('등록되었습니다.');
-            dispatch(addCategoryImage({ image: '' }));
+            dispatch(addCategoryImage({ image: null }));
             navigate('/product');
           })
           .catch(error => console.log(error))

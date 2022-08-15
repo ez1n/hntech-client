@@ -35,7 +35,7 @@ export const ProductCategoryContentSlice = createSlice({
   reducers: {
     addCategoryImage: (
       state,
-      action: PayloadAction<{ image: string }>
+      action: PayloadAction<{ image: string | null }>
     ) => { state.categoryImagePath = action.payload.image },
     deleteCategoryImage: (state) => { state.categoryImagePath = null },
     updateProductCategoryName: (
