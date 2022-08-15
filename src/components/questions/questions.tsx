@@ -31,10 +31,7 @@ export default function Questions() {
             console.log('customer')
         }}
         sx={{ textAlign: 'end' }}>
-        {managerMode ?
-          EditButton('글쓰기', () => navigate('/notice-form')) :
-          EditButton('문의하기', () => navigate('/question-form'))
-        }
+        {EditButton('글쓰기', () => navigate('/question-form'))}
       </Box>
 
       {/* 문의 목록 */}

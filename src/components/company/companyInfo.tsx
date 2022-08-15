@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { previewCompanyInfo, updateCompanyInfo } from '../../app/reducers/companyModifySlice';
+import { previewCompanyInfo, updateCompanyData, updateCompanyInfo } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
@@ -14,6 +14,7 @@ export default function CompanyInfo() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const ci = useAppSelector(state => state.companyModify.ci); // CI 소개 state (받아온 데이터)
   const ciPreview = useAppSelector(state => state.companyModify.ciPreview); // CI 소개 미리보기 state
+  const newData = useAppSelector(state => state.companyModify.newData); // 업로드한 데이터
 
   // 임시
   const image = '/images/organizationChart.png';
@@ -25,16 +26,20 @@ export default function CompanyInfo() {
   }, []);
 
   // CI 사진 업로드 -> 됐는지 확인해야함
-  const updateOrgChartImage = (event: any) => {
+  const updateCompanyInfoImage = (event: any) => {
     dispatch(previewCompanyInfo({ path: URL.createObjectURL(event.target.files[0]) }));
-    ciForm.append('file', event?.target.files[0]);
-    ciForm.append('where', 'orgChart');
+    dispatch(updateCompanyData({ data: event.target.files[0] }))
   };
 
   // CI 변경 요청
   const putCompanyInfo = () => {
+    ciForm.append('file', newData);
+    ciForm.append('where', 'ci');
     api.putCompanyInfo(ciForm)
-      .then(res => console.log(res));
+      .then(res => {
+        console.log(res); // get 요청 어떻게 하는지?
+        alert('등록되었습니다.');
+      })
   };
 
   return (
@@ -62,7 +67,7 @@ export default function CompanyInfo() {
                 type='file'
                 accept='image*'
                 id='orgChartInput'
-                onChange={event => updateOrgChartImage(event)} />
+                onChange={event => updateCompanyInfoImage(event)} />
             </label>
             {EditButton('수정', putCompanyInfo)}
           </>}

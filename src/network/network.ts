@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const SUCCESS = 200;
+const SUCCESS = 200
 const BAD_REQUEST = 400;
 
 class Api {
@@ -8,7 +8,8 @@ class Api {
 
   constructor() {
     this.api = axios.create({
-      baseURL: 'http://13.125.250.39',
+      // baseURL: 'http://13.125.250.39',
+      baseURL: 'https://c896-211-117-246-158.jp.ngrok.io',
     })
   }
 
@@ -42,6 +43,12 @@ class Api {
     return response.data;
   };
 
+  // FAQ 상세보기
+  async getFAQDetail(questionId: number) {
+    const response = await this.api.get(`/question/${questionId}`);
+    return response.data;
+  };
+
   // 문의사항 비밀번호
   async postPassword(questionId: number, password: {}) {
     const response = await this.api.post(`/question/${questionId}`, password);
@@ -72,7 +79,7 @@ class Api {
 
   // 댓글 등록
   async postCreateComment(questionId: number, comment: {}) {
-    const response = await this.api.post(`/comment/${questionId}`, comment);
+    const response = await this.api.post(`/question/${questionId}/comment`, comment);
     return response.data;
   };
 
@@ -137,7 +144,7 @@ class Api {
 
   // 조직도 변경
   async putOrgChart(orgChart: FormData) {
-    const response = await this.api.put(`/admin/image`, orgChart, {
+    const response = await this.api.post(`/admin/image`, orgChart, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -210,8 +217,8 @@ class Api {
   };
 
   // 다중 파일 전송
-  async postUploadAllFiles(file: []) {
-    const response = await this.api.post(`/file/upload-all`, file, {
+  async postUploadAllFiles(files: FormData) {
+    const response = await this.api.post(`/file/upload-all`, files, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

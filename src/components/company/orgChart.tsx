@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { updateOrgChart, previewOrgChart } from '../../app/reducers/companyModifySlice';
+import { updateOrgChart, previewOrgChart, updateCompanyData } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
@@ -14,6 +14,7 @@ export default function OrgChart() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const orgChart = useAppSelector(state => state.companyModify.orgChart); // 조직도 state (받아온 데이터)
   const orgChartPreview = useAppSelector(state => state.companyModify.orgChartPreview); // 조직도 미리보기 state
+  const newData = useAppSelector(state => state.companyModify.newData); // 업로드한 데이터
 
   // 임시
   const image = '/images/organizationChart.png';
@@ -27,14 +28,18 @@ export default function OrgChart() {
   // 조직도 사진 업로드 -> 됐는지 확인해야함
   const updateOrgChartImage = (event: any) => {
     dispatch(previewOrgChart({ path: URL.createObjectURL(event.target.files[0]) }));
-    orgChartForm.append('file', event?.target.files[0]);
-    orgChartForm.append('where', 'orgChart');
+    dispatch(updateCompanyData({ data: event.target.files[0] }))
   };
 
   // 조직도 변경 요청
   const putOrgChart = () => {
+    orgChartForm.append('file', newData);
+    orgChartForm.append('where', 'orgChart');
     api.putOrgChart(orgChartForm)
-      .then(res => console.log(res));
+      .then(res => {
+        console.log(res); // get 요청 어떻게 하는지?
+        alert('등록되었습니다.');
+      })
   };
 
   return (
@@ -56,13 +61,12 @@ export default function OrgChart() {
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {managerMode &&
           <>
-            <label className='imageUploadButton' htmlFor='orgChartInput'>
+            <label className='imageUploadButton' htmlFor='orgChartInput' onChange={event => updateOrgChartImage(event)}>
               이미지 가져오기
               <input
                 type='file'
                 accept='image*'
-                id='orgChartInput'
-                onChange={event => updateOrgChartImage(event)} />
+                id='orgChartInput' />
             </label>
             {EditButton('수정', putOrgChart)}
           </>}

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { setCurrentId, setDetailData } from '../../app/reducers/questionSlice';
 import {
   Box,
   Button,
@@ -22,7 +23,6 @@ import {
   inputPassword,
   getFaq
 } from '../../app/reducers/questionSlice';
-import { setDetailData } from '../../app/reducers/questionSlice';
 import ErrorIcon from '@mui/icons-material/Error';
 
 export default function QuestionItem() {
@@ -35,6 +35,7 @@ export default function QuestionItem() {
   const totalPage = useAppSelector(state => state.question.totalPage); // 전체 페이지 state
   const currentPage = useAppSelector(state => state.question.currentPage); // 현재 페이지 state
   const faq = useAppSelector(state => state.question.faq); // FAQ 목록 state
+  const currentId = useAppSelector(state => state.question.currentId); // 선택한 게시글 id state
 
   useEffect(() => {
     // 자주하는 질문 목록 받아오기
@@ -66,14 +67,23 @@ export default function QuestionItem() {
         dispatch(inputPassword());
         dispatch(setDetailData({ detail: res }));
         navigate('/question-detail');
-        console.log('question 정보', res)
+      })
+  };
+
+  // FAQ 상세보기
+  const getFAQDetail = (questionId: number) => {
+    api.getFAQDetail(questionId)
+      .then(res => {
+        dispatch(setDetailData({ detail: res }));
+        navigate('/question-detail');
       })
   };
 
   // 페이지 전환
-  const changePage = (event: React.ChangeEvent<unknown>, value: number) => {
-    api.getAllQuestions(value)
-      .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })));
+  const changePage = (value: number) => {
+    api.getAllQuestions(value - 1)
+      .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })))
+      .catch(error => console.log(error))
   };
 
   return (
@@ -93,7 +103,7 @@ export default function QuestionItem() {
           <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: 'rgba(46, 125, 50, 0.1)' }}>
             <List sx={{ flex: 0.1 }}><ErrorIcon sx={{ color: 'darkgreen' }} /></List>
             <List
-              onClick={() => navigate('/question-detail')}
+              onClick={() => getFAQDetail(item.id)}
               sx={{
                 flex: 0.5,
                 display: 'flex',
@@ -131,7 +141,10 @@ export default function QuestionItem() {
             <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46' }}>
               <List sx={{ flex: 0.1 }}>{item.id}</List>
               <List
-                onClick={() => dispatch(inputPassword())}
+                onClick={() => {
+                  dispatch(inputPassword());
+                  dispatch(setCurrentId({ id: item.id }));
+                }}
                 sx={{
                   flex: 0.5,
                   display: 'flex',
@@ -161,28 +174,6 @@ export default function QuestionItem() {
               <List sx={{ flex: 0.1 }}>{masking(item.writer)}</List>
               <List sx={{ flex: 0.2 }}>{item.createTime}</List>
             </Box>
-
-            {/* dialog */}
-            <Dialog
-              open={passwordState}
-              onClose={() => dispatch(inputPassword())}
-              sx={{ textAlign: 'center' }}>
-              <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
-              <DialogContent>
-                <TextField
-                  type={'password'}
-                  size={'small'}
-                  inputProps={{ maxLength: 4 }}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => dispatch(setPassword({ password: event.target.value }))} />
-              </DialogContent>
-
-              <DialogActions sx={{ justifyContent: 'center' }}>
-                <Button onClick={() => { openDetail(item.id) }}>
-                  확인
-                </Button>
-                <Button onClick={() => dispatch(inputPassword())}>취소</Button>
-              </DialogActions>
-            </Dialog>
           </>
         ))}
       </Box>
@@ -192,9 +183,31 @@ export default function QuestionItem() {
       <Stack>
         <Pagination
           count={totalPage}
-          onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(event, value)}
+          onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
           sx={{ m: '0 auto' }} />
       </Stack>
+
+      {/* dialog */}
+      <Dialog
+        open={passwordState}
+        onClose={() => dispatch(inputPassword())}
+        sx={{ textAlign: 'center' }}>
+        <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
+        <DialogContent>
+          <TextField
+            type={'password'}
+            size={'small'}
+            inputProps={{ maxLength: 4 }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => dispatch(setPassword({ password: event.target.value }))} />
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button onClick={() => { openDetail(currentId) }}>
+            확인
+          </Button>
+          <Button onClick={() => dispatch(inputPassword())}>취소</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 };

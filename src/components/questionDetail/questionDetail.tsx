@@ -25,6 +25,7 @@ export default function QuestionDetail() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
 

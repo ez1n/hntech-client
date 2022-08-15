@@ -18,10 +18,10 @@ export default function Products() {
   }, []);
 
   return (
-    <Container sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', ml: 25, mr: 25 }}>
       {/* default */}
       {!categorySelected &&
-        <Box sx={{ p: 5 }}>
+        <Box sx={{ p: 5, margin: 'auto', width: '100%', }}>
           {/* 카테고리 */}
           <ProductCategories />
         </Box>
@@ -31,9 +31,8 @@ export default function Products() {
       {categorySelected &&
         <>
           {/* 사이드 메뉴 */}
-          <Box sx={{ flex: 0.3 }}>
+          <Box sx={{ flex: 0.2 }}>
             <Box sx={{
-              ml: '50%',
               pt: 1,
               pb: 1,
               mt: 5,
@@ -45,12 +44,12 @@ export default function Products() {
           </Box>
 
           {/* 제품 목록 */}
-          <Box sx={{ flex: 0.7, pt: 5, mr: '10%' }}>
+          <Box sx={{ flex: 0.8, pt: 5 }}>
             <ProductItem />
           </Box>
         </>
       }
-    </Container>
+    </Box>
   )
 };
 

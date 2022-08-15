@@ -23,6 +23,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  */
 
 interface modeInitialState {
+  newData: string,
   introduce: { newIntroduce: string },
   history: { updatedServerFilename: string, where: string },
   historyPreview: string,
@@ -33,6 +34,7 @@ interface modeInitialState {
 };
 
 const CompanyModifyInitialState: modeInitialState = {
+  newData: '',
   introduce: { newIntroduce: '' },
   history: { updatedServerFilename: '', where: 'companyHistory' },
   historyPreview: '',
@@ -46,6 +48,10 @@ export const ModeSlice = createSlice({
   name: 'companyModify',
   initialState: CompanyModifyInitialState,
   reducers: {
+    updateCompanyData: (
+      state,
+      action: PayloadAction<{ data: string }>
+    ) => { state.newData = action.payload.data },
     updateIntroduce: (
       state,
       action: PayloadAction<{ newIntroduce: string }>
@@ -78,6 +84,7 @@ export const ModeSlice = createSlice({
 });
 
 export const {
+  updateCompanyData,
   updateIntroduce,
   updateHistory,
   previewHistory,

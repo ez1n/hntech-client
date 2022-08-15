@@ -47,30 +47,6 @@ export default function ProductItem() {
     {
       url: '/images/mainButtons/알람밸브조립.jpg',
       title: '알람밸브'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '유리벌브'
     }
   ];
 
@@ -91,14 +67,10 @@ export default function ProductItem() {
   };
 
   return (
-    <Box sx={{
-      p: 1,
-      display: 'flex',
-      flexWrap: 'wrap'
-    }}>
+    <Box sx={{ p: 1, display: 'flex', flexWrap: 'wrap' }}>
       {productList.map((item, index) => (
-        <Box key={index}>
-          <ContainerBox sx={{ m: 1 }}>
+        <TotalBox key={index}>
+          <ContainerBox>
             <ProductButton onClick={() => navigate('/product-detail')}>
               <img className='productImage' src={item.url} width='100%' alt='제품 이미지' />
               <Typography sx={{
@@ -148,19 +120,21 @@ export default function ProductItem() {
               <Button onClick={() => dispatch(clickProductItemGoBack())}>아니오</Button>
             </DialogActions>
           </Dialog>
-        </Box>
-      ))}
+        </TotalBox>
+      ))
+      }
 
-      {managerMode &&
+      {
+        managerMode &&
         <AddButton onClick={() => navigate('/product-form')}>
           <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
         </AddButton>
       }
-    </Box>
+    </Box >
   )
 };
 
-const ContainerBox = styled(Box)(({ theme }) => ({
+const TotalBox = styled(Box)(({ theme }) => ({
   // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('lg')]: {
     width: '30% !important'
@@ -171,7 +145,11 @@ const ContainerBox = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '90% !important'
   },
-  width: '18%',
+  width: '19%',
+  margin: 3,
+})) as typeof Box;
+
+const ContainerBox = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center'

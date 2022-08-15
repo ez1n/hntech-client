@@ -3,6 +3,7 @@ import { api } from '../../network/network';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { setComment } from '../../app/reducers/commentSlice';
 import { clickCommentGoBack } from '../../app/reducers/dialogSlice';
+import { updateCommentData } from '../../app/reducers/questionSlice';
 import {
   Box,
   Button,
@@ -30,12 +31,12 @@ export default function CommentForm() {
   const postComment = () => {
     api.postCreateComment(detail.id, comment)
       .then(res => {
-
-        alert('댓글이 등록되었습니다.');
+        console.log('comments', res.comments)
+        dispatch(updateCommentData({ comments: res.comments }));
         dispatch(clickCommentGoBack());
         commentRef.current.value = '';
       })
-      .catch(error => console.log(detail))
+      .catch(error => console.log(error))
   };
 
   return (
