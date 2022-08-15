@@ -15,6 +15,7 @@ export default function ModifyForm() {
   const dispatch = useAppDispatch();
 
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
+  const currentQuestion = useAppSelector(state => state.question.currentQuestion); // 현재 문의사항 정보
 
   return (
     <>
@@ -31,7 +32,7 @@ export default function ModifyForm() {
         }}>
           <TextField
             type='text'
-            value={detail.title}
+            value={currentQuestion.title}
             required={true}
             onChange={event => dispatch(modifyQuestionTitle({ title: event?.target.value }))}
             placeholder='제목을 입력해 주세요'
@@ -88,7 +89,7 @@ export default function ModifyForm() {
         <Box p={2}>
           <TextField
             type='text'
-            value={detail.content}
+            value={currentQuestion.content}
             multiline
             minRows={15}
             required={true}

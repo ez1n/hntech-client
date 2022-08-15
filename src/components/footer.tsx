@@ -1,22 +1,54 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './style.css';
+import { api } from '../network/network';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { clickManagerLogin, clickChangeMode } from '../app/reducers/managerModeSlice';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, TextField, Typography } from '@mui/material';
+import { clickManagerLogin, clickChangeMode, setFooter, setPassword } from '../app/reducers/managerModeSlice';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material';
 
 export default function Footer() {
   const dispatch = useAppDispatch();
 
-  const managerLogin = useAppSelector(state => state.manager.managerLogin);
-  const managerMode = useAppSelector(state => state.manager.managerMode);
+  const managerLogin = useAppSelector(state => state.manager.managerLogin); // 로그인 dialog state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
+  const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
 
   // 임시 데이터
   const data = {
     address: '경기도 용인시 처인구 모현읍 외개일로 20번길 9-14',
-    as: '000-000-000',
-    tel: '031-337-4005',
+    afterService: '000-000-000',
+    phone: '031-337-4005',
     fax: '031-337-4006'
   }
+
+  useEffect(() => {
+    // api.getFooter()
+    // .then(res => dispatch(setFooter({ footer: res })));
+
+    dispatch(setFooter({ footer: data }));
+  }, []);
+
+  // 로그인
+  const postLogin = () => {
+    api.postLogin(password)
+      .then(res => {
+        dispatch(clickChangeMode());
+        dispatch(clickManagerLogin());
+        console.log(res)
+      })
+      .catch(error => console.log('password', error))
+  };
 
   return (
     <Box sx={{ p: 3, pb: 0, mt: 10, backgroundColor: '#042709' }}>
@@ -39,20 +71,20 @@ export default function Footer() {
       <Stack direction='row' sx={{ width: '60%', m: 'auto' }}>
         <Box sx={{ width: 'max-content', flex: 0.7 }}>
           <Typography sx={{ color: '#FCFCFC', opacity: 0.8, mb: 1 }}>
-            본사 : {data.address}
+            본사 : {footer.address}
           </Typography>
 
           <Stack direction='row' spacing={3}>
             <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
-              A/S : {data.as}
+              A/S : {footer.afterService}
             </Typography>
 
             <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
-              TEL : {data.tel}
+              TEL : {footer.phone}
             </Typography>
 
             <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
-              FAX : {data.fax}
+              FAX : {footer.fax}
             </Typography>
           </Stack>
 
@@ -102,14 +134,11 @@ export default function Footer() {
 
         <DialogContent>
           <DialogContentText>비밀번호</DialogContentText>
-          <TextField type={'password'} inputProps={{ maxLength: 4 }} />
+          <TextField type={'password'} onChange={event => dispatch(setPassword({ password: event?.target.value }))} inputProps={{ maxLength: 4 }} />
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => {
-            dispatch(clickChangeMode());
-            dispatch(clickManagerLogin());
-          }}>
+          <Button onClick={postLogin}>
             로그인
           </Button>
           <Button onClick={() => dispatch(clickManagerLogin())}>취소</Button>

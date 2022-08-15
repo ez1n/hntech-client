@@ -26,12 +26,13 @@ export default function QuestionModifyForm() {
   const currentQuestion = useAppSelector(state => state.question.currentQuestion); // 수정용 정보
 
   // 문의사항 변경하기
-  const putCreateQuestion = (questionId: number) => {
+  const putCreateQuestion = (questionId: number, currentQuestion: {}) => {
     api.putQuestion(questionId, currentQuestion)
       .then(res => {
         navigate(-1);
         alert('변경되었습니다.')
       })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -48,7 +49,7 @@ export default function QuestionModifyForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('변경완료', () => putCreateQuestion(detail.id))}
+        {EditButton('변경완료', () => putCreateQuestion(detail.id, currentQuestion))}
         {EditButton('변경취소', () => dispatch(clickQuestionModifyFormGoBack()))}
       </Spacing>
 

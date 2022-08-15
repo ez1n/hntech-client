@@ -63,12 +63,12 @@ export default function ProductCategories() {
           </Container>
 
 
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', ml: '10%', mr: '10%' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
             {categories.map((value, index) => (
-              <ContainerBox sx={{ width: '23%', m: 1 }}>
-                <CategoryButton key={index} onClick={() => { dispatch(selectCategoryTrue()) }}>
+              <ContainerBox key={value.id} sx={{ m: 1 }}>
+                <CategoryButton onClick={() => { dispatch(selectCategoryTrue()) }}>
                   {/* 목록 버튼 */}
-                  <img className='categoryImage' src={value.image.originalFilename} alt='카테고리 이미지' />
+                  <img className='categoryImage' src={value.imageServerFilename} alt='카테고리 이미지' />
                   <Typography sx={{
                     width: '100%',
                     pt: 1,
@@ -92,7 +92,10 @@ export default function ProductCategories() {
                       <RemoveCircleRoundedIcon sx={{ fontSize: 30 }} />
                     </Button>
                     <Button
-                      onClick={() => dispatch(setCurrentCategory({ category: value }))}
+                      onClick={() => {
+                        dispatch(setCurrentCategory({ category: value }));
+                        navigate('/productCategory-modify');
+                      }}
                       sx={{ color: 'darkgreen' }}>
                       <CreateRoundedIcon sx={{ fontSize: 30 }} />
                     </Button>
@@ -196,14 +199,24 @@ const CategoryButton = styled(Button)(() => ({
   borderRadius: 10,
   transition: '0.5s',
   '&: hover': {
-    transform: 'scale(1.04)',
-    fontWeight: 'bold'
+    transform: 'scale(1.04)'
   }
 })) as typeof Button;
 
 // 추가 버튼
-const AddButton = styled(Button)(() => ({
+const AddButton = styled(Button)(({ theme }) => ({
+  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
+  [theme.breakpoints.down('lg')]: {
+    width: '30% !important'
+  },
+  [theme.breakpoints.down('md')]: {
+    width: '45% !important'
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '90% !important'
+  },
   margin: 10,
+  width: '23%',
   color: '#0F0F0F',
   backgroundColor: 'rgba(57, 150, 82, 0.1)',
   borderRadius: 10,
@@ -223,7 +236,6 @@ const MenuButton = styled(Button)(() => ({
   transition: '0.5s',
   '&:hover': {
     backgroundColor: 'rgba(57, 150, 82, 0.1)',
-    transform: 'scale(1.02)',
-    fontWeight: 'bold'
+    transform: 'scale(1.02)'
   }
 })) as typeof Button;

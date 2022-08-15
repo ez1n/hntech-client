@@ -71,7 +71,7 @@ const QuestionInitialState: questionInitialState = {
   questions: [],
   faq: [],
   detail: {
-    comments: [{ content: '안녕하세요', id: 1, sequence: 0, writer: '작성자' }, { content: '안녕하세요', id: 2, sequence: 0, writer: '관리자' }],
+    comments: [],
     content: '',
     createTime: '',
     id: 0,

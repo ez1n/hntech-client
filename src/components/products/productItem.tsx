@@ -97,9 +97,9 @@ export default function ProductItem() {
       flexWrap: 'wrap'
     }}>
       {productList.map((item, index) => (
-        <>
+        <Box key={index}>
           <ContainerBox sx={{ m: 1 }}>
-            <ProductButton key={index} onClick={() => navigate('/product-detail')}>
+            <ProductButton onClick={() => navigate('/product-detail')}>
               <img className='productImage' src={item.url} width='100%' alt='제품 이미지' />
               <Typography sx={{
                 width: '100%',
@@ -148,7 +148,7 @@ export default function ProductItem() {
               <Button onClick={() => dispatch(clickProductItemGoBack())}>아니오</Button>
             </DialogActions>
           </Dialog>
-        </>
+        </Box>
       ))}
 
       {managerMode &&

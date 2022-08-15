@@ -24,6 +24,7 @@ import QuestionModifyForm from './components/questionModifyForm/questionModifyFo
 import NoticeModifyForm from './components/noticeModifyForm/noticeModifyForm';
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
 import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
+import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
 
 export default function App() {
   const managerMode = useAppSelector(state => state.manager.managerMode);
@@ -61,6 +62,10 @@ export default function App() {
 
           <Route path='/productCategory-form' element={
             managerMode && <ProductCategoryForm />
+          }></Route>
+
+          <Route path='/productCategory-modify' element={
+            managerMode && <ProductCategoryModifyForm />
           }></Route>
 
           <Route path='/data' element={

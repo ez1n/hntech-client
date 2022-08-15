@@ -39,51 +39,10 @@ export default function Header() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const categories = useAppSelector(state => state.productCategory.categories); // 제품 카테고리 state
 
-  // 임시데이터
-  const data = [
-    {
-      categoryName: '건식퓨지블링크',
-      id: 1,
-      image: {
-        id: 1,
-        originalFilename: '/images/mainButtons/건식퓨지블링크.jpg',
-        serverFilename: ''
-      }
-    },
-    {
-      categoryName: '유리벌브',
-      id: 2,
-      image: {
-        id: 2,
-        originalFilename: '/images/mainButtons/알람밸브조립.jpg',
-        serverFilename: ''
-      }
-    },
-    {
-      categoryName: '스프링클러',
-      id: 3,
-      image: {
-        id: 3,
-        originalFilename: '/images/mainButtons/알람밸브조립.jpg',
-        serverFilename: ''
-      }
-    },
-    {
-      categoryName: '유리벌브',
-      id: 3,
-      image: {
-        id: 3,
-        originalFilename: '/images/mainButtons/알람밸브조립.jpg',
-        serverFilename: ''
-      }
-    },
-  ];
-
-  // 카테고리 목록 받아오기
+  //  제품 카테고리 목록 받아오기
   useEffect(() => {
-    // api.getAllCategories()
-    // .then(res => dispatch(setAllCategories({categories: res.data})));
-    dispatch(setAllCategories({ categories: data }));
+    api.getAllCategories()
+      .then(res => dispatch(setAllCategories({ categories: res.categories })));
   }, []);
 
   return (
@@ -190,7 +149,6 @@ export default function Header() {
           >
             제품소개
           </MainMenu>
-          {/* 통신으로 목록 받아오기 */}
           {openProduct &&
             <Paper
               sx={{
@@ -200,7 +158,7 @@ export default function Header() {
               }}>
               {categories.map((item, index) => (
                 <DropdownMenu
-                  key={index}
+                  key={item.id}
                   onClick={() => {
                     navigate('/product');
                     dispatch(selectCategoryTrue());

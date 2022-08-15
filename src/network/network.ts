@@ -8,9 +8,15 @@ class Api {
 
   constructor() {
     this.api = axios.create({
-      baseURL: 'https://e96d-211-117-246-158.jp.ngrok.io',
+      baseURL: 'http://13.125.250.39',
     })
   }
+
+  /* 로그인 */
+  async postLogin(password: {}) {
+    const response = await this.api.post(`/admin/login`, password);
+    return response.data;
+  };
 
   /* 문의사항 */
 
@@ -42,8 +48,6 @@ class Api {
     return response.data;
   };
 
-  ////////////////////// 여기서부터 다시 해야댐 //////////////////////
-
   // 문의사항 글 삭제
   async deleteQuestion(questionId: number) {
     const response = await this.api.delete(`/question/${questionId}`);
@@ -66,33 +70,48 @@ class Api {
     console.log(response.data);
   };
 
-  // 댓글을 지금 목록 받아올때 한번에 정보를 주는데
-  // 그렇게 하면 업데이트 하는 경우에 받아올 방법이 없음
-  // 게시글 들어갔을 때 한번에 주는게 더 나을거같은데
-  // 근데 이거말고도 다른 애들도 이런 이슈가 있음 예를 들면 문의사항 상세정보 라던가..
   // 댓글 등록
   async postCreateComment(questionId: number, comment: {}) {
-    const response = await this.api.post(`/comment${questionId}`, comment);
+    const response = await this.api.post(`/comment/${questionId}`, comment);
     return response.data;
   };
 
   // 댓글 수정 => 댓글을 개별적으로 수정할 수 있게 하는 방법을 모르겠슴..
   async putCreateComment(commentId: number, comment: {}) {
-    const response = await this.api.put(`/comment${commentId}`, comment);
+    const response = await this.api.put(`/comment/${commentId}`, comment);
     return response.data;
   };
 
   // 댓글 삭제
   async deleteComment(commentId: number,) {
-    const response = await this.api.delete(`/comment${commentId}`);
+    const response = await this.api.delete(`/comment/${commentId}`);
     return response.data;
   };
 
   /* 관리자 정보 */
 
-  // 관리자 정보 변경
-  async putManagerData() {
-    const response = await this.api.put('',);
+  // 이메일, 비밀번호 받아오기
+  //이건 혹시 그냥 post로 보내기만 하는건감?
+  async getMail(mail: {}) {
+    const response = await this.api.get('');
+    return response.data;
+  };
+
+  // 이메일, 비밀번호 변경
+  async putUpdateMail(mail: {}) {
+    const response = await this.api.put(`/admin/mail`, mail);
+    return response.data;
+  };
+
+  // footer 정보 받아오기
+  async getFooter() {
+    const response = await this.api.put(`/admin/footer`);
+    return response.data;
+  };
+
+  // footer 정보 변경
+  async putUpdateFooter(footer: {}) {
+    const response = await this.api.put(`/admin/footer`, footer);
     return response.data;
   };
 
@@ -112,7 +131,7 @@ class Api {
 
   // 조직도 받아오기
   async getOrgChart() {
-    const response = await this.api.get('');
+    const response = await this.api.get(``);
     return response.data;
   }
 
@@ -154,29 +173,51 @@ class Api {
     return response.data;
   };
 
-  // 카테고리 목록 받아오기
+  // 제품 카테고리 목록 받아오기
   async getAllCategories() {
-    const response = await this.api.get(`/category`);
+    const response = await this.api.get(`/category/product`);
     return response.data;
   };
 
   // 카테고리 등록
-  async postAllCategories() {
-    const response = await this.api.post(`/category`);
+  async postCreateCategory(category: {}) {
+    const response = await this.api.post(`/category`, category);
     return response.data;
   };
 
   // 카테고리 수정
-  async putAllCategories(categoryId: number) {
-    const response = await this.api.put(`/category${categoryId}`);
+  async putUpdateCategory(categoryId: number, categoryForm: FormData) {
+    const response = await this.api.put(`/category/${categoryId}`, categoryForm);
     return response.data;
   };
 
   // 카테고리 삭제
   async deleteCategory(categoryId: number) {
-    const response = await this.api.delete(`/category${categoryId}`);
+    const response = await this.api.delete(`/category/${categoryId}`);
     return response.data;
   };
+
+  /* 파일 등록 */
+
+  // 단일 파일 전송
+  async postUploadFile(file: FormData) {
+    const response = await this.api.post(`/file/upload`, file, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  };
+
+  // 다중 파일 전송
+  async postUploadAllFiles(file: []) {
+    const response = await this.api.post(`/file/upload-all`, file, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  }
 };
 
 export const api = new Api();

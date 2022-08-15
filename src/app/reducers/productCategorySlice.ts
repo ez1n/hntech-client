@@ -19,20 +19,14 @@ interface productCategoryInitialState {
   categories: {
     categoryName: string,
     id: number,
-    image: {
-      id: number,
-      originalFilename: string,
-      serverFilename: string
-    }
+    imageServerFilename: string,
+    sequence: number
   }[],
   currentCategory: {
     categoryName: string,
     id: number,
-    image: {
-      id: number,
-      originalFilename: string,
-      serverFilename: string
-    }
+    imageServerFilename: string,
+    sequence: number
   },
   selected: boolean
 };
@@ -42,11 +36,8 @@ const ProductCategoryInitialState: productCategoryInitialState = {
   currentCategory: {
     categoryName: '',
     id: 0,
-    image: {
-      id: 0,
-      originalFilename: '',
-      serverFilename: ''
-    }
+    imageServerFilename: '',
+    sequence: 0
   },
   selected: false
 };
@@ -61,11 +52,8 @@ export const ProductCategorySlice = createSlice({
         categories: {
           categoryName: string,
           id: number,
-          image: {
-            id: number,
-            originalFilename: string,
-            serverFilename: string
-          }
+          imageServerFilename: string,
+          sequence: number
         }[]
       }>
     ) => { state.categories = action.payload.categories },
@@ -75,14 +63,19 @@ export const ProductCategorySlice = createSlice({
         category: {
           categoryName: string,
           id: number,
-          image: {
-            id: number,
-            originalFilename: string,
-            serverFilename: string
-          }
+          imageServerFilename: string,
+          sequence: number
         }
       }>
     ) => { state.currentCategory = action.payload.category },
+    updateCurrentCategoryName: (
+      state,
+      action: PayloadAction<{ categoryName: string }>
+    ) => { state.currentCategory.categoryName = action.payload.categoryName },
+    updateCurrentCategoryImage: (
+      state,
+      action: PayloadAction<{ image: string }>
+    ) => { state.currentCategory.imageServerFilename = action.payload.image },
     selectCategoryTrue: (state) => { state.selected = true },
     selectCategoryFalse: (state) => { state.selected = false },
   }
@@ -91,6 +84,8 @@ export const ProductCategorySlice = createSlice({
 export const {
   setAllCategories,
   setCurrentCategory,
+  updateCurrentCategoryName,
+  updateCurrentCategoryImage,
   selectCategoryTrue,
   selectCategoryFalse } = ProductCategorySlice.actions;
 export default ProductCategorySlice.reducer;

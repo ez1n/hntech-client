@@ -1,14 +1,24 @@
-import React from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { Box } from '@mui/material';
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { Box, Container } from '@mui/material';
 import ProductCategories from './productCategories';
 import ProductItem from './productItem';
+import { setAllCategories } from '../../app/reducers/productCategorySlice';
+import { api } from '../../network/network';
 
 export default function Products() {
+  const dispatch = useAppDispatch();
+
   const categorySelected = useAppSelector(state => state.productCategory.selected); // 카테고리 선택 state
 
+  //  제품 카테고리 목록 받아오기
+  useEffect(() => {
+    api.getAllCategories()
+      .then(res => dispatch(setAllCategories({ categories: res.categories })));
+  }, []);
+
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Container sx={{ display: 'flex' }}>
       {/* default */}
       {!categorySelected &&
         <Box sx={{ p: 5 }}>
@@ -40,7 +50,7 @@ export default function Products() {
           </Box>
         </>
       }
-    </Box>
+    </Container>
   )
 };
 
