@@ -16,6 +16,7 @@ import archiveCategorySlice from './reducers/archiveCategorySlice';
 import archiveFileSlice from './reducers/archiveFileSlice';
 import noticeSlice from './reducers/noticeSlice';
 import productCategoryContentSlice from './reducers/productCategoryContentSlice';
+import fileSlice from './reducers/fileSlice';
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ export const store = configureStore({
     notice: noticeSlice,
     questionContent: questionContentSlice,
     archiveCategory: archiveCategorySlice,
+    file: fileSlice
   }
 });
 

@@ -37,19 +37,20 @@ export default function QuestionItem() {
   const faq = useAppSelector(state => state.question.faq); // FAQ 목록 state
 
   useEffect(() => {
-    // 문의 목록 받아오기
-    api.getAllQuestions(0)
-      .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })));
-
     // 자주하는 질문 목록 받아오기
     api.getFAQ()
-      .then(res => { dispatch(getFaq({ faq: res.questions })) });
-  }, [])
+      .then(res => dispatch(getFaq({ faq: res.questions })))
+      .catch(error => console.log('faq error', error))
+    // 문의 목록 받아오기
+    api.getAllQuestions(0)
+      .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })))
+      .catch(error => console.log('error', error))
+  }, []);
 
   // 이름 마스킹
   const masking = (name: string) => {
     if (name === '관리자') {
-      return name
+      return name;
     }
     switch (name.length) {
       case 2: return name.replace(name.substring(1,), "*");
@@ -63,8 +64,9 @@ export default function QuestionItem() {
     api.postPassword(id, pw)
       .then(res => {
         dispatch(inputPassword());
-        dispatch(setDetailData(res));
+        dispatch(setDetailData({ detail: res }));
         navigate('/question-detail');
+        console.log('question 정보', res)
       })
   };
 

@@ -30,10 +30,12 @@ export default function CommentForm() {
   const postComment = () => {
     api.postCreateComment(detail.id, comment)
       .then(res => {
+
         alert('댓글이 등록되었습니다.');
         dispatch(clickCommentGoBack());
         commentRef.current.value = '';
-      });
+      })
+      .catch(error => console.log(detail))
   };
 
   return (

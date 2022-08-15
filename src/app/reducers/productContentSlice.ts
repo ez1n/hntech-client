@@ -18,7 +18,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  */
 
 interface productContentInitialState {
-  productContent: { name: string, productImage: FormData | null, description: string, gradeImage: FormData | null },
+  productContent: {
+    name: string,
+    productImage: FormData | null,
+    description: string,
+    gradeImage: FormData | null
+  },
   productPath: string[],
   gradePath: string[]
 };

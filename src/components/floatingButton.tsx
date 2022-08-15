@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
+import { api } from '../network/network';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { clickEditGoBack } from '../app/reducers/dialogSlice';
 import {
   updateManagerPassword,
-  updateManagerSentMail,
-  updateManagerReceivedMail,
-  updateManagerTime
+  updateManagerEmail,
+  updateManagerTime,
+  updateAddress,
+  updateAfterService,
+  updateFax,
+  updatePhone,
+  setFooter
 } from '../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -25,16 +30,28 @@ export default function FloatingButton() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
   const editState = useAppSelector(state => state.dialog.editState); // dialog open state
-  const managerData = useAppSelector(state => state.manager.managerData); // 관리자 정보 state
+  const mail = useAppSelector(state => state.manager.mail); // 관리자 정보 state
+  const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
 
   useEffect(() => {
     // 관리자 정보 받아오기
     // dispatch(setManagerData());
+
+    // footer 정보 받아오기
+    // api.getFooter()
+    //   .then(res => dispatch(setFooter({ footer: res })));
   }, []);
 
-  // 관리자 정보 변경
+  // 이메일, 비밀번호 정보 변경
   const putManagerData = () => {
-    console.log(managerData);
+    // api.putUpdateMail(mail)
+    //   .then(res => alert('변경되었습니다.'))
+  };
+
+  // footer 정보 변경
+  const putUpdateFooter = () => {
+    // api.putUpdateFooter(footer)
+    //   .then(res => alert('변경되었습니다.'))
   };
 
   return (
@@ -65,40 +82,35 @@ export default function FloatingButton() {
               textAlign: 'center',
               width: 500
             }}>
-            관리자 정보 수정
+            관리자 정보
           </Typography>
 
-          <ContentContainer direction='row' sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>
+          <ContentContainer
+            direction='row'
+            sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <TitleBox>비밀번호</TitleBox>
             <TextField
               type={'password'}
-              value={managerData.password}
+              value={mail.password}
               onChange={event => dispatch(updateManagerPassword({ password: event?.target.value }))}
               placeholder={'비밀번호'} />
           </ContentContainer>
 
           <ContentContainer direction='row'>
-            <TitleBox>발신 메일</TitleBox>
-            <TextField
-              type={'email'}
-              value={managerData.sentMail}
-              onChange={event => dispatch(updateManagerSentMail({ sentMail: event?.target.value }))}
-              placeholder={'발신 메일 주소'} />
-          </ContentContainer>
-
-          <ContentContainer direction='row' sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <TitleBox>수신 메일</TitleBox>
             <TextField
               type={'email'}
-              value={managerData.receivedMail}
-              onChange={event => dispatch(updateManagerReceivedMail({ receivedMail: event?.target.value }))}
-              placeholder={'수신 메일 주소'} />
+              value={mail.email}
+              onChange={event => dispatch(updateManagerEmail({ email: event?.target.value }))}
+              placeholder={'메일 주소'} />
           </ContentContainer>
 
-          <ContentContainer direction='row'>
+          <ContentContainer
+            direction='row'
+            sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <TitleBox>메일 발송 시간</TitleBox>
             <Select
-              defaultValue={managerData.time}
+              defaultValue={mail.time}
               onChange={event => dispatch(updateManagerTime({ time: event?.target.value }))}
               MenuProps={{
                 PaperProps: { sx: { maxHeight: 300 } }
@@ -121,12 +133,69 @@ export default function FloatingButton() {
               <MenuList value='01:00'>01:00</MenuList><MenuList value='02:00'>02:00</MenuList>
               <MenuList value='03:00'>03:00</MenuList><MenuList value='04:00'>04:00</MenuList>
             </Select>
+
+            <Stack direction='row' sx={{ width: '25%', justifyContent: 'flex-end' }}>
+              {EditButton('변경', putManagerData)}
+            </Stack>
+          </ContentContainer>
+
+          <Typography
+            variant='h5'
+            sx={{
+              pt: 3,
+              pb: 3,
+              textAlign: 'center',
+              width: 500
+            }}>
+            회사 정보
+          </Typography>
+
+          <ContentContainer
+            direction='row'
+            sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
+            <TitleBox>본사 주소</TitleBox>
+            <TextField
+              type={'text'}
+              multiline
+              value={footer.address}
+              onChange={event => dispatch(updateAddress({ address: event?.target.value }))}
+              placeholder={'본사 주소'}
+              sx={{ width: '60%' }} />
+          </ContentContainer>
+
+          <ContentContainer direction='row'>
+            <TitleBox>A/S</TitleBox>
+            <TextField
+              type={'text'}
+              value={footer.afterService}
+              onChange={event => dispatch(updateAfterService({ afterService: event?.target.value }))}
+              placeholder={'A/S'} />
+          </ContentContainer>
+
+          <ContentContainer direction='row'>
+            <TitleBox>TEL</TitleBox>
+            <TextField
+              type={'text'}
+              value={footer.phone}
+              onChange={event => dispatch(updatePhone({ phone: event?.target.value }))}
+              placeholder={'TEL'} />
+          </ContentContainer>
+
+          <ContentContainer
+            direction='row'
+            sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }} >
+            <TitleBox>FAX</TitleBox>
+            <TextField
+              type={'text'}
+              value={footer.fax}
+              onChange={event => dispatch(updateFax({ fax: event?.target.value }))}
+              placeholder={'FAX'} />
           </ContentContainer>
         </Stack>
 
-        <Stack direction='row' sx={{ justifyContent: 'center', mt: 2 }}>
-          {EditButton('변경', putManagerData)}
-          {EditButton('취소', () => dispatch(clickEditGoBack()))}
+        <Stack direction='row' sx={{ justifyContent: 'center' }}>
+          {EditButton('변경', putUpdateFooter)}
+          {EditButton('나가기', () => dispatch(clickEditGoBack()))}
         </Stack>
       </Drawer>
     </>

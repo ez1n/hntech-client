@@ -26,8 +26,8 @@ export default function Introduce() {
 
   // 인사말 받아오기
   useEffect(() => {
-    // api.getIntroduce()
-    //   .then(res => dispatch(updateIntroduce({ newIntroduce: res.data.newIntroduce })));
+    api.getIntroduce()
+      .then(res => dispatch(updateIntroduce({ newIntroduce: res.data.newIntroduce })));
     dispatch(updateIntroduce({ newIntroduce: comment }));
   }, []);
 

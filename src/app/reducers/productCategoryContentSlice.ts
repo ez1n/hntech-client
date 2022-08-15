@@ -6,6 +6,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * categoryImagePath : 카테고리 이미지 미리보기
  * categoryName : 카테고리 이름
  * categoryImage : 카테고리 이미지 정보
+ * showInMain : 메인 카테고리
  */
 
 /**
@@ -13,6 +14,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * deleteCategoryImage : 이미지 삭제
  * updateProductCategoryName : 카테고리 이름 입력
  * updateProductCategoryImage : 카테고리 이미지 입력
+ * updateShowInMain : 메인 카테고리 선택
  */
 
 interface productCategoryContentInitialState {
@@ -24,7 +26,7 @@ interface productCategoryContentInitialState {
 const ProductCategoryContentInitialState: productCategoryContentInitialState = {
   categoryImagePath: null,
   categoryName: '',
-  categoryImage: ''
+  categoryImage: '',
 };
 
 export const ProductCategoryContentSlice = createSlice({
@@ -43,7 +45,7 @@ export const ProductCategoryContentSlice = createSlice({
     updateProductCategoryImage: (
       state,
       action: PayloadAction<{ categoryImage: string }>
-    ) => { state.categoryImage = action.payload.categoryImage }
+    ) => { state.categoryImage = action.payload.categoryImage },
   }
 });
 

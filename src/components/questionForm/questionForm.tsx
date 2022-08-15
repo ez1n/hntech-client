@@ -30,7 +30,8 @@ export default function QuestionForm() {
       .then(res => {
         alert('등록되었습니다.');
         navigate('/question');
-      });
+      })
+      .catch(error => console.log('error', error))
   };
 
   return (

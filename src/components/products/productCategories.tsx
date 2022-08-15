@@ -65,10 +65,10 @@ export default function ProductCategories() {
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', ml: '10%', mr: '10%' }}>
             {categories.map((value, index) => (
-              <ContainerBox sx={{ width: '23%', m: 1 }}>
-                <CategoryButton key={index} onClick={() => { dispatch(selectCategoryTrue()) }}>
+              <ContainerBox key={value.id} sx={{ width: '23%', m: 1 }}>
+                <CategoryButton onClick={() => { dispatch(selectCategoryTrue()) }}>
                   {/* 목록 버튼 */}
-                  <img className='categoryImage' src={value.image.originalFilename} alt='카테고리 이미지' />
+                  <img className='categoryImage' src={value.imageServerFilename} alt='카테고리 이미지' />
                   <Typography sx={{
                     width: '100%',
                     pt: 1,
@@ -92,7 +92,10 @@ export default function ProductCategories() {
                       <RemoveCircleRoundedIcon sx={{ fontSize: 30 }} />
                     </Button>
                     <Button
-                      onClick={() => dispatch(setCurrentCategory({ category: value }))}
+                      onClick={() => {
+                        dispatch(setCurrentCategory({ category: value }));
+                        navigate('/productCategory-modify');
+                      }}
                       sx={{ color: 'darkgreen' }}>
                       <CreateRoundedIcon sx={{ fontSize: 30 }} />
                     </Button>
