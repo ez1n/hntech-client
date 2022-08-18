@@ -90,14 +90,14 @@ export default function QuestionDetail() {
       </Spacing>
 
       {/* 댓글 */}
-      {comments.map((item, index) => (
-        <Comment item={item} index={index} />
+      {comments.map((item) => (
+        <Comment key={item.id} item={item} questionId={detail.id} />
       ))}
 
       <Spacing />
 
       {/* 댓글 폼 */}
-      <CommentForm />
+      <CommentForm id={detail.id} />
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal

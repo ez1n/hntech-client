@@ -84,14 +84,14 @@ class Api {
   };
 
   // 댓글 수정 
-  async putCreateComment(commentId: number, comment: {}) {
-    const response = await this.api.put(`/comment/${commentId}`, comment);
+  async putCreateComment(questionId: number, commentId: number, comment: {}) {
+    const response = await this.api.put(`/question/${questionId}/comment/${commentId}`, comment);
     return response.data;
   };
 
   // 댓글 삭제
-  async deleteComment(commentId: number,) {
-    const response = await this.api.delete(`/comment/${commentId}`);
+  async deleteComment(questionId: number, commentId: number) {
+    const response = await this.api.delete(`/question/${questionId}/comment/${commentId}`);
     return response.data;
   };
 

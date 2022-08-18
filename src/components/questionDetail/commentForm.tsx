@@ -15,21 +15,25 @@ import {
   Stack,
   TextField
 } from '@mui/material';
+import CancelModal from '../cancelModal';
 
-export default function CommentForm() {
+interface propsType {
+  id: number
+}
+
+export default function CommentForm({ id }: propsType) {
   const dispatch = useAppDispatch();
 
   const commentRef: React.Ref<any> = useRef();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
   const commentState = useAppSelector(state => state.dialog.commentState); // 댓글 입력 취소  state
   const comment = useAppSelector(state => state.comment.comment); // 댓글 state
   const writer = managerMode ? '관리자' : '작성자'; // writer
 
   // 댓글 등록
   const postComment = () => {
-    api.postCreateComment(detail.id, comment)
+    api.postCreateComment(id, comment)
       .then(res => {
         console.log('comments', res.comments)
         dispatch(updateCommentData({ comments: res.comments }));
@@ -59,25 +63,14 @@ export default function CommentForm() {
       </Box>
 
       {/* 댓글 등록 Dialog */}
-      <Dialog
-        open={commentState}
-        onClose={() => dispatch(clickCommentGoBack())}>
-        <DialogTitle>
-          댓글 등록
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            작성하신 댓글을 등록하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
+      <CancelModal
+        openState={commentState}
+        title={'댓글 등록'}
+        text1={'작성하신 댓글을 등록하시겠습니까?'}
+        text2={''}
+        yesAction={postComment}
+        closeAction={() => dispatch(clickCommentGoBack())} />
 
-        <DialogActions>
-          <Button onClick={postComment}>
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickCommentGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
     </Stack>
   )
 }

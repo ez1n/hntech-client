@@ -82,6 +82,7 @@ export default function Form() {
         </Box>
 
         {/* 정보 */}
+        {/* 공지사항 */}
         <Box sx={{
           display: 'flex',
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
