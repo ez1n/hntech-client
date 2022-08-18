@@ -50,12 +50,12 @@ interface archiveInitialState {
     title: string,
   },
   archiveModifyContent: {
-    id: number,
-    title: string,
-    createDate: string,
-    content: string,
     categoryName: string,
+    content: string,
+    createTime: string,
+    id: number,
     notice: string
+    title: string,
   },
   archiveContent: {
     categoryName: string,
@@ -71,7 +71,7 @@ const ArchiveInitialState: archiveInitialState = {
   archives: [],
   notice: [],
   detail: { categoryName: '', content: '', createTime: '', id: 0, notice: '', title: '', },
-  archiveModifyContent: { id: 0, title: '', createDate: '', content: '', categoryName: '', notice: '' },
+  archiveModifyContent: { categoryName: '', content: '', createTime: '', id: 0, notice: '', title: '', },
   archiveContent: { categoryName: '', content: '', notice: 'false', title: '' }
 };
 
@@ -124,12 +124,12 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         detail: {
-          id: number,
-          title: string,
-          createDate: string,
-          content: string,
           categoryName: string,
+          content: string,
+          createTime: string,
+          id: number,
           notice: string
+          title: string,
         }
       }>
     ) => { state.archiveModifyContent = action.payload.detail },
