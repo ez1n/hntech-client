@@ -3,19 +3,11 @@ import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickQuestionModifyFormGoBack } from '../../app/reducers/dialogSlice';
-import {
-  Container,
-  styled,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Typography
-} from '@mui/material';
+import { setDetailData } from '../../app/reducers/questionSlice';
+import { Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import ModifyForm from './modifyForm';
+import CancelModal from '../cancelModal';
 
 export default function QuestionModifyForm() {
   const navigate = useNavigate();
@@ -29,7 +21,7 @@ export default function QuestionModifyForm() {
   const putQuestion = (questionId: number, currentQuestion: {}) => {
     api.putQuestion(questionId, currentQuestion)
       .then(res => {
-        alert('변경되었습니다.');
+        dispatch(setDetailData(res));
         navigate('/question-detail');
       })
       .catch(error => console.log(error))
@@ -54,31 +46,16 @@ export default function QuestionModifyForm() {
       </Spacing>
 
       {/* 변경취소 Dialog */}
-      <Dialog
-        open={questionModifyFormState}
-        onClose={() => dispatch(clickQuestionModifyFormGoBack())}>
-        <DialogTitle>
-          변경 취소
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            변경중인 내용이 사라집니다.
-          </DialogContentText>
-          <DialogContentText>
-            취소하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => {
-            navigate('/question-detail');
-            dispatch(clickQuestionModifyFormGoBack());
-          }}>
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickQuestionModifyFormGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={questionModifyFormState}
+        title={'변경 취소'}
+        text1={'변경중인 내용이 사라집니다.'}
+        text2={'취소하시겠습니까?'}
+        yesAction={() => {
+          navigate('/question-detail');
+          dispatch(clickQuestionModifyFormGoBack());
+        }}
+        closeAction={() => dispatch(clickQuestionModifyFormGoBack())} />
     </Container >
   )
 };

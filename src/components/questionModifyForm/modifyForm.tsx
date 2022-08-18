@@ -6,8 +6,11 @@ import {
 } from '../../app/reducers/questionSlice';
 import {
   Box,
+  Checkbox,
+  FormControlLabel,
   List,
   ListItem,
+  Stack,
   TextField
 } from '@mui/material';
 
@@ -53,31 +56,47 @@ export default function ModifyForm() {
           p: 2,
           pb: 0
         }}>
-          <TextField
-            type='text'
-            disabled
-            value={detail.writer}
-            size='small'
-            inputProps={{
-              style: {
-                fontSize: 20,
-              }
-            }}
-            sx={{ mr: 2, width: '15%' }}
-          />
-          <TextField
-            type='password'
-            disabled
-            value={detail.password}
-            size='small'
-            inputProps={{
-              style: {
-                fontSize: 20
-              },
-              maxLength: 4
-            }}
-            sx={{ width: '15%' }}
-          />
+          <Stack direction='row'>
+            <TextField
+              type='text'
+              disabled
+              value={detail.writer}
+              size='small'
+              inputProps={{
+                style: {
+                  fontSize: 20,
+                }
+              }}
+              sx={{ mr: 2, width: '15%' }}
+            />
+            <TextField
+              type='password'
+              disabled
+              value={detail.password}
+              size='small'
+              inputProps={{
+                style: {
+                  fontSize: 20
+                },
+                maxLength: 4
+              }}
+              sx={{ width: '15%' }}
+            />
+
+            <FormControlLabel
+              control={<Checkbox
+                defaultChecked={false}
+                onChange={event => console.log}
+                sx={{
+                  color: 'darkgrey',
+                  '&.Mui-checked': {
+                    color: 'green',
+                  },
+                }} />}
+              label='FAQ'
+              labelPlacement='start'
+              sx={{ color: 'darkgrey' }} />
+          </Stack>
 
           <List sx={{ mt: 1 }}>
             <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 이름은 꼭 실명으로 기재해 주세요.</ListItem>
