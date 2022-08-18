@@ -8,8 +8,15 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   updateArchiveTitle,
   updateArchiveContent,
-  updateArchiveNoticeChecked
+  updateArchiveNoticeChecked,
+  updateArchiveCategory
 } from '../../app/reducers/archiveSlice';
+import {
+  addArchiveFile,
+  deleteArchiveFile,
+  updateArchiveFileData,
+  deleteArchiveFileData
+} from '../../app/reducers/archiveFileSlice';
 import ArchiveCategorySelect from '../archiveCategorySelect';
 import {
   Box,
@@ -20,35 +27,30 @@ import {
   Typography
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import { addArchiveFile, deleteArchiveFile } from '../../app/reducers/archiveFileSlice';
 
 export default function Form() {
   const dispatch = useAppDispatch();
 
-  const fileData = new FormData(); // 첨부파일 데이터
-  const file = useAppSelector(state => state.archiveFile.file); // 첨부파일 이름 목록 state
+  const fileName = useAppSelector(state => state.archiveFile.file.name); // 첨부파일 이름 목록 state
 
-  // 파일 이름 미리보기
-  const selectFile = (event: any) => {
+  // 파일 선택 이벤트
+  const selectFile = (event: React.FormEvent<HTMLLabelElement>) => {
+    // 파일 이름 미리보기
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addArchiveFile({ item: event.target.files[i].name }))
-    }
+    };
+
+    // 전송할 파일 데이터
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(updateArchiveFileData({ file: event.target.files[i] }))
+    };
   };
 
-  // 파일 첨부 (update)
-  const addFileData = () => {
-    // const filename = image.split('/').pop();
-    // fileData.append('file', { uri: image, type: 'multipart/form-data', name: filename });
-  }
-
-  // 파일 전송
-  const postFileData = async () => {
-    await axios.post('', fileData, {
-      headers: {
-        'Content-Type': `multipart/form-data`,
-      }
-    })
-  }
+  // 파일 선택 취소
+  const deleteFile = (index: number) => {
+    dispatch(deleteArchiveFile({ num: index }));
+    dispatch(deleteArchiveFileData({ num: index }))
+  };
 
   return (
     <>
@@ -86,7 +88,11 @@ export default function Form() {
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
           pl: 1
         }}>
-          {ArchiveCategorySelect('전체')}
+
+          {/* 카테고리 선택 */}
+          <ArchiveCategorySelect defaultCategory='전체' />
+
+          {/* 공지사항 표시 */}
           <FormControlLabel
             control={<Checkbox sx={{
               color: 'darkgrey',
@@ -94,7 +100,7 @@ export default function Form() {
                 color: 'green',
               },
             }} />}
-            onChange={event => dispatch(updateArchiveNoticeChecked({ isNotice: Boolean(event.target) }))}
+            onChange={(event: React.SyntheticEvent<Element, Event>) => dispatch(updateArchiveNoticeChecked({ isNotice: event.target.checked }))}
             label='공지사항 표시'
             labelPlacement='start'
             sx={{ color: 'darkgrey' }} />
@@ -136,19 +142,19 @@ export default function Form() {
             alignItems: 'center'
           }}>
             <Stack>
-              {file.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>}
-              {file.map((item, index) => (
+              {fileName.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>}
+              {fileName.map((item, index) => (
                 <Stack direction='row' key={index}>
                   <Typography>{item}</Typography>
                   <ClearRoundedIcon
-                    onClick={() => dispatch(deleteArchiveFile({ num: index }))}
+                    onClick={() => deleteFile(index)}
                     fontSize='small'
                     sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
                 </Stack>
               ))}
             </Stack>
           </Box>
-          <label className='fileUploadButton' htmlFor='archiveFile' onChange={(event) => {
+          <label className='fileUploadButton' htmlFor='archiveFile' onChange={event => {
             selectFile(event);
           }}>
             업로드

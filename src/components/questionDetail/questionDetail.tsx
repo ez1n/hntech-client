@@ -3,6 +3,7 @@ import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
 import { clickQuestionDetailGoBack } from '../../app/reducers/dialogSlice';
+import { setCurrentQuestion } from '../../app/reducers/questionSlice';
 import {
   Box,
   Button,
@@ -19,7 +20,7 @@ import EditButton from '../editButton';
 import QuestionContent from './questionContent';
 import Comment from './comment';
 import CommentForm from './commentForm';
-import { setCurrentQuestion } from '../../app/reducers/questionSlice';
+import CancelModal from '../cancelModal';
 
 export default function QuestionDetail() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function QuestionDetail() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
+  const comments = useAppSelector(state => state.question.detail.comments); // 댓글 정보 (데이터) state
 
   // 수정 데이터 업데이트
   useEffect(() => {
@@ -88,7 +90,9 @@ export default function QuestionDetail() {
       </Spacing>
 
       {/* 댓글 */}
-      <Comment />
+      {comments.map((item, index) => (
+        <Comment item={item} index={index} />
+      ))}
 
       <Spacing />
 
@@ -96,28 +100,13 @@ export default function QuestionDetail() {
       <CommentForm />
 
       {/* 삭제 버튼 Dialog */}
-      <Dialog
-        open={questionDetailState}
-        onClose={() => dispatch(clickQuestionDetailGoBack())}>
-        <DialogTitle>
-          게시글 삭제
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            삭제된 게시글은 복구할 수 없습니다.
-          </DialogContentText>
-          <DialogContentText>
-            삭제하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => deleteQuestion(detail.id)}>
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickQuestionDetailGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={questionDetailState}
+        title={'게시글 삭제'}
+        text1={'삭제된 게시글은 복구할 수 없습니다'}
+        text2={'삭제하시겠습니까?'}
+        yesAction={() => deleteQuestion(detail.id)}
+        closeAction={() => dispatch(clickQuestionDetailGoBack())} />
     </Container>
   )
 };

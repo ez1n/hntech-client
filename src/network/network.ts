@@ -8,8 +8,8 @@ class Api {
 
   constructor() {
     this.api = axios.create({
-      // baseURL: 'http://13.125.250.39',
-      baseURL: 'https://c896-211-117-246-158.jp.ngrok.io',
+      baseURL: 'http://13.125.250.39',
+      //baseURL: '',
     })
   }
 
@@ -83,7 +83,7 @@ class Api {
     return response.data;
   };
 
-  // 댓글 수정 => 댓글을 개별적으로 수정할 수 있게 하는 방법을 모르겠슴..
+  // 댓글 수정 
   async putCreateComment(commentId: number, comment: {}) {
     const response = await this.api.put(`/comment/${commentId}`, comment);
     return response.data;
@@ -201,6 +201,40 @@ class Api {
   // 카테고리 삭제
   async deleteCategory(categoryId: number) {
     const response = await this.api.delete(`/category/${categoryId}`);
+    return response.data;
+  };
+
+  /* 자료실 */
+
+  // 자료실 목록 받아오기
+  async getArchives() {
+    const response = await this.api.get(`/archive/all`);
+    return response.data;
+  };
+
+  // 자료실 공지사항 목록 받아오기
+
+  // 자료실 글 자세히보기
+  async getArchive(archiveId: number) {
+    const response = await this.api.get(`/archive/${archiveId}`);
+    return response.data;
+  };
+
+  // 자료실 게시글 등록
+  async postCreateArchive(archive: {}) {
+    const response = await this.api.post(`/archive`, archive);
+    return response.data;
+  };
+
+  // 자료실 게시글 수정  // 이거 get요청이랑 통일해줬으면 좋겠음 (new가 get에는 없고 put에는 있ㅇ므)
+  async putUpdateArchive(archiveId: number, form: {}) {
+    const response = await this.api.put(`/archive/${archiveId}`, form);
+    return response.data;
+  };
+
+  // 자료실 게시글 삭제
+  async deleteArchive(archiveId: number) {
+    const response = await this.api.delete(`/category/${archiveId}`);
     return response.data;
   };
 

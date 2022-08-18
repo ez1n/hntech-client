@@ -1,10 +1,19 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../network/network';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, styled, Typography } from '@mui/material';
+import { copyDetailData, getDetailData } from '../app/reducers/archiveSlice';
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  styled,
+  Typography
+} from '@mui/material';
 import EditButton from './editButton';
-import { copyDetailData } from '../app/reducers/archiveSlice';
+import CancelModal from './cancelModal';
 
 export default function ArchiveDetail() {
   const navigate = useNavigate();
@@ -14,16 +23,19 @@ export default function ArchiveDetail() {
   const archiveDetailState = useAppSelector(state => state.dialog.archiveDetailState); // 게시글 삭제 취소 state
   const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
 
+  // 수정 정보 만들기
   useEffect(() => {
-    dispatch(copyDetailData({ detail: detail })); // 수정 정보 만들기
-    // 정보 받아오기 (detail.id 이용)
+    dispatch(copyDetailData({ detail: detail }));
   }, []);
 
   // 게시글 삭제
-  const deleteArchive = () => {
-    // 삭제 요청
-    dispatch(archiveDetailGoBack());
-    navigate('/archive');
+  const deleteArchive = (archiveId: number) => {
+    api.deleteArchive(archiveId)
+      .then(res => {
+        dispatch(archiveDetailGoBack());
+        navigate('/archive');
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -40,7 +52,7 @@ export default function ArchiveDetail() {
       </Typography>
 
       <Spacing>
-        {managerMode &&
+        {!managerMode &&
           <Box sx={{ textAlign: 'end' }}>
             {EditButton('수정', () => navigate('/archive-modify'))}
             {EditButton('삭제', () => dispatch(archiveDetailGoBack()))}
@@ -70,7 +82,7 @@ export default function ArchiveDetail() {
             color: 'darkgrey',
             borderBottom: '1px solid #3B6C46'
           }}>
-          <Typography sx={{ fontSize: 18, textAlign: 'end' }}>작성일 {detail.createDate}</Typography>
+          <Typography sx={{ fontSize: 18, textAlign: 'end' }}>작성일 {detail.createTime}</Typography>
         </Box>
 
         {/* 동영상 */}
@@ -91,6 +103,8 @@ export default function ArchiveDetail() {
         <Stack direction='row' spacing={1} sx={{ p: 2, color: 'darkgrey' }}>
           <Typography>첨부파일</Typography>
           <Typography>|</Typography>
+          {/* 첨부파일 어디감 ㅋㅋ */}
+          <Typography></Typography>
         </Stack>
       </Box>
 
@@ -109,26 +123,13 @@ export default function ArchiveDetail() {
       </Box>
 
       {/* 삭제 버튼 Dialog */}
-      <Dialog
-        open={archiveDetailState}
-        onClose={() => dispatch(archiveDetailGoBack())}>
-        <DialogTitle>
-          게시글 삭제
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            삭제된 게시글은 복구할 수 없습니다.
-          </DialogContentText>
-          <DialogContentText>
-            삭제하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={deleteArchive}>네</Button>
-          <Button onClick={() => dispatch(archiveDetailGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={archiveDetailState}
+        title={'게시글 삭제'}
+        text1={'삭제된 게시글은 복구할 수 없습니다'}
+        text2={'삭제하시겠습니까?'}
+        yesAction={() => deleteArchive(detail.id)}
+        closeAction={() => dispatch(archiveDetailGoBack())} />
     </Container>
   )
 };

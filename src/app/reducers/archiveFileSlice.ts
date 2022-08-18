@@ -9,14 +9,22 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /**
  * addArchiveFile : 파일 추가
  * deleteArchiveFile : 파일 삭제
+ * updateArchiveFileData : 전송할 파일 추가
+ * deleteArchiveFileData : 전송할 파일 삭제
  */
 
 interface archiveFileInitialState {
-  file: string[]
+  file: {
+    name: string[],
+    data: string[],
+  },
 };
 
 const ArchiveFileInitialState: archiveFileInitialState = {
-  file: []
+  file: {
+    name: [],
+    data: []
+  },
 };
 
 export const ArchiveFileSlice = createSlice({
@@ -27,18 +35,36 @@ export const ArchiveFileSlice = createSlice({
       state,
       action: PayloadAction<{ item: string }>
     ) => {
-      const newFile = [...state.file, action.payload.item];
-      state.file = newFile
+      const newFile = [...state.file.name, action.payload.item];
+      state.file.name = newFile
     },
     deleteArchiveFile: (
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newFile = state.file.filter((value, index) => index !== action.payload.num);
-      state.file = newFile;
-    }
+      const newFile = state.file.name.filter((value, index) => index !== action.payload.num);
+      state.file.name = newFile;
+    },
+    updateArchiveFileData: (
+      state,
+      action: PayloadAction<{ file: string }>
+    ) => {
+      const newFile = [...state.file.data, action.payload.file];
+      state.file.data = newFile;
+    },
+    deleteArchiveFileData: (
+      state,
+      action: PayloadAction<{ num: number }>
+    ) => {
+      const newFile = state.file.data.filter((value, index) => index !== action.payload.num);
+      state.file.data = newFile;
+    },
   }
 });
 
-export const { addArchiveFile, deleteArchiveFile } = ArchiveFileSlice.actions;
+export const {
+  addArchiveFile,
+  deleteArchiveFile,
+  updateArchiveFileData,
+  deleteArchiveFileData } = ArchiveFileSlice.actions;
 export default ArchiveFileSlice.reducer;

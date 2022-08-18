@@ -6,9 +6,9 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
-  updateArchiveTitle,
-  updateArchiveContent,
-  updateArchiveNoticeChecked
+  modifyArchiveTitle,
+  modifyArchiveContent,
+  modifyArchiveNoticeChecked
 } from '../../app/reducers/archiveSlice';
 import ArchiveCategorySelect from '../archiveCategorySelect';
 import {
@@ -27,10 +27,10 @@ export default function Form() {
 
   const fileData = new FormData(); // 첨부파일 데이터
   const file = useAppSelector(state => state.archiveFile.file); // 첨부파일 이름 목록 state
-  const archiveContent = useAppSelector(state => state.archive.archiveContent); // 자료실 글쓰기 내용 state
+  const archiveModifyContent = useAppSelector(state => state.archive.archiveModifyContent); // 자료실 상세 자료(수정용)
 
   // 파일 이름 미리보기
-  const selectFile = (event: any) => {
+  const selectFile = (event: React.FormEvent<HTMLLabelElement>) => {
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addArchiveFile({ item: event.target.files[i].name }))
     }
@@ -66,9 +66,9 @@ export default function Form() {
         }}>
           <TextField
             type='text'
-            value={archiveContent.title}
+            value={archiveModifyContent.title}
             required={true}
-            onChange={event => dispatch(updateArchiveTitle({ title: event?.target.value }))}
+            onChange={event => dispatch(modifyArchiveTitle({ title: event?.target.value }))}
             placeholder='제목을 입력해 주세요'
             inputProps={{
               style: {
@@ -87,11 +87,11 @@ export default function Form() {
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
           pl: 1
         }}>
-          {ArchiveCategorySelect(archiveContent.category)}
+          <ArchiveCategorySelect defaultCategory={archiveModifyContent.categoryName} />
           <FormControlLabel
             control={<Checkbox
-              defaultChecked={archiveContent.notice === 'true' ? true : false}
-              onChange={event => dispatch(updateArchiveNoticeChecked({ isNotice: event?.target.checked }))}
+              defaultChecked={archiveModifyContent.notice === 'true' ? true : false}
+              onChange={event => dispatch(modifyArchiveNoticeChecked({ isNotice: event?.target.checked }))}
               sx={{
                 color: 'darkgrey',
                 '&.Mui-checked': {
@@ -107,14 +107,14 @@ export default function Form() {
         <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)' }}>
           <CKEditor
             editor={ClassicEditor}
-            data={archiveContent.content}
+            data={archiveModifyContent.content}
             config={{
               placeholder: '내용을 입력하세요',
             }}
             onChange={(event: any, editor: { getData: () => any }) => {
               const data = editor.getData();
               console.log({ event, editor, data });
-              dispatch(updateArchiveContent({ content: data }));
+              dispatch(modifyArchiveContent({ content: data }));
             }}
           />
         </Box>
@@ -143,9 +143,7 @@ export default function Form() {
               ))}
             </Stack>
           </Box>
-          <label className='fileUploadButton' htmlFor='archiveFile' onChange={(event) => {
-            selectFile(event);
-          }}>
+          <label className='fileUploadButton' htmlFor='archiveFile' onChange={(event) => selectFile(event)}>
             업로드
             <input type='file' id='archiveFile' multiple style={{ display: 'none' }} />
           </label>

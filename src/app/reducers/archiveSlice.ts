@@ -8,6 +8,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * archives : 자료실 글 목록
  * notice : 자료실 공지 목록
  * detail : 자료실 상세보기 정보
+ * archiveModifyContent : 수정용 상세보기 정보
  * archiveContent : 자료실 글 쓰기 (폼 내용)
  */
 
@@ -21,40 +22,48 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * updateArchiveNoticeChecked : 자료실 공지사항 체크 (default: false)
  * updateArchiveCategory : 자료실 카테고리 선택
  * resetArchiveState : 자료실 state 초기화
+ * modifyArchiveTitle : 자료실 제목 수정
+ * modifyArchiveContent : 자료실 내용 수정
+ * modifyArchiveNoticeChecked : 자료실 공지사항 체크 수정
+ * modifyArchiveCategory : 자료실 카테고리 수정
  */
 
 interface archiveInitialState {
   totalPage: number,
   currentPage: number,
   archives: {
+    categoryName: string,
+    createTime: string,
     id: number,
-    category: string,
+    new: string,
     title: string,
-    createDate: string,
-    new: string
   }[],
   notice: {
+    categoryName: string,
+    createTime: string,
     id: number,
-    category: string,
+    new: string,
     title: string,
-    createDate: string,
-    new: string
   }[],
   detail: {
-    id: number,
-    title: string,
-    createDate: string,
+    categoryName: string,
     content: string,
-    category: string,
+    createTime: string,
+    id: number,
     notice: string
+    title: string,
+  },
+  archiveModifyContent: {
+    categoryName: string,
+    content: string,
+    notice: string
+    title: string,
   },
   archiveContent: {
-    id: number,
-    title: string,
-    createDate: string,
+    categoryName: string,
     content: string,
-    category: string,
-    notice: string
+    notice: string,
+    title: string,
   }
 };
 
@@ -63,8 +72,9 @@ const ArchiveInitialState: archiveInitialState = {
   currentPage: 0,
   archives: [],
   notice: [],
-  detail: { id: 0, title: '', createDate: '', content: '', category: '', notice: '' },
-  archiveContent: { id: 0, title: '', createDate: '', content: '', category: '전체', notice: 'false' }
+  detail: { categoryName: '', content: '', createTime: '', id: 0, notice: '', title: '', },
+  archiveModifyContent: { categoryName: '', content: '', notice: '', title: '', },
+  archiveContent: { categoryName: '', content: '', notice: 'false', title: '' }
 };
 
 export const ArchiveSlice = createSlice({
@@ -75,11 +85,11 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         archives: {
+          categoryName: string,
+          createTime: string,
           id: number,
-          category: string,
+          new: string,
           title: string,
-          createDate: string,
-          new: string
         }[], totalPage: number, currentPage: number
       }>
     ) => {
@@ -91,11 +101,11 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         notice: {
+          categoryName: string,
+          createTime: string,
           id: number,
-          category: string,
+          new: string,
           title: string,
-          createDate: string,
-          new: string
         }[]
       }>
     ) => { state.notice = action.payload.notice },
@@ -103,12 +113,12 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         detail: {
-          id: number,
-          title: string,
-          createDate: string,
+          categoryName: string,
           content: string,
-          category: string,
+          createTime: string,
+          id: number,
           notice: string
+          title: string,
         }
       }>
     ) => { state.detail = action.payload.detail },
@@ -116,15 +126,20 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         detail: {
-          id: number,
-          title: string,
-          createDate: string,
+          categoryName: string,
           content: string,
-          category: string,
+          createTime: string,
+          id: number,
           notice: string
+          title: string,
         }
       }>
-    ) => { state.archiveContent = action.payload.detail },
+    ) => {
+      state.archiveModifyContent.categoryName = action.payload.detail.categoryName;
+      state.archiveModifyContent.content = action.payload.detail.content;
+      state.archiveModifyContent.notice = action.payload.detail.notice;
+      state.archiveModifyContent.title = action.payload.detail.title;
+    },
     updateArchiveTitle: (
       state,
       action: PayloadAction<{ title: string }>
@@ -139,11 +154,27 @@ export const ArchiveSlice = createSlice({
     ) => { state.archiveContent.notice = String(action.payload.isNotice) },
     updateArchiveCategory: (
       state,
-      action: PayloadAction<{ category: string }>
-    ) => { state.archiveContent.category = action.payload.category },
+      action: PayloadAction<{ categoryName: string }>
+    ) => { state.archiveContent.categoryName = action.payload.categoryName },
     resetArchiveState: (state) => {
-      state.archiveContent = { id: 0, title: '', createDate: '', content: '', category: '전체', notice: 'false' }
+      state.archiveContent = ArchiveInitialState.archiveContent;
     },
+    modifyArchiveTitle: (
+      state,
+      action: PayloadAction<{ title: string }>
+    ) => { state.archiveModifyContent.title = action.payload.title },
+    modifyArchiveContent: (
+      state,
+      action: PayloadAction<{ content: string }>
+    ) => { state.archiveModifyContent.content = action.payload.content },
+    modifyArchiveNoticeChecked: (
+      state,
+      action: PayloadAction<{ isNotice: boolean }>
+    ) => { state.archiveModifyContent.notice = String(action.payload.isNotice) },
+    modifyArchiveCategory: (
+      state,
+      action: PayloadAction<{ categoryName: string }>
+    ) => { state.archiveModifyContent.categoryName = action.payload.categoryName },
   }
 });
 
@@ -156,5 +187,9 @@ export const {
   updateArchiveContent,
   updateArchiveNoticeChecked,
   updateArchiveCategory,
-  resetArchiveState } = ArchiveSlice.actions;
+  resetArchiveState,
+  modifyArchiveTitle,
+  modifyArchiveContent,
+  modifyArchiveNoticeChecked,
+  modifyArchiveCategory } = ArchiveSlice.actions;
 export default ArchiveSlice.reducer;

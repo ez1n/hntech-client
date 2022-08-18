@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getAllArchives, getNotice, getDetailData } from '../../app/reducers/archiveSlice';
+import {
+  getAllArchives,
+  getNotice,
+  getDetailData
+} from '../../app/reducers/archiveSlice';
 import {
   Box,
   Container,
@@ -21,48 +26,28 @@ export default function ArchiveItem() {
   const archives = useAppSelector(state => state.archive.archives); // 자료실 글 목록
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
 
-  // 임시데이터
-  const data = [
-    { id: 9, category: '일반자료', title: '제목', createDate: '2022-08-09', new: 'true' },
-    { id: 8, category: '일반자료', title: '제목', createDate: '2022-08-09', new: 'true' },
-    { id: 7, category: '일반자료', title: '제목', createDate: '2022-08-08', new: 'true' },
-    { id: 6, category: '일반자료', title: '제목', createDate: '2022-08-04', new: 'false' },
-    { id: 5, category: '일반자료', title: '제목', createDate: '2022-08-03', new: 'false' },
-    { id: 4, category: '일반자료', title: '제목', createDate: '2022-08-02', new: 'false' },
-    { id: 3, category: '일반자료', title: '제목', createDate: '2022-07-30', new: 'false' },
-    { id: 2, category: '일반자료', title: '제목', createDate: '2022-07-30', new: 'false' },
-    { id: 1, category: '일반자료', title: '제목', createDate: '2022-07-23', new: 'false' },
-  ];
-
-  // 임시 데이터
-  const noticeData = [
-    { id: 5, category: '일반자료', title: '제목', createDate: '2022-08-10', new: 'true' },
-    { id: 4, category: '일반자료', title: '제목', createDate: '2022-08-9', new: 'true' },
-    { id: 3, category: '일반자료', title: '제목', createDate: '2022-08-03', new: 'false' },
-  ];
-
-  // 임시 데이터
-  const detailData = {
-    id: 0,
-    title: 'ㅇㅇㅇ자료',
-    createDate: '2022-08-10',
-    content: 'ㅎㅎㅎ입니다',
-    category: '전체',
-    notice: 'true'
-  };
-
   useEffect(() => {
-    // 자료 목록 받아오기
-    dispatch(getAllArchives({ archives: data, totalPage: 3, currentPage: 0 }));
+    api.getArchives()
+      .then(res => {
+        dispatch(getAllArchives({
+          archives: res.archives,
+          totalPage: res.totalPage,
+          currentPage: res.currentPage
+        }));
+      })
 
     // 공지 목록 받아오기
-    dispatch(getNotice({ notice: noticeData }));
+    //dispatch(getNotice({ notice:  }));
   }, []);
 
   // 게시글 보기 (정보 받아오기)
-  const openDetail = (id: number) => {
-    dispatch(getDetailData({ detail: detailData }));
-    navigate('/archive-detail');
+  const openDetail = (archiveId: number) => {
+    api.getArchive(archiveId)
+      .then(res => {
+        dispatch(getDetailData({ detail: res }));
+        navigate('/archive-detail');
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -88,7 +73,7 @@ export default function ArchiveItem() {
               backgroundColor: 'rgba(46, 125, 50, 0.1)'
             }}>
             <List sx={{ flex: 0.1 }}><ErrorIcon sx={{ color: 'darkgreen' }} /></List>
-            <List sx={{ flex: 0.1 }}>{item.category}</List>
+            <List sx={{ flex: 0.1 }}>{item.categoryName}</List>
             <List
               onClick={() => openDetail(item.id)}
               sx={{
@@ -116,7 +101,7 @@ export default function ArchiveItem() {
                 </Typography>
               }
             </List>
-            <List sx={{ flex: 0.2 }}>{item.createDate}</List>
+            <List sx={{ flex: 0.2 }}>{item.createTime}</List>
 
           </Box>
         ))}
@@ -132,7 +117,7 @@ export default function ArchiveItem() {
               borderBottom: '1px solid #3B6C46'
             }}>
             <List sx={{ flex: 0.1 }}>{item.id}</List>
-            <List sx={{ flex: 0.1 }}>{item.category}</List>
+            <List sx={{ flex: 0.1 }}>{item.categoryName}</List>
             <List
               onClick={() => navigate('/archive-detail')}
               sx={{
@@ -160,7 +145,7 @@ export default function ArchiveItem() {
                 </Typography>
               }
             </List>
-            <List sx={{ flex: 0.2 }}>{item.createDate}</List>
+            <List sx={{ flex: 0.2 }}>{item.createTime}</List>
 
           </Box>
         ))}

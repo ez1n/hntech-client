@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // 회사소개 변경
 
 /**
+ * newData : 업로드한 데이터
  * introduce : 인사말
  * history : 회사 연혁
  * historyPreview : 회사 연혁 이미지
@@ -13,6 +14,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  */
 
 /**
+ * updateCompanyData : 업로드한 데이터 정보 업데이트
  * updateIntroduce : 인사말 수정
  * updateHistory : 회사 연혁 수정
  * previewHistory : 회사 연혁 미리보기
