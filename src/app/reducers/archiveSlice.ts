@@ -8,6 +8,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * archives : 자료실 글 목록
  * notice : 자료실 공지 목록
  * detail : 자료실 상세보기 정보
+ * archiveModifyContent : 수정용 상세보기 정보
  * archiveContent : 자료실 글 쓰기 (폼 내용)
  */
 
@@ -45,16 +46,22 @@ interface archiveInitialState {
     title: string,
     createDate: string,
     content: string,
-    category: string,
+    categoryName: string,
     notice: string
   },
-  archiveContent: {
+  archiveModifyContent: {
     id: number,
     title: string,
     createDate: string,
     content: string,
-    category: string,
+    categoryName: string,
     notice: string
+  },
+  archiveContent: {
+    categoryName: string,
+    content: string,
+    notice: string,
+    title: string,
   }
 };
 
@@ -63,8 +70,9 @@ const ArchiveInitialState: archiveInitialState = {
   currentPage: 0,
   archives: [],
   notice: [],
-  detail: { id: 0, title: '', createDate: '', content: '', category: '', notice: '' },
-  archiveContent: { id: 0, title: '', createDate: '', content: '', category: '전체', notice: 'false' }
+  detail: { id: 0, title: '', createDate: '', content: '', categoryName: '', notice: '' },
+  archiveModifyContent: { id: 0, title: '', createDate: '', content: '', categoryName: '', notice: '' },
+  archiveContent: { categoryName: '', content: '', notice: 'false', title: '' }
 };
 
 export const ArchiveSlice = createSlice({
@@ -107,7 +115,7 @@ export const ArchiveSlice = createSlice({
           title: string,
           createDate: string,
           content: string,
-          category: string,
+          categoryName: string,
           notice: string
         }
       }>
@@ -120,11 +128,11 @@ export const ArchiveSlice = createSlice({
           title: string,
           createDate: string,
           content: string,
-          category: string,
+          categoryName: string,
           notice: string
         }
       }>
-    ) => { state.archiveContent = action.payload.detail },
+    ) => { state.archiveModifyContent = action.payload.detail },
     updateArchiveTitle: (
       state,
       action: PayloadAction<{ title: string }>
@@ -139,10 +147,10 @@ export const ArchiveSlice = createSlice({
     ) => { state.archiveContent.notice = String(action.payload.isNotice) },
     updateArchiveCategory: (
       state,
-      action: PayloadAction<{ category: string }>
-    ) => { state.archiveContent.category = action.payload.category },
+      action: PayloadAction<{ categoryName: string }>
+    ) => { state.archiveContent.categoryName = action.payload.categoryName },
     resetArchiveState: (state) => {
-      state.archiveContent = { id: 0, title: '', createDate: '', content: '', category: '전체', notice: 'false' }
+      state.archiveContent = ArchiveInitialState.archiveContent;
     },
   }
 });

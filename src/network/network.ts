@@ -8,8 +8,8 @@ class Api {
 
   constructor() {
     this.api = axios.create({
-      // baseURL: 'http://13.125.250.39',
-      baseURL: 'https://c896-211-117-246-158.jp.ngrok.io',
+      baseURL: 'http://13.125.250.39',
+      //baseURL: '',
     })
   }
 
@@ -83,7 +83,7 @@ class Api {
     return response.data;
   };
 
-  // 댓글 수정 => 댓글을 개별적으로 수정할 수 있게 하는 방법을 모르겠슴..
+  // 댓글 수정 
   async putCreateComment(commentId: number, comment: {}) {
     const response = await this.api.put(`/comment/${commentId}`, comment);
     return response.data;
@@ -203,6 +203,22 @@ class Api {
     const response = await this.api.delete(`/category/${categoryId}`);
     return response.data;
   };
+
+  /* 자료실 */
+
+  // 자료실 목록 받아오기
+
+  // 자료실 글 자세히보기
+
+  // 자료실 공지사항 등록
+  async postCreateArchive(archive: {}) {
+    const response = await this.api.post(`/archive`, archive);
+    return response.data;
+  };
+
+  // 자료실 공지사항 수정
+
+  // 자료실 공지사항 삭제
 
   /* 파일 등록 */
 

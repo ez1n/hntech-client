@@ -5,6 +5,7 @@ import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
 import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, styled, Typography } from '@mui/material';
 import EditButton from './editButton';
 import { copyDetailData } from '../app/reducers/archiveSlice';
+import CancelModal from './cancelModal';
 
 export default function ArchiveDetail() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function ArchiveDetail() {
   }, []);
 
   // 게시글 삭제
-  const deleteArchive = () => {
+  const deleteArchive = (id: number) => {
     // 삭제 요청
     dispatch(archiveDetailGoBack());
     navigate('/archive');
@@ -40,7 +41,7 @@ export default function ArchiveDetail() {
       </Typography>
 
       <Spacing>
-        {managerMode &&
+        {!managerMode &&
           <Box sx={{ textAlign: 'end' }}>
             {EditButton('수정', () => navigate('/archive-modify'))}
             {EditButton('삭제', () => dispatch(archiveDetailGoBack()))}
@@ -109,26 +110,13 @@ export default function ArchiveDetail() {
       </Box>
 
       {/* 삭제 버튼 Dialog */}
-      <Dialog
-        open={archiveDetailState}
-        onClose={() => dispatch(archiveDetailGoBack())}>
-        <DialogTitle>
-          게시글 삭제
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            삭제된 게시글은 복구할 수 없습니다.
-          </DialogContentText>
-          <DialogContentText>
-            삭제하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={deleteArchive}>네</Button>
-          <Button onClick={() => dispatch(archiveDetailGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={archiveDetailState}
+        title={'게시글 삭제'}
+        text1={'삭제된 게시글은 복구할 수 없습니다'}
+        text2={'삭제하시겠습니까?'}
+        yesAction={() => deleteArchive(detail.id)}
+        closeAction={() => dispatch(archiveDetailGoBack())} />
     </Container>
   )
 };
