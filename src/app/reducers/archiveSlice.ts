@@ -22,6 +22,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * updateArchiveNoticeChecked : 자료실 공지사항 체크 (default: false)
  * updateArchiveCategory : 자료실 카테고리 선택
  * resetArchiveState : 자료실 state 초기화
+ * modifyArchiveTitle : 자료실 제목 수정
+ * modifyArchiveContent : 자료실 내용 수정
+ * modifyArchiveNoticeChecked : 자료실 공지사항 체크 수정
+ * modifyArchiveCategory : 자료실 카테고리 수정
  */
 
 interface archiveInitialState {
@@ -52,8 +56,6 @@ interface archiveInitialState {
   archiveModifyContent: {
     categoryName: string,
     content: string,
-    createTime: string,
-    id: number,
     notice: string
     title: string,
   },
@@ -71,7 +73,7 @@ const ArchiveInitialState: archiveInitialState = {
   archives: [],
   notice: [],
   detail: { categoryName: '', content: '', createTime: '', id: 0, notice: '', title: '', },
-  archiveModifyContent: { categoryName: '', content: '', createTime: '', id: 0, notice: '', title: '', },
+  archiveModifyContent: { categoryName: '', content: '', notice: '', title: '', },
   archiveContent: { categoryName: '', content: '', notice: 'false', title: '' }
 };
 
@@ -132,7 +134,12 @@ export const ArchiveSlice = createSlice({
           title: string,
         }
       }>
-    ) => { state.archiveModifyContent = action.payload.detail },
+    ) => {
+      state.archiveModifyContent.categoryName = action.payload.detail.categoryName;
+      state.archiveModifyContent.content = action.payload.detail.content;
+      state.archiveModifyContent.notice = action.payload.detail.notice;
+      state.archiveModifyContent.title = action.payload.detail.title;
+    },
     updateArchiveTitle: (
       state,
       action: PayloadAction<{ title: string }>
@@ -152,6 +159,22 @@ export const ArchiveSlice = createSlice({
     resetArchiveState: (state) => {
       state.archiveContent = ArchiveInitialState.archiveContent;
     },
+    modifyArchiveTitle: (
+      state,
+      action: PayloadAction<{ title: string }>
+    ) => { state.archiveModifyContent.title = action.payload.title },
+    modifyArchiveContent: (
+      state,
+      action: PayloadAction<{ content: string }>
+    ) => { state.archiveModifyContent.content = action.payload.content },
+    modifyArchiveNoticeChecked: (
+      state,
+      action: PayloadAction<{ isNotice: boolean }>
+    ) => { state.archiveModifyContent.notice = String(action.payload.isNotice) },
+    modifyArchiveCategory: (
+      state,
+      action: PayloadAction<{ categoryName: string }>
+    ) => { state.archiveModifyContent.categoryName = action.payload.categoryName },
   }
 });
 
@@ -164,5 +187,9 @@ export const {
   updateArchiveContent,
   updateArchiveNoticeChecked,
   updateArchiveCategory,
-  resetArchiveState } = ArchiveSlice.actions;
+  resetArchiveState,
+  modifyArchiveTitle,
+  modifyArchiveContent,
+  modifyArchiveNoticeChecked,
+  modifyArchiveCategory } = ArchiveSlice.actions;
 export default ArchiveSlice.reducer;
