@@ -6,15 +6,15 @@ import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
 import { Container, styled, Typography } from '@mui/material';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
-import CategorySelect from '../archiveCategorySelect';
 import EditArchiveCategory from './editArchiveCategory';
+import ArchiveCategorySelect from '../archiveCategorySelect';
 
 export default function Archives() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  //// 읭 이거 archivesState는 어디서 써? (cancel)
+
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
@@ -38,7 +38,7 @@ export default function Archives() {
         }
 
         {/* 카테고리 */}
-        {CategorySelect('전체')}
+        <ArchiveCategorySelect defaultCategory={'전체'} />
       </Spacing>
 
       {/* 자료 목록 */}

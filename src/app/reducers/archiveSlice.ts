@@ -28,26 +28,26 @@ interface archiveInitialState {
   totalPage: number,
   currentPage: number,
   archives: {
+    categoryName: string,
+    createTime: string,
     id: number,
-    category: string,
+    new: string,
     title: string,
-    createDate: string,
-    new: string
   }[],
   notice: {
+    categoryName: string,
+    createTime: string,
     id: number,
-    category: string,
+    new: string,
     title: string,
-    createDate: string,
-    new: string
   }[],
   detail: {
-    id: number,
-    title: string,
-    createDate: string,
-    content: string,
     categoryName: string,
+    content: string,
+    createTime: string,
+    id: number,
     notice: string
+    title: string,
   },
   archiveModifyContent: {
     id: number,
@@ -70,7 +70,7 @@ const ArchiveInitialState: archiveInitialState = {
   currentPage: 0,
   archives: [],
   notice: [],
-  detail: { id: 0, title: '', createDate: '', content: '', categoryName: '', notice: '' },
+  detail: { categoryName: '', content: '', createTime: '', id: 0, notice: '', title: '', },
   archiveModifyContent: { id: 0, title: '', createDate: '', content: '', categoryName: '', notice: '' },
   archiveContent: { categoryName: '', content: '', notice: 'false', title: '' }
 };
@@ -83,11 +83,11 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         archives: {
+          categoryName: string,
+          createTime: string,
           id: number,
-          category: string,
+          new: string,
           title: string,
-          createDate: string,
-          new: string
         }[], totalPage: number, currentPage: number
       }>
     ) => {
@@ -99,11 +99,11 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         notice: {
+          categoryName: string,
+          createTime: string,
           id: number,
-          category: string,
+          new: string,
           title: string,
-          createDate: string,
-          new: string
         }[]
       }>
     ) => { state.notice = action.payload.notice },
@@ -111,12 +111,12 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{
         detail: {
-          id: number,
-          title: string,
-          createDate: string,
-          content: string,
           categoryName: string,
+          content: string,
+          createTime: string,
+          id: number,
           notice: string
+          title: string,
         }
       }>
     ) => { state.detail = action.payload.detail },

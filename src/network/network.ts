@@ -207,6 +207,12 @@ class Api {
   /* 자료실 */
 
   // 자료실 목록 받아오기
+  async getArchives() {
+    const response = await this.api.get(`/archive/all`);
+    return response.data;
+  };
+
+  // 자료실 공지사항 목록 받아오기
 
   // 자료실 글 자세히보기
 

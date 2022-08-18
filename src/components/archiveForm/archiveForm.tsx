@@ -23,7 +23,7 @@ export default function ArchiveForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const archiveData = new FormData();
+  const archiveData = new FormData(); // 자료실 첨부파일
 
   const archiveFormState = useAppSelector(state => state.dialog.archiveFormState); // 글쓰기 취소 state
   const archiveContent = useAppSelector(state => state.archive.archiveContent); // 자료실 글쓰기 내용 state

@@ -12,7 +12,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * noticeFormState : 
  * questionDetailState : 
  * commentState : 댓글 등록
- * archivesState : 자료실 카테고리 수정
+ * archiveState : 자료실 카테고리 수정
  * archiveFormState : 
  * archiveDetailState : 
  * editArchiveCategoryState : 
@@ -51,7 +51,7 @@ interface dialogInitialState {
   questionModifyFormState: boolean,
   commentState: boolean,
   commentRemoveState: boolean,
-  archivesState: boolean,
+  archiveState: boolean,
   archiveFormState: boolean,
   archiveDetailState: boolean,
   archiveModifyFormState: boolean,
@@ -71,7 +71,7 @@ const DialogInitialState: dialogInitialState = {
   questionModifyFormState: false,
   commentState: false,
   commentRemoveState: false,
-  archivesState: false,
+  archiveState: false,
   archiveFormState: false,
   archiveDetailState: false,
   archiveModifyFormState: false,
@@ -94,7 +94,7 @@ export const DialogSlice = createSlice({
     clickQuestionModifyFormGoBack: (state) => { state.questionModifyFormState = !state.questionModifyFormState },
     clickCommentGoBack: (state) => { state.commentState = !state.commentState },
     clickCommentRemoveGoBack: (state) => { state.commentRemoveState = !state.commentRemoveState },
-    clickArchivesGoBack: (state) => { state.archivesState = !state.archivesState },
+    clickArchivesGoBack: (state) => { state.archiveState = !state.archiveState },
     archiveFormGoBack: (state) => { state.archiveFormState = !state.archiveFormState },
     archiveDetailGoBack: (state) => { state.archiveDetailState = !state.archiveDetailState },
     clickArchiveModifyFormGoBack: (state) => { state.archiveModifyFormState = !state.archiveModifyFormState },
