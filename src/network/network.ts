@@ -3,20 +3,21 @@ import axios from 'axios';
 const SUCCESS = 200
 const BAD_REQUEST = 400;
 
+axios.defaults.withCredentials = true;
+
 class Api {
   api: any
 
   constructor() {
     this.api = axios.create({
       baseURL: 'http://13.125.250.39',
-      //baseURL: '',
     })
   }
 
   /* 로그인 */
   async postLogin(password: {}) {
     const response = await this.api.post(`/admin/login`, password);
-    return response.data;
+    return response;
   };
 
   /* 문의사항 */
@@ -207,12 +208,16 @@ class Api {
   /* 자료실 */
 
   // 자료실 목록 받아오기
-  async getArchives() {
-    const response = await this.api.get(`/archive/all`);
+  async getArchives(pageNumber: number) {
+    const response = await this.api.get(`/archive/all?page=${pageNumber}`);
     return response.data;
   };
 
   // 자료실 공지사항 목록 받아오기
+  async getArchivesNotice() {
+    const response = await this.api.get(`/archive/notice`);
+    return response.data;
+  };
 
   // 자료실 글 자세히보기
   async getArchive(archiveId: number) {
@@ -234,7 +239,7 @@ class Api {
 
   // 자료실 게시글 삭제
   async deleteArchive(archiveId: number) {
-    const response = await this.api.delete(`/category/${archiveId}`);
+    const response = await this.api.delete(`/archive/${archiveId}`);
     return response.data;
   };
 
@@ -258,7 +263,15 @@ class Api {
       }
     });
     return response.data;
-  }
+  };
+
+  // 파일 다운로드
+  async downloadFile(filename: string) {
+    const response = await this.api.get(`/file/download/${filename}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  };
 };
 
 export const api = new Api();

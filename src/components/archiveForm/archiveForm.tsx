@@ -1,22 +1,13 @@
 import React from 'react';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { archiveFormGoBack } from '../../app/reducers/dialogSlice';
 import { resetArchiveState } from '../../app/reducers/archiveSlice';
-import {
-  Container,
-  styled,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Typography
-} from '@mui/material';
+import { resetArchiveFileData } from '../../app/reducers/archiveFileSlice';
+import { Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import Form from './form';
-import { api } from '../../network/network';
 import CancelModal from '../cancelModal';
 
 export default function ArchiveForm() {
@@ -31,25 +22,55 @@ export default function ArchiveForm() {
 
   // 자료실 글쓰기
   const postArchiveForm = () => {
-    fileData.map(item => archiveData.append('file', item));
+    fileData.map(item => archiveData.append('files', item));
+
+    // 첨부파일 보내기
     api.postUploadAllFiles(archiveData)
-      .then(res => {
-        console.log('postUploadAllFiles', res);
+      .then(res => { // 파일이 존재하는 경우
+        console.log('postUploadAllFiles', res.uploadedFiles);
+        // 게시글 내용 보내기
         api.postCreateArchive({
           categoryName: archiveContent.categoryName,
           content: archiveContent.content,
-          files: res.files,
+          files: res.uploadedFiles.map((item: {
+            id: number,
+            originalFilename: string,
+            serverFilename: string,
+            savedPath: string
+          }) => {
+            return item.serverFilename
+          }),
           notice: archiveContent.notice,
           title: archiveContent.title,
         })
           .then(res => {
             console.log('postCreateArchive', res);
             dispatch(resetArchiveState());
+            dispatch(resetArchiveFileData());
             navigate('/archive');
           })
-          .catch(error => console.log('postCreateArchive', error))
+          .catch(error => console.log('postCreateArchive', error.config.data))
       })
-      .catch(error => console.log('postArchiveForm', error))
+      .catch(error => { // 파일이 존재하지 않는 경우
+        if (error.response.data.message.includes('specified as non-null is null')) {
+          // 게시글 내용 보내기
+          api.postCreateArchive({
+            categoryName: archiveContent.categoryName,
+            content: archiveContent.content,
+            files: [],
+            notice: archiveContent.notice,
+            title: archiveContent.title,
+          })
+            .then(res => {
+              dispatch(resetArchiveState());
+              dispatch(resetArchiveFileData());
+              navigate('/archive');
+            })
+            .catch(error => console.log('postCreateArchive', error))
+        } else { // 첨부파일 보내기 오류
+          console.log('postUploadAllFiles', error);
+        }
+      })
   };
 
   return (
@@ -59,7 +80,7 @@ export default function ArchiveForm() {
 
       <Spacing />
 
-      {/* 공지사항 글쓰기 폼 */}
+      {/* 자료실 글쓰기 폼 */}
       <Form />
 
       <Spacing />
@@ -77,7 +98,7 @@ export default function ArchiveForm() {
         text1={'작성중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
-          navigate(-1);
+          navigate('/archive');
           dispatch(archiveFormGoBack());
         }}
         closeAction={() => dispatch(archiveFormGoBack())} />

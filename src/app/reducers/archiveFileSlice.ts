@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /**
  * file : 첨부파일
+ * currentFile : 받아온 파일 목록
  */
 
 /**
@@ -11,6 +12,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * deleteArchiveFile : 파일 삭제
  * updateArchiveFileData : 전송할 파일 추가
  * deleteArchiveFileData : 전송할 파일 삭제
+ * resetArchiveFileData : 파일 데이터 초기화
  */
 
 interface archiveFileInitialState {
@@ -18,6 +20,7 @@ interface archiveFileInitialState {
     name: string[],
     data: string[],
   },
+  currentFile: string[],
 };
 
 const ArchiveFileInitialState: archiveFileInitialState = {
@@ -25,6 +28,7 @@ const ArchiveFileInitialState: archiveFileInitialState = {
     name: [],
     data: []
   },
+  currentFile: []
 };
 
 export const ArchiveFileSlice = createSlice({
@@ -36,7 +40,7 @@ export const ArchiveFileSlice = createSlice({
       action: PayloadAction<{ item: string }>
     ) => {
       const newFile = [...state.file.name, action.payload.item];
-      state.file.name = newFile
+      state.file.name = newFile;
     },
     deleteArchiveFile: (
       state,
@@ -59,6 +63,7 @@ export const ArchiveFileSlice = createSlice({
       const newFile = state.file.data.filter((value, index) => index !== action.payload.num);
       state.file.data = newFile;
     },
+    resetArchiveFileData: (state) => { state.file.data = ArchiveFileInitialState.file.data }
   }
 });
 
@@ -66,5 +71,6 @@ export const {
   addArchiveFile,
   deleteArchiveFile,
   updateArchiveFileData,
-  deleteArchiveFileData } = ArchiveFileSlice.actions;
+  deleteArchiveFileData,
+  resetArchiveFileData } = ArchiveFileSlice.actions;
 export default ArchiveFileSlice.reducer;

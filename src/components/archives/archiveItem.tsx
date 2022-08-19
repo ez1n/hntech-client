@@ -27,7 +27,7 @@ export default function ArchiveItem() {
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
 
   useEffect(() => {
-    api.getArchives()
+    api.getArchives(0)
       .then(res => {
         dispatch(getAllArchives({
           archives: res.archives,
@@ -37,16 +37,32 @@ export default function ArchiveItem() {
       })
 
     // 공지 목록 받아오기
-    //dispatch(getNotice({ notice:  }));
+    api.getArchivesNotice()
+      .then(res => {
+        dispatch(getNotice({ notice: res.notices }))
+      })
+      .catch(error => console.log(error))
   }, []);
 
   // 게시글 보기 (정보 받아오기)
   const openDetail = (archiveId: number) => {
     api.getArchive(archiveId)
       .then(res => {
+        console.log(res)
         dispatch(getDetailData({ detail: res }));
         navigate('/archive-detail');
       })
+      .catch(error => console.log(error))
+  };
+
+  // 페이지 전환
+  const changePage = (value: number) => {
+    api.getArchives(value - 1)
+      .then(res => dispatch(getAllArchives({
+        archives: res.archives,
+        totalPage: res.totalPage,
+        currentPage: res.currentPage
+      })))
       .catch(error => console.log(error))
   };
 
@@ -62,9 +78,9 @@ export default function ArchiveItem() {
         </Box>
 
         {/* 공지 목록 */}
-        {notice.map((item, index) => (
+        {notice.map((item) => (
           <Box
-            key={index}
+            key={item.id}
             sx={{
               display: 'flex',
               flex: 1,
@@ -107,9 +123,9 @@ export default function ArchiveItem() {
         ))}
 
         {/* 자료 목록 */}
-        {archives.map((item, index) => (
+        {archives.map((item) => (
           <Box
-            key={index}
+            key={item.id}
             sx={{
               display: 'flex',
               flex: 1,
@@ -119,7 +135,7 @@ export default function ArchiveItem() {
             <List sx={{ flex: 0.1 }}>{item.id}</List>
             <List sx={{ flex: 0.1 }}>{item.categoryName}</List>
             <List
-              onClick={() => navigate('/archive-detail')}
+              onClick={() => openDetail(item.id)}
               sx={{
                 flex: 0.6,
                 cursor: 'pointer',
@@ -154,7 +170,10 @@ export default function ArchiveItem() {
       <Spacing />
 
       <Stack>
-        <Pagination count={TotalPage} sx={{ m: '0 auto' }} />
+        <Pagination
+          onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
+          count={TotalPage}
+          sx={{ m: '0 auto' }} />
       </Stack>
     </>
   )
