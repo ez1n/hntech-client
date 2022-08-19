@@ -26,6 +26,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * modifyArchiveContent : 자료실 내용 수정
  * modifyArchiveNoticeChecked : 자료실 공지사항 체크 수정
  * modifyArchiveCategory : 자료실 카테고리 수정
+ * deleteArchiveOriginFile : 기존 파일 수정 (삭제)
  */
 
 interface archiveInitialState {
@@ -200,6 +201,13 @@ export const ArchiveSlice = createSlice({
       state,
       action: PayloadAction<{ categoryName: string }>
     ) => { state.archiveModifyContent.categoryName = action.payload.categoryName },
+    deleteArchiveOriginFile: (
+      state,
+      action: PayloadAction<{ num: number }>
+    ) => {
+      const newFile = state.archiveModifyContent.files.filter((value, index) => index !== action.payload.num);
+      state.archiveModifyContent.files = newFile;
+    },
   }
 });
 
@@ -216,5 +224,6 @@ export const {
   modifyArchiveTitle,
   modifyArchiveContent,
   modifyArchiveNoticeChecked,
-  modifyArchiveCategory } = ArchiveSlice.actions;
+  modifyArchiveCategory,
+  deleteArchiveOriginFile } = ArchiveSlice.actions;
 export default ArchiveSlice.reducer;

@@ -1,16 +1,13 @@
 import React, { useEffect } from 'react';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickArchiveModifyFormGoBack } from '../../app/reducers/dialogSlice';
 import { getDetailData, resetArchiveState } from '../../app/reducers/archiveSlice';
-import {
-  Container,
-  styled,
-  Typography
-} from '@mui/material';
+import { resetArchiveFileData } from '../../app/reducers/archiveFileSlice';
+import { Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import ModifyForm from './modifyForm';
-import { api } from '../../network/network';
 import CancelModal from '../cancelModal';
 
 export default function ArchiveModifyForm() {
@@ -20,39 +17,42 @@ export default function ArchiveModifyForm() {
   const archiveData = new FormData(); // 자료실 첨부파일 => 이게 서버에서 파일을 어떻게 넘겨주는지 보고 수정
 
   const archiveModifyFormState = useAppSelector(state => state.dialog.archiveModifyFormState); // 글쓰기 취소 state
-  const archiveContent = useAppSelector(state => state.archive.archiveContent); // 자료실 글쓰기 내용 state
   const archiveModifyContent = useAppSelector(state => state.archive.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
+  const fileData = useAppSelector(state => state.archiveFile.file.data); // 첨부파일 이름 목록 state
 
-  let serverFileNameList: string[]
-
-  // 기존 파일 불러오기
-  useEffect(() => {
-    serverFileNameList = archiveModifyContent.files.map(item => {
-      return item.serverFilename;
-    })
-  }, [])
+  let serverFileNameList: string[] = [];
 
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
+    fileData.map(item => archiveData.append('files', item));
+    // 기존 파일 리스트 생성
+    archiveModifyContent.files.map(item => (
+      serverFileNameList.push(item.serverFilename)
+    ))
+    console.log(serverFileNameList);
+
     api.postUploadAllFiles(archiveData)
       .then(res => {
+        // serverFilename 리스트에 추가
+        res.uploadedFiles.map((item: {
+          id: number,
+          originalFilename: string,
+          serverFilename: string,
+          savedPath: string
+        }) => (serverFileNameList.push(item.serverFilename)));
+
         api.putUpdateArchive(archiveId, {
           categoryName: archiveModifyContent.categoryName,
           content: archiveModifyContent.content,
-          files: res.uploadedFiles.map((item: {
-            id: number,
-            originalFilename: string,
-            serverFilename: string,
-            savedPath: string
-          }) => (serverFileNameList.push(item.serverFilename))),
+          files: serverFileNameList,
           notice: archiveModifyContent.notice,
           title: archiveModifyContent.title,
         })
           .then(res => {
             dispatch(getDetailData(res));
-            console.log(archiveContent); //보내기
-            alert('변경되었습니다.');
+            dispatch(resetArchiveFileData());
             navigate('/archive');
+            serverFileNameList = [];
           })
           .catch(error => console.log(error))
       })
@@ -83,7 +83,8 @@ export default function ArchiveModifyForm() {
         text1={'변경중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
-          resetArchiveState();
+          dispatch(resetArchiveState());
+          dispatch(resetArchiveFileData());
           dispatch(clickArchiveModifyFormGoBack());
           navigate(-1);
         }}

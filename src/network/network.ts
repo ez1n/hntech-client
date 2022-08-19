@@ -20,6 +20,12 @@ class Api {
     return response;
   };
 
+  /* 로그아웃 */
+  async getLogout() {
+    const response = await this.api.post(`/admin/logout`);
+    return response;
+  };
+
   /* 문의사항 */
 
   // 문의사항 글쓰기

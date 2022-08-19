@@ -69,7 +69,7 @@ export default function Comment({ item, questionId }: propsType) {
         textAlign: `${item.writer === '작성자' && 'end'}`
       }}>
       {/*  댓글 내용 */}
-      {commentModifyState ?
+      {commentModifyState === item.id ?
         <Stack
           direction='column'
           spacing={1}
@@ -87,12 +87,15 @@ export default function Comment({ item, questionId }: propsType) {
           />
           <Stack direction='row' sx={{ width: '100%', justifyContent: 'flex-end' }}>
             <Button
-              onClick={() => putComment(questionId, item.id, commentModify)}
+              onClick={() => {
+                putComment(questionId, item.id, commentModify);
+                dispatch(updateCommentState({ id: null }));
+              }}
               sx={{ fontSize: 16, color: 'green' }}>
               수정
             </Button>
             <Button
-              onClick={() => dispatch(updateCommentState())}
+              onClick={() => dispatch(updateCommentState({ id: null }))}
               sx={{ fontSize: 16, color: 'green' }}>
               취소
             </Button>
@@ -119,7 +122,7 @@ export default function Comment({ item, questionId }: propsType) {
             onClose={() => dispatch(resetAnchor())}
           >
             <MenuItem onClick={() => {
-              dispatch(updateCommentState());
+              dispatch(updateCommentState({ id: item.id }));
               dispatch(resetAnchor());
             }}>
               수정
@@ -150,7 +153,7 @@ export default function Comment({ item, questionId }: propsType) {
             onClose={() => dispatch(resetAnchor())}
           >
             <MenuItem onClick={() => {
-              dispatch(updateCommentState());
+              dispatch(updateCommentState({ id: item.id }));
               dispatch(resetAnchor());
             }}>
               수정
@@ -171,7 +174,7 @@ export default function Comment({ item, questionId }: propsType) {
         title={'댓글 삭제'}
         text1={'삭제된 댓글은 복구할 수 없습니다.'}
         text2={'삭제하시겠습니까?'}
-        yesAction={() => { deleteComment(questionId, item.id) }}
+        yesAction={() => deleteComment(questionId, item.id)}
         closeAction={() => dispatch(clickCommentRemoveGoBack())} />
     </Stack>
   )

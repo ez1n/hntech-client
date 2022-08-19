@@ -24,7 +24,7 @@ interface commentInitialState {
   comment: { content: string, writer: string },
   currentComment: { content: string, id: number },
   commentModify: { content: string },
-  commentModifyState: boolean
+  commentModifyState: number | null
 };
 
 const CommentInitialState: commentInitialState = {
@@ -32,7 +32,7 @@ const CommentInitialState: commentInitialState = {
   comment: { content: '', writer: '' },
   currentComment: { content: '', id: 0 },
   commentModify: { content: '' },
-  commentModifyState: false
+  commentModifyState: null
 };
 
 export const CommentSlice = createSlice({
@@ -59,7 +59,10 @@ export const CommentSlice = createSlice({
       state,
       action: PayloadAction<{ content: string }>
     ) => { state.commentModify.content = action.payload.content },
-    updateCommentState: (state) => { state.commentModifyState = !state.commentModifyState }
+    updateCommentState: (
+      state,
+      action: PayloadAction<{ id: number | null }>
+    ) => { state.commentModifyState = action.payload.id }
   }
 });
 

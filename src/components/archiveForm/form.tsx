@@ -96,7 +96,7 @@ export default function Form() {
               color: 'green',
             },
           }} />}
-          onChange={(event: React.SyntheticEvent<Element, Event>) => dispatch(updateArchiveNoticeChecked({ isNotice: event.target.checked }))}
+          onChange={event => dispatch(updateArchiveNoticeChecked({ isNotice: event.target.checked }))}
           label='공지사항'
           labelPlacement='start'
           sx={{ color: 'darkgrey' }} />
