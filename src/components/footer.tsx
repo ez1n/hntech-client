@@ -32,6 +32,7 @@ export default function Footer() {
     fax: '031-337-4006'
   }
 
+  // footer 정보 받아오기
   useEffect(() => {
     // api.getFooter()
     // .then(res => dispatch(setFooter({ footer: res })));
@@ -48,6 +49,15 @@ export default function Footer() {
         console.log(res)
       })
       .catch(error => console.log('password', error))
+  };
+
+  // 로그아웃
+  const getLogout = () => {
+    api.getLogout()
+      .then(res => {
+        dispatch(clickChangeMode())
+        console.log('로그아웃')
+      })
   };
 
   return (
@@ -116,7 +126,7 @@ export default function Footer() {
           justifyContent: 'flex-end'
         }}>
         <Button
-          onClick={managerMode ? () => dispatch(clickChangeMode()) : () => dispatch(clickManagerLogin())}
+          onClick={managerMode ? getLogout : () => dispatch(clickManagerLogin())}
           sx={{
             color: '#FCFCFC',
             opacity: 0.6
@@ -125,6 +135,7 @@ export default function Footer() {
         </Button>
       </Box>
 
+      {/* 관리자 모드 로그인 dialog */}
       <Dialog
         open={managerLogin}
         onClose={() => dispatch(clickManagerLogin())}>
