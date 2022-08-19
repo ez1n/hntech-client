@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../style.css';
 import axios from 'axios';
 import FormData from 'form-data';
@@ -11,6 +11,7 @@ import {
   modifyArchiveNoticeChecked
 } from '../../app/reducers/archiveSlice';
 import ArchiveCategorySelect from '../archiveCategorySelect';
+import { addArchiveFile, deleteArchiveFile, deleteArchiveFileData, updateArchiveFileData } from '../../app/reducers/archiveFileSlice';
 import {
   Box,
   Checkbox,
@@ -20,36 +21,32 @@ import {
   Typography
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import { addArchiveFile, deleteArchiveFile } from '../../app/reducers/archiveFileSlice';
 
 export default function Form() {
   const dispatch = useAppDispatch();
 
   const fileData = new FormData(); // 첨부파일 데이터
-  const file = useAppSelector(state => state.archiveFile.file); // 첨부파일 이름 목록 state
+  const fileName = useAppSelector(state => state.archiveFile.file.name); // 첨부파일 이름 목록 state
   const archiveModifyContent = useAppSelector(state => state.archive.archiveModifyContent); // 자료실 상세 자료(수정용)
 
-  // 파일 이름 미리보기
+  // 파일 선택 이벤트
   const selectFile = (event: React.FormEvent<HTMLLabelElement>) => {
+    // 파일 이름 미리보기
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addArchiveFile({ item: event.target.files[i].name }))
-    }
+    };
+
+    // 전송할 파일 데이터
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(updateArchiveFileData({ file: event.target.files[i] }))
+    };
   };
 
-  // 파일 첨부 (update)
-  const addFileData = () => {
-    // const filename = image.split('/').pop();
-    // fileData.append('file', { uri: image, type: 'multipart/form-data', name: filename });
-  }
-
-  // 파일 전송
-  const postFileData = async () => {
-    await axios.post('', fileData, {
-      headers: {
-        'Content-Type': `multipart/form-data`,
-      }
-    })
-  }
+  // 파일 선택 취소
+  const deleteFile = (index: number) => {
+    dispatch(deleteArchiveFile({ num: index }));
+    dispatch(deleteArchiveFileData({ num: index }))
+  };
 
   return (
     <>
@@ -132,10 +129,10 @@ export default function Form() {
             alignItems: 'center'
           }}>
             <Stack>
-              {file.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>}
-              {file.map((item, index) => (
-                <Stack direction='row' key={index}>
-                  <Typography>{item}</Typography>
+              {fileName.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>}
+              {fileName.map((item, index) => (
+                <Stack direction='row' key={item.id}>
+                  <Typography>{item.originalFilename}</Typography>
                   <ClearRoundedIcon
                     onClick={() => dispatch(deleteArchiveFile({ num: index }))}
                     fontSize='small'
@@ -144,7 +141,7 @@ export default function Form() {
               ))}
             </Stack>
           </Box>
-          <label className='fileUploadButton' htmlFor='archiveFile' onChange={(event) => selectFile(event)}>
+          <label className='fileUploadButton' htmlFor='archiveFile' onChange={event => selectFile(event)}>
             업로드
             <input type='file' id='archiveFile' multiple style={{ display: 'none' }} />
           </label>

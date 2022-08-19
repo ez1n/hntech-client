@@ -49,13 +49,25 @@ interface archiveInitialState {
     categoryName: string,
     content: string,
     createTime: string,
+    files: {
+      id: 0,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    }[],
     id: number,
-    notice: string
     title: string,
+    notice: string
   },
   archiveModifyContent: {
     categoryName: string,
     content: string,
+    files: {
+      id: 0,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    }[],
     notice: string
     title: string,
   },
@@ -72,8 +84,8 @@ const ArchiveInitialState: archiveInitialState = {
   currentPage: 0,
   archives: [],
   notice: [],
-  detail: { categoryName: '', content: '', createTime: '', id: 0, notice: '', title: '', },
-  archiveModifyContent: { categoryName: '', content: '', notice: '', title: '', },
+  detail: { categoryName: '', content: '', createTime: '', id: 0, files: [], title: '', notice: '' },
+  archiveModifyContent: { categoryName: '', content: '', files: [], notice: '', title: '', },
   archiveContent: { categoryName: '', content: '', notice: 'false', title: '' }
 };
 
@@ -116,9 +128,15 @@ export const ArchiveSlice = createSlice({
           categoryName: string,
           content: string,
           createTime: string,
+          files: {
+            id: 0,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          }[],
           id: number,
-          notice: string
           title: string,
+          notice: string
         }
       }>
     ) => { state.detail = action.payload.detail },
@@ -129,14 +147,21 @@ export const ArchiveSlice = createSlice({
           categoryName: string,
           content: string,
           createTime: string,
+          files: {
+            id: 0,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          }[],
           id: number,
-          notice: string
           title: string,
+          notice: string
         }
       }>
     ) => {
       state.archiveModifyContent.categoryName = action.payload.detail.categoryName;
       state.archiveModifyContent.content = action.payload.detail.content;
+      state.archiveModifyContent.files = action.payload.detail.files;
       state.archiveModifyContent.notice = action.payload.detail.notice;
       state.archiveModifyContent.title = action.payload.detail.title;
     },

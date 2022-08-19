@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../network/network';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
-import { copyDetailData, getDetailData } from '../app/reducers/archiveSlice';
+import { copyDetailData } from '../app/reducers/archiveSlice';
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
+import { addArchiveFile } from '../app/reducers/archiveFileSlice';
 
 export default function ArchiveDetail() {
   const navigate = useNavigate();
@@ -26,6 +27,9 @@ export default function ArchiveDetail() {
   // 수정 정보 만들기
   useEffect(() => {
     dispatch(copyDetailData({ detail: detail }));
+    for (let i = 0; i < detail.files.length; i++) {
+      dispatch(addArchiveFile({ item: detail.files[i].originalFilename }))
+    };
   }, []);
 
   // 게시글 삭제
@@ -34,6 +38,26 @@ export default function ArchiveDetail() {
       .then(res => {
         dispatch(archiveDetailGoBack());
         navigate('/archive');
+      })
+      .catch(error => console.log(error))
+  };
+
+  const downloadFile = (serverFilename: string, originalFilename: string) => {
+    api.downloadFile(serverFilename)
+      .then(res => {
+        return res;
+      })
+      .then(file => {
+        const url = window.URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = originalFilename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(_ => {
+          window.URL.revokeObjectURL(url);
+        }, 60000);
+        a.remove();
       })
       .catch(error => console.log(error))
   };
@@ -52,7 +76,7 @@ export default function ArchiveDetail() {
       </Typography>
 
       <Spacing>
-        {!managerMode &&
+        {managerMode &&
           <Box sx={{ textAlign: 'end' }}>
             {EditButton('수정', () => navigate('/archive-modify'))}
             {EditButton('삭제', () => dispatch(archiveDetailGoBack()))}
@@ -78,33 +102,38 @@ export default function ArchiveDetail() {
         {/* 작성일 */}
         <Box
           sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
             p: 2,
-            color: 'darkgrey',
             borderBottom: '1px solid #3B6C46'
           }}>
-          <Typography sx={{ fontSize: 18, textAlign: 'end' }}>작성일 {detail.createTime}</Typography>
-        </Box>
-
-        {/* 동영상 */}
-        <Box sx={{ p: 3 }}>
-          동영상
+          <Typography sx={{ fontSize: 18 }}>{detail.categoryName}</Typography>
+          <Typography sx={{ fontSize: 18, color: 'darkgrey' }}>작성일 {detail.createTime}</Typography>
         </Box>
 
         {/* 자료 부가 설명 */}
-        <Box sx={{ p: 3, minHeight: 200, borderBottom: '1px solid #3B6C46' }}>
-          {detail.content.split('\n').map((value, index) => (
-            <Typography key={index} sx={{ fontSize: 18 }}>
-              {value}
-            </Typography>
-          ))}
+        <Box sx={{ p: 3, minHeight: 300, borderBottom: '1px solid #3B6C46' }}>
+          {detail.content}
         </Box>
 
         {/* 첨부파일 */}
         <Stack direction='row' spacing={1} sx={{ p: 2, color: 'darkgrey' }}>
           <Typography>첨부파일</Typography>
           <Typography>|</Typography>
-          {/* 첨부파일 어디감 ㅋㅋ */}
-          <Typography></Typography>
+          <Box>
+            {detail.files.map((item: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            }) => (
+              <Typography
+                onClick={() => downloadFile(item.serverFilename, item.originalFilename)}
+                sx={{ cursor: 'pointer', '&:hover': { color: 'darkgreen' } }}>
+                {item.originalFilename}
+              </Typography>
+            ))}
+          </Box>
         </Stack>
       </Box>
 
@@ -116,7 +145,10 @@ export default function ArchiveDetail() {
           sx={{
             color: 'white',
             backgroundColor: '#2E7D32',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            '&: hover': {
+              backgroundColor: '#339933'
+            }
           }}>
           목록
         </Button>

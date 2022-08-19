@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickArchiveModifyFormGoBack } from '../../app/reducers/dialogSlice';
@@ -23,13 +23,28 @@ export default function ArchiveModifyForm() {
   const archiveContent = useAppSelector(state => state.archive.archiveContent); // 자료실 글쓰기 내용 state
   const archiveModifyContent = useAppSelector(state => state.archive.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
 
+  let serverFileNameList: string[]
+
+  // 기존 파일 불러오기
+  useEffect(() => {
+    serverFileNameList = archiveModifyContent.files.map(item => {
+      return item.serverFilename;
+    })
+  }, [])
+
+  // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
     api.postUploadAllFiles(archiveData)
       .then(res => {
         api.putUpdateArchive(archiveId, {
           categoryName: archiveModifyContent.categoryName,
           content: archiveModifyContent.content,
-          files: res.files,
+          files: res.uploadedFiles.map((item: {
+            id: number,
+            originalFilename: string,
+            serverFilename: string,
+            savedPath: string
+          }) => (serverFileNameList.push(item.serverFilename))),
           notice: archiveModifyContent.notice,
           title: archiveModifyContent.title,
         })
