@@ -4,6 +4,7 @@ import { api } from '../network/network';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
 import { copyDetailData } from '../app/reducers/archiveSlice';
+import { addArchiveFile } from '../app/reducers/archiveFileSlice';
 import {
   Box,
   Button,
@@ -14,7 +15,6 @@ import {
 } from '@mui/material';
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
-import { addArchiveFile } from '../app/reducers/archiveFileSlice';
 
 export default function ArchiveDetail() {
   const navigate = useNavigate();
