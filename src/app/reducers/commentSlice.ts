@@ -22,7 +22,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface commentInitialState {
   commentAnchor: HTMLAnchorElement | null,
   comment: { content: string, writer: string },
-  currentComment: { content: string, id: number },
+  currentComment: { content: string, id: number | null },
   commentModify: { content: string },
   commentModifyState: number | null
 };
@@ -30,7 +30,7 @@ interface commentInitialState {
 const CommentInitialState: commentInitialState = {
   commentAnchor: null,
   comment: { content: '', writer: '' },
-  currentComment: { content: '', id: 0 },
+  currentComment: { content: '', id: null },
   commentModify: { content: '' },
   commentModifyState: null
 };

@@ -29,13 +29,11 @@ export default function CommentForm({ id }: propsType) {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const commentState = useAppSelector(state => state.dialog.commentState); // 댓글 입력 취소  state
   const comment = useAppSelector(state => state.comment.comment); // 댓글 state
-  const writer = managerMode ? '관리자' : '작성자'; // writer
 
   // 댓글 등록
   const postComment = () => {
     api.postCreateComment(id, comment)
       .then(res => {
-        console.log('comments', res.comments)
         dispatch(updateCommentData({ comments: res.comments }));
         dispatch(clickCommentGoBack());
         commentRef.current.value = '';
@@ -46,12 +44,13 @@ export default function CommentForm({ id }: propsType) {
   return (
     <Stack direction='column' sx={{ alignItems: 'center' }}>
       <TextField
-        onChange={event => dispatch(setComment({ comment: event.target.value, writer: writer }))}
+        onChange={event => dispatch(setComment({ comment: event.target.value, writer: managerMode ? '관리자' : '작성자' }))}
         inputRef={commentRef}
         multiline
         minRows={3}
         variant={'filled'}
         label={'댓글 작성'}
+        inputProps={{ maxLength: 50 }}
         sx={{ width: '100%' }} />
 
       <Box sx={{ width: '100%', textAlign: 'end' }}>

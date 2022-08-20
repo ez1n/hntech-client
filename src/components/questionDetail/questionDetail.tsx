@@ -8,11 +8,6 @@ import {
   Box,
   Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   styled,
   Typography
 } from '@mui/material';
