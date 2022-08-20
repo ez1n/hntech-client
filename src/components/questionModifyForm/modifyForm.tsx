@@ -2,7 +2,8 @@ import React from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
   modifyQuestionTitle,
-  modifyQuestionContent
+  modifyQuestionContent,
+  setFaqState
 } from '../../app/reducers/questionSlice';
 import {
   Box,
@@ -86,7 +87,7 @@ export default function ModifyForm() {
             <FormControlLabel
               control={<Checkbox
                 defaultChecked={false}
-                onChange={event => console.log}
+                onChange={event => dispatch(setFaqState({ faq: event.target.checked }))}
                 sx={{
                   color: 'darkgrey',
                   '&.Mui-checked': {

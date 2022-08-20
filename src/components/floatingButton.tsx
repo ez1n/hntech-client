@@ -105,6 +105,16 @@ export default function FloatingButton() {
               placeholder={'메일 주소'} />
           </ContentContainer>
 
+          {/* 발신메일 state 추가하기 */}
+          <ContentContainer direction='row'>
+            <TitleBox>발신 메일</TitleBox>
+            <TextField
+              type={'email'}
+              value={''}
+              onChange={event => console.log('발신 메일 변경')}
+              placeholder={'메일 주소'} />
+          </ContentContainer>
+
           <ContentContainer
             direction='row'
             sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>

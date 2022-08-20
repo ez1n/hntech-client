@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
-import { clickQuestionDetailGoBack } from '../../app/reducers/dialogSlice';
-import { setCurrentQuestion } from '../../app/reducers/questionSlice';
+import { clickQuestionDetailGoBack, clickQuestionStatusGoBack } from '../../app/reducers/dialogSlice';
+import { setCurrentQuestion, setDetailData } from '../../app/reducers/questionSlice';
 import {
   Box,
   Button,
@@ -23,13 +23,13 @@ export default function QuestionDetail() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
+  const questionStatusState = useAppSelector(state => state.dialog.questionStatusState); // 게시글 상태 변경 취소 state
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
-  const comments = useAppSelector(state => state.question.detail.comments); // 댓글 정보 (데이터) state
 
   // 수정 데이터 업데이트
   useEffect(() => {
     dispatch(setCurrentQuestion({ content: detail.content, title: detail.title }));
-  }, [])
+  }, []);
 
   // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
@@ -37,7 +37,15 @@ export default function QuestionDetail() {
       .then(res => {
         dispatch(clickQuestionDetailGoBack());
         navigate('/question');
-        alert('삭제되었습니다.');
+      });
+  };
+
+  // 게시글 처리 완료 요청
+  const putUpdateQuestionStatus = (questionId: number) => {
+    api.putUpdateQuestionStatus(questionId)
+      .then(res => {
+        dispatch(setDetailData({ detail: res }));
+        dispatch(clickQuestionStatusGoBack());
       });
   };
 
@@ -56,6 +64,18 @@ export default function QuestionDetail() {
 
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          onClick={() => dispatch(clickQuestionStatusGoBack())}
+          disabled={detail.status === '완료' ? true : false}
+          sx={{
+            m: 1,
+            color: '#2E7D32',
+            border: '1px solid rgba(46, 125, 50, 0.5)',
+            borderRadius: 2,
+            backgroundColor: 'rgba(46, 125, 50, 0.1)'
+          }}>
+          답변완료
+        </Button>
         {EditButton('수정', () => navigate('/question-modify'))}
         {EditButton('삭제', () => dispatch(clickQuestionDetailGoBack()))}
       </Spacing>
@@ -85,7 +105,7 @@ export default function QuestionDetail() {
       </Spacing>
 
       {/* 댓글 */}
-      {comments.map((item) => (
+      {detail.comments.map((item) => (
         <Comment key={item.id} item={item} questionId={detail.id} />
       ))}
 
@@ -102,6 +122,15 @@ export default function QuestionDetail() {
         text2={'삭제하시겠습니까?'}
         yesAction={() => deleteQuestion(detail.id)}
         closeAction={() => dispatch(clickQuestionDetailGoBack())} />
+
+      {/* 답변완료 Dialog */}
+      <CancelModal
+        openState={questionStatusState}
+        title={'문의사항 처리상태 변경'}
+        text1={'답변 완료된 게시글은 되돌릴 수 없습니다.'}
+        text2={'변경 하시겠습니까?'}
+        yesAction={() => putUpdateQuestionStatus(detail.id)}
+        closeAction={() => dispatch(clickQuestionStatusGoBack())} />
     </Container>
   )
 };

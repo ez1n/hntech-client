@@ -2,7 +2,12 @@ import React, { useEffect } from 'react';
 import './style.css';
 import { api } from '../network/network';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { clickManagerLogin, clickChangeMode, setFooter, setPassword } from '../app/reducers/managerModeSlice';
+import {
+  clickManagerLogin,
+  clickChangeMode,
+  setFooter,
+  setPassword
+} from '../app/reducers/managerModeSlice';
 import {
   Box,
   Button,
@@ -15,11 +20,13 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import CancelModal from './cancelModal';
 
 export default function Footer() {
   const dispatch = useAppDispatch();
 
   const managerLogin = useAppSelector(state => state.manager.managerLogin); // 로그인 dialog state
+  const logoutState = useAppSelector(state => state.dialog.logoutState); // 로그아웃 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
   const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
@@ -56,7 +63,6 @@ export default function Footer() {
     api.getLogout()
       .then(res => {
         dispatch(clickChangeMode())
-        console.log('로그아웃')
       })
   };
 
@@ -126,7 +132,7 @@ export default function Footer() {
           justifyContent: 'flex-end'
         }}>
         <Button
-          onClick={managerMode ? getLogout : () => dispatch(clickManagerLogin())}
+          onClick={managerMode ? () => dispatch(clickLogoutGoBack()) : () => dispatch(clickManagerLogin())}
           sx={{
             color: '#FCFCFC',
             opacity: 0.6
@@ -155,6 +161,16 @@ export default function Footer() {
           <Button onClick={() => dispatch(clickManagerLogin())}>취소</Button>
         </DialogActions>
       </Dialog>
+
+      {/* 로그아웃 dialog */}
+      <CancelModal
+        openState={logoutState}
+        title={'관리자 로그아웃'}
+        text1={'로그아웃 하시겠습니까?'}
+        text2={''}
+        yesAction={() => getLogout()}
+        closeAction={() => dispatch(clickLogoutGoBack())}
+      />
     </Box>
   )
 };

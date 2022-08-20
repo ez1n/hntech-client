@@ -22,7 +22,7 @@ class Api {
 
   /* 로그아웃 */
   async getLogout() {
-    const response = await this.api.post(`/admin/logout`);
+    const response = await this.api.get(`/admin/logout`);
     return response;
   };
 
@@ -56,9 +56,15 @@ class Api {
     return response.data;
   };
 
-  // 문의사항 비밀번호
+  // 문의사항 상세보기 - 비밀번호
   async postPassword(questionId: number, password: {}) {
     const response = await this.api.post(`/question/${questionId}`, password);
+    return response.data;
+  };
+
+  // 문의사항 상세보기 - 관리자
+  async getQuestionByAdmin(questionId: number) {
+    const response = await this.api.get(`/admin/question/${questionId}`);
     return response.data;
   };
 
@@ -74,14 +80,20 @@ class Api {
     return response.data;
   };
 
-  // 문의게시판 FAQ 글쓰기 -> 어떻게 보내지?
-  async postCreateNotice(createNoticeForm: {}) {
-    const response = await this.api.post(``, createNoticeForm);
+  // 문의게시판 FAQ (게시글 수정)
+  async putUpdateFAQ(questionId: number, currentQuestion: { title: string, content: string, faq: string }) {
+    const response = await this.api.put(`/admin/question/${questionId}`, currentQuestion);
     if (response.status !== SUCCESS) {
       console.error(response.data);
       return;
     }
     console.log(response.data);
+  };
+
+  // 문의게시판 답변완료
+  async putUpdateQuestionStatus(questionId: number) {
+    const response = await this.api.put(`/admin/question/${questionId}/complete`);
+    return response.data;
   };
 
   // 댓글 등록

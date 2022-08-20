@@ -1,4 +1,3 @@
-import { Password } from "@mui/icons-material";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // 관리자 정보 / 페이지 관리

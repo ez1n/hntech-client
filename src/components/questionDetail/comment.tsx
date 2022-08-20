@@ -51,7 +51,7 @@ export default function Comment({ item, questionId }: propsType) {
   };
 
   // 댓글 삭제
-  const deleteComment = (questionId: number, commentId: number | null) => {
+  const deleteComment = (questionId: number, commentId: number) => {
     api.deleteComment(questionId, commentId)
       .then(res => {
         dispatch(updateCommentData({ comments: res.comments }));

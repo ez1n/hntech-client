@@ -29,6 +29,7 @@ export default function QuestionItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const passwordState = useAppSelector(state => state.question.passwordState); // 비밀번호 dialog state
   const pw = useAppSelector(state => state.question.pw); // 비밀번호 state (정보)
   const questions = useAppSelector(state => state.question.questions); // 문의 목록 state
@@ -70,6 +71,21 @@ export default function QuestionItem() {
       })
   };
 
+  // 게시글 자세히 보기
+  const getQuestionByAdmin = (questionId: number) => {
+    if (managerMode) {
+      api.getQuestionByAdmin(questionId)
+        .then(res => {
+          dispatch(setDetailData({ detail: res }));
+          navigate('/question-detail');
+          console.log(res)
+        })
+    } else {
+      dispatch(inputPassword());
+      dispatch(setCurrentId({ id: questionId }));
+    }
+  };
+
   // FAQ 상세보기
   const getFAQDetail = (questionId: number) => {
     api.getFAQDetail(questionId)
@@ -99,8 +115,8 @@ export default function QuestionItem() {
         </Box>
 
         {/* FAQ */}
-        {faq.map((item, index) => (
-          <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: 'rgba(46, 125, 50, 0.1)' }}>
+        {faq.map((item) => (
+          <Box key={item.id} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: 'rgba(46, 125, 50, 0.1)' }}>
             <List sx={{ flex: 0.1 }}><ErrorIcon sx={{ color: 'darkgreen' }} /></List>
             <List
               onClick={() => getFAQDetail(item.id)}
@@ -136,15 +152,12 @@ export default function QuestionItem() {
         ))}
 
         {/* 목록 */}
-        {questions.map((item, index) => (
+        {questions.map((item) => (
           <>
-            <Box key={index} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46' }}>
+            <Box key={item.id} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46' }}>
               <List sx={{ flex: 0.1 }}>{item.id}</List>
               <List
-                onClick={() => {
-                  dispatch(inputPassword());
-                  dispatch(setCurrentId({ id: item.id }));
-                }}
+                onClick={() => getQuestionByAdmin(item.id)}
                 sx={{
                   flex: 0.5,
                   display: 'flex',
@@ -188,26 +201,28 @@ export default function QuestionItem() {
       </Stack>
 
       {/* dialog */}
-      <Dialog
-        open={passwordState}
-        onClose={() => dispatch(inputPassword())}
-        sx={{ textAlign: 'center' }}>
-        <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
-        <DialogContent>
-          <TextField
-            type={'password'}
-            size={'small'}
-            inputProps={{ maxLength: 4 }}
-            onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => dispatch(setPassword({ password: event.target.value }))} />
-        </DialogContent>
+      {!managerMode &&
+        <Dialog
+          open={passwordState}
+          onClose={() => dispatch(inputPassword())}
+          sx={{ textAlign: 'center' }}>
+          <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
+          <DialogContent>
+            <TextField
+              type={'password'}
+              size={'small'}
+              inputProps={{ maxLength: 4 }}
+              onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => dispatch(setPassword({ password: event.target.value }))} />
+          </DialogContent>
 
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button onClick={() => { openDetail(currentId) }}>
-            확인
-          </Button>
-          <Button onClick={() => dispatch(inputPassword())}>취소</Button>
-        </DialogActions>
-      </Dialog>
+          <DialogActions sx={{ justifyContent: 'center' }}>
+            <Button onClick={() => { openDetail(currentId) }}>
+              확인
+            </Button>
+            <Button onClick={() => dispatch(inputPassword())}>취소</Button>
+          </DialogActions>
+        </Dialog>
+      }
     </>
   )
 };
