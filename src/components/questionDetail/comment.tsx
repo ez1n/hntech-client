@@ -1,5 +1,5 @@
 import React from 'react';
-import { api } from '../../network/network';
+import { commentApi } from '../../network/comment';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickCommentRemoveGoBack } from '../../app/reducers/dialogSlice';
 import {
@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import CancelModal from '../cancelModal';
+import { updateCommentData } from '../../app/reducers/questionSlice';
 
 interface propsType {
   item: {
@@ -38,22 +39,22 @@ export default function Comment({ item, questionId }: propsType) {
   const commentAnchor = useAppSelector(state => state.comment.commentAnchor); // 댓글 메뉴 위치 state 
   const commentModifyState = useAppSelector(state => state.comment.commentModifyState); // 댓글 수정 state
   const commentModify = useAppSelector(state => state.comment.commentModify); // 수정 댓글
+  const currentComment = useAppSelector(state => state.comment.currentComment); // 현재 댓글 정보
   const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제 state
   const commentMenuOpen = Boolean(commentAnchor); // 댓글 메뉴 open
 
   // 댓글 수정
   const putComment = (questionId: number, commentId: number, comment: {}) => {
-    api.putCreateComment(questionId, commentId, comment)
-      .then(res => {
-        dispatch(clickCommentRemoveGoBack());
-      })
+    commentApi.putCreateComment(questionId, commentId, comment)
+      .then(res => dispatch(updateCommentData({ comments: res.comments })))
       .catch(error => console.log(error))
   };
 
   // 댓글 삭제
   const deleteComment = (questionId: number, commentId: number) => {
-    api.deleteComment(questionId, commentId)
+    commentApi.deleteComment(questionId, commentId)
       .then(res => {
+        dispatch(updateCommentData({ comments: res.comments }));
         dispatch(clickCommentRemoveGoBack());
         dispatch(resetAnchor());
       })
@@ -65,25 +66,16 @@ export default function Comment({ item, questionId }: propsType) {
       direction='row'
       sx={{
         borderBottom: '1px solid #2E7D32',
-        flexDirection: `${item.writer === '작성자' && 'row-reverse'}`,
-        textAlign: `${item.writer === '작성자' && 'end'}`
+        flexDirection: `${item.writer !== '관리자' && 'row-reverse'}`,
+        textAlign: `${item.writer !== '관리자' && 'end'}`
       }}>
       {/*  댓글 내용 */}
       {commentModifyState === item.id ?
-        <Stack
-          direction='column'
-          spacing={1}
-          sx={{
-            p: 2,
-            width: '100%',
-          }}>
-          <Typography sx={{ fontSize: 20 }}>{item.writer}</Typography>
-          <Typography>{item.content}</Typography>
-        </Stack> :
         <>
           <TextField
-            defaultValue={item.content}
+            defaultValue={currentComment.content}
             onChange={event => dispatch(updateComment({ content: event?.target.value }))}
+            inputProps={{ maxLength: 50 }}
           />
           <Stack direction='row' sx={{ width: '100%', justifyContent: 'flex-end' }}>
             <Button
@@ -101,6 +93,17 @@ export default function Comment({ item, questionId }: propsType) {
             </Button>
           </Stack>
         </>
+        :
+        <Stack
+          direction='column'
+          spacing={1}
+          sx={{
+            p: 2,
+            width: '100%',
+          }}>
+          <Typography sx={{ fontSize: 20 }}>{item.writer}</Typography>
+          <Typography>{item.content}</Typography>
+        </Stack>
       }
 
       {/* 수정, 삭제 버튼 */}
@@ -122,7 +125,7 @@ export default function Comment({ item, questionId }: propsType) {
             onClose={() => dispatch(resetAnchor())}
           >
             <MenuItem onClick={() => {
-              dispatch(updateCommentState({ id: item.id }));
+              dispatch(updateCommentState({ id: currentComment.id }));
               dispatch(resetAnchor());
             }}>
               수정
@@ -153,7 +156,7 @@ export default function Comment({ item, questionId }: propsType) {
             onClose={() => dispatch(resetAnchor())}
           >
             <MenuItem onClick={() => {
-              dispatch(updateCommentState({ id: item.id }));
+              dispatch(updateCommentState({ id: currentComment.id }));
               dispatch(resetAnchor());
             }}>
               수정
@@ -174,7 +177,7 @@ export default function Comment({ item, questionId }: propsType) {
         title={'댓글 삭제'}
         text1={'삭제된 댓글은 복구할 수 없습니다.'}
         text2={'삭제하시겠습니까?'}
-        yesAction={() => deleteComment(questionId, item.id)}
+        yesAction={() => deleteComment(questionId, currentComment.id)}
         closeAction={() => dispatch(clickCommentRemoveGoBack())} />
     </Stack>
   )

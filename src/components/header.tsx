@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import './style.css';
 import { api } from '../network/network';
-import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import {
@@ -26,7 +25,7 @@ import {
   selectCategoryFalse,
   setAllCategories
 } from '../app/reducers/productCategorySlice';
-import { Toolbar, Typography, Button, Stack, Box, Paper } from '@mui/material';
+import { Toolbar, Typography, Button, Stack, Box, Paper, styled } from '@mui/material';
 
 export default function Header() {
   const navigate = useNavigate();

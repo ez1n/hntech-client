@@ -1,5 +1,5 @@
 import React from 'react';
-import { api } from '../../network/network';
+import { questionApi } from '../../network/question';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickQuestionModifyFormGoBack } from '../../app/reducers/dialogSlice';
@@ -16,15 +16,23 @@ export default function QuestionModifyForm() {
   const questionModifyFormState = useAppSelector(state => state.dialog.questionModifyFormState); // 글쓰기 취소 state
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
   const currentQuestion = useAppSelector(state => state.question.currentQuestion); // 수정용 정보
+  const faqState = useAppSelector(state => state.question.faqState); // FAQ state
 
   // 문의사항 변경하기
-  const putQuestion = (questionId: number, currentQuestion: {}) => {
-    api.putQuestion(questionId, currentQuestion)
-      .then(res => {
-        dispatch(setDetailData(res));
-        navigate('/question-detail');
-      })
-      .catch(error => console.log(error))
+  const putQuestion = (questionId: number, currentQuestion: { title: string, content: string }) => {
+    if (faqState) {
+      questionApi.putUpdateFAQ(questionId, { title: currentQuestion.title, content: currentQuestion.content, faq: faqState })
+        .then(res => {
+          navigate('/question-detail');
+        })
+    } else {
+      questionApi.putQuestion(questionId, currentQuestion)
+        .then(res => {
+          dispatch(setDetailData(res));
+          navigate('/question-detail');
+        })
+        .catch(error => console.log(error))
+    }
   };
 
   return (

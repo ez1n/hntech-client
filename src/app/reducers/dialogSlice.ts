@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 // 알림창
 
 /**
+ * logoutState : 로그아웃
  * productCategoryState : 
  * productFormState : 
  * productModifyFormState : 
@@ -18,9 +19,11 @@ import { createSlice } from "@reduxjs/toolkit";
  * editArchiveCategoryState : 
  * archiveModifyFormState : 자료실 글 수정
  * editState : 
+ * questionStatusState : 문의사항 처리 상태
  */
 
 /**
+ * clickLogoutGoBack : 로그아웃 취소
  * clickProductCategoryGoBack : 
  * clickProductFormGoBack : 
  * clickProductModifyFormGoBack : 
@@ -36,9 +39,11 @@ import { createSlice } from "@reduxjs/toolkit";
  * editArchiveCategoryGoBack : 
  * clickArchiveModifyFormGoBack : 자료실 글 수정 취소
  * clickEditGoBack : 
+ * clickQuestionStatusGoBack : 문의사항 처리상태 변경
  */
 
 interface dialogInitialState {
+  logoutState: boolean,
   productCategoryState: boolean,
   productFormState: boolean,
   productModifyFormState: boolean,
@@ -55,10 +60,12 @@ interface dialogInitialState {
   archiveFormState: boolean,
   archiveDetailState: boolean,
   archiveModifyFormState: boolean,
-  editState: boolean
+  editState: boolean,
+  questionStatusState: boolean
 };
 
 const DialogInitialState: dialogInitialState = {
+  logoutState: false,
   productCategoryState: false,
   productFormState: false,
   productModifyFormState: false,
@@ -75,13 +82,15 @@ const DialogInitialState: dialogInitialState = {
   archiveFormState: false,
   archiveDetailState: false,
   archiveModifyFormState: false,
-  editState: false
+  editState: false,
+  questionStatusState: false
 };
 
 export const DialogSlice = createSlice({
   name: 'dialog',
   initialState: DialogInitialState,
   reducers: {
+    clickLogoutGoBack: (state) => { state.logoutState = !state.logoutState },
     clickProductCategoryGoBack: (state) => { state.productCategoryState = !state.productCategoryState },
     clickProductFormGoBack: (state) => { state.productFormState = !state.productFormState },
     clickProductModifyFormGoBack: (state) => { state.productModifyFormState = !state.productModifyFormState },
@@ -98,11 +107,13 @@ export const DialogSlice = createSlice({
     archiveFormGoBack: (state) => { state.archiveFormState = !state.archiveFormState },
     archiveDetailGoBack: (state) => { state.archiveDetailState = !state.archiveDetailState },
     clickArchiveModifyFormGoBack: (state) => { state.archiveModifyFormState = !state.archiveModifyFormState },
-    clickEditGoBack: (state) => { state.editState = !state.editState }
+    clickEditGoBack: (state) => { state.editState = !state.editState },
+    clickQuestionStatusGoBack: (state) => { state.questionStatusState = !state.questionStatusState }
   }
 });
 
 export const {
+  clickLogoutGoBack,
   clickProductCategoryGoBack,
   clickProductFormGoBack,
   clickProductModifyFormGoBack,
@@ -119,5 +130,6 @@ export const {
   archiveFormGoBack,
   archiveDetailGoBack,
   clickArchiveModifyFormGoBack,
-  clickEditGoBack } = DialogSlice.actions;
+  clickEditGoBack,
+  clickQuestionStatusGoBack } = DialogSlice.actions;
 export default DialogSlice.reducer;

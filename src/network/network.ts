@@ -22,84 +22,8 @@ class Api {
 
   /* 로그아웃 */
   async getLogout() {
-    const response = await this.api.post(`/admin/logout`);
+    const response = await this.api.get(`/admin/logout`);
     return response;
-  };
-
-  /* 문의사항 */
-
-  // 문의사항 글쓰기
-  async postCreateQuestion(createQuestionForm: {}) {
-    const response = await this.api.post(`/question`, createQuestionForm);
-    if (response.status !== SUCCESS) {
-      console.error(response.data);
-      return;
-    }
-    console.log(response.data);
-  };
-
-  // 문의사항 목록 받아오기
-  async getAllQuestions(pageNumber: number) {
-    const response = await this.api.get(`/question?page=${pageNumber}`);
-    return response.data;
-  };
-
-  // FAQ
-  async getFAQ() {
-    const response = await this.api.get(`/question/faq?page=0`);
-    return response.data;
-  };
-
-  // FAQ 상세보기
-  async getFAQDetail(questionId: number) {
-    const response = await this.api.get(`/question/${questionId}`);
-    return response.data;
-  };
-
-  // 문의사항 비밀번호
-  async postPassword(questionId: number, password: {}) {
-    const response = await this.api.post(`/question/${questionId}`, password);
-    return response.data;
-  };
-
-  // 문의사항 글 삭제
-  async deleteQuestion(questionId: number) {
-    const response = await this.api.delete(`/question/${questionId}`);
-    return response.data;
-  };
-
-  // 문의사항 글 수정 (변경 요청)
-  async putQuestion(questionId: number, updateQuestionForm: {}) {
-    const response = await this.api.put(`/question/${questionId}`, updateQuestionForm);
-    return response.data;
-  };
-
-  // 문의게시판 FAQ 글쓰기 -> 어떻게 보내지?
-  async postCreateNotice(createNoticeForm: {}) {
-    const response = await this.api.post(``, createNoticeForm);
-    if (response.status !== SUCCESS) {
-      console.error(response.data);
-      return;
-    }
-    console.log(response.data);
-  };
-
-  // 댓글 등록
-  async postCreateComment(questionId: number, comment: {}) {
-    const response = await this.api.post(`/question/${questionId}/comment`, comment);
-    return response.data;
-  };
-
-  // 댓글 수정 
-  async putCreateComment(questionId: number, commentId: number, comment: {}) {
-    const response = await this.api.put(`/question/${questionId}/comment/${commentId}`, comment);
-    return response.data;
-  };
-
-  // 댓글 삭제
-  async deleteComment(questionId: number, commentId: number) {
-    const response = await this.api.delete(`/question/${questionId}/comment/${commentId}`);
-    return response.data;
   };
 
   /* 관리자 정보 */
@@ -246,36 +170,6 @@ class Api {
   // 자료실 게시글 삭제
   async deleteArchive(archiveId: number) {
     const response = await this.api.delete(`/archive/${archiveId}`);
-    return response.data;
-  };
-
-  /* 파일 등록 */
-
-  // 단일 파일 전송
-  async postUploadFile(file: FormData) {
-    const response = await this.api.post(`/file/upload`, file, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    return response.data;
-  };
-
-  // 다중 파일 전송
-  async postUploadAllFiles(files: FormData) {
-    const response = await this.api.post(`/file/upload-all`, files, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    return response.data;
-  };
-
-  // 파일 다운로드
-  async downloadFile(filename: string) {
-    const response = await this.api.get(`/file/download/${filename}`, {
-      responseType: 'blob',
-    });
     return response.data;
   };
 };

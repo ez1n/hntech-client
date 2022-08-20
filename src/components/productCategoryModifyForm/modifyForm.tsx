@@ -1,11 +1,7 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import {
-  updateProductCategoryName,
-  addCategoryImage,
-  deleteCategoryImage,
-  updateProductCategoryImage
-} from '../../app/reducers/productCategoryContentSlice';
+import { addCategoryImage, deleteCategoryImage } from '../../app/reducers/productCategoryContentSlice';
+import { updateCurrentCategoryImage, updateCurrentCategoryName } from '../../app/reducers/productCategorySlice';
 import {
   Box,
   Checkbox,
@@ -15,7 +11,6 @@ import {
   TextField
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import { updateCurrentCategoryImage, updateCurrentCategoryName } from '../../app/reducers/productCategorySlice';
 
 export default function ModifyForm() {
   const dispatch = useAppDispatch();

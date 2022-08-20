@@ -2,7 +2,8 @@ import React from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
   modifyQuestionTitle,
-  modifyQuestionContent
+  modifyQuestionContent,
+  setFaqState
 } from '../../app/reducers/questionSlice';
 import {
   Box,
@@ -69,24 +70,11 @@ export default function ModifyForm() {
               }}
               sx={{ mr: 2, width: '15%' }}
             />
-            <TextField
-              type='password'
-              disabled
-              value={detail.password}
-              size='small'
-              inputProps={{
-                style: {
-                  fontSize: 20
-                },
-                maxLength: 4
-              }}
-              sx={{ width: '15%' }}
-            />
 
             <FormControlLabel
               control={<Checkbox
                 defaultChecked={false}
-                onChange={event => console.log}
+                onChange={event => dispatch(setFaqState({ faq: event.target.checked }))}
                 sx={{
                   color: 'darkgrey',
                   '&.Mui-checked': {

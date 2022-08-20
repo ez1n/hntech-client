@@ -42,6 +42,7 @@ export default function ArchiveDetail() {
       .catch(error => console.log(error))
   };
 
+  // 파일 다운로드
   const downloadFile = (serverFilename: string, originalFilename: string) => {
     api.downloadFile(serverFilename)
       .then(res => {
@@ -54,7 +55,7 @@ export default function ArchiveDetail() {
         a.download = originalFilename;
         document.body.appendChild(a);
         a.click();
-        setTimeout(_ => {
+        setTimeout(() => {
           window.URL.revokeObjectURL(url);
         }, 60000);
         a.remove();

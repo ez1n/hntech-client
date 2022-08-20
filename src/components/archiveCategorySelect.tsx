@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { updateArchiveCategory } from '../app/reducers/archiveSlice';
 import { MenuItem, Select } from '@mui/material';
-import { getArchiveCategory } from '../app/reducers/archiveCategorySlice';
 
 interface propsType {
   defaultCategory: string

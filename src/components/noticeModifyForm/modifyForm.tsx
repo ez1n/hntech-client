@@ -5,13 +5,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { addNoticeFile, deleteNoticeFile } from '../../app/reducers/noticeSlice';
 import { updateNoticeTitle, updateNoticeContent } from '../../app/reducers/questionContentSlice';
-
-import {
-  Box,
-  TextField,
-  Typography,
-  Stack
-} from '@mui/material';
+import { Box, TextField, Typography, Stack } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 
 export default function ModifyForm() {

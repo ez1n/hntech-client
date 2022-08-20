@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
+import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { Box, Container } from '@mui/material';
+import { Box } from '@mui/material';
 import ProductCategories from './productCategories';
 import ProductItem from './productItem';
 import { setAllCategories } from '../../app/reducers/productCategorySlice';
-import { api } from '../../network/network';
 
 export default function Products() {
   const dispatch = useAppDispatch();

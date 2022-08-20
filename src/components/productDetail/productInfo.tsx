@@ -7,11 +7,6 @@ import {
   Box,
   Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   MobileStepper,
   styled,
   Typography
@@ -19,6 +14,7 @@ import {
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@mui/icons-material/NavigateBeforeRounded';
 import EditButton from '../editButton';
+import CancelModal from '../cancelModal';
 
 export default function ProductInfo() {
   const navigate = useNavigate();
@@ -31,7 +27,7 @@ export default function ProductInfo() {
       '/images/mainButtons/건식퓨지블링크.jpg',
       '/images/mainButtons/유리벌브.jpg'
     ],
-    data: { name: '플러쉬', info: '아파트와 같은 주거공간의 발코니에 설치되는 제품' }
+    data: { name: '플러쉬', info: '아파트와 같은 주거공간의 발코니에 설치되는 제품', category: '스프링클러' }
   };
 
   // 제품 정보 받아오기
@@ -126,26 +122,13 @@ export default function ProductInfo() {
       </Typography>
 
       {/* 삭제 버튼 Dialog */}
-      <Dialog
-        open={productInfoState}
-        onClose={() => dispatch(clickProductInfoGoBack())}>
-        <DialogTitle>
-          제품 삭제
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            해당 제품이 삭제됩니다.
-          </DialogContentText>
-          <DialogContentText>
-            삭제하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={deleteProduct}>네</Button>
-          <Button onClick={() => dispatch(clickProductInfoGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={productInfoState}
+        title='제품 삭제'
+        text1='해당 제품이 삭제됩니다.'
+        text2='삭제하시겠습니까?'
+        yesAction={() => deleteProduct()}
+        closeAction={() => dispatch(clickProductInfoGoBack())} />
     </Container>
   )
 };

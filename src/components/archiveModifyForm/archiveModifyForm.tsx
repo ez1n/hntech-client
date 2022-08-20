@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { fileApi } from '../../network/file';
 import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -31,7 +32,7 @@ export default function ArchiveModifyForm() {
     ))
     console.log(serverFileNameList);
 
-    api.postUploadAllFiles(archiveData)
+    fileApi.postUploadAllFiles(archiveData)
       .then(res => {
         // serverFilename 리스트에 추가
         res.uploadedFiles.map((item: {

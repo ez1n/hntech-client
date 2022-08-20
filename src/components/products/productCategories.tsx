@@ -4,21 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectCategoryTrue, setCurrentCategory } from '../../app/reducers/productCategorySlice';
 import { clickProductCategoryGoBack } from '../../app/reducers/dialogSlice';
-import {
-  Box,
-  Button,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  styled,
-  Typography
-} from '@mui/material';
+import { Box, Button, Container, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import CancelModal from '../cancelModal';
 
 export default function ProductCategories() {
   const navigate = useNavigate();
@@ -148,28 +138,13 @@ export default function ProductCategories() {
       }
 
       {/* 삭제 버튼 Dialog */}
-      <Dialog
-        open={productCategoryState}
-        onClose={() => dispatch(clickProductCategoryGoBack())}>
-        <DialogTitle>
-          카테고리 삭제
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            해당 카테고리가 삭제됩니다.
-          </DialogContentText>
-          <DialogContentText>
-            삭제하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => deleteCategory(currentCategory.id)}>
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickProductCategoryGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={productCategoryState}
+        title='카테고리 삭제'
+        text1='해당 카테고리가 삭제됩니다.'
+        text2='삭제하시겠습니까?'
+        yesAction={() => deleteCategory(currentCategory.id)}
+        closeAction={() => dispatch(clickProductCategoryGoBack())} />
     </>
   )
 };

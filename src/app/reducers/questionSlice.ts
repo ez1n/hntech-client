@@ -59,11 +59,11 @@ interface questionInitialState {
     content: string,
     createTime: string,
     id: number,
-    password: string,
     title: string,
-    updateTime: string,
+    status: string,
     writer: string
   },
+  faqState: string,
   currentQuestion: { title: string, content: string }
 };
 
@@ -80,11 +80,11 @@ const QuestionInitialState: questionInitialState = {
     content: '',
     createTime: '',
     id: 0,
-    password: '',
     title: '',
-    updateTime: '',
+    status: '',
     writer: ''
   },
+  faqState: 'false',
   currentQuestion: { title: '', content: '' }
 };
 
@@ -115,6 +115,12 @@ export const QuestionSlice = createSlice({
     ) => {
       state.faq = action.payload.faq;
     },
+    setFaqState: (
+      state,
+      action: PayloadAction<{ faq: boolean }>
+    ) => {
+      state.faqState = String(action.payload.faq);
+    },
     setDetailData: (
       state,
       action: PayloadAction<{
@@ -123,9 +129,8 @@ export const QuestionSlice = createSlice({
           content: string,
           createTime: string,
           id: number,
-          password: string,
           title: string,
-          updateTime: string,
+          status: string,
           writer: string
         }
       }>
@@ -160,6 +165,7 @@ export const {
   setCurrentId,
   getAllQuestions,
   getFaq,
+  setFaqState,
   updateCommentData,
   setDetailData,
   setCurrentQuestion,
