@@ -1,4 +1,5 @@
 import React from 'react';
+import { fileApi } from '../../network/file';
 import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -25,7 +26,7 @@ export default function ArchiveForm() {
     fileData.map(item => archiveData.append('files', item));
 
     // 첨부파일 보내기
-    api.postUploadAllFiles(archiveData)
+    fileApi.postUploadAllFiles(archiveData)
       .then(res => { // 파일이 존재하는 경우
         console.log('postUploadAllFiles', res.uploadedFiles);
         // 게시글 내용 보내기

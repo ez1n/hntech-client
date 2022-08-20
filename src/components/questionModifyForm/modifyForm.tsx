@@ -70,19 +70,6 @@ export default function ModifyForm() {
               }}
               sx={{ mr: 2, width: '15%' }}
             />
-            <TextField
-              type='password'
-              disabled
-              value={detail.password}
-              size='small'
-              inputProps={{
-                style: {
-                  fontSize: 20
-                },
-                maxLength: 4
-              }}
-              sx={{ width: '15%' }}
-            />
 
             <FormControlLabel
               control={<Checkbox

@@ -36,10 +36,12 @@ export default function ProductDetail() {
 
         <Spacing />
 
+        {/* 다운로드 자료 */}
         <Files />
 
         <Spacing />
 
+        {/* 상세 정보 */}
         <Specification />
       </Box>
     </Box>

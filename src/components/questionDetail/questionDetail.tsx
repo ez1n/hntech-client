@@ -1,16 +1,10 @@
 import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import { questionApi } from '../../network/question';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
 import { clickQuestionDetailGoBack, clickQuestionStatusGoBack } from '../../app/reducers/dialogSlice';
 import { setCurrentQuestion, setDetailData } from '../../app/reducers/questionSlice';
-import {
-  Box,
-  Button,
-  Container,
-  styled,
-  Typography
-} from '@mui/material';
+import { Box, Button, Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import QuestionContent from './questionContent';
 import Comment from './comment';
@@ -33,7 +27,7 @@ export default function QuestionDetail() {
 
   // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
-    api.deleteQuestion(id)
+    questionApi.deleteQuestion(id)
       .then(res => {
         dispatch(clickQuestionDetailGoBack());
         navigate('/question');
@@ -42,7 +36,7 @@ export default function QuestionDetail() {
 
   // 게시글 처리 완료 요청
   const putUpdateQuestionStatus = (questionId: number) => {
-    api.putUpdateQuestionStatus(questionId)
+    questionApi.putUpdateQuestionStatus(questionId)
       .then(res => {
         dispatch(setDetailData({ detail: res }));
         dispatch(clickQuestionStatusGoBack());

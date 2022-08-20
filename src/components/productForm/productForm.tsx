@@ -2,19 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickProductFormGoBack } from '../../app/reducers/dialogSlice';
-import {
-  Container,
-  styled,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Typography
-} from '@mui/material';
+import { Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import Form from './form';
+import CancelModal from '../cancelModal';
 
 export default function ProductForm() {
   const navigate = useNavigate();
@@ -48,32 +39,16 @@ export default function ProductForm() {
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
-      <Dialog
-        open={productFormState}
-        onClose={() => dispatch(clickProductFormGoBack())}>
-        <DialogTitle>
-          {'작성 취소'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            작성중인 내용이 사라집니다.
-          </DialogContentText>
-          <DialogContentText>
-            취소하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => {
-            dispatch(clickProductFormGoBack());
-            navigate(-1);
-          }}
-          >
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickProductFormGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={productFormState}
+        title='작성 취소'
+        text1='작성중인 내용이 사라집니다.'
+        text2='취소하시겠습니까?'
+        yesAction={() => {
+          dispatch(clickProductFormGoBack());
+          navigate(-1);
+        }}
+        closeAction={() => dispatch(clickProductFormGoBack())} />
     </Container >
   )
 };

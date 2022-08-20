@@ -8,6 +8,7 @@ import {
   setFooter,
   setPassword
 } from '../app/reducers/managerModeSlice';
+import { clickLogoutGoBack } from '../app/reducers/dialogSlice';
 import {
   Box,
   Button,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { api } from '../../network/network';
+import { commentApi } from '../../network/comment';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickCommentRemoveGoBack } from '../../app/reducers/dialogSlice';
 import {
@@ -45,14 +45,14 @@ export default function Comment({ item, questionId }: propsType) {
 
   // 댓글 수정
   const putComment = (questionId: number, commentId: number, comment: {}) => {
-    api.putCreateComment(questionId, commentId, comment)
+    commentApi.putCreateComment(questionId, commentId, comment)
       .then(res => dispatch(updateCommentData({ comments: res.comments })))
       .catch(error => console.log(error))
   };
 
   // 댓글 삭제
   const deleteComment = (questionId: number, commentId: number) => {
-    api.deleteComment(questionId, commentId)
+    commentApi.deleteComment(questionId, commentId)
       .then(res => {
         dispatch(updateCommentData({ comments: res.comments }));
         dispatch(clickCommentRemoveGoBack());

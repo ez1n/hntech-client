@@ -6,12 +6,7 @@ import {
   updateQuestionPassword,
   updateQuestionContent
 } from '../../app/reducers/questionContentSlice';
-import {
-  Box,
-  List,
-  ListItem,
-  TextField
-} from '@mui/material';
+import { Box, List, ListItem, TextField } from '@mui/material';
 
 export default function Form() {
   const dispatch = useAppDispatch();

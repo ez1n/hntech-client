@@ -2,20 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickNoticeFormGoBack } from '../../app/reducers/dialogSlice';
-import { resetNoticeContent } from '../../app/reducers/questionContentSlice';
-import {
-  Container,
-  styled,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Typography
-} from '@mui/material';
+import { Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import ModifyForm from './modifyForm';
+import CancelModal from '../cancelModal';
 
 export default function NoticeModifyForm() {
   const navigate = useNavigate();
@@ -48,32 +38,16 @@ export default function NoticeModifyForm() {
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
-      <Dialog
-        open={noticeFormState}
-        onClose={() => dispatch(clickNoticeFormGoBack())}>
-        <DialogTitle>
-          변경 취소
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            변경중인 내용이 사라집니다.
-          </DialogContentText>
-          <DialogContentText>
-            취소하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => {
-            dispatch(clickNoticeFormGoBack());
-            navigate(-1);
-          }}
-          >
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickNoticeFormGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={noticeFormState}
+        title='변경 취소'
+        text1='변경중인 내용이 사라집니다.'
+        text2='취소하시겠습니까?'
+        yesAction={() => {
+          dispatch(clickNoticeFormGoBack());
+          navigate(-1);
+        }}
+        closeAction={() => dispatch(clickNoticeFormGoBack())} />
     </Container >
   )
 };

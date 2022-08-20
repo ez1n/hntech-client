@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import { questionApi } from '../../network/question';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { setCurrentId, setDetailData } from '../../app/reducers/questionSlice';
+import { getAllQuestions, setPassword, inputPassword, getFaq } from '../../app/reducers/questionSlice';
 import {
   Box,
   Button,
@@ -17,12 +18,6 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import {
-  getAllQuestions,
-  setPassword,
-  inputPassword,
-  getFaq
-} from '../../app/reducers/questionSlice';
 import ErrorIcon from '@mui/icons-material/Error';
 
 export default function QuestionItem() {
@@ -40,11 +35,11 @@ export default function QuestionItem() {
 
   useEffect(() => {
     // 자주하는 질문 목록 받아오기
-    api.getFAQ()
+    questionApi.getFAQ()
       .then(res => dispatch(getFaq({ faq: res.questions })))
       .catch(error => console.log('faq error', error))
     // 문의 목록 받아오기
-    api.getAllQuestions(0)
+    questionApi.getAllQuestions(0)
       .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })))
       .catch(error => console.log('error', error))
   }, []);
@@ -63,7 +58,7 @@ export default function QuestionItem() {
 
   // 비밀번호 입력
   const openDetail = (id: number) => {
-    api.postPassword(id, pw)
+    questionApi.postPassword(id, pw)
       .then(res => {
         dispatch(inputPassword());
         dispatch(setDetailData({ detail: res }));
@@ -74,7 +69,7 @@ export default function QuestionItem() {
   // 게시글 자세히 보기
   const getQuestionByAdmin = (questionId: number) => {
     if (managerMode) {
-      api.getQuestionByAdmin(questionId)
+      questionApi.getQuestionByAdmin(questionId)
         .then(res => {
           dispatch(setDetailData({ detail: res }));
           navigate('/question-detail');
@@ -88,7 +83,7 @@ export default function QuestionItem() {
 
   // FAQ 상세보기
   const getFAQDetail = (questionId: number) => {
-    api.getFAQDetail(questionId)
+    questionApi.getFAQDetail(questionId)
       .then(res => {
         dispatch(setDetailData({ detail: res }));
         navigate('/question-detail');
@@ -97,7 +92,7 @@ export default function QuestionItem() {
 
   // 페이지 전환
   const changePage = (value: number) => {
-    api.getAllQuestions(value - 1)
+    questionApi.getAllQuestions(value - 1)
       .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })))
       .catch(error => console.log(error))
   };

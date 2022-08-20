@@ -3,20 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
 import { getProductList } from '../../app/reducers/productSlice';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  styled,
-  Typography
-} from '@mui/material';
+import { Box, Button, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import CancelModal from '../cancelModal';
 
 export default function ProductItem() {
   const navigate = useNavigate();
@@ -98,28 +89,6 @@ export default function ProductItem() {
               </Box>
             }
           </ContainerBox>
-
-          {/* 삭제 버튼 Dialog */}
-          <Dialog
-            open={productItemState}
-            onClose={() => dispatch(clickProductItemGoBack())}>
-            <DialogTitle>
-              제품 삭제
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                해당 제품이 삭제됩니다.
-              </DialogContentText>
-              <DialogContentText>
-                삭제하시겠습니까?
-              </DialogContentText>
-            </DialogContent>
-
-            <DialogActions>
-              <Button onClick={deleteProduct}>네</Button>
-              <Button onClick={() => dispatch(clickProductItemGoBack())}>아니오</Button>
-            </DialogActions>
-          </Dialog>
         </TotalBox>
       ))
       }
@@ -130,6 +99,14 @@ export default function ProductItem() {
           <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
         </AddButton>
       }
+      {/* 삭제 버튼 Dialog */}
+      <CancelModal
+        openState={productItemState}
+        title='제품 삭제'
+        text1='해당 제품이 삭제됩니다.'
+        text2='삭제하시겠습니까?'
+        yesAction={() => deleteProduct()}
+        closeAction={() => dispatch(clickProductItemGoBack())} />
     </Box >
   )
 };

@@ -3,19 +3,10 @@ import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
-import {
-  Button,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  styled,
-  Typography
-} from '@mui/material';
+import { Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import ModifyForm from './modifyForm';
+import CancelModal from '../cancelModal';
 
 export default function ProductCategoryModifyForm() {
   const navigate = useNavigate();
@@ -54,32 +45,16 @@ export default function ProductCategoryModifyForm() {
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
-      <Dialog
-        open={productCategoryFormState}
-        onClose={() => dispatch(clickProductCategoryFormGoBack())}>
-        <DialogTitle>
-          {'변경 취소'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            변경중인 내용이 사라집니다.
-          </DialogContentText>
-          <DialogContentText>
-            취소하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => {
-            dispatch(clickProductCategoryFormGoBack());
-            navigate(-1);
-          }}
-          >
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickProductCategoryFormGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={productCategoryFormState}
+        title='변경 취소'
+        text1='변경중인 내용이 사라집니다.'
+        text2='취소하시겠습니까?'
+        yesAction={() => {
+          dispatch(clickProductCategoryFormGoBack());
+          navigate(-1);
+        }}
+        closeAction={() => dispatch(clickProductCategoryFormGoBack())} />
     </Container >
   )
 };

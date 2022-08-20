@@ -1,5 +1,5 @@
 import React from 'react';
-import { api } from '../../network/network';
+import { questionApi } from '../../network/question';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickQuestionModifyFormGoBack } from '../../app/reducers/dialogSlice';
@@ -21,12 +21,12 @@ export default function QuestionModifyForm() {
   // 문의사항 변경하기
   const putQuestion = (questionId: number, currentQuestion: { title: string, content: string }) => {
     if (faqState) {
-      api.putUpdateFAQ(questionId, { title: currentQuestion.title, content: currentQuestion.content, faq: faqState })
+      questionApi.putUpdateFAQ(questionId, { title: currentQuestion.title, content: currentQuestion.content, faq: faqState })
         .then(res => {
           navigate('/question-detail');
         })
     } else {
-      api.putQuestion(questionId, currentQuestion)
+      questionApi.putQuestion(questionId, currentQuestion)
         .then(res => {
           dispatch(setDetailData(res));
           navigate('/question-detail');

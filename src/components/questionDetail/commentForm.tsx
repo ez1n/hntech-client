@@ -1,20 +1,10 @@
 import React, { useRef } from 'react';
-import { api } from '../../network/network';
+import { commentApi } from '../../network/comment';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { setComment } from '../../app/reducers/commentSlice';
 import { clickCommentGoBack } from '../../app/reducers/dialogSlice';
 import { updateCommentData } from '../../app/reducers/questionSlice';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Stack,
-  TextField
-} from '@mui/material';
+import { Box, Button, Stack, TextField } from '@mui/material';
 import CancelModal from '../cancelModal';
 
 interface propsType {
@@ -32,7 +22,7 @@ export default function CommentForm({ id }: propsType) {
 
   // 댓글 등록
   const postComment = () => {
-    api.postCreateComment(id, comment)
+    commentApi.postCreateComment(id, comment)
       .then(res => {
         dispatch(updateCommentData({ comments: res.comments }));
         dispatch(clickCommentGoBack());

@@ -1,21 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../network/network';
+import { questionApi } from '../../network/question';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickQuestionFormGoBack } from '../../app/reducers/dialogSlice';
-import {
-  Container,
-  styled,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Typography
-} from '@mui/material';
+import { Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import Form from './form';
+import CancelModal from '../cancelModal';
 
 export default function QuestionForm() {
   const navigate = useNavigate();
@@ -26,7 +17,7 @@ export default function QuestionForm() {
 
   // 문의사항 작성하기
   const postCreateQuestion = () => {
-    api.postCreateQuestion(questionContent)
+    questionApi.postCreateQuestion(questionContent)
       .then(res => {
         alert('등록되었습니다.');
         navigate('/question');
@@ -53,31 +44,16 @@ export default function QuestionForm() {
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
-      <Dialog
-        open={questionFormState}
-        onClose={() => dispatch(clickQuestionFormGoBack())}>
-        <DialogTitle>
-          작성 취소
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            작성중인 내용이 사라집니다.
-          </DialogContentText>
-          <DialogContentText>
-            취소하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => {
-            navigate(-1);
-            dispatch(clickQuestionFormGoBack());
-          }}>
-            네
-          </Button>
-          <Button onClick={() => dispatch(clickQuestionFormGoBack())}>아니오</Button>
-        </DialogActions>
-      </Dialog>
+      <CancelModal
+        openState={questionFormState}
+        title='작성 취소'
+        text1='작성중인 내용이 사라집니다.'
+        text2='취소하시겠습니까?'
+        yesAction={() => {
+          navigate(-1);
+          dispatch(clickQuestionFormGoBack());
+        }}
+        closeAction={() => dispatch(clickQuestionFormGoBack())} />
     </Container >
   )
 };
