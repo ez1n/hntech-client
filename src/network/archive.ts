@@ -1,4 +1,4 @@
-import baseApi from "./baseApi";
+import axios from "axios";
 
 const SUCCESS = 200
 const BAD_REQUEST = 400;
@@ -6,37 +6,37 @@ const BAD_REQUEST = 400;
 class ArchiveApi {
   // 자료실 목록 받아오기
   async getArchives(pageNumber: number) {
-    const response = await baseApi.get(`/archive/all?page=${pageNumber}`);
+    const response = await axios.get(`/api/archive?page=${pageNumber}`);
     return response.data;
   };
 
   // 자료실 공지사항 목록 받아오기
   async getArchivesNotice() {
-    const response = await baseApi.get(`/archive/notice`);
+    const response = await axios.get(`/api/archive/notice`);
     return response.data;
   };
 
   // 자료실 글 자세히보기
   async getArchive(archiveId: number) {
-    const response = await baseApi.get(`/archive/${archiveId}`);
+    const response = await axios.get(`/api/archive/${archiveId}`);
     return response.data;
   };
 
   // 자료실 게시글 등록
   async postCreateArchive(archive: {}) {
-    const response = await baseApi.post(`/archive`, archive);
+    const response = await axios.post(`/api/archive`, archive);
     return response.data;
   };
 
   // 자료실 게시글 수정  // 이거 get요청이랑 통일해줬으면 좋겠음 (new가 get에는 없고 put에는 있ㅇ므)
   async putUpdateArchive(archiveId: number, form: {}) {
-    const response = await baseApi.put(`/archive/${archiveId}`, form);
+    const response = await axios.put(`/api/archive/${archiveId}`, form);
     return response.data;
   };
 
   // 자료실 게시글 삭제
   async deleteArchive(archiveId: number) {
-    const response = await baseApi.delete(`/archive/${archiveId}`);
+    const response = await axios.delete(`/api/archive/${archiveId}`);
     return response.data;
   };
 };

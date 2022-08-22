@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { api } from '../../network/network';
 import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
 import {
-  getArchiveCategory,
-  addArchiveCategory,
-  deleteArchiveCategory
+  getArchiveCategory
 } from '../../app/reducers/archiveCategorySlice';
 import {
   Box,
@@ -25,16 +24,15 @@ export default function EditArchiveCategory() {
 
   const inputRef: any = useRef(); // 카테고리 input ref
 
-  const archivesState = useAppSelector(state => state.dialog.archivesState); // dialog state
+  const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog state
   const category = useAppSelector(state => state.archiveCategory.category); // 카테고리 목록 state
-
-  // 임시데이터
-  const data = ['전체', '일반자료', '승인서', '스프링클러', '소방용밸브']
-
 
   // 카테고리 목록 받아오기
   useEffect(() => {
-    dispatch(getArchiveCategory({ categories: data })); // 통신으로 받아오기
+    api.getAllCategories()
+      .then(res => {
+        dispatch(getArchiveCategory({ categories: res.categories }));
+      })
   }, []);
 
   // 카테고리 목록에 추가
@@ -42,14 +40,28 @@ export default function EditArchiveCategory() {
     if (inputRef.current.value === '') {
       return;
     }
-    dispatch(addArchiveCategory({ item: inputRef.current.value }));
-    inputRef.current.value = '';
+    api.createArchiveCategory({ categoryName: inputRef.current.value })
+      .then(res => {
+        inputRef.current.value = '';
+        api.getAllCategories()
+          .then(res => {
+            dispatch(getArchiveCategory({ categories: res.categories }));
+          })
+      })
   };
 
-  // 카테고리 목록 업데이트
-  const putArchiveCategory = () => {
-    alert('수정되었습니다.');
-    dispatch(clickArchivesGoBack());
+  // 카테고리 삭제
+  const deleteArchiveCategory = (categoryId: number) => {
+    console.log(categoryId)
+    api.deleteArchiveCategory(categoryId)
+      .then(res => {
+        console.log(res);
+        api.getAllCategories()
+          .then(res => {
+            dispatch(getArchiveCategory({ categories: res.categories }));
+          })
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -78,12 +90,12 @@ export default function EditArchiveCategory() {
             height: 150,
             overflow: 'auto',
           }}>
-          {category.map((item: string, index: number) => (
-            <Stack key={index} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
-              <Typography>{item}</Typography>
+          {category.map((item: { id: number, categoryName: string }, index: number) => (
+            <Stack key={item.id} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
+              <Typography>{item.categoryName}</Typography>
               <ClearRoundedIcon
                 fontSize='small'
-                onClick={() => dispatch(deleteArchiveCategory({ index: index }))}
+                onClick={() => deleteArchiveCategory(item.id)}
                 sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer' }} />
             </Stack>
           ))}
@@ -107,8 +119,6 @@ export default function EditArchiveCategory() {
       </DialogContent>
 
       <DialogActions sx={{ justifyContent: 'center' }}>
-        {/* 수정된 카테고리 보내기 */}
-        {EditButton('수정', putArchiveCategory)}
         {EditButton('취소', () => dispatch(clickArchivesGoBack()))}
       </DialogActions>
     </Dialog >

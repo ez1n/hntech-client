@@ -10,7 +10,7 @@ import {
 } from '../../app/reducers/productContentSlice';
 import {
   addFile,
-  deleteFile,
+  deleteFileName,
   addUploadButton,
   deleteUploadButton
 } from '../../app/reducers/productFileSlice';
@@ -201,7 +201,7 @@ export default function Form() {
               }}>
                 <>
                   {item.name}
-                  {item.name ? <ClearRoundedIcon onClick={() => dispatch(deleteFile({ key: item.key }))} fontSize='small' sx={{ ml: 1, cursor: 'pointer' }} /> : '파일'}
+                  {item.name ? <ClearRoundedIcon onClick={() => dispatch(deleteFileName({ key: item.key }))} fontSize='small' sx={{ ml: 1, cursor: 'pointer' }} /> : '파일'}
                 </>
               </Typography>
               <label className='fileUploadButton' htmlFor={`inputFile${item.key}`} onChange={(event) => { selectFile(item.key, event) }}>
