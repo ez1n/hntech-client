@@ -4,13 +4,16 @@ import {
   addProductImagePath,
   deleteProductImagePath,
   addGradeImagePath,
-  deleteGradeImagePath
+  deleteGradeImagePath,
+  updateProductImage,
+  updateGradeImage
 } from '../../app/reducers/productContentSlice';
 import {
   addFile,
-  deleteFile,
+  deleteFileName,
   addUploadButton,
-  deleteUploadButton
+  deleteUploadButton,
+  updateProductFile
 } from '../../app/reducers/productFileSlice';
 import {
   Box,
@@ -40,22 +43,40 @@ export default function ModifyForm() {
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => { item.current?.click() };
 
-  // 제품 사진 미리보기
+  // 제품 사진 추가
   const selectProductImage = (event: any) => {
+    // 미리보기
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addProductImagePath({ item: URL.createObjectURL(event.target.files[i]) }))
     };
+
+    // 전송할 제품 사진 데이터
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(updateProductImage({ file: event.target.files[i] }))
+    };
   };
 
-  // 규격 사진 미리보기
+  // 규격 사진 추가
   const selectGradeImage = (event: any) => {
+    // 미리보기
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addGradeImagePath({ item: URL.createObjectURL(event.target.files[i]) }))
     }
+
+    // 전송할 규격 사진 데이터
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(updateGradeImage({ file: event.target.files[i] }))
+    };
   };
 
-  // 파일 이름 미리보기
-  const selectFile = (key: number, event: any) => { dispatch(addFile({ key: key, item: event.target.files[0].name })) };
+  // 첨부파일 추가
+  const selectFile = (key: number, event: React.FormEvent<HTMLLabelElement>) => {
+    // 미리보기
+    dispatch(addFile({ key: key, item: event.target.files[0].name }));
+
+    // 전송할 파일 데이터
+    dispatch(updateProductFile({ file: event.target.files[0] }));
+  };
 
   return (
     <Box sx={{
@@ -199,7 +220,7 @@ export default function ModifyForm() {
               }}>
                 <>
                   {item.name}
-                  {item.name ? <ClearRoundedIcon onClick={() => dispatch(deleteFile({ key: item.key }))} fontSize='small' sx={{ ml: 1, cursor: 'pointer' }} /> : '파일'}
+                  {item.name ? <ClearRoundedIcon onClick={() => dispatch(deleteFileName({ key: item.key }))} fontSize='small' sx={{ ml: 1, cursor: 'pointer' }} /> : '파일'}
                 </>
               </Typography>
               <label className='fileUploadButton' htmlFor={`inputFile${item.key}`} onChange={(event) => { selectFile(item.key, event) }}>

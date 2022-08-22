@@ -13,15 +13,13 @@ import ProductForm from './components/productForm/productForm';
 import MainData from './components/mainData';
 import Questions from './components/questions/questions';
 import QuestionForm from './components/questionForm/questionForm';
-import NoticeForm from './components/noticeForm/noticeForm';
 import QuestionDetail from './components/questionDetail/questionDetail';
 import Archives from './components/archives/archives';
 import ArchiveForm from './components/archiveForm/archiveForm';
 import ArchiveDetail from './components/archiveDetail';
-import FloatingButton from './components/floatingButton';
+import FloatingButton from './components/managerPanel/floatingButton';
 import ProductModifyForm from './components/productModifyForm/productModifyForm';
 import QuestionModifyForm from './components/questionModifyForm/questionModifyForm';
-import NoticeModifyForm from './components/noticeModifyForm/noticeModifyForm';
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
 import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
 import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
@@ -82,14 +80,6 @@ export default function App() {
 
           <Route path='/question-modify' element={
             <QuestionModifyForm />
-          }></Route>
-
-          <Route path='/notice-form' element={
-            managerMode && <NoticeForm />
-          }></Route>
-
-          <Route path='/notice-modify' element={
-            managerMode && <NoticeModifyForm />
           }></Route>
 
           <Route path='/question-detail' element={

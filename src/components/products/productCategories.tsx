@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectCategoryTrue, setCurrentCategory } from '../../app/reducers/productCategorySlice';
+import { selectCategoryTrue, setAllCategories, setCurrentCategory } from '../../app/reducers/productCategorySlice';
 import { clickProductCategoryGoBack } from '../../app/reducers/dialogSlice';
 import { Box, Button, Container, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
@@ -20,14 +20,25 @@ export default function ProductCategories() {
   const currentCategory = useAppSelector(state => state.productCategory.currentCategory); // 선택된 카테고리 정보 state
   const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
 
+  useEffect(() => {
+    api.getAllProductCategories()
+      .then(res => {
+        console.log(res)
+        dispatch(setAllCategories({ categories: res.categories }))
+      })
+  }, []);
+
   // 카테고리 삭제
-  const deleteCategory = (categoryId: number) => {
-    // api.deleteCategory(categoryId)
-    //   .then(res => {
-    //     dispatch(clickProductCategoryGoBack());
-    //   });
-    console.log(categoryId)
-    dispatch(clickProductCategoryGoBack());
+  const deleteProductCategory = (categoryId: number) => {
+    api.deleteProductCategory(categoryId)
+      .then(res => {
+        dispatch(clickProductCategoryGoBack());
+        api.getAllProductCategories()
+          .then(res => {
+            console.log(res)
+            dispatch(setAllCategories({ categories: res.categories }))
+          })
+      })
   };
 
   return (
@@ -126,10 +137,12 @@ export default function ProductCategories() {
           }}>
 
             {categories.map((value, index) => (
-              <MenuButton key={index} onClick={() => {
-                navigate('/product');
-                dispatch(selectCategoryTrue());
-              }}>
+              <MenuButton
+                key={index}
+                onClick={() => {
+                  navigate('/product');
+                  dispatch(selectCategoryTrue());
+                }}>
                 <Typography sx={{ m: 1, textAlign: 'center' }}>{value.categoryName}</Typography>
               </MenuButton>
             ))}
@@ -143,7 +156,7 @@ export default function ProductCategories() {
         title='카테고리 삭제'
         text1='해당 카테고리가 삭제됩니다.'
         text2='삭제하시겠습니까?'
-        yesAction={() => deleteCategory(currentCategory.id)}
+        yesAction={() => deleteProductCategory(currentCategory.id)}
         closeAction={() => dispatch(clickProductCategoryGoBack())} />
     </>
   )

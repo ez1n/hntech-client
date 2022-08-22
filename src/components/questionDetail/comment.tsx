@@ -2,6 +2,7 @@ import React from 'react';
 import { commentApi } from '../../network/comment';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickCommentRemoveGoBack } from '../../app/reducers/dialogSlice';
+import { updateCommentData } from '../../app/reducers/questionSlice';
 import {
   resetAnchor,
   setAnchor,
@@ -20,7 +21,6 @@ import {
 } from '@mui/material';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import CancelModal from '../cancelModal';
-import { updateCommentData } from '../../app/reducers/questionSlice';
 
 interface propsType {
   item: {

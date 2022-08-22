@@ -3,12 +3,12 @@ import './style.css';
 import { api } from '../network/network';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
-  clickManagerLogin,
   clickChangeMode,
   setFooter,
+  setManagerData,
   setPassword
 } from '../app/reducers/managerModeSlice';
-import { clickLogoutGoBack } from '../app/reducers/dialogSlice';
+import { clickLogoutGoBack, clickManagerLogin } from '../app/reducers/dialogSlice';
 import {
   Box,
   Button,
@@ -26,26 +26,16 @@ import CancelModal from './cancelModal';
 export default function Footer() {
   const dispatch = useAppDispatch();
 
-  const managerLogin = useAppSelector(state => state.manager.managerLogin); // 로그인 dialog state
+  const loginState = useAppSelector(state => state.dialog.loginState); // 로그인 dialog state
   const logoutState = useAppSelector(state => state.dialog.logoutState); // 로그아웃 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
   const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
 
-  // 임시 데이터
-  const data = {
-    address: '경기도 용인시 처인구 모현읍 외개일로 20번길 9-14',
-    afterService: '000-000-000',
-    phone: '031-337-4005',
-    fax: '031-337-4006'
-  }
-
-  // footer 정보 받아오기
+  // 정보 받아오기
   useEffect(() => {
-    // api.getFooter()
-    // .then(res => dispatch(setFooter({ footer: res })));
-
-    dispatch(setFooter({ footer: data }));
+    api.getFooter()
+      .then(res => dispatch(setFooter({ footer: res })))
   }, []);
 
   // 로그인
@@ -54,7 +44,11 @@ export default function Footer() {
       .then(res => {
         dispatch(clickChangeMode());
         dispatch(clickManagerLogin());
-        console.log(res)
+
+        api.getPanelInfo()
+          .then(res => {
+            dispatch(setManagerData({ panelData: res }));
+          })
       })
       .catch(error => console.log('password', error))
   };
@@ -63,7 +57,8 @@ export default function Footer() {
   const getLogout = () => {
     api.getLogout()
       .then(res => {
-        dispatch(clickChangeMode())
+        dispatch(clickLogoutGoBack());
+        dispatch(clickChangeMode());
       })
   };
 
@@ -144,7 +139,7 @@ export default function Footer() {
 
       {/* 관리자 모드 로그인 dialog */}
       <Dialog
-        open={managerLogin}
+        open={loginState}
         onClose={() => dispatch(clickManagerLogin())}>
         <DialogTitle>
           관리자 모드 로그인

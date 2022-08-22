@@ -13,11 +13,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  */
 
 interface archiveCategoryInitialState {
-  category: string[]
+  category: { id: number, categoryName: string }[],
 };
 
 const ArchiveCategoryInitialState: archiveCategoryInitialState = {
-  category: []
+  category: [{ id: 0, categoryName: '' },],
 };
 
 export const ArchiveCategorySlice = createSlice({
@@ -26,24 +26,10 @@ export const ArchiveCategorySlice = createSlice({
   reducers: {
     getArchiveCategory: (
       state,
-      action: PayloadAction<{ categories: string[] }>
-    ) => { state.category = action.payload.categories },
-    addArchiveCategory: (
-      state,
-      action: PayloadAction<{ item: string }>
-    ) => {
-      const newCategory = [...state.category, action.payload.item];
-      state.category = newCategory;
-    },
-    deleteArchiveCategory: (
-      state,
-      action: PayloadAction<{ index: number }>
-    ) => {
-      const newCategory = state.category.filter((item, index) => index != action.payload.index);
-      state.category = newCategory;
-    }
+      action: PayloadAction<{ categories: { id: number, categoryName: string }[] }>
+    ) => { state.category = action.payload.categories }
   }
 });
 
-export const { getArchiveCategory, addArchiveCategory, deleteArchiveCategory } = ArchiveCategorySlice.actions;
+export const { getArchiveCategory } = ArchiveCategorySlice.actions;
 export default ArchiveCategorySlice.reducer;

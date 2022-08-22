@@ -18,8 +18,8 @@ export default function ArchiveCategorySelect({ defaultCategory }: propsType) {
       defaultValue={defaultCategory}
       onChange={event => dispatch(updateArchiveCategory({ categoryName: event.target.value }))}
       sx={{ width: '18%', m: 1, textAlign: 'center' }}>
-      {category.map((item, index) => (
-        <MenuItem key={index} value={item}>{item}</MenuItem>
+      {category.map((item: { id: number, categoryName: string }) => (
+        <MenuItem key={item.id} value={item.categoryName}>{item.categoryName}</MenuItem>
       ))}
     </Select>
   )

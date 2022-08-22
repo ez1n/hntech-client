@@ -29,9 +29,10 @@ export default function ArchiveItem() {
   useEffect(() => {
     api.getArchives(0)
       .then(res => {
+        console.log(res)
         dispatch(getAllArchives({
           archives: res.archives,
-          totalPage: res.totalPage,
+          totalPage: res.totalPages,
           currentPage: res.currentPage
         }));
       })
@@ -58,11 +59,13 @@ export default function ArchiveItem() {
   // 페이지 전환
   const changePage = (value: number) => {
     api.getArchives(value - 1)
-      .then(res => dispatch(getAllArchives({
-        archives: res.archives,
-        totalPage: res.totalPage,
-        currentPage: res.currentPage
-      })))
+      .then(res => {
+        dispatch(getAllArchives({
+          archives: res.archives,
+          totalPage: res.totalPages,
+          currentPage: res.currentPage
+        }))
+      })
       .catch(error => console.log(error))
   };
 

@@ -93,7 +93,8 @@ export default function ModifyForm() {
                 onClick={() => dispatch(deleteCategoryImage())}
                 sx={{ color: 'darkgreen', cursor: 'pointer' }} />
             </Box>
-            <img src={currentCategory.image.originalFilename} alt='제품 사진' width='100%' />
+            {/* 수정 */}
+            <img src={currentCategory.imageServerFilename} alt='제품 사진' width='100%' />
           </Box>
         </Container>
       </Box>

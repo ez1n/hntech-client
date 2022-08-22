@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../network/network';
+import { fileApi } from '../network/file';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
 import { copyDetailData } from '../app/reducers/archiveSlice';
@@ -44,7 +45,7 @@ export default function ArchiveDetail() {
 
   // 파일 다운로드
   const downloadFile = (serverFilename: string, originalFilename: string) => {
-    api.downloadFile(serverFilename)
+    fileApi.downloadFile(serverFilename)
       .then(res => {
         return res;
       })

@@ -40,8 +40,11 @@ export default function Header() {
 
   //  제품 카테고리 목록 받아오기
   useEffect(() => {
-    api.getAllCategories()
-      .then(res => dispatch(setAllCategories({ categories: res.categories })));
+    api.getAllProductCategories()
+      .then(res => {
+        console.log(res)
+        dispatch(setAllCategories({ categories: res.categories }))
+      });
   }, []);
 
   return (
