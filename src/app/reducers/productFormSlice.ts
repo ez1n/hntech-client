@@ -4,21 +4,28 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /**
  * productContent : 제품 정보
- * productPath : 제품 이미지 경로 리스트
- * gradePath : 규격 이미지 경로 리스트
+ * productRepPath : 대표 제품 이미지 경로 (미리보기)
+ * productPath : 제품 이미지 경로 리스트 (미리보기)
+ * standardPath : 규격 이미지 경로 리스트 (미리보기)
  * productImage : 전송할 제품 이미지 정보
- * gradeImage :  전송할 규격 이미지 정보
- * productFileName : 제품 첨부파일 이름 미리보기 (버튼에 넣을 자료)
+ * productRepImage : 전송할 대표 제품 이미지 정보
+ * standardImage :  전송할 규격 이미지 정보
+ * productFileName : 제품 첨부파일 이름-버튼에 넣을 자료 (미리보기)
  * productFile : 전송할 제품 첨부파일 데이터
  */
 
 /**
  * updateProductName : 제품 이름 입력
  * updateProductDescription : 제품 설명 입력
+ * updateProductCategory : 제품 카테고리 선택
+ * updateRepProductImage : 전송할 대표 제품 이미지 추가
+ * deleteRepProductImage : 전송할 대표 제품 이미지 삭제
  * updateProductImage : 전송할 제품 이미지 추가
  * deleteProductImage : 전송할 제품 이미지 삭제
  * updateGradeImage : 전송할 규격 이미지 추가
  * deleteGradeImage : 전송할 규격 이미지 삭제
+ * addRepProductImagePath : 대표 제품 사진 추가 (미리보기)
+ * deleteRepProductImagePath : 대표 제품 사진 삭제 (미리보기)
  * addProductImagePath : 제품 사진 추가 (미리보기)
  * deleteProductImagePath : 제품 사진 삭제 (미리보기)
  * addGradeImagePath : 규격 사진 추가 (미리보기)
@@ -34,22 +41,27 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface productFormInitialState {
   productContent: {
     name: string,
-    description: string
+    description: string,
+    categoryName: string
   },
+  productRepPath: string | undefined,
   productPath: string[],
-  gradePath: string[],
+  standardPath: string[],
   productImage: string[],
-  gradeImage: string[],
+  productRepImage: string,
+  standardImage: string[],
   productFileName: { key: number, name: string | undefined }[] | [],
   productFile: string[]
 };
 
 const ProductFormInitialState: productFormInitialState = {
-  productContent: { name: '', description: '' },
+  productContent: { name: '', description: '', categoryName: '' },
+  productRepPath: undefined,
   productPath: [],
-  gradePath: [],
+  standardPath: [],
   productImage: [],
-  gradeImage: [],
+  productRepImage: '',
+  standardImage: [],
   productFileName: [{ key: 0, name: undefined }],
   productFile: []
 };
@@ -66,6 +78,15 @@ export const ProductFormSlice = createSlice({
       state,
       action: PayloadAction<{ description: string }>
     ) => { state.productContent.description = action.payload.description },
+    updateProductCategory: (
+      state,
+      action: PayloadAction<{ categoryName: string }>
+    ) => { state.productContent.categoryName = action.payload.categoryName },
+    updateRepProductImage: (
+      state,
+      action: PayloadAction<{ file: string }>
+    ) => { state.productRepImage = action.payload.file },
+    deleteRepProductImage: (state) => { state.productRepImage = '' },
     updateProductImage: (
       state,
       action: PayloadAction<{ file: string }>
@@ -84,16 +105,21 @@ export const ProductFormSlice = createSlice({
       state,
       action: PayloadAction<{ file: string }>
     ) => {
-      const newFile = [...state.gradeImage, action.payload.file];
-      state.gradeImage = newFile;
+      const newFile = [...state.standardImage, action.payload.file];
+      state.standardImage = newFile;
     },
     deleteGradeImage: (
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newFile = state.gradeImage.filter((value, index) => index !== action.payload.num);
-      state.gradeImage = newFile;
+      const newFile = state.standardImage.filter((value, index) => index !== action.payload.num);
+      state.standardImage = newFile;
     },
+    addRepProductImagePath: (
+      state,
+      action: PayloadAction<{ item: string }>
+    ) => { state.productRepPath = action.payload.item },
+    deleteRepProductImagePath: (state) => { state.productRepPath = undefined },
     addProductImagePath: (
       state,
       action: PayloadAction<{ item: string }>
@@ -112,15 +138,15 @@ export const ProductFormSlice = createSlice({
       state,
       action: PayloadAction<{ item: string }>
     ) => {
-      const newPath = [...state.gradePath, action.payload.item];
-      state.gradePath = newPath;
+      const newPath = [...state.standardPath, action.payload.item];
+      state.standardPath = newPath;
     },
     deleteGradeImagePath: (
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newPath = state.gradePath.filter((path, index) => index !== action.payload.num)
-      state.gradePath = newPath;
+      const newPath = state.standardPath.filter((path, index) => index !== action.payload.num)
+      state.standardPath = newPath;
     },
     addProductFile: (
       state,
@@ -178,10 +204,15 @@ export const ProductFormSlice = createSlice({
 export const {
   updateProductName,
   updateProductDescription,
+  updateProductCategory,
+  updateRepProductImage,
+  deleteRepProductImage,
   updateProductImage,
   deleteProductImage,
   updateGradeImage,
   deleteGradeImage,
+  addRepProductImagePath,
+  deleteRepProductImagePath,
   addProductImagePath,
   deleteProductImagePath,
   addGradeImagePath,

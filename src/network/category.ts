@@ -55,6 +55,12 @@ class CategoryApi {
     const response = await axios.delete(`/api/category/${categoryId}`)
     return response.data;
   };
+
+  // 자료실 카테고리 수정
+  async putUpdateArchiveCategory(categoryId: number, categoryData: {}) {
+    const response = await axios.put(`/api/category/${categoryId}`, categoryData);
+    return response.data.categories;
+  };
 };
 
 export const categoryApi = new CategoryApi();
