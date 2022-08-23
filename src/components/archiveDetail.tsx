@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../network/network';
+import { archiveApi } from '../network/archive';
 import { fileApi } from '../network/file';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
@@ -24,18 +24,19 @@ export default function ArchiveDetail() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const archiveDetailState = useAppSelector(state => state.dialog.archiveDetailState); // 게시글 삭제 취소 state
   const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
+  const fileName = useAppSelector(state => state.archiveFile.file.name)
 
   // 수정 정보 만들기
   useEffect(() => {
     dispatch(copyDetailData({ detail: detail }));
     for (let i = 0; i < detail.files.length; i++) {
-      dispatch(addArchiveFile({ item: detail.files[i].originalFilename }))
+      dispatch(addArchiveFile({ item: detail.files[i].originalFilename }));
     };
   }, []);
 
   // 게시글 삭제
   const deleteArchive = (archiveId: number) => {
-    api.deleteArchive(archiveId)
+    archiveApi.deleteArchive(archiveId)
       .then(res => {
         dispatch(archiveDetailGoBack());
         navigate('/archive');
@@ -57,7 +58,7 @@ export default function ArchiveDetail() {
         document.body.appendChild(a);
         a.click();
         setTimeout(() => {
-          window.URL.revokeObjectURL(url);
+          URL.revokeObjectURL(url);
         }, 60000);
         a.remove();
       })

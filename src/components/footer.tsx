@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import './style.css';
-import { api } from '../network/network';
+import { adminApi } from '../network/admin';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
   clickChangeMode,
+  copyManagerData,
   setFooter,
   setManagerData,
   setPassword
@@ -34,20 +35,22 @@ export default function Footer() {
 
   // 정보 받아오기
   useEffect(() => {
-    api.getFooter()
+    adminApi.getFooter()
       .then(res => dispatch(setFooter({ footer: res })))
   }, []);
 
   // 로그인
   const postLogin = () => {
-    api.postLogin(password)
+    adminApi.postLogin(password)
       .then(res => {
         dispatch(clickChangeMode());
         dispatch(clickManagerLogin());
 
-        api.getPanelInfo()
+        // 관리자 패널 정보 받아오기
+        adminApi.getPanelInfo()
           .then(res => {
             dispatch(setManagerData({ panelData: res }));
+            dispatch(copyManagerData({ panelData: res }));
           })
       })
       .catch(error => console.log('password', error))
@@ -55,7 +58,7 @@ export default function Footer() {
 
   // 로그아웃
   const getLogout = () => {
-    api.getLogout()
+    adminApi.getLogout()
       .then(res => {
         dispatch(clickLogoutGoBack());
         dispatch(clickChangeMode());

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import { archiveApi } from '../../network/archive';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
@@ -27,7 +27,8 @@ export default function ArchiveItem() {
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
 
   useEffect(() => {
-    api.getArchives(0)
+    // 자료실 목록 받아오기
+    archiveApi.getArchives(0)
       .then(res => {
         console.log(res)
         dispatch(getAllArchives({
@@ -38,7 +39,7 @@ export default function ArchiveItem() {
       })
 
     // 공지 목록 받아오기
-    api.getArchivesNotice()
+    archiveApi.getArchivesNotice()
       .then(res => {
         dispatch(getNotice({ notice: res.notices }))
       })
@@ -47,9 +48,8 @@ export default function ArchiveItem() {
 
   // 게시글 보기 (정보 받아오기)
   const openDetail = (archiveId: number) => {
-    api.getArchive(archiveId)
+    archiveApi.getArchive(archiveId)
       .then(res => {
-        console.log(res)
         dispatch(getDetailData({ detail: res }));
         navigate('/archive-detail');
       })
@@ -58,7 +58,7 @@ export default function ArchiveItem() {
 
   // 페이지 전환
   const changePage = (value: number) => {
-    api.getArchives(value - 1)
+    archiveApi.getArchives(value - 1)
       .then(res => {
         dispatch(getAllArchives({
           archives: res.archives,

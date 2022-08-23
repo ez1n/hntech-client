@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectCategoryTrue, setAllCategories, setCurrentCategory } from '../../app/reducers/productCategorySlice';
@@ -21,7 +21,7 @@ export default function ProductCategories() {
   const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
 
   useEffect(() => {
-    api.getAllProductCategories()
+    categoryApi.getAllProductCategories()
       .then(res => {
         console.log(res)
         dispatch(setAllCategories({ categories: res.categories }))
@@ -30,10 +30,10 @@ export default function ProductCategories() {
 
   // 카테고리 삭제
   const deleteProductCategory = (categoryId: number) => {
-    api.deleteProductCategory(categoryId)
+    categoryApi.deleteProductCategory(categoryId)
       .then(res => {
         dispatch(clickProductCategoryGoBack());
-        api.getAllProductCategories()
+        categoryApi.getAllProductCategories()
           .then(res => {
             console.log(res)
             dispatch(setAllCategories({ categories: res.categories }))

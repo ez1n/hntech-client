@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import { categoryApi } from '../../network/category';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setAllCategories } from '../../app/reducers/productCategorySlice';
 import { Box } from '@mui/material';
@@ -13,7 +13,7 @@ export default function Products() {
 
   //  제품 카테고리 목록 받아오기
   useEffect(() => {
-    api.getAllProductCategories()
+    categoryApi.getAllProductCategories()
       .then(res => dispatch(setAllCategories({ categories: res.categories })));
   }, []);
 

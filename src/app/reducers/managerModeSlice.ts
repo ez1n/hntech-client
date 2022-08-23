@@ -5,7 +5,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /**
  * managerLogin : 관리자 로그인 dialog
  * password : 관리자 비밀번호 (로그인)
- * panelData : 관리자 정보
+ * panelData : 관리자 패널 정보
+ * newPanelData : 관리자 패널 정보 변경
  * updatePassword: 관리자 비밀번호 (변경)
  */
 
@@ -13,6 +14,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * clickChangeMode : 관리자모드 state (boolean)
  * setPassword : 비밀번호 입력(관리자 로그인)
  * setManagerData : 관리자 정보 받아오기
+ * copyManagerData : 관리자 정보 copy (변경용)
  * setFooter : footer 정보 받아오기
  * updateCurPassword : 관리자 현재 비밀번호 수정
  * updateNewPassword : 관리자 새 비밀번호
@@ -44,6 +46,16 @@ interface managerInitialState {
     sendEmailAccount: string,
     sendEmailPassword: string
   },
+  newPanelData: {
+    emailSendingTime: string,
+    address: string,
+    afterService: string,
+    fax: string,
+    phone: string,
+    receiveEmailAccount: string,
+    sendEmailAccount: string,
+    sendEmailPassword: string
+  },
   footer: {
     address: string,
     afterService: string,
@@ -65,6 +77,16 @@ const ManagerInitialState: managerInitialState = {
       fax: '',
       phone: ''
     },
+    receiveEmailAccount: '',
+    sendEmailAccount: '',
+    sendEmailPassword: ''
+  },
+  newPanelData: {
+    emailSendingTime: '',
+    address: '',
+    afterService: '',
+    fax: '',
+    phone: '',
     receiveEmailAccount: '',
     sendEmailAccount: '',
     sendEmailPassword: ''
@@ -106,6 +128,35 @@ export const ManagerSlice = createSlice({
         }
       }>
     ) => { state.panelData = action.payload.panelData },
+    copyManagerData: (
+      state,
+      action: PayloadAction<{
+        panelData: {
+          adminPassword: string,
+          emailSendingTime: string,
+          footer: {
+            address: string,
+            afterService: string,
+            fax: string,
+            phone: string
+          },
+          receiveEmailAccount: string,
+          sendEmailAccount: string,
+          sendEmailPassword: string
+        }
+      }>
+    ) => {
+      state.newPanelData = {
+        emailSendingTime: action.payload.panelData.emailSendingTime,
+        address: action.payload.panelData.footer.address,
+        afterService: action.payload.panelData.footer.afterService,
+        fax: action.payload.panelData.footer.fax,
+        phone: action.payload.panelData.footer.phone,
+        receiveEmailAccount: action.payload.panelData.receiveEmailAccount,
+        sendEmailAccount: action.payload.panelData.sendEmailAccount,
+        sendEmailPassword: action.payload.panelData.sendEmailPassword
+      }
+    },
     setFooter: (
       state,
       action: PayloadAction<{
@@ -136,35 +187,35 @@ export const ManagerSlice = createSlice({
     updateManagerSentMail: (
       state,
       action: PayloadAction<{ sendEmailAccount: string }>
-    ) => { state.panelData.sendEmailAccount = action.payload.sendEmailAccount },
+    ) => { state.newPanelData.sendEmailAccount = action.payload.sendEmailAccount },
     updateManagerReceivedMail: (
       state,
       action: PayloadAction<{ receiveEmailAccount: string }>
-    ) => { state.panelData.receiveEmailAccount = action.payload.receiveEmailAccount },
+    ) => { state.newPanelData.receiveEmailAccount = action.payload.receiveEmailAccount },
     updateManagerTime: (
       state,
       action: PayloadAction<{ emailSendingTime: string }>
-    ) => { state.panelData.emailSendingTime = action.payload.emailSendingTime },
+    ) => { state.newPanelData.emailSendingTime = action.payload.emailSendingTime },
     updateManagerSendEmailPassword: (
       state,
       action: PayloadAction<{ sendEmailPassword: string }>
-    ) => { state.panelData.sendEmailPassword = action.payload.sendEmailPassword },
+    ) => { state.newPanelData.sendEmailPassword = action.payload.sendEmailPassword },
     updateAddress: (
       state,
       action: PayloadAction<{ address: string }>
-    ) => { state.panelData.footer.address = action.payload.address },
+    ) => { state.newPanelData.address = action.payload.address },
     updateAfterService: (
       state,
       action: PayloadAction<{ afterService: string }>
-    ) => { state.panelData.footer.afterService = action.payload.afterService },
+    ) => { state.newPanelData.afterService = action.payload.afterService },
     updateFax: (
       state,
       action: PayloadAction<{ fax: string }>
-    ) => { state.panelData.footer.fax = action.payload.fax },
+    ) => { state.newPanelData.fax = action.payload.fax },
     updatePhone: (
       state,
       action: PayloadAction<{ phone: string }>
-    ) => { state.panelData.footer.phone = action.payload.phone },
+    ) => { state.newPanelData.phone = action.payload.phone },
   }
 });
 
@@ -172,6 +223,7 @@ export const {
   clickChangeMode,
   setPassword,
   setManagerData,
+  copyManagerData,
   setFooter,
   updateCurPassword,
   updateNewPassword,

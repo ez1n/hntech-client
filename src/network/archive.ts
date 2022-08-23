@@ -28,7 +28,7 @@ class ArchiveApi {
     return response.data;
   };
 
-  // 자료실 게시글 수정  // 이거 get요청이랑 통일해줬으면 좋겠음 (new가 get에는 없고 put에는 있ㅇ므)
+  // 자료실 게시글 수정
   async putUpdateArchive(archiveId: number, form: {}) {
     const response = await axios.put(`/api/archive/${archiveId}`, form);
     return response.data;

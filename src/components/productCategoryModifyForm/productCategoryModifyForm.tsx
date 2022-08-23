@@ -1,5 +1,5 @@
 import React from 'react';
-import { api } from '../../network/network';
+import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
@@ -19,7 +19,7 @@ export default function ProductCategoryModifyForm() {
 
   // 카테고리 수정
   const postProductCategory = (categoryId: number, categoryForm: FormData) => {
-    api.putUpdateCategory(categoryId, categoryForm)
+    categoryApi.putUpdateCategory(categoryId, categoryForm)
       .then(res => {
         navigate(-1);
         alert('변경되었습니다.')

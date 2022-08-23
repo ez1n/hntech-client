@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import { adminApi } from '../../network/admin';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { previewHistory, updateCompanyData, updateHistory } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
@@ -35,7 +35,7 @@ export default function History() {
   const putHistory = () => {
     historyForm.append('file', newData);
     historyForm.append('where', 'companyHistory');
-    api.putHistory(historyForm)
+    adminApi.putHistory(historyForm)
       .then(res => {
         console.log(res); // get 요청 어떻게 하는지?
         alert('등록되었습니다.');

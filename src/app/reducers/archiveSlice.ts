@@ -183,7 +183,7 @@ export const ArchiveSlice = createSlice({
       action: PayloadAction<{ categoryName: string }>
     ) => { state.archiveContent.categoryName = action.payload.categoryName },
     resetArchiveState: (state) => {
-      state.archiveContent = ArchiveInitialState.archiveContent;
+      state.archiveContent = { categoryName: '', content: '', notice: 'false', title: '' };
     },
     modifyArchiveTitle: (
       state,

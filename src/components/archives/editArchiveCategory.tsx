@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { api } from '../../network/network';
+import { categoryApi } from '../../network/category';
 import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
 import {
   getArchiveCategory
@@ -29,7 +29,7 @@ export default function EditArchiveCategory() {
 
   // 카테고리 목록 받아오기
   useEffect(() => {
-    api.getAllCategories()
+    categoryApi.getAllCategories()
       .then(res => {
         dispatch(getArchiveCategory({ categories: res.categories }));
       })
@@ -40,10 +40,10 @@ export default function EditArchiveCategory() {
     if (inputRef.current.value === '') {
       return;
     }
-    api.createArchiveCategory({ categoryName: inputRef.current.value })
+    categoryApi.createArchiveCategory({ categoryName: inputRef.current.value })
       .then(res => {
         inputRef.current.value = '';
-        api.getAllCategories()
+        categoryApi.getAllCategories()
           .then(res => {
             dispatch(getArchiveCategory({ categories: res.categories }));
           })
@@ -53,10 +53,10 @@ export default function EditArchiveCategory() {
   // 카테고리 삭제
   const deleteArchiveCategory = (categoryId: number) => {
     console.log(categoryId)
-    api.deleteArchiveCategory(categoryId)
+    categoryApi.deleteArchiveCategory(categoryId)
       .then(res => {
         console.log(res);
-        api.getAllCategories()
+        categoryApi.getAllCategories()
           .then(res => {
             dispatch(getArchiveCategory({ categories: res.categories }));
           })

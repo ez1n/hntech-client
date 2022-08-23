@@ -2,7 +2,7 @@ import React from 'react';
 import '../style.css';
 import { fileApi } from '../../network/file';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../network/network';
+import { archiveApi } from '../../network/archive';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -18,7 +18,8 @@ import {
   deleteArchiveFile,
   updateArchiveFileData,
   deleteArchiveFileData,
-  resetArchiveFileData
+  resetArchiveFileData,
+  resetArchiveFileName
 } from '../../app/reducers/archiveFileSlice';
 import {
   Container,
@@ -74,7 +75,7 @@ export default function ArchiveForm() {
       .then(res => { // 파일이 존재하는 경우
         console.log('postUploadAllFiles', res.uploadedFiles);
         // 게시글 내용 보내기
-        api.postCreateArchive({
+        archiveApi.postCreateArchive({
           categoryName: archiveContent.categoryName,
           content: archiveContent.content,
           files: res.uploadedFiles.map((item: {
@@ -92,6 +93,7 @@ export default function ArchiveForm() {
             console.log('postCreateArchive', res);
             dispatch(resetArchiveState());
             dispatch(resetArchiveFileData());
+            dispatch(resetArchiveFileName());
             navigate('/archive');
           })
           .catch(error => console.log('postCreateArchive', error.config.data))
@@ -99,7 +101,7 @@ export default function ArchiveForm() {
       .catch(error => { // 파일이 존재하지 않는 경우
         if (error.response.data.message.includes('specified as non-null is null')) {
           // 게시글 내용 보내기
-          api.postCreateArchive({
+          archiveApi.postCreateArchive({
             categoryName: archiveContent.categoryName,
             content: archiveContent.content,
             files: [],

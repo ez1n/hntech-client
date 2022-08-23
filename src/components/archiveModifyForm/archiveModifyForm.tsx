@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../style.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { fileApi } from '../../network/file';
-import { api } from '../../network/network';
+import { archiveApi } from '../../network/archive';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickArchiveModifyFormGoBack } from '../../app/reducers/dialogSlice';
@@ -19,7 +19,8 @@ import {
   deleteArchiveFile,
   deleteArchiveFileData,
   updateArchiveFileData,
-  resetArchiveFileData
+  resetArchiveFileData,
+  resetArchiveFileName
 } from '../../app/reducers/archiveFileSlice';
 import {
   Container,
@@ -29,7 +30,8 @@ import {
   Checkbox,
   FormControlLabel,
   Stack,
-  TextField
+  TextField,
+  ListItem
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ArchiveCategorySelect from '../archiveCategorySelect';
@@ -40,42 +42,48 @@ export default function ArchiveModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const archiveData = new FormData(); // 자료실 첨부파일 => 이게 서버에서 파일을 어떻게 넘겨주는지 보고 수정
+  const archiveData = new FormData(); // 자료실 첨부파일
 
   const archiveModifyFormState = useAppSelector(state => state.dialog.archiveModifyFormState); // 글쓰기 취소 state
   const archiveModifyContent = useAppSelector(state => state.archive.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
+  const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
   const fileData = useAppSelector(state => state.archiveFile.file.data); // 첨부파일 이름 목록 state
   const fileName = useAppSelector(state => state.archiveFile.file.name); // 첨부파일 이름 목록 state
+
+  useEffect(() => {
+    dispatch(resetArchiveFileName());
+  }, [])
 
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
     // 파일 이름 미리보기
     for (let i = 0; i < event?.target.files.length; i++) {
-      dispatch(addArchiveFile({ item: event?.target.files[i].name }))
+      dispatch(addArchiveFile({ item: event?.target.files[i].name }));
     };
 
     // 전송할 파일 데이터
     for (let i = 0; i < event?.target.files.length; i++) {
-      dispatch(updateArchiveFileData({ file: event?.target.files[i] }))
+      dispatch(updateArchiveFileData({ file: event?.target.files[i] }));
     };
   };
 
   // 파일 선택 취소
   const deleteFile = (index: number) => {
+    // 파일 이름 삭제
     dispatch(deleteArchiveFile({ num: index }));
-    dispatch(deleteArchiveFileData({ num: index }))
-  };
 
-  let serverFileNameList: string[] = [];
+    // 전송할 파일 데이터 삭제
+    dispatch(deleteArchiveFileData({ num: index }));
+  };
 
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
+    let serverFileNameList: string[] = [];
+
     fileData.map(item => archiveData.append('files', item));
+
     // 기존 파일 리스트 생성
-    archiveModifyContent.files.map(item => (
-      serverFileNameList.push(item.serverFilename)
-    ))
-    console.log(serverFileNameList);
+    archiveModifyContent.files.map(item => serverFileNameList.push(item.serverFilename));
 
     fileApi.postUploadAllFiles(archiveData, 'archive')
       .then(res => {
@@ -87,7 +95,7 @@ export default function ArchiveModifyForm() {
           savedPath: string
         }) => (serverFileNameList.push(item.serverFilename)));
 
-        api.putUpdateArchive(archiveId, {
+        archiveApi.putUpdateArchive(archiveId, {
           categoryName: archiveModifyContent.categoryName,
           content: archiveModifyContent.content,
           files: serverFileNameList,
@@ -97,8 +105,10 @@ export default function ArchiveModifyForm() {
           .then(res => {
             dispatch(getDetailData(res));
             dispatch(resetArchiveFileData());
+            dispatch(resetArchiveFileName());
             navigate('/archive');
             serverFileNameList = [];
+            alert('수정완료')
           })
           .catch(error => console.log(error))
       })
@@ -233,7 +243,7 @@ export default function ArchiveModifyForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', putArchiveForm)}
+        {EditButton('변경완료', () => putArchiveForm(archiveId))}
         {EditButton('취소', () => dispatch(clickArchiveModifyFormGoBack()))}
       </Spacing>
 
@@ -247,6 +257,7 @@ export default function ArchiveModifyForm() {
           dispatch(resetArchiveState());
           dispatch(resetArchiveFileData());
           dispatch(clickArchiveModifyFormGoBack());
+          dispatch(resetArchiveFileName());
           navigate(-1);
         }}
         closeAction={() => dispatch(clickArchiveModifyFormGoBack())} />
