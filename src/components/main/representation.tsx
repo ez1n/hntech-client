@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { categoryApi } from '../../network/category';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { setMainCategories } from '../../app/reducers/productCategorySlice';
 import {
   Box,
   ButtonBase,
@@ -6,67 +10,51 @@ import {
   Typography,
   styled
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 export default function Representation() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  // 임시 데이터 -> 서버에서 받아오나? 수정해야하니까 그럴듯
-  const images = [
+  // const mainCategories = useAppSelector(state => state.productCategory.mainCategories); // 메인 카테고리 목록
+
+  const mainCategories = [
     {
-      url: '/images/mainButtons/유리벌브.jpg',
-      title: '유리벌브',
-      width: '31.7%',
-      mode: '유리벌브'
+      categoryName: '유리벌브',
+      id: 0,
+      imageServerFilename: '/images/mainButtons/유리벌브.jpg',
+      sequence: 0,
     },
     {
-      url: '/images/mainButtons/헤드-퓨지블링크조기.jpg',
-      title: '헤드 퓨지블링크 조기',
-      width: '31.7%',
-      mode: '헤드 퓨지블링크 조기'
+      categoryName: '유리벌브',
+      id: 0,
+      imageServerFilename: '/images/mainButtons/유리벌브.jpg',
+      sequence: 0,
     },
     {
-      url: '/images/mainButtons/건식퓨지블링크.jpg',
-      title: '건식 퓨지블링크',
-      width: '31.7%',
-      mode: '건식 퓨지블링크'
-    },
-    {
-      url: '/images/mainButtons/알람밸브단품.jpg',
-      title: '알람밸브 기본형',
-      width: '31.7%',
-      mode: '알람밸브 기본형'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '알람밸브 버터부착형',
-      width: '31.7%',
-      mode: '알람밸브 버터부착형'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '알람밸브 버터부착형',
-      width: '31.7%',
-      mode: '알람밸브 버터부착형'
-    },
-    {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '알람밸브 버터부착형',
-      width: '31.7%',
-      mode: '알람밸브 버터부착형'
-    }, {
-      url: '/images/mainButtons/알람밸브조립.jpg',
-      title: '알람밸브 버터부착형',
-      width: '31.7%',
-      mode: '알람밸브 버터부착형'
-    },
-  ];
+      categoryName: '유리벌브',
+      id: 0,
+      imageServerFilename: '/images/mainButtons/유리벌브.jpg',
+      sequence: 0,
+    }]
+
+  // 메인 카테고리 받아오기
+  // useEffect(() => {
+  //   categoryApi.getMainCategories()
+  //     .then(res => {
+  //       dispatch(setMainCategories({ categories: res.categories }));
+  //       console.log(res);
+  //     })
+  //     .catch(error => console.warn(error))
+  // }, [])
+
+  // 카테고리 이미지 받아오기
+
 
   // 제품 버튼 클릭 이벤트 (페이지 이동)
   const onClickButton = (mode: string) => {
     console.log(mode); // state 업데이트
     navigate('#'); // 페이지 이동
-  }
+  };
 
   return (
     <Container sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -84,13 +72,13 @@ export default function Representation() {
         </Container>
 
         {/* 제품 버튼 */}
-        {images.map((image, index) => (
+        {mainCategories.map((item: { categoryName: string, id: number, imageServerFilename: string, sequence: number }) => (
           <RepProductionButton
             onClick={() => {
-              onClickButton(image.mode);
+              onClickButton(item.categoryName);
               navigate('/product');
             }}
-            key={index}
+            key={item.id}
             style={{
               width: '33%',
               height: 200
@@ -98,7 +86,7 @@ export default function Representation() {
           >
             {/* 버튼 이미지 */}
             <Container
-              style={{ backgroundImage: `url(${image.url})` }}
+              style={{ backgroundImage: `url(${item.imageServerFilename})` }}
               sx={{
                 position: 'absolute',
                 left: 0,
@@ -125,7 +113,7 @@ export default function Representation() {
                   fontWeight: 'bold',
                   display: 'none'
                 }}>
-                {image.title}
+                {item.categoryName}
               </Typography>
             </Container>
           </RepProductionButton>

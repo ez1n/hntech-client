@@ -1,6 +1,6 @@
 import React from 'react';
 import { fileApi } from '../../network/file';
-import { api } from '../../network/network';
+import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
@@ -46,7 +46,7 @@ export default function ProductCategoryForm() {
     productCategoryForm.append('file', categoryImage);
     fileApi.postUploadFile(productCategoryForm, 'category')
       .then(res => {
-        api.postCreateCategory({
+        categoryApi.postCreateCategory({
           categoryName: categoryName,
           imageFileId: res.id,
           type: 'product'

@@ -106,7 +106,7 @@ export default function ArchiveModifyForm() {
             dispatch(getDetailData(res));
             dispatch(resetArchiveFileData());
             dispatch(resetArchiveFileName());
-            navigate(-1);
+            navigate('/archive');
             serverFileNameList = [];
             alert('수정완료')
           })

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './style.css';
-import { api } from '../network/network';
+import { categoryApi } from '../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import {
@@ -40,7 +40,7 @@ export default function Header() {
 
   //  제품 카테고리 목록 받아오기
   useEffect(() => {
-    api.getAllProductCategories()
+    categoryApi.getAllProductCategories()
       .then(res => {
         console.log(res)
         dispatch(setAllCategories({ categories: res.categories }))

@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import React from 'react';
+import { adminApi } from '../../network/admin';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickEditGoBack, clickPasswordStateGoBack } from '../../app/reducers/dialogSlice';
+import { clickEditGoBack, clickPasswordStateGoBack, clickSendMailPasswordStateGoBack } from '../../app/reducers/dialogSlice';
 import {
   updateManagerPassword,
   updateManagerSentMail,
@@ -13,8 +13,7 @@ import {
   updatePhone,
   setManagerData,
   updateManagerSendEmailPassword,
-  copyManagerData,
-  setFooter
+  copyManagerData
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -49,16 +48,13 @@ export default function FloatingButton() {
     sendEmailAccount: string,
     sendEmailPassword: string
   }) => {
-    api.putUpdatePanelInfo(panelData)
+    adminApi.putUpdatePanelInfo(panelData)
       .then(res => {
         dispatch(setManagerData({ panelData: res }));
         dispatch(copyManagerData({ panelData: res }));
       })
       .catch(error => console.log(error))
   };
-
-  // 비밀번호 변경 dialog state
-  const passwordState = useAppSelector(state => state.dialog.passwordState);
 
   return (
     <>
@@ -106,10 +102,8 @@ export default function FloatingButton() {
               disabled
               onChange={event => dispatch(updateManagerPassword({ adminPassword: event?.target.value }))}
               placeholder={'현재 비밀번호'} />
-            {EditButton('변경', () => {
-              console.log(passwordState)
-              dispatch(clickPasswordStateGoBack())
-            })}
+
+            {EditButton('변경', () => dispatch(clickPasswordStateGoBack()))}
 
             <PasswordUpdate />
           </ContentContainer>
