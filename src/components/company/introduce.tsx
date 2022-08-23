@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { api } from '../../network/network';
+import { adminApi } from '../../network/admin';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { updateIntroduce } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
@@ -26,14 +26,14 @@ export default function Introduce() {
 
   // 인사말 받아오기
   useEffect(() => {
-    api.getIntroduce()
+    adminApi.getIntroduce()
       .then(res => dispatch(updateIntroduce({ newIntroduce: res.data.newIntroduce })));
     dispatch(updateIntroduce({ newIntroduce: comment }));
   }, []);
 
   // 인사말 수정
   const putIntroduce = () => {
-    api.putIntroduce(introduce)
+    adminApi.putIntroduce(introduce)
       .then(res => {
         dispatch(updateIntroduce({ newIntroduce: res.newIntroduce }));
         alert('수정되었습니다.');
