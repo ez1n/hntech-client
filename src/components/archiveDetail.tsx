@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../network/network';
+import { archiveApi } from '../network/archive';
 import { fileApi } from '../network/file';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
@@ -36,7 +36,7 @@ export default function ArchiveDetail() {
 
   // 게시글 삭제
   const deleteArchive = (archiveId: number) => {
-    api.deleteArchive(archiveId)
+    archiveApi.deleteArchive(archiveId)
       .then(res => {
         dispatch(archiveDetailGoBack());
         navigate('/archive');
@@ -58,7 +58,7 @@ export default function ArchiveDetail() {
         document.body.appendChild(a);
         a.click();
         setTimeout(() => {
-          window.URL.revokeObjectURL(url);
+          URL.revokeObjectURL(url);
         }, 60000);
         a.remove();
       })
