@@ -10,10 +10,10 @@ import { createSlice } from "@reduxjs/toolkit";
  * productCategoryState : 제품 카테고리 삭제
  * productFormState : 제품 등록 취소
  * productModifyFormState : 제품 정보 변경 취소
- * productInfoState : 
+ * productInfoState : 제품 정보 삭제 취소
  * productCategoryFormState : 제품 카테고리 폼 등록 / 수정
  * questionFormState : 문의사항 등록 취소
- * questionDetailState : 
+ * questionDetailState : 문의사항 삭제 취소
  * commentState : 댓글 등록
  * archiveState : 자료실 카테고리 수정
  * archiveFormState : 자료실 글쓰기 취소
@@ -25,24 +25,24 @@ import { createSlice } from "@reduxjs/toolkit";
  */
 
 /**
- * clickLogoutGoBack : 로그아웃 취소
- * clickProductCategoryGoBack : 
- * clickPasswordStateGoBack : 비밀번호 변경 취소
- * clickSendMailPasswordStateGoBack : 발송 메일 비밀번호 변경 취소
- * clickProductFormGoBack : 
- * clickProductModifyFormGoBack : 
- * clickProductInfoGoBack : 
- * clickProductCategoryFormGoBack : 제품 카테고리 등록 / 수정 취소
- * clickQuestionFormGoBack : 
- * clickNoticeFormGoBack : 
- * clickQuestionDetailGoBack : 
- * clickCommentGoBack : 댓글 등록 취소
- * archivesGoBack : 자료실 카테고리 수정 취소
- * archiveFormGoBack : 
- * archiveDetailGoBack : 
- * editArchiveCategoryGoBack : 
- * clickArchiveModifyFormGoBack : 자료실 글 수정 취소
- * clickEditGoBack : 
+ * clickManagerLogin : 로그인
+ * clickLogoutGoBack : 로그아웃
+ * clickProductCategoryGoBack : 제품 카테고리 삭제
+ * clickPasswordStateGoBack : 비밀번호 변경
+ * clickSendMailPasswordStateGoBack : 발송 메일 비밀번호 변경
+ * clickProductFormGoBack : 제품 등록 취소 (폼 초기화)
+ * clickProductModifyFormGoBack : 제품 정보 변경 취소
+ * clickProductInfoGoBack : 제품 정보 삭제
+ * clickProductCategoryFormGoBack : 제품 카테고리 등록 / 수정
+ * clickQuestionFormGoBack : 문의사항 글쓰기 취소
+ * clickQuestionDetailGoBack : 문의사항 삭제
+ * clickCommentGoBack : 댓글 등록
+ * archivesGoBack : 자료실 카테고리 수정
+ * archiveFormGoBack : 자료실 글쓰기 취소 
+ * archiveDetailGoBack : 자료실 글 삭제
+ * editArchiveCategoryGoBack : 자료실 카테고리 수정
+ * clickArchiveModifyFormGoBack : 자료실 글 수정
+ * clickEditGoBack : 관리자패널
  * clickQuestionStatusGoBack : 문의사항 처리상태 변경
  */
 

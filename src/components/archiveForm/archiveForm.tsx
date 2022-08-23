@@ -8,19 +8,17 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { archiveFormGoBack } from '../../app/reducers/dialogSlice';
 import {
-  updateArchiveTitle,
-  updateArchiveContent,
-  updateArchiveNoticeChecked,
-  resetArchiveState
-} from '../../app/reducers/archiveSlice';
-import {
   addArchiveFile,
   deleteArchiveFile,
   updateArchiveFileData,
   deleteArchiveFileData,
   resetArchiveFileData,
-  resetArchiveFileName
-} from '../../app/reducers/archiveFileSlice';
+  resetArchiveFileName,
+  updateArchiveTitle,
+  updateArchiveContent,
+  updateArchiveNoticeChecked,
+  resetArchiveState
+} from '../../app/reducers/archiveFormSlice';
 import {
   Container,
   styled,
@@ -43,9 +41,9 @@ export default function ArchiveForm() {
   const archiveData = new FormData(); // 자료실 첨부파일
 
   const archiveFormState = useAppSelector(state => state.dialog.archiveFormState); // 글쓰기 취소 state
-  const archiveContent = useAppSelector(state => state.archive.archiveContent); // 자료실 글쓰기 내용 state
-  const fileData = useAppSelector(state => state.archiveFile.file.data); // 첨부파일 이름 목록 state
-  const fileName = useAppSelector(state => state.archiveFile.file.name); // 첨부파일 이름 목록 state
+  const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용 state
+  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록 state
+  const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
 
   // 파일 선택 이벤트
   const selectFile = (event: any) => {

@@ -3,7 +3,7 @@ import { fileApi } from '../../network/file';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickProductFormGoBack } from '../../app/reducers/dialogSlice';
-import { resetArchiveFileData } from '../../app/reducers/archiveFileSlice';
+import { resetArchiveFileData } from '../../app/reducers/archiveFormSlice';
 import {
   updateProductName,
   updateProductDescription,
@@ -14,16 +14,14 @@ import {
   updateProductImage,
   updateGradeImage,
   deleteProductImage,
-  deleteGradeImage
-} from '../../app/reducers/productContentSlice';
-import {
-  addFile,
-  deleteFileName,
-  addUploadButton,
-  deleteUploadButton,
+  deleteGradeImage,
+  addProductFile,
+  deleteProductFileName,
+  addProductUploadButton,
+  deleteProductUploadButton,
   updateProductFile,
   deleteProductFile
-} from '../../app/reducers/productFileSlice';
+} from '../../app/reducers/productFormSlice';
 import {
   Container,
   styled,
@@ -53,11 +51,11 @@ export default function ProductForm() {
   const fileData = new FormData();
 
   const productFormState = useAppSelector(state => state.dialog.productFormState); // 글쓰기 취소 state
-  const productContent = useAppSelector(state => state.productContent.productContent); // 제품 등록 내용
-  const gradeImage = useAppSelector(state => state.productContent.gradePath); // 규격 사진 state
-  const file = useAppSelector(state => state.productFile.file); // 파일 state
-  const productImage = useAppSelector(state => state.productContent.productImage); // 전송할 제품 사진 state
-  const productPath = useAppSelector(state => state.productContent.productPath); //
+  const productContent = useAppSelector(state => state.productForm.productContent); // 제품 등록 내용
+  const gradeImage = useAppSelector(state => state.productForm.gradePath); // 규격 사진 state
+  const productFileName = useAppSelector(state => state.productForm.productFileName); // 파일 state
+  const productImage = useAppSelector(state => state.productForm.productImage); // 전송할 제품 사진 state
+  const productPath = useAppSelector(state => state.productForm.productPath); //
 
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => { item.current?.click() };
@@ -91,7 +89,7 @@ export default function ProductForm() {
   // 첨부파일 추가
   const selectFile = (key: number, event: any) => {
     // 미리보기
-    dispatch(addFile({ key: key, item: event.target.files[0].name }));
+    dispatch(addProductFile({ key: key, item: event.target.files[0].name }));
 
     // 전송할 파일 데이터
     dispatch(updateProductFile({ file: event.target.files[0] }));
@@ -245,7 +243,7 @@ export default function ProductForm() {
 
           {/* 파일 업로드 (다운로드 가능한 자료) */}
           <Stack direction='column' spacing={2}>
-            {file.map((item, index) => (
+            {productFileName.map((item, index) => (
               <Stack key={index} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
                 <TextField
                   size='small'
@@ -270,7 +268,7 @@ export default function ProductForm() {
                     {item.name ?
                       <ClearRoundedIcon
                         onClick={() => {
-                          dispatch(deleteFileName({ key: item.key }));
+                          dispatch(deleteProductFileName({ key: item.key }));
                           dispatch(deleteProductFile({ num: index }))
                         }}
                         fontSize='small'
@@ -282,11 +280,11 @@ export default function ProductForm() {
                   업로드
                   <input className='productInput' type='file' id={`inputFile${item.key}`} multiple accept='.pdf, .doc, .docx, .hwp, .hwpx' />
                 </label>
-                {file.length === 1 ?
-                  <Button disabled onClick={() => dispatch(deleteUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
+                {productFileName.length === 1 ?
+                  <Button disabled onClick={() => dispatch(deleteProductUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
                     <DeleteIcon />
                   </Button> :
-                  <Button onClick={() => dispatch(deleteUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
+                  <Button onClick={() => dispatch(deleteProductUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
                     <DeleteIcon />
                   </Button>
                 }
@@ -294,7 +292,7 @@ export default function ProductForm() {
             ))}
 
             <Button
-              onClick={() => dispatch(addUploadButton())}
+              onClick={() => dispatch(addProductUploadButton())}
               sx={{
                 color: 'rgba(46, 125, 50, 0.5)',
                 '&: hover': { backgroundColor: 'rgba(46, 125, 50, 0.1)' }

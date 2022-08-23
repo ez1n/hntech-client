@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setMainCategories } from '../../app/reducers/productCategorySlice';
+import { setMainCategories } from '../../app/reducers/categorySlice';
 import {
   Box,
   ButtonBase,

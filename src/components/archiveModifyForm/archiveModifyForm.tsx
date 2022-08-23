@@ -7,21 +7,20 @@ import { archiveApi } from '../../network/archive';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickArchiveModifyFormGoBack } from '../../app/reducers/dialogSlice';
-import { getDetailData, resetArchiveState } from '../../app/reducers/archiveSlice';
-import {
-  modifyArchiveTitle,
-  modifyArchiveContent,
-  modifyArchiveNoticeChecked,
-  deleteArchiveOriginFile
-} from '../../app/reducers/archiveSlice';
+import { getDetailData } from '../../app/reducers/archiveSlice';
 import {
   addArchiveFile,
   deleteArchiveFile,
   deleteArchiveFileData,
   updateArchiveFileData,
   resetArchiveFileData,
-  resetArchiveFileName
-} from '../../app/reducers/archiveFileSlice';
+  resetArchiveFileName,
+  resetArchiveState,
+  modifyArchiveTitle,
+  modifyArchiveContent,
+  modifyArchiveNoticeChecked,
+  deleteArchiveOriginFile
+} from '../../app/reducers/archiveFormSlice';
 import {
   Container,
   styled,
@@ -30,8 +29,7 @@ import {
   Checkbox,
   FormControlLabel,
   Stack,
-  TextField,
-  ListItem
+  TextField
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ArchiveCategorySelect from '../archiveCategorySelect';
@@ -45,10 +43,10 @@ export default function ArchiveModifyForm() {
   const archiveData = new FormData(); // 자료실 첨부파일
 
   const archiveModifyFormState = useAppSelector(state => state.dialog.archiveModifyFormState); // 글쓰기 취소 state
-  const archiveModifyContent = useAppSelector(state => state.archive.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
+  const archiveModifyContent = useAppSelector(state => state.archiveForm.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
   const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
-  const fileData = useAppSelector(state => state.archiveFile.file.data); // 첨부파일 이름 목록 state
-  const fileName = useAppSelector(state => state.archiveFile.file.name); // 첨부파일 이름 목록 state
+  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록 state
+  const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
 
   useEffect(() => {
     dispatch(resetArchiveFileName());

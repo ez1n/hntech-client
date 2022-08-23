@@ -2,9 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { categoryApi } from '../../network/category';
 import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
-import {
-  getArchiveCategory
-} from '../../app/reducers/archiveCategorySlice';
+import { getArchiveCategory } from '../../app/reducers/categorySlice';
 import {
   Box,
   Dialog,
@@ -25,7 +23,7 @@ export default function EditArchiveCategory() {
   const inputRef: any = useRef(); // 카테고리 input ref
 
   const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog state
-  const category = useAppSelector(state => state.archiveCategory.category); // 카테고리 목록 state
+  const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록 state
 
   // 카테고리 목록 받아오기
   useEffect(() => {
@@ -90,7 +88,7 @@ export default function EditArchiveCategory() {
             height: 150,
             overflow: 'auto',
           }}>
-          {category.map((item: { id: number, categoryName: string }, index: number) => (
+          {archiveCategory.map((item: { id: number, categoryName: string }, index: number) => (
             <Stack key={item.id} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
               <Typography>{item.categoryName}</Typography>
               <ClearRoundedIcon

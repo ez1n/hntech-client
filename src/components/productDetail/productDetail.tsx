@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import { selectCategoryTrue } from '../../app/reducers/productCategorySlice';
+import { selectProductCategoryTrue } from '../../app/reducers/categorySlice';
 import { Box, Container, styled } from '@mui/material';
 import ProductCategories from '../products/productCategories';
 import ProductInfo from './productInfo';
@@ -11,7 +11,7 @@ export default function ProductDetail() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(selectCategoryTrue());
+    dispatch(selectProductCategoryTrue());
   }, [])
 
   return (

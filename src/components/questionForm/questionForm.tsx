@@ -8,7 +8,7 @@ import {
   updateQuestionName,
   updateQuestionPassword,
   updateQuestionContent
-} from '../../app/reducers/questionContentSlice';
+} from '../../app/reducers/questionFormSlice';
 import { Container, styled, Typography, Box, List, ListItem, TextField } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
@@ -18,8 +18,8 @@ export default function QuestionForm() {
   const dispatch = useAppDispatch();
 
   const questionFormState = useAppSelector(state => state.dialog.questionFormState); // 글쓰기 취소 state
-  const questionContent = useAppSelector(state => state.questionContent.questionContent); // 문의사항 폼 정보 state
-  const createQuestionForm = useAppSelector(state => state.questionContent.questionContent); // 문의사항 글 state
+  const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보 state
+  const createQuestionForm = useAppSelector(state => state.questionForm.questionContent); // 문의사항 글 state
 
   // 문의사항 작성하기
   const postCreateQuestion = () => {

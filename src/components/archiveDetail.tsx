@@ -4,8 +4,8 @@ import { archiveApi } from '../network/archive';
 import { fileApi } from '../network/file';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
-import { copyDetailData } from '../app/reducers/archiveSlice';
-import { addArchiveFile } from '../app/reducers/archiveFileSlice';
+import { copyArchiveDetailData } from '../app/reducers/archiveFormSlice';
+import { addArchiveFile } from '../app/reducers/archiveFormSlice';
 import {
   Box,
   Button,
@@ -24,11 +24,10 @@ export default function ArchiveDetail() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const archiveDetailState = useAppSelector(state => state.dialog.archiveDetailState); // 게시글 삭제 취소 state
   const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
-  const fileName = useAppSelector(state => state.archiveFile.file.name)
 
   // 수정 정보 만들기
   useEffect(() => {
-    dispatch(copyDetailData({ detail: detail }));
+    dispatch(copyArchiveDetailData({ detail: detail }));
     for (let i = 0; i < detail.files.length; i++) {
       dispatch(addArchiveFile({ item: detail.files[i].originalFilename }));
     };

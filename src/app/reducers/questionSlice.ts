@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// 문의사항 (question, questionDetail)
+// 문의사항 정보
 
 /**
  * pw : 비밀번호
@@ -11,7 +11,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * faq : FAQ 목록
  * detail : 문의사항 상세보기 정보
  * currentId: 현재 문의사항 id
- * currentQuestion : 현재 문의사항 글 정보 (수정)
  */
 
 /**
@@ -22,9 +21,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * getFaq : 전체 FAQ 목록 받아오기
  * setDetailData : 문의사항 상세보기 정보 받아오기
  * updateCommentData : 댓글 업데이트
- * setCurrentQuestion : 현재 정보 받아오기 (수정용)
- * updateQuestionTitle : 문의사항 제목 수정
- * updateQuestionContent : 문의사항 내용 수정
  */
 
 interface questionInitialState {
@@ -63,8 +59,7 @@ interface questionInitialState {
     status: string,
     writer: string
   },
-  faqState: string,
-  currentQuestion: { title: string, content: string }
+  faqState: string
 };
 
 const QuestionInitialState: questionInitialState = {
@@ -84,8 +79,7 @@ const QuestionInitialState: questionInitialState = {
     status: '',
     writer: ''
   },
-  faqState: 'false',
-  currentQuestion: { title: '', content: '' }
+  faqState: 'false'
 };
 
 export const QuestionSlice = createSlice({
@@ -140,22 +134,7 @@ export const QuestionSlice = createSlice({
       action: PayloadAction<{ comments: [] }>
     ) => {
       state.detail.comments = action.payload.comments
-    },
-    setCurrentQuestion: (
-      state,
-      action: PayloadAction<{ content: string, title: string }>
-    ) => {
-      state.currentQuestion.content = action.payload.content;
-      state.currentQuestion.title = action.payload.title;
-    },
-    modifyQuestionTitle: (
-      state,
-      action: PayloadAction<{ title: string }>
-    ) => { state.currentQuestion.title = action.payload.title },
-    modifyQuestionContent: (
-      state,
-      action: PayloadAction<{ content: string }>
-    ) => { state.currentQuestion.content = action.payload.content },
+    }
   }
 });
 
@@ -167,8 +146,5 @@ export const {
   getFaq,
   setFaqState,
   updateCommentData,
-  setDetailData,
-  setCurrentQuestion,
-  modifyQuestionTitle,
-  modifyQuestionContent } = QuestionSlice.actions;
+  setDetailData } = QuestionSlice.actions;
 export default QuestionSlice.reducer;

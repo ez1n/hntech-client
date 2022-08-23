@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { categoryApi } from '../../network/category';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setAllCategories } from '../../app/reducers/productCategorySlice';
+import { setAllProductCategories } from '../../app/reducers/categorySlice';
 import { Box } from '@mui/material';
 import ProductCategories from './productCategories';
 import ProductItem from './productItem';
@@ -9,18 +9,18 @@ import ProductItem from './productItem';
 export default function Products() {
   const dispatch = useAppDispatch();
 
-  const categorySelected = useAppSelector(state => state.productCategory.selected); // 카테고리 선택 state
+  const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
 
   //  제품 카테고리 목록 받아오기
   useEffect(() => {
     categoryApi.getAllProductCategories()
-      .then(res => dispatch(setAllCategories({ categories: res.categories })));
+      .then(res => dispatch(setAllProductCategories({ categories: res.categories })));
   }, []);
 
   return (
     <Box sx={{ display: 'flex', ml: 25, mr: 25 }}>
       {/* default */}
-      {!categorySelected &&
+      {!productCategorySelected &&
         <Box sx={{ p: 5, margin: 'auto', width: '100%', }}>
           {/* 카테고리 */}
           <ProductCategories />
@@ -28,7 +28,7 @@ export default function Products() {
       }
 
       {/* category selected */}
-      {categorySelected &&
+      {productCategorySelected &&
         <>
           {/* 사이드 메뉴 */}
           <Box sx={{ flex: 0.2 }}>

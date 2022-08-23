@@ -8,15 +8,13 @@ import {
   addGradeImagePath,
   deleteGradeImagePath,
   updateProductImage,
-  updateGradeImage
-} from '../../app/reducers/productContentSlice';
-import {
-  addFile,
-  deleteFileName,
-  addUploadButton,
-  deleteUploadButton,
+  updateGradeImage,
+  addProductFile,
+  deleteProductFileName,
+  addProductUploadButton,
+  deleteProductUploadButton,
   updateProductFile
-} from '../../app/reducers/productFileSlice';
+} from '../../app/reducers/productFormSlice';
 import {
   Container,
   styled,
@@ -29,7 +27,6 @@ import {
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditButton from '../editButton';
-import ModifyForm from './modifyForm';
 import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
 
@@ -42,9 +39,9 @@ export default function ProductModifyForm() {
   const gradeInputRef: any = useRef();
 
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
-  const productImage = useAppSelector(state => state.productContent.productPath); // 제품 사진 state
-  const gradeImage = useAppSelector(state => state.productContent.gradePath); // 규격 사진 state
-  const file = useAppSelector(state => state.productFile.file); // 파일 state 
+  const productImage = useAppSelector(state => state.productForm.productPath); // 제품 사진 state
+  const gradeImage = useAppSelector(state => state.productForm.gradePath); // 규격 사진 state
+  const productFileName = useAppSelector(state => state.productForm.productFileName); // 파일 state 
   const productModifyFormState = useAppSelector(state => state.dialog.productModifyFormState); // 글쓰기 취소 state
 
   // input - button 연결(input 숨기기)
@@ -77,9 +74,9 @@ export default function ProductModifyForm() {
   };
 
   // 첨부파일 추가
-  const selectFile = (key: number, event: React.FormEvent<HTMLLabelElement>) => {
+  const selectFile = (key: number, event: any) => {
     // 미리보기
-    dispatch(addFile({ key: key, item: event.target.files[0].name }));
+    dispatch(addProductFile({ key: key, item: event.target.files[0].name }));
 
     // 전송할 파일 데이터
     dispatch(updateProductFile({ file: event.target.files[0] }));
@@ -218,7 +215,7 @@ export default function ProductModifyForm() {
 
           {/* 파일 업로드 (다운로드 가능한 자료) */}
           <Stack direction='column' spacing={2}>
-            {file.map((item, index) => (
+            {productFileName.map((item, index) => (
               <Stack key={index} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
                 <TextField
                   size='small'
@@ -240,25 +237,25 @@ export default function ProductModifyForm() {
                 }}>
                   <>
                     {item.name}
-                    {item.name ? <ClearRoundedIcon onClick={() => dispatch(deleteFileName({ key: item.key }))} fontSize='small' sx={{ ml: 1, cursor: 'pointer' }} /> : '파일'}
+                    {item.name ? <ClearRoundedIcon onClick={() => dispatch(deleteProductFileName({ key: item.key }))} fontSize='small' sx={{ ml: 1, cursor: 'pointer' }} /> : '파일'}
                   </>
                 </Typography>
                 <label className='fileUploadButton' htmlFor={`inputFile${item.key}`} onChange={(event) => { selectFile(item.key, event) }}>
                   업로드
                   <input className='productInput' type='file' id={`inputFile${item.key}`} multiple accept='.pdf, .doc, .docx, .hwp, .hwpx' />
                 </label>
-                {file.length === 1 ?
-                  <Button disabled onClick={() => dispatch(deleteUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
+                {productFileName.length === 1 ?
+                  <Button disabled onClick={() => dispatch(deleteProductUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
                     <DeleteIcon />
                   </Button> :
-                  <Button onClick={() => dispatch(deleteUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
+                  <Button onClick={() => dispatch(deleteProductUploadButton({ key: index }))} sx={{ color: 'darkgreen' }}>
                     <DeleteIcon />
                   </Button>
                 }
               </Stack>
             ))}
 
-            <Button onClick={() => dispatch(addUploadButton())} sx={{ color: 'rgba(46, 125, 50, 0.5)', '&: hover': { backgroundColor: 'rgba(46, 125, 50, 0.1)' } }}>파일 추가</Button>
+            <Button onClick={() => dispatch(addProductUploadButton())} sx={{ color: 'rgba(46, 125, 50, 0.5)', '&: hover': { backgroundColor: 'rgba(46, 125, 50, 0.1)' } }}>파일 추가</Button>
           </Stack>
         </Box>
       </Box>
