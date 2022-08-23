@@ -4,6 +4,7 @@ import { api } from '../network/network';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
   clickChangeMode,
+  copyManagerData,
   setFooter,
   setManagerData,
   setPassword
@@ -48,6 +49,7 @@ export default function Footer() {
         api.getPanelInfo()
           .then(res => {
             dispatch(setManagerData({ panelData: res }));
+            dispatch(copyManagerData({ panelData: res }));
           })
       })
       .catch(error => console.log('password', error))

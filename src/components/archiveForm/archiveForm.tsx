@@ -18,7 +18,8 @@ import {
   deleteArchiveFile,
   updateArchiveFileData,
   deleteArchiveFileData,
-  resetArchiveFileData
+  resetArchiveFileData,
+  resetArchiveFileName
 } from '../../app/reducers/archiveFileSlice';
 import {
   Container,
@@ -92,6 +93,7 @@ export default function ArchiveForm() {
             console.log('postCreateArchive', res);
             dispatch(resetArchiveState());
             dispatch(resetArchiveFileData());
+            dispatch(resetArchiveFileName());
             navigate('/archive');
           })
           .catch(error => console.log('postCreateArchive', error.config.data))

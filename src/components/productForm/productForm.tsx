@@ -57,6 +57,7 @@ export default function ProductForm() {
   const gradeImage = useAppSelector(state => state.productContent.gradePath); // 규격 사진 state
   const file = useAppSelector(state => state.productFile.file); // 파일 state
   const productImage = useAppSelector(state => state.productContent.productImage); // 전송할 제품 사진 state
+  const productPath = useAppSelector(state => state.productContent.productPath); //
 
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => { item.current?.click() };
@@ -88,7 +89,7 @@ export default function ProductForm() {
   };
 
   // 첨부파일 추가
-  const selectFile = (key: number, event: React.FormEvent<HTMLLabelElement>) => {
+  const selectFile = (key: number, event: any) => {
     // 미리보기
     dispatch(addFile({ key: key, item: event.target.files[0].name }));
 
@@ -98,11 +99,13 @@ export default function ProductForm() {
 
   // 제품 등록
   const postProduct = () => {
-    productImage.map(item => productData.append('files', item))
-    fileApi.postUploadAllFiles(productData)
+    productImage.map(item => productData.append('files', item));
+    gradeImage.map(item => productData.append('files', item));
+    // 한번에 보내고 
+
+    fileApi.postUploadAllFiles(productData, 'product')
       .then(res => {
         console.log(resetArchiveFileData);
-
         navigate('product');
       })
       .catch(error => console.log(error))
@@ -182,8 +185,8 @@ export default function ProductForm() {
               overflow: 'auto',
               alignItems: 'center'
             }}>
-            {productImage.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>제품 사진 미리보기</Typography>}
-            {productImage.map((file, index) => (
+            {productPath.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>제품 사진 미리보기</Typography>}
+            {productPath.map((file, index) => (
               <Box key={index} sx={{ width: '23%', m: 1 }}>
                 <Box sx={{ textAlign: 'end' }}>
                   <ClearRoundedIcon

@@ -1,6 +1,13 @@
 import React from 'react';
+import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickPasswordStateGoBack } from '../../app/reducers/dialogSlice';
+import {
+  updateCurPassword,
+  updateManagerPassword,
+  updateNewPassword,
+  updateNewPasswordCheck
+} from '../../app/reducers/managerModeSlice';
 import {
   Dialog,
   DialogActions,
@@ -10,8 +17,6 @@ import {
   TextField
 } from '@mui/material';
 import EditButton from '../editButton';
-import { updateCurPassword, updateManagerPassword, updateNewPassword, updateNewPasswordCheck } from '../../app/reducers/managerModeSlice';
-import { api } from '../../network/network';
 
 export default function PasswordUpdate() {
   const dispatch = useAppDispatch();
@@ -19,6 +24,7 @@ export default function PasswordUpdate() {
   const passwordState = useAppSelector(state => state.dialog.passwordState); // 비밀번호 변경 dialog state
   const updatePassword = useAppSelector(state => state.manager.updatePassword); // 변경할 비밀번호 state
 
+  // 비밀번호 변경
   const putUpdatePassword = (updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) => {
     api.putUpdatePassword(updatePassword)
       .then(res => dispatch(updateManagerPassword(res.newPassword)))

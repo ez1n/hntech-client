@@ -25,27 +25,21 @@ class Api {
     return response.data;
   };
 
-  // 정보 받아오기
+  // 관리자 패널 정보 받아오기
   async getPanelInfo() {
     const response = await axios.get(`/api/admin/panel`);
     return response.data;
   };
 
-  // 비밀번호 변경
+  // 관리자 비밀번호 변경
   async putUpdatePassword(updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) {
     const response = await axios.put(`/api/admin/password`, updatePassword);
     return response.data
   };
 
-  // 이메일 변경
-  async putUpdateMail(mail: {}) {
-    const response = await axios.put(`/api/admin/mail`, mail);
-    return response.data;
-  };
-
-  // footer 정보 변경
-  async putUpdateFooter(footer: {}) {
-    const response = await axios.put(`/api/admin/footer`, footer);
+  // 관리자 패널 정보 변경
+  async putUpdatePanelInfo(panelData: {}) {
+    const response = await axios.put(`/api/admin/panel`, panelData);
     return response.data;
   };
 

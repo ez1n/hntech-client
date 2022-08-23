@@ -10,6 +10,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /**
  * addArchiveFile : 파일 추가
  * deleteArchiveFile : 파일 삭제
+ * resetArchiveFileName : 파일 이름 초기화
  * updateArchiveFileData : 전송할 파일 추가
  * deleteArchiveFileData : 전송할 파일 삭제
  * resetArchiveFileData : 파일 데이터 초기화
@@ -49,6 +50,7 @@ export const ArchiveFileSlice = createSlice({
       const newFile = state.file.name.filter((value, index) => index !== action.payload.num);
       state.file.name = newFile;
     },
+    resetArchiveFileName: (state) => { state.file.name = [] },
     updateArchiveFileData: (
       state,
       action: PayloadAction<{ file: string }>
@@ -70,6 +72,7 @@ export const ArchiveFileSlice = createSlice({
 export const {
   addArchiveFile,
   deleteArchiveFile,
+  resetArchiveFileName,
   updateArchiveFileData,
   deleteArchiveFileData,
   resetArchiveFileData } = ArchiveFileSlice.actions;

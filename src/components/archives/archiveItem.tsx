@@ -49,7 +49,6 @@ export default function ArchiveItem() {
   const openDetail = (archiveId: number) => {
     api.getArchive(archiveId)
       .then(res => {
-        console.log(res)
         dispatch(getDetailData({ detail: res }));
         navigate('/archive-detail');
       })

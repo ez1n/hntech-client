@@ -12,7 +12,9 @@ import {
   updateFax,
   updatePhone,
   setManagerData,
-  updateManagerSendEmailPassword
+  updateManagerSendEmailPassword,
+  copyManagerData,
+  setFooter
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -34,21 +36,29 @@ export default function FloatingButton() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
   const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
   const panelData = useAppSelector(state => state.manager.panelData); // 관리자 정보 state
+  const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
 
-  // 이메일, 비밀번호 정보 변경
-  const putManagerData = (mail: { password: '', sentMail: '', receivedMail: '', time: '' }) => {
-    // api.putUpdateMail(mail)
-    //   .then(res => dispatch(setManagerData({data: res})))
+  // 정보 변경
+  const putUpdatePanelInfo = (panelData: {
+    emailSendingTime: string,
+    address: string,
+    afterService: string,
+    fax: string,
+    phone: string,
+    receiveEmailAccount: string,
+    sendEmailAccount: string,
+    sendEmailPassword: string
+  }) => {
+    api.putUpdatePanelInfo(panelData)
+      .then(res => {
+        dispatch(setManagerData({ panelData: res }));
+        dispatch(copyManagerData({ panelData: res }));
+      })
+      .catch(error => console.log(error))
   };
 
-  // footer 정보 변경
-  const putUpdateFooter = (footer: { address: '', afterService: '', fax: '', phone: '' }) => {
-    // api.putUpdateFooter(footer)
-    //   .then(res => dispatch(setFooter({ footer: res })))
-  };
-
-  const passwordState = useAppSelector(state => state.dialog.passwordState); // 비밀번호 변경 dialog state
-
+  // 비밀번호 변경 dialog state
+  const passwordState = useAppSelector(state => state.dialog.passwordState);
 
   return (
     <>
@@ -83,7 +93,12 @@ export default function FloatingButton() {
 
           <ContentContainer
             direction='row'
-            sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
+            sx={{
+              pt: 2,
+              pb: 2,
+              borderTop: '2px solid rgba(46, 125, 50, 0.5)',
+              borderBottom: '2px solid rgba(46, 125, 50, 0.5)'
+            }}>
             <TitleBox>비밀번호</TitleBox>
             <TextField
               type={'password'}
@@ -103,7 +118,7 @@ export default function FloatingButton() {
             <TitleBox>수신 메일</TitleBox>
             <TextField
               type={'email'}
-              value={panelData.receiveEmailAccount}
+              value={newPanelData.receiveEmailAccount}
               onChange={event => dispatch(updateManagerReceivedMail({ receiveEmailAccount: event?.target.value }))}
               placeholder={'메일 주소'} />
           </ContentContainer>
@@ -112,7 +127,7 @@ export default function FloatingButton() {
             <TitleBox>발신 메일</TitleBox>
             <TextField
               type={'email'}
-              value={panelData.sendEmailAccount}
+              value={newPanelData.sendEmailAccount}
               onChange={event => dispatch(updateManagerSentMail({ sendEmailAccount: event?.target.value }))}
               placeholder={'메일 주소'} />
           </ContentContainer>
@@ -120,8 +135,8 @@ export default function FloatingButton() {
           <ContentContainer direction='row'>
             <TitleBox>발신 메일 비밀번호</TitleBox>
             <TextField
-              type={'email'}
-              value={panelData.sendEmailPassword}
+              type={'password'}
+              value={newPanelData.sendEmailPassword}
               onChange={event => dispatch(updateManagerSendEmailPassword({ sendEmailPassword: event?.target.value }))}
               placeholder={'발신 메일 비밀번호'} />
           </ContentContainer>
@@ -131,7 +146,7 @@ export default function FloatingButton() {
             sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <TitleBox>메일 발송 시간</TitleBox>
             <Select
-              defaultValue={panelData.emailSendingTime}
+              defaultValue={newPanelData.emailSendingTime}
               onChange={event => dispatch(updateManagerTime({ emailSendingTime: event?.target.value }))}
               MenuProps={{
                 PaperProps: { sx: { maxHeight: 300 } }
@@ -154,10 +169,6 @@ export default function FloatingButton() {
               <MenuList value='1'>01:00</MenuList><MenuList value='2'>02:00</MenuList>
               <MenuList value='3'>03:00</MenuList><MenuList value='4'>04:00</MenuList>
             </Select>
-
-            <Stack direction='row' sx={{ width: '25%', justifyContent: 'flex-end' }}>
-              {EditButton('변경', putManagerData)}
-            </Stack>
           </ContentContainer>
 
           <Typography
@@ -178,7 +189,7 @@ export default function FloatingButton() {
             <TextField
               type={'text'}
               multiline
-              value={panelData.footer.address}
+              value={newPanelData.address}
               onChange={event => dispatch(updateAddress({ address: event?.target.value }))}
               placeholder={'본사 주소'}
               sx={{ width: '60%' }} />
@@ -188,7 +199,7 @@ export default function FloatingButton() {
             <TitleBox>A/S</TitleBox>
             <TextField
               type={'text'}
-              value={panelData.footer.afterService}
+              value={newPanelData.afterService}
               onChange={event => dispatch(updateAfterService({ afterService: event?.target.value }))}
               placeholder={'A/S'} />
           </ContentContainer>
@@ -197,7 +208,7 @@ export default function FloatingButton() {
             <TitleBox>TEL</TitleBox>
             <TextField
               type={'text'}
-              value={panelData.footer.phone}
+              value={newPanelData.phone}
               onChange={event => dispatch(updatePhone({ phone: event?.target.value }))}
               placeholder={'TEL'} />
           </ContentContainer>
@@ -208,14 +219,14 @@ export default function FloatingButton() {
             <TitleBox>FAX</TitleBox>
             <TextField
               type={'text'}
-              value={panelData.footer.fax}
+              value={newPanelData.fax}
               onChange={event => dispatch(updateFax({ fax: event?.target.value }))}
               placeholder={'FAX'} />
           </ContentContainer>
         </Stack>
 
-        <Stack direction='row' sx={{ justifyContent: 'center' }}>
-          {EditButton('변경', putUpdateFooter)}
+        <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
+          {EditButton('변경', () => putUpdatePanelInfo(newPanelData))}
           {EditButton('나가기', () => dispatch(clickEditGoBack()))}
         </Stack>
       </Drawer>
