@@ -3,6 +3,8 @@ import axios from "axios";
 const SUCCESS = 200
 const BAD_REQUEST = 400;
 
+axios.defaults.withCredentials = true;
+
 class CategoryApi {
   /* 제품 카테고리 */
 
@@ -25,8 +27,8 @@ class CategoryApi {
   };
 
   // 제품 카테고리 수정
-  async putUpdateCategory(categoryId: number, categoryForm: FormData) {
-    const response = await axios.put(`/api/category/${categoryId}`, categoryForm);
+  async putUpdateProductCategory(categoryId: number, categoryData: {}) {
+    const response = await axios.put(`/api/category/${categoryId}`, categoryData);
     return response.data;
   };
 

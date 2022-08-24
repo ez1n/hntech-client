@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { categoryApi } from '../../network/category';
 import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
-import { getArchiveCategory } from '../../app/reducers/categorySlice';
+import { getArchiveCategory, updateCategoryName } from '../../app/reducers/categorySlice';
 import {
   Box,
   Dialog,
@@ -16,11 +16,13 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
 export default function EditArchiveCategory() {
   const dispatch = useAppDispatch();
 
   const inputRef: any = useRef(); // 카테고리 input ref
+  const categoryNameRef: any = useRef(); // 카테고리 이름 ref
 
   const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog state
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록 state
@@ -62,6 +64,13 @@ export default function EditArchiveCategory() {
       .catch(error => console.log(error))
   };
 
+  // 카테고리 이름 수정
+  const editArchiveCategory = (categoryId: number, categoryName: string) => {
+    categoryApi.putUpdateArchiveCategory(categoryId, { categoryName: categoryName })
+      .then(res => console.log(res))
+      .catch(error => console.warn(error))
+  };
+
   return (
     <Dialog
       open={archivesState}
@@ -88,12 +97,19 @@ export default function EditArchiveCategory() {
             height: 150,
             overflow: 'auto',
           }}>
-          {archiveCategory.map((item: { id: number, categoryName: string }, index: number) => (
+          {archiveCategory.map((item: { id: number, categoryName: string }) => (
             <Stack key={item.id} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
-              <Typography>{item.categoryName}</Typography>
+              <TextField
+                defaultValue={item.categoryName}
+                inputRef={categoryNameRef}
+              />
               <ClearRoundedIcon
                 fontSize='small'
                 onClick={() => deleteArchiveCategory(item.id)}
+                sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer' }} />
+              <CheckCircleRoundedIcon
+                fontSize='small'
+                onClick={() => editArchiveCategory(item.id, categoryNameRef)}
                 sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer' }} />
             </Stack>
           ))}

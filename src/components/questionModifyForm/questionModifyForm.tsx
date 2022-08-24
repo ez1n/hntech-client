@@ -27,6 +27,7 @@ export default function QuestionModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const managerMode = useAppSelector(state => state.manager.managerMode)
   const questionModifyFormState = useAppSelector(state => state.dialog.questionModifyFormState); // 글쓰기 취소 state
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
   const currentQuestion = useAppSelector(state => state.questionForm.currentQuestion); // 현재 문의사항 정보 (수정용)
@@ -34,15 +35,19 @@ export default function QuestionModifyForm() {
 
   // 문의사항 변경하기
   const putQuestion = (questionId: number, currentQuestion: { title: string, content: string }) => {
-    if (faqState) {
+    if (managerMode) {
       questionApi.putUpdateFAQ(questionId, { title: currentQuestion.title, content: currentQuestion.content, faq: faqState })
         .then(res => {
+          console.log(res)
+          dispatch(setDetailData({ detail: res }));
           navigate('/question-detail');
         })
+        .catch(error => console.log(error))
     } else {
       questionApi.putQuestion(questionId, currentQuestion)
         .then(res => {
-          dispatch(setDetailData(res));
+          console.log(res)
+          dispatch(setDetailData({ detail: res }));
           navigate('/question-detail');
         })
         .catch(error => console.log(error))

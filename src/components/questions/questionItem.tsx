@@ -73,7 +73,6 @@ export default function QuestionItem() {
         .then(res => {
           dispatch(setDetailData({ detail: res }));
           navigate('/question-detail');
-          console.log(res)
         })
     } else {
       dispatch(inputPassword());
@@ -88,6 +87,7 @@ export default function QuestionItem() {
         dispatch(setDetailData({ detail: res }));
         navigate('/question-detail');
       })
+      .catch(error => console.log(error))
   };
 
   // 페이지 전환

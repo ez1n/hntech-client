@@ -51,7 +51,7 @@ export default function Header() {
       .then(res => {
         console.log(res)
         dispatch(setAllProductCategories({ categories: res.categories }))
-      });
+      })
   }, []);
 
   return (

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { categoryApi } from '../../network/category';
+import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectProductCategoryTrue } from '../../app/reducers/categorySlice';
@@ -25,9 +26,10 @@ export default function ProductCategories() {
   useEffect(() => {
     categoryApi.getAllProductCategories()
       .then(res => {
-        console.log(res)
+        console.log('image', res.categories)
         dispatch(setAllProductCategories({ categories: res.categories }))
       })
+      .catch(error => console.log(error))
   }, []);
 
   // 카테고리 삭제
@@ -71,7 +73,7 @@ export default function ProductCategories() {
               <ContainerBox key={value.id} sx={{ m: 1 }}>
                 <CategoryButton onClick={() => { dispatch(selectProductCategoryTrue()) }}>
                   {/* 목록 버튼 */}
-                  <img className='categoryImage' src={value.imageServerFilename} alt='카테고리 이미지' />
+                  <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt='카테고리 이미지' />
                   <Typography sx={{
                     width: '100%',
                     pt: 1,

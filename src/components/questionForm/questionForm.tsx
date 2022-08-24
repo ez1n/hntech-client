@@ -9,7 +9,15 @@ import {
   updateQuestionPassword,
   updateQuestionContent
 } from '../../app/reducers/questionFormSlice';
-import { Container, styled, Typography, Box, List, ListItem, TextField } from '@mui/material';
+import {
+  Container,
+  styled,
+  Typography,
+  Box,
+  List,
+  ListItem,
+  TextField
+} from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
@@ -56,14 +64,8 @@ export default function QuestionForm() {
             autoFocus={true}
             onChange={event => dispatch(updateQuestionTitle({ title: event?.target.value }))}
             placeholder='제목을 입력해 주세요'
-            inputProps={{
-              style: {
-                fontSize: 20
-              }
-            }}
-            sx={{
-              width: '100%'
-            }}
+            inputProps={{ style: { fontSize: 20 } }}
+            sx={{ width: '100%' }}
           />
         </Box>
 
@@ -119,11 +121,7 @@ export default function QuestionForm() {
               console.log(createQuestionForm)
             }}
             placeholder='문의사항을 작성해 주세요'
-            inputProps={{
-              style: {
-                fontSize: 20,
-              }
-            }}
+            inputProps={{ style: { fontSize: 20 } }}
             sx={{ width: '100%' }}
           />
         </Box>

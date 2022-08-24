@@ -13,7 +13,11 @@ import {
   deleteProductFileName,
   addProductUploadButton,
   deleteProductUploadButton,
-  updateProductFile
+  updateProductFile,
+  addRepProductImagePath,
+  updateRepProductImage,
+  deleteRepProductImagePath,
+  deleteRepProductImage
 } from '../../app/reducers/productFormSlice';
 import {
   Container,
@@ -35,17 +39,29 @@ export default function ProductModifyForm() {
   const dispatch = useAppDispatch();
 
   // 제품, 규격 사진 Ref
+  const repPhotoInputRef: any = useRef();
   const photoInputRef: any = useRef();
-  const gradeInputRef: any = useRef();
+  const standardInputRef: any = useRef();
 
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const productImage = useAppSelector(state => state.productForm.productPath); // 제품 사진 state
-  const gradeImage = useAppSelector(state => state.productForm.gradePath); // 규격 사진 state
+  const standardImage = useAppSelector(state => state.productForm.standardPath); // 규격 사진 state
   const productFileName = useAppSelector(state => state.productForm.productFileName); // 파일 state 
   const productModifyFormState = useAppSelector(state => state.dialog.productModifyFormState); // 글쓰기 취소 state
+  const productRepImage = useAppSelector(state => state.productForm.productRepImage); // 전송할 대표 제품 사진 state
+  const productRepPath = useAppSelector(state => state.productForm.productRepPath); // 대표 제품 사진 state (미리보기)
 
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => { item.current?.click() };
+
+  // 대표 제품 사진 추가
+  const selectRepProductImage = (event: any) => {
+    // 미리보기
+    dispatch(addRepProductImagePath({ item: URL.createObjectURL(event.target.files[0]) }));
+
+    // 전송할 제품 사진 데이터 // 수정!!! state 없음
+    dispatch(updateRepProductImage({ file: event.target.files[0] }));
+  };
 
   // 제품 사진 추가
   const selectProductImage = (event: any) => {
@@ -133,23 +149,59 @@ export default function ProductModifyForm() {
         }}>
           <Box>
             {/* 숨김 input */}
+            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={(event) => selectRepProductImage(event)}>
+              <input className='productInput' type='file' id='inputRepPhoto' accept='image/*' />
+            </label>
+
             <label ref={photoInputRef} htmlFor='inputPhoto' onChange={(event) => selectProductImage(event)}>
               <input className='productInput' type='file' id='inputPhoto' multiple accept='image/*' />
             </label>
 
-            <label ref={gradeInputRef} htmlFor='inputGrade' onChange={(event) => selectGradeImage(event)}>
+            <label ref={standardInputRef} htmlFor='inputGrade' onChange={(event) => selectGradeImage(event)}>
               <input className='productInput' type='file' id='inputGrade' multiple accept='image/*' />
             </label>
 
             {/* 보여지는 button */}
+            {EditButton('대표 제품 사진 추가', () => selectInput(repPhotoInputRef))}
             {EditButton('제품 사진 추가', () => selectInput(photoInputRef))}
-            {EditButton('규격 사진 추가', () => selectInput(gradeInputRef))}
+            {EditButton('규격 사진 추가', () => selectInput(standardInputRef))}
           </Box>
           {ProductCategorySelect(productDetail.data.category)}
         </Box>
 
-        {/* 제품 사진 미리보기 */}
+        {/* 미리보기 */}
         <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
+          {/* 대표 제품 사진 미리보기 */}
+          <Container
+            sx={{
+              border: '1.8px solid lightgrey',
+              borderRadius: 1,
+              mb: 2,
+              height: 250,
+              display: 'flex',
+              flexWrap: 'wrap',
+              overflow: 'auto',
+              alignItems: 'center'
+            }}>
+            {productRepPath === undefined &&
+              <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>
+                대표 제품 사진 미리보기
+              </Typography>
+            }
+            <Box sx={{ width: '23%', m: 1 }}>
+              <Box sx={{ textAlign: 'end' }}>
+                <ClearRoundedIcon
+                  onClick={() => {
+                    dispatch(deleteRepProductImagePath());
+                    dispatch(deleteRepProductImage());
+                  }}
+                  sx={{ color: 'darkgreen', cursor: 'pointer' }} />
+              </Box>
+              <img src={productRepPath} alt='대표 제품 사진' width='100%' />
+            </Box>
+          </Container>
+
+          {/* 제품 사진 미리보기 */}
           <Container
             sx={{
               border: '1.8px solid lightgrey',
@@ -200,8 +252,8 @@ export default function ProductModifyForm() {
               overflow: 'auto',
               alignItems: 'center'
             }}>
-            {gradeImage.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>규격 사진 미리보기</Typography>}
-            {gradeImage.map((file, index) => (
+            {standardImage.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>규격 사진 미리보기</Typography>}
+            {standardImage.map((file, index) => (
               <Box key={index} sx={{ width: '23%', m: 1 }}>
                 <Box sx={{ textAlign: 'end' }}>
                   <ClearRoundedIcon
