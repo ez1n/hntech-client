@@ -3,7 +3,7 @@ import { categoryApi } from '../../network/category';
 import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectProductCategoryTrue } from '../../app/reducers/categorySlice';
+import { addProductCategoryImage, selectProductCategoryTrue, setCurrentProductCategoryName, updateProductCategoryImage } from '../../app/reducers/categorySlice';
 import { clickProductCategoryGoBack } from '../../app/reducers/dialogSlice';
 import { setAllProductCategories, setCurrentProductCategory } from '../../app/reducers/categorySlice';
 import { Box, Button, Container, styled, Typography } from '@mui/material';
@@ -22,8 +22,12 @@ export default function ProductCategories() {
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보 state
   const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
 
-  // 카테고리 목록 받아오기
   useEffect(() => {
+    // 카테고리 이미지 초기화
+    dispatch(addProductCategoryImage({ image: undefined }));
+    dispatch(updateProductCategoryImage({ categoryImage: '' }));
+
+    // 카테고리 목록 받아오기
     categoryApi.getAllProductCategories()
       .then(res => {
         console.log('image', res.categories)
@@ -69,10 +73,19 @@ export default function ProductCategories() {
 
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-            {productCategories.map((value, index) => (
+            {productCategories.map((value: {
+              categoryName: string;
+              id: number;
+              imageServerFilename: string;
+              imageOriginalFilename: string;
+              showInMain: string;
+            }) => (
               <ContainerBox key={value.id} sx={{ m: 1 }}>
-                <CategoryButton onClick={() => { dispatch(selectProductCategoryTrue()) }}>
-                  {/* 목록 버튼 */}
+                <CategoryButton onClick={() => {
+                  dispatch(selectProductCategoryTrue());
+                  dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
+                }}>
+                  {/* 카테고리 목록 */}
                   <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt='카테고리 이미지' />
                   <Typography sx={{
                     width: '100%',
@@ -140,12 +153,18 @@ export default function ProductCategories() {
             flexDirection: 'column'
           }}>
 
-            {productCategories.map((value, index) => (
+            {productCategories.map((value: {
+              categoryName: string;
+              id: number;
+              imageServerFilename: string;
+              imageOriginalFilename: string;
+              showInMain: string;
+            }) => (
               <MenuButton
-                key={index}
+                key={value.id}
                 onClick={() => {
-                  navigate('/product');
                   dispatch(selectProductCategoryTrue());
+                  dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
                 }}>
                 <Typography sx={{ m: 1, textAlign: 'center' }}>{value.categoryName}</Typography>
               </MenuButton>

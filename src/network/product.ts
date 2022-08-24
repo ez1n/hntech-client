@@ -7,8 +7,8 @@ axios.defaults.withCredentials = true;
 
 class ProductApi {
   // 제품 목록 받아오기
-  async getAllProducts() {
-    const response = await axios.get(`/api/product`);
+  async getAllProducts(category: string) {
+    const response = await axios.get(`/api/product?category=${category}`);
     return response.data.products;
   };
 

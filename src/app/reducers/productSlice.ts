@@ -4,26 +4,83 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /**
  * productList : 제품 목록
- * productDetail : 제품 정보
+ * currentProductData : 선택한 제품 정보
+ * productDetail : 제품 상세정보
  * activeStep : 보여지는 제품 이미지 번호
  */
 
 /**
  * getProductList : 제품 목록 받아오기
- * getProductDetail : 제품 정보 받아오기
+ * getCurrentProductData : 선택한 제품 정보 받아오기
+ * getProductDetail : 제품 상세정보 받아오기
  * nextImage : 다음 이미지
  * prevImage : 이전 이미지
  */
 
 interface productInitialState {
-  productList: { url: string, title: string }[],
-  productDetail: { image: string[], data: { name: string, info: string, category: string } },
+  productList: {
+    id: number,
+    image: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    },
+    productName: string
+  }[],
+  currentProductData: {
+    id: number,
+    image: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    },
+    productName: string
+  },
+  productDetail: {
+    category: string,
+    description: string,
+    files: [
+      {
+        id: number,
+        originalFilename: string,
+        savedPath: string,
+        serverFilename: string
+      }
+    ],
+    id: number,
+    productName: string
+  },
   activeStep: number
 };
 
 const ProductInitialState: productInitialState = {
   productList: [],
-  productDetail: { image: [], data: { name: '', info: '', category: '' } },
+  currentProductData: {
+    id: 0,
+    image: {
+      id: 0,
+      originalFilename: '',
+      savedPath: '',
+      serverFilename: ''
+    },
+    productName: ''
+  },
+  productDetail: {
+    category: '',
+    description: '',
+    files: [
+      {
+        id: 0,
+        originalFilename: '',
+        savedPath: '',
+        serverFilename: ''
+      }
+    ],
+    id: 0,
+    productName: ''
+  },
   activeStep: 0
 };
 
@@ -33,11 +90,52 @@ export const ProductSlice = createSlice({
   reducers: {
     getProductList: (
       state,
-      action: PayloadAction<{ productList: { url: string, title: string }[] }>
+      action: PayloadAction<{
+        productList: {
+          id: number,
+          image: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          },
+          productName: string
+        }[]
+      }>
     ) => { state.productList = action.payload.productList },
+    getCurrentProductData: (
+      state,
+      action: PayloadAction<{
+        productData: {
+          id: number,
+          image: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          },
+          productName: string
+        }
+      }>
+    ) => { state.currentProductData = action.payload.productData },
     getProductDetail: (
       state,
-      action: PayloadAction<{ detail: { image: string[], data: { name: string, info: string, category: string } } }>
+      action: PayloadAction<{
+        detail: {
+          category: string,
+          description: string,
+          files: [
+            {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            }
+          ],
+          id: number,
+          productName: string
+        }
+      }>
     ) => { state.productDetail = action.payload.detail },
     nextImage: (state) => { state.activeStep = state.activeStep + 1 },
     prevImage: (state) => { state.activeStep = state.activeStep - 1 }
@@ -47,6 +145,7 @@ export const ProductSlice = createSlice({
 
 export const {
   getProductList,
+  getCurrentProductData,
   getProductDetail,
   nextImage,
   prevImage } = ProductSlice.actions;

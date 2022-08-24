@@ -1,9 +1,15 @@
 import React, { useEffect } from 'react';
 import { fileApi } from '../../network/file';
+import { api } from '../../network/network';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { deleteProductCategoryImage, updateCurrentProductCategoryName, updateCurrentProductCategoryShowInMain, updateProductCategoryImage } from '../../app/reducers/categorySlice';
+import {
+  deleteProductCategoryImage,
+  updateCurrentProductCategoryName,
+  updateCurrentProductCategoryShowInMain,
+  updateProductCategoryImage
+} from '../../app/reducers/categorySlice';
 import { addProductCategoryImage } from '../../app/reducers/categorySlice';
 import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
 import {
@@ -19,7 +25,6 @@ import {
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
-import { api } from '../../network/network';
 
 export default function ProductCategoryModifyForm() {
   const navigate = useNavigate();

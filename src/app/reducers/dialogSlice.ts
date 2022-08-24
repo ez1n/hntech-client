@@ -66,6 +66,7 @@ interface dialogInitialState {
   archiveFormState: boolean,
   archiveDetailState: boolean,
   archiveModifyFormState: boolean,
+  editArchiveCategoryState: boolean,
   editState: boolean,
   questionStatusState: boolean
 };
@@ -90,6 +91,7 @@ const DialogInitialState: dialogInitialState = {
   archiveFormState: false,
   archiveDetailState: false,
   archiveModifyFormState: false,
+  editArchiveCategoryState: false,
   editState: false,
   questionStatusState: false
 };
@@ -117,6 +119,7 @@ export const DialogSlice = createSlice({
     archiveFormGoBack: (state) => { state.archiveFormState = !state.archiveFormState },
     archiveDetailGoBack: (state) => { state.archiveDetailState = !state.archiveDetailState },
     clickArchiveModifyFormGoBack: (state) => { state.archiveModifyFormState = !state.archiveModifyFormState },
+    clickArchiveCategoryGoBack: (state) => { state.editArchiveCategoryState = !state.editArchiveCategoryState },
     clickEditGoBack: (state) => { state.editState = !state.editState },
     clickQuestionStatusGoBack: (state) => { state.questionStatusState = !state.questionStatusState }
   }
@@ -142,6 +145,7 @@ export const {
   archiveFormGoBack,
   archiveDetailGoBack,
   clickArchiveModifyFormGoBack,
+  clickArchiveCategoryGoBack,
   clickEditGoBack,
   clickQuestionStatusGoBack } = DialogSlice.actions;
 export default DialogSlice.reducer;

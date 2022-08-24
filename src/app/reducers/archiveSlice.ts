@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// 자료실 상세보기
+// 자료실 상세보기, 검색
 
 /**
  * totalPage: 전체 페이지
@@ -65,7 +65,7 @@ const ArchiveInitialState: archiveInitialState = {
   currentPage: 0,
   archives: [],
   notice: [],
-  detail: { categoryName: '', content: '', createTime: '', id: 0, files: [], title: '', notice: '' }
+  detail: { categoryName: '', content: '', createTime: '', id: 0, files: [], title: '', notice: '' },
 };
 
 export const ArchiveSlice = createSlice({

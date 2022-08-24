@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { fileApi } from '../../network/file';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
@@ -162,7 +162,7 @@ export default function ProductCategoryForm() {
         text2='취소하시겠습니까?'
         yesAction={() => {
           dispatch(clickProductCategoryFormGoBack());
-          navigate(-1);
+          navigate('/product');
         }}
         closeAction={() => dispatch(clickProductCategoryFormGoBack())} />
     </Container >
