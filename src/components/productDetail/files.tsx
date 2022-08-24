@@ -1,16 +1,44 @@
 import React from 'react';
+import { useAppSelector } from '../../app/hooks';
 import { Box, Button, styled } from '@mui/material';
+import { fileApi } from '../../network/file';
 
 export default function Files() {
-  const data = [
-    { name: '형식승인서' },
-    { name: '도면' },
-  ]
+  const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
+
+  // 파일 다운로드
+  const downloadFile = (serverFilename: string, originalFilename: string) => {
+    fileApi.downloadFile(serverFilename)
+      .then(res => {
+        return res;
+      })
+      .then(file => {
+        const url = window.URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = originalFilename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 60000);
+        a.remove();
+      })
+      .catch(error => console.log(error))
+  };
+
   return (
     <Box>
-      {data.map((item, index) =>
-        <FileButton key={index}>
-          {item.name}
+      {productDetail.files.map((item: {
+        id: number,
+        originalFilename: string,
+        savedPath: string,
+        serverFilename: string
+      }) =>
+        <FileButton
+          key={item.id}
+          onClick={() => downloadFile(item.serverFilename, item.originalFilename)}>
+          {item.originalFilename}
         </FileButton>)}
     </Box>
   )
@@ -33,4 +61,4 @@ const FileButton = styled(Button)(() => ({
     transform: 'scale(1.02)',
     backgroundColor: 'rgb(66, 183, 72)'
   }
-}));
+})) as typeof Button;

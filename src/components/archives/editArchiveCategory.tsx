@@ -1,10 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { categoryApi } from '../../network/category';
-import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
-import {
-  getArchiveCategory
-} from '../../app/reducers/archiveCategorySlice';
+import { clickArchiveCategoryGoBack, clickArchivesGoBack } from '../../app/reducers/dialogSlice';
+import { getArchiveCategory, setSelectedArchiveCategoryId } from '../../app/reducers/categorySlice';
 import {
   Box,
   Dialog,
@@ -17,15 +15,21 @@ import {
   Typography
 } from '@mui/material';
 import EditButton from '../editButton';
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
+import CancelModal from '../cancelModal';
 
 export default function EditArchiveCategory() {
   const dispatch = useAppDispatch();
 
   const inputRef: any = useRef(); // 카테고리 input ref
+  const categoryNameRef: any = useRef(); // 카테고리 이름 ref
 
   const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog state
-  const category = useAppSelector(state => state.archiveCategory.category); // 카테고리 목록 state
+  const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록 state
+  const selectedArchiveCategoryId = useAppSelector(state => state.category.selectedArchiveCategoryId); // 선택한 카테고리 id
+  const editArchiveCategoryState = useAppSelector(state => state.dialog.editArchiveCategoryState); // 자료실 카테고리 삭제 state
 
   // 카테고리 목록 받아오기
   useEffect(() => {
@@ -64,11 +68,21 @@ export default function EditArchiveCategory() {
       .catch(error => console.log(error))
   };
 
+  // 카테고리 이름 수정
+  const editArchiveCategory = (categoryId: number, categoryName: string) => {
+    categoryApi.putUpdateArchiveCategory(categoryId, { categoryName: categoryName })
+      .then(res => {
+        console.log(res);
+        dispatch(setSelectedArchiveCategoryId({ id: undefined }));
+      })
+      .catch(error => console.warn(error))
+  };
+
   return (
     <Dialog
       open={archivesState}
       onClose={() => dispatch(clickArchivesGoBack())}>
-      <DialogTitle fontSize={30} sx={{ textAlign: 'center' }}>
+      <DialogTitle fontSize={30} sx={{ textAlign: 'center', mr: 10, ml: 10 }}>
         카테고리 수정
       </DialogTitle>
 
@@ -85,18 +99,43 @@ export default function EditArchiveCategory() {
         {/* 카테고리 목록 */}
         <Stack
           direction='column'
+          spacing={1}
           sx={{
-            pl: 2,
             height: 150,
             overflow: 'auto',
           }}>
-          {category.map((item: { id: number, categoryName: string }, index: number) => (
-            <Stack key={item.id} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
-              <Typography>{item.categoryName}</Typography>
-              <ClearRoundedIcon
+          {archiveCategory.map((item: { id: number, categoryName: string }) => (
+            <Stack
+              key={item.id}
+              direction='row'
+              spacing={2}
+              sx={{ alignItems: 'center', pl: 2, pr: 2 }}>
+              {selectedArchiveCategoryId === item.id ?
+                <TextField
+                  defaultValue={item.categoryName}
+                  inputRef={categoryNameRef}
+                  size='small'
+                  sx={{ flex: 0.7 }}
+                /> :
+                <Typography sx={{ flex: 0.7 }}>{item.categoryName}</Typography>
+              }
+              {selectedArchiveCategoryId === undefined ?
+                <BorderColorRoundedIcon
+                  fontSize='small'
+                  onClick={() => dispatch(setSelectedArchiveCategoryId({ id: item.id }))}
+                  sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} /> :
+                <CheckCircleRoundedIcon
+                  fontSize='small'
+                  onClick={() => editArchiveCategory(item.id, categoryNameRef.current.value)}
+                  sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} />
+              }
+              <CancelRoundedIcon
                 fontSize='small'
-                onClick={() => deleteArchiveCategory(item.id)}
-                sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer' }} />
+                onClick={() => {
+                  dispatch(setSelectedArchiveCategoryId({ id: item.id }));
+                  dispatch(clickArchiveCategoryGoBack());
+                }}
+                sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} />
             </Stack>
           ))}
         </Stack>
@@ -119,8 +158,23 @@ export default function EditArchiveCategory() {
       </DialogContent>
 
       <DialogActions sx={{ justifyContent: 'center' }}>
-        {EditButton('취소', () => dispatch(clickArchivesGoBack()))}
+        {EditButton('취소', () => {
+          dispatch(setSelectedArchiveCategoryId({ id: undefined }));
+          dispatch(clickArchivesGoBack());
+        })}
       </DialogActions>
+
+      <CancelModal
+        openState={editArchiveCategoryState}
+        title='카테고리 삭제'
+        text1='해당 카테고리의 제품이 모두 삭제됩니다.'
+        text2='삭제하시겠습니까?'
+        yesAction={() => {
+          { selectedArchiveCategoryId && deleteArchiveCategory(selectedArchiveCategoryId) };
+          dispatch(clickArchiveCategoryGoBack());
+        }}
+        closeAction={() => dispatch(clickArchiveCategoryGoBack())}
+      />
     </Dialog >
   )
 }

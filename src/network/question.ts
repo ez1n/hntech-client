@@ -20,7 +20,7 @@ class QuestionApi {
     return response.data;
   };
 
-  // FAQ
+  // FAQ 목록 받아오기
   async getFAQ() {
     const response = await axios.get(`/api/question/faq?page=0`);
     return response.data;
@@ -28,7 +28,7 @@ class QuestionApi {
 
   // FAQ 상세보기
   async getFAQDetail(questionId: number) {
-    const response = await axios.get(`/api/question/${questionId}`);
+    const response = await axios.get(`/api/question/faq/${questionId}`);
     return response.data;
   };
 
@@ -63,7 +63,7 @@ class QuestionApi {
       console.error(response.data);
       return;
     }
-    console.log(response.data);
+    return response.data;
   };
 
   // 문의게시판 답변완료

@@ -15,32 +15,18 @@ import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@mui/icons-material/NavigateBeforeRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import { productApi } from '../../network/product';
+import { api } from '../../network/network';
 
 export default function ProductInfo() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // 임시 데이터
-  const productData = {
-    image: [
-      '/images/mainButtons/알람밸브조립.jpg',
-      '/images/mainButtons/건식퓨지블링크.jpg',
-      '/images/mainButtons/유리벌브.jpg'
-    ],
-    data: { name: '플러쉬', info: '아파트와 같은 주거공간의 발코니에 설치되는 제품', category: '스프링클러' }
-  };
-
-  // 제품 정보 받아오기
-  useEffect(() => {
-    dispatch(getProductDetail({ detail: productData }));
-    console.log(productDetail)
-  }, []);
-
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productInfoState = useAppSelector(state => state.dialog.productInfoState); // 제품 삭제 dialog state
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
-  const maxSteps = productDetail.image.length; // 이미지 개수
+  const maxSteps = productDetail.files.length; // 이미지 개수
 
   // 제품 삭제
   const deleteProduct = () => {
@@ -53,6 +39,12 @@ export default function ProductInfo() {
     navigate('/product-modify');
     // 뭐 보내야 정보 받아올거아냐
   };
+
+
+
+  /** 제품 사진 수정하기 */
+
+
 
   return (
     <Container
@@ -70,7 +62,7 @@ export default function ProductInfo() {
           borderBottom: '3px solid #2E7D32',
           textAlign: 'start'
         }}>
-        {productDetail.data.name}
+        {productDetail.productName}
       </Typography>
 
       <Spacing sx={{ textAlign: 'end' }}>
@@ -92,7 +84,10 @@ export default function ProductInfo() {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-          <img src={productDetail.image[activeStep]} alt={productDetail.data.name} width={300} />
+          <img
+            src={`${api.baseUrl()}/files/product/${productDetail.files[activeStep].serverFilename}`}
+            alt={productDetail.files[activeStep].originalFilename}
+            width={300} />
         </Box>
         <MobileStepper
           steps={maxSteps}
@@ -118,7 +113,7 @@ export default function ProductInfo() {
 
       {/* 부가 설명 */}
       <Typography sx={{ fontSize: 20 }}>
-        {productDetail.data.info}
+        {productDetail.description}
       </Typography>
 
       {/* 삭제 버튼 Dialog */}

@@ -1,7 +1,8 @@
 import React from 'react';
+import '../style.css'
 import { adminApi } from '../../network/admin';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickEditGoBack, clickPasswordStateGoBack, clickSendMailPasswordStateGoBack } from '../../app/reducers/dialogSlice';
+import { clickEditGoBack, clickPasswordStateGoBack } from '../../app/reducers/dialogSlice';
 import {
   updateManagerPassword,
   updateManagerSentMail,
@@ -13,7 +14,9 @@ import {
   updatePhone,
   setManagerData,
   updateManagerSendEmailPassword,
-  copyManagerData
+  copyManagerData,
+  updateFooterLogo,
+  updateHeaderLogo
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -23,7 +26,8 @@ import {
   Stack,
   styled,
   Select,
-  MenuItem
+  MenuItem,
+  Box
 } from '@mui/material';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import EditButton from '../editButton';
@@ -36,6 +40,9 @@ export default function FloatingButton() {
   const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
   const panelData = useAppSelector(state => state.manager.panelData); // 관리자 정보 state
   const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
+  const headerLogo = useAppSelector(state => state.manager.headerLogo); // 헤더 로고 state
+  const footerLogo = useAppSelector(state => state.manager.footerLogo); // 푸터 로고 state
+  const banner = useAppSelector(state => state.manager.banner); // 배너 로고 state
 
   // 정보 변경
   const putUpdatePanelInfo = (panelData: {
@@ -87,7 +94,7 @@ export default function FloatingButton() {
             관리자 정보
           </Typography>
 
-          <ContentContainer
+          <ContentStack
             direction='row'
             sx={{
               pt: 2,
@@ -106,36 +113,36 @@ export default function FloatingButton() {
             {EditButton('변경', () => dispatch(clickPasswordStateGoBack()))}
 
             <PasswordUpdate />
-          </ContentContainer>
+          </ContentStack>
 
-          <ContentContainer direction='row'>
+          <ContentStack direction='row'>
             <TitleBox>수신 메일</TitleBox>
             <TextField
               type={'email'}
               value={newPanelData.receiveEmailAccount}
               onChange={event => dispatch(updateManagerReceivedMail({ receiveEmailAccount: event?.target.value }))}
               placeholder={'메일 주소'} />
-          </ContentContainer>
+          </ContentStack>
 
-          <ContentContainer direction='row'>
+          <ContentStack direction='row'>
             <TitleBox>발신 메일</TitleBox>
             <TextField
               type={'email'}
               value={newPanelData.sendEmailAccount}
               onChange={event => dispatch(updateManagerSentMail({ sendEmailAccount: event?.target.value }))}
               placeholder={'메일 주소'} />
-          </ContentContainer>
+          </ContentStack>
 
-          <ContentContainer direction='row'>
+          <ContentStack direction='row'>
             <TitleBox>발신 메일 비밀번호</TitleBox>
             <TextField
               type={'password'}
               value={newPanelData.sendEmailPassword}
               onChange={event => dispatch(updateManagerSendEmailPassword({ sendEmailPassword: event?.target.value }))}
               placeholder={'발신 메일 비밀번호'} />
-          </ContentContainer>
+          </ContentStack>
 
-          <ContentContainer
+          <ContentStack
             direction='row'
             sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <TitleBox>메일 발송 시간</TitleBox>
@@ -163,7 +170,7 @@ export default function FloatingButton() {
               <MenuList value='1'>01:00</MenuList><MenuList value='2'>02:00</MenuList>
               <MenuList value='3'>03:00</MenuList><MenuList value='4'>04:00</MenuList>
             </Select>
-          </ContentContainer>
+          </ContentStack>
 
           <Typography
             variant='h5'
@@ -176,7 +183,7 @@ export default function FloatingButton() {
             회사 정보
           </Typography>
 
-          <ContentContainer
+          <ContentStack
             direction='row'
             sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <TitleBox>본사 주소</TitleBox>
@@ -187,27 +194,27 @@ export default function FloatingButton() {
               onChange={event => dispatch(updateAddress({ address: event?.target.value }))}
               placeholder={'본사 주소'}
               sx={{ width: '60%' }} />
-          </ContentContainer>
+          </ContentStack>
 
-          <ContentContainer direction='row'>
+          <ContentStack direction='row'>
             <TitleBox>A/S</TitleBox>
             <TextField
               type={'text'}
               value={newPanelData.afterService}
               onChange={event => dispatch(updateAfterService({ afterService: event?.target.value }))}
               placeholder={'A/S'} />
-          </ContentContainer>
+          </ContentStack>
 
-          <ContentContainer direction='row'>
+          <ContentStack direction='row'>
             <TitleBox>TEL</TitleBox>
             <TextField
               type={'text'}
               value={newPanelData.phone}
               onChange={event => dispatch(updatePhone({ phone: event?.target.value }))}
               placeholder={'TEL'} />
-          </ContentContainer>
+          </ContentStack>
 
-          <ContentContainer
+          <ContentStack
             direction='row'
             sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }} >
             <TitleBox>FAX</TitleBox>
@@ -216,11 +223,73 @@ export default function FloatingButton() {
               value={newPanelData.fax}
               onChange={event => dispatch(updateFax({ fax: event?.target.value }))}
               placeholder={'FAX'} />
-          </ContentContainer>
+          </ContentStack>
+
+          <Stack sx={{ alignItems: 'center', mb: 5 }}>
+            {EditButton('변경', () => putUpdatePanelInfo(newPanelData))}
+          </Stack>
+
+          <Typography
+            variant='h5'
+            sx={{
+              pt: 3,
+              pb: 3,
+              textAlign: 'center',
+              width: 500
+            }}>
+            홈페이지 정보
+          </Typography>
+
+          <ContentStack
+            direction='row'
+            sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
+            <TitleBox>헤더 로고</TitleBox>
+            <Typography sx={{ width: '60%' }}>
+              {headerLogo.name}
+            </Typography>
+            <label
+              className='uploadButton'
+              htmlFor='headerLogoInput'
+              onChange={event => dispatch(updateHeaderLogo({ header: { image: event?.target.files[0], name: event?.target.files[0].name } }))}>
+              업로드
+              <input type={'file'} id='headerLogoInput' accept='image/*' />
+            </label>
+          </ContentStack>
+
+          <ContentStack direction='row'>
+            <TitleBox>푸터 로고</TitleBox>
+            <Typography sx={{ width: '60%' }}>
+              {footerLogo.name}
+            </Typography>
+            <label
+              className='uploadButton'
+              htmlFor='footerLogoInput'
+              onChange={event => dispatch(updateFooterLogo({ footer: { image: event?.target.files[0], name: event?.target.files[0].name } }))}>
+              업로드
+              <input type={'file'} id='footerLogoInput' accept='image/*' />
+            </label>
+          </ContentStack>
+
+          <ContentStack
+            direction='row'
+            sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }} >
+            <TitleBox>배너 변경</TitleBox>
+            <Stack sx={{ width: '60%' }}>
+              {banner?.map((item: { image: string, name: string }) => (
+                <Typography>
+                  {item.name}
+                </Typography>
+              ))}
+            </Stack>
+            <label className='uploadButton' htmlFor='bannerInput'>
+              업로드
+              <input type={'file'} id='bannerInput' accept='image/*' multiple />
+            </label>
+          </ContentStack>
         </Stack>
 
         <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
-          {EditButton('변경', () => putUpdatePanelInfo(newPanelData))}
+          {EditButton('변경', () => console.log("변경"))}
           {EditButton('나가기', () => dispatch(clickEditGoBack()))}
         </Stack>
       </Drawer>
@@ -228,7 +297,7 @@ export default function FloatingButton() {
   )
 };
 
-const ContentContainer = styled(Stack)(() => ({
+const ContentStack = styled(Stack)(() => ({
   alignItems: 'center'
 })) as typeof Stack;
 

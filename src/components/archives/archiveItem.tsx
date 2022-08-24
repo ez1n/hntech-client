@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { archiveApi } from '../../network/archive';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -9,17 +9,22 @@ import {
 } from '../../app/reducers/archiveSlice';
 import {
   Box,
+  Button,
   Container,
   Pagination,
   Stack,
   styled,
+  TextField,
   Typography
 } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 export default function ArchiveItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const [searchContent, setSearchContent] = useState<string>('');
 
   const TotalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
   const currentPage = useAppSelector(state => state.archive.currentPage); // 현재 페이지
@@ -67,6 +72,25 @@ export default function ArchiveItem() {
         }))
       })
       .catch(error => console.log(error))
+  };
+
+  // 자료 검색
+  const postSearchArchive = () => {
+    console.log(searchContent) // 보내기
+
+    // 검색하고 목록 업데이트
+    dispatch(getAllArchives({
+      archives: [{
+        categoryName: '',
+        createTime: '',
+        id: 0,
+        new: '',
+        title: '',
+      },],
+      totalPage: 0,
+      currentPage: 0
+    }));
+
   };
 
   return (
@@ -170,7 +194,22 @@ export default function ArchiveItem() {
         ))}
       </Box>
 
-      <Spacing />
+      <SpacingMargin />
+
+      {/* 자료 검색 */}
+      <Stack direction='row' spacing={1} sx={{ justifyContent: 'center', alignItems: 'center' }}>
+        <TextField
+          placeholder='검색어를 입력하세요.'
+          size='small'
+          autoComplete='off'
+          onChange={event => setSearchContent(event?.target.value)}
+          sx={{ width: '50%' }} />
+        <SearchRoundedIcon
+          onClick={postSearchArchive}
+          sx={{ color: 'darkgreen', fontSize: 35, cursor: 'pointer' }} />
+      </Stack>
+
+      <SpacingMargin />
 
       <Stack>
         <Pagination
@@ -185,6 +224,10 @@ export default function ArchiveItem() {
 
 const Spacing = styled(Container)(() => ({
   height: 50
+})) as typeof Container;
+
+const SpacingMargin = styled(Container)(() => ({
+  height: 30
 })) as typeof Container;
 
 const Title = styled(Typography)(() => ({

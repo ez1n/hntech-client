@@ -8,8 +8,16 @@ import {
   updateQuestionName,
   updateQuestionPassword,
   updateQuestionContent
-} from '../../app/reducers/questionContentSlice';
-import { Container, styled, Typography, Box, List, ListItem, TextField } from '@mui/material';
+} from '../../app/reducers/questionFormSlice';
+import {
+  Container,
+  styled,
+  Typography,
+  Box,
+  List,
+  ListItem,
+  TextField
+} from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
@@ -18,8 +26,8 @@ export default function QuestionForm() {
   const dispatch = useAppDispatch();
 
   const questionFormState = useAppSelector(state => state.dialog.questionFormState); // 글쓰기 취소 state
-  const questionContent = useAppSelector(state => state.questionContent.questionContent); // 문의사항 폼 정보 state
-  const createQuestionForm = useAppSelector(state => state.questionContent.questionContent); // 문의사항 글 state
+  const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보 state
+  const createQuestionForm = useAppSelector(state => state.questionForm.questionContent); // 문의사항 글 state
 
   // 문의사항 작성하기
   const postCreateQuestion = () => {
@@ -56,14 +64,8 @@ export default function QuestionForm() {
             autoFocus={true}
             onChange={event => dispatch(updateQuestionTitle({ title: event?.target.value }))}
             placeholder='제목을 입력해 주세요'
-            inputProps={{
-              style: {
-                fontSize: 20
-              }
-            }}
-            sx={{
-              width: '100%'
-            }}
+            inputProps={{ style: { fontSize: 20 } }}
+            sx={{ width: '100%' }}
           />
         </Box>
 
@@ -119,11 +121,7 @@ export default function QuestionForm() {
               console.log(createQuestionForm)
             }}
             placeholder='문의사항을 작성해 주세요'
-            inputProps={{
-              style: {
-                fontSize: 20,
-              }
-            }}
+            inputProps={{ style: { fontSize: 20 } }}
             sx={{ width: '100%' }}
           />
         </Box>

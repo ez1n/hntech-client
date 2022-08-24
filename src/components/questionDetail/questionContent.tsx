@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppSelector } from '../../app/hooks';
 import { Box, Stack, Typography } from '@mui/material';
+import { questionApi } from '../../network/question';
 
 export default function QuestionContent() {
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)

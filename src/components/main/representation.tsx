@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
+import { api } from '../../network/network';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setMainCategories } from '../../app/reducers/productCategorySlice';
+import { setMainCategories } from '../../app/reducers/categorySlice';
 import {
   Box,
   ButtonBase,
@@ -15,40 +16,17 @@ export default function Representation() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // const mainCategories = useAppSelector(state => state.productCategory.mainCategories); // 메인 카테고리 목록
-
-  const mainCategories = [
-    {
-      categoryName: '유리벌브',
-      id: 0,
-      imageServerFilename: '/images/mainButtons/유리벌브.jpg',
-      sequence: 0,
-    },
-    {
-      categoryName: '유리벌브',
-      id: 0,
-      imageServerFilename: '/images/mainButtons/유리벌브.jpg',
-      sequence: 0,
-    },
-    {
-      categoryName: '유리벌브',
-      id: 0,
-      imageServerFilename: '/images/mainButtons/유리벌브.jpg',
-      sequence: 0,
-    }]
+  const productMainCategories = useAppSelector(state => state.category.productMainCategories); // 메인 카테고리 목록
 
   // 메인 카테고리 받아오기
-  // useEffect(() => {
-  //   categoryApi.getMainCategories()
-  //     .then(res => {
-  //       dispatch(setMainCategories({ categories: res.categories }));
-  //       console.log(res);
-  //     })
-  //     .catch(error => console.warn(error))
-  // }, [])
-
-  // 카테고리 이미지 받아오기
-
+  useEffect(() => {
+    categoryApi.getMainCategories()
+      .then(res => {
+        console.log(res)
+        dispatch(setMainCategories({ categories: res }));
+      })
+      .catch(error => console.warn(error))
+  }, [])
 
   // 제품 버튼 클릭 이벤트 (페이지 이동)
   const onClickButton = (mode: string) => {
@@ -72,7 +50,7 @@ export default function Representation() {
         </Container>
 
         {/* 제품 버튼 */}
-        {mainCategories.map((item: { categoryName: string, id: number, imageServerFilename: string, sequence: number }) => (
+        {productMainCategories?.map((item: { categoryName: string, id: number, imageServerFilename: string }) => (
           <RepProductionButton
             onClick={() => {
               onClickButton(item.categoryName);
@@ -86,7 +64,7 @@ export default function Representation() {
           >
             {/* 버튼 이미지 */}
             <Container
-              style={{ backgroundImage: `url(${item.imageServerFilename})` }}
+              style={{ backgroundImage: `url(${api.baseUrl()}/files/category/${item.imageServerFilename})` }}
               sx={{
                 position: 'absolute',
                 left: 0,

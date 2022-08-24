@@ -3,18 +3,15 @@ import menuSlice from './reducers/menuSlice';
 import managerModeSlice from './reducers/managerModeSlice';
 import companySlice from './reducers/companySlice';
 import companyModifySlice from './reducers/companyModifySlice';
-import productCategorySlice from './reducers/productCategorySlice';
 import dialogSlice from './reducers/dialogSlice';
 import questionSlice from './reducers/questionSlice';
 import commentSlice from './reducers/commentSlice';
 import productSlice from './reducers/productSlice';
-import productContentSlice from './reducers/productContentSlice';
-import productFileSlice from './reducers/productFileSlice';
-import questionContentSlice from './reducers/questionContentSlice';
+import productFormSlice from './reducers/productFormSlice';
+import questionFormSlice from './reducers/questionFormSlice';
 import archiveSlice from './reducers/archiveSlice';
-import archiveCategorySlice from './reducers/archiveCategorySlice';
-import archiveFileSlice from './reducers/archiveFileSlice';
-import productCategoryContentSlice from './reducers/productCategoryContentSlice';
+import archiveFormSlice from './reducers/archiveFormSlice';
+import categorySlice from './reducers/categorySlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,18 +19,15 @@ export const store = configureStore({
     manager: managerModeSlice,
     company: companySlice,
     companyModify: companyModifySlice,
-    productCategory: productCategorySlice,
     dialog: dialogSlice,
     question: questionSlice,
     comment: commentSlice,
     product: productSlice,
-    productContent: productContentSlice,
-    productFile: productFileSlice,
-    productCategoryContent: productCategoryContentSlice,
+    productForm: productFormSlice,
     archive: archiveSlice,
-    archiveFile: archiveFileSlice,
-    questionContent: questionContentSlice,
-    archiveCategory: archiveCategorySlice
+    archiveForm: archiveFormSlice,
+    questionForm: questionFormSlice,
+    category: categorySlice,
   }
 });
 

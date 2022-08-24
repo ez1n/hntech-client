@@ -21,11 +21,18 @@ import {
   clickChangeLocation
 } from '../app/reducers/companySlice';
 import {
-  selectCategoryTrue,
-  selectCategoryFalse,
-  setAllCategories
-} from '../app/reducers/productCategorySlice';
-import { Toolbar, Typography, Button, Stack, Box, Paper, styled } from '@mui/material';
+  selectProductCategoryTrue,
+  selectProductCategoryFalse
+} from '../app/reducers/categorySlice';
+import { setAllProductCategories } from '../app/reducers/categorySlice';
+import {
+  Toolbar,
+  Typography,
+  Button, Stack,
+  Box,
+  Paper,
+  styled
+} from '@mui/material';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -36,15 +43,15 @@ export default function Header() {
   const openArchive = useAppSelector(state => state.menu.archive); // 고객지원 state
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const categories = useAppSelector(state => state.productCategory.categories); // 제품 카테고리 state
+  const productCategories = useAppSelector(state => state.category.productCategories); // 제품 카테고리 state
 
   //  제품 카테고리 목록 받아오기
   useEffect(() => {
     categoryApi.getAllProductCategories()
       .then(res => {
         console.log(res)
-        dispatch(setAllCategories({ categories: res.categories }))
-      });
+        dispatch(setAllProductCategories({ categories: res.categories }))
+      })
   }, []);
 
   return (
@@ -146,7 +153,7 @@ export default function Header() {
             onMouseOver={() => dispatch(mouseOverProduct())}
             onClick={() => {
               navigate('/product');
-              dispatch(selectCategoryFalse());
+              dispatch(selectProductCategoryFalse());
             }}
           >
             제품소개
@@ -158,12 +165,12 @@ export default function Header() {
                 flexDirection: 'column',
                 position: 'absolute',
               }}>
-              {categories.map((item, index) => (
+              {productCategories.map((item, index) => (
                 <DropdownMenu
                   key={item.id}
                   onClick={() => {
                     navigate('/product');
-                    dispatch(selectCategoryTrue());
+                    dispatch(selectProductCategoryTrue());
                   }}>
                   {item.categoryName}
                 </DropdownMenu>

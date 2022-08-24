@@ -29,7 +29,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * updatePhone : 본사 번호 업데이트
  */
 
-// 관리자모드 state (임시)
+// 관리자모드 state
 interface managerInitialState {
   managerMode: boolean,
   password: { password: string },
@@ -62,7 +62,10 @@ interface managerInitialState {
     fax: string,
     phone: string
   },
-  updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }
+  updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string },
+  headerLogo: { image: string, name: string },
+  footerLogo: { image: string, name: string },
+  banner: { image: string, name: string }[]
 };
 
 const ManagerInitialState: managerInitialState = {
@@ -97,7 +100,10 @@ const ManagerInitialState: managerInitialState = {
     fax: '',
     phone: ''
   },
-  updatePassword: { curPassword: '', newPassword: '', newPasswordCheck: '' }
+  updatePassword: { curPassword: '', newPassword: '', newPasswordCheck: '' },
+  headerLogo: { image: '', name: '' },
+  footerLogo: { image: '', name: '' },
+  banner: []
 };
 
 // 관리자 모드 업데이트
@@ -216,6 +222,28 @@ export const ManagerSlice = createSlice({
       state,
       action: PayloadAction<{ phone: string }>
     ) => { state.newPanelData.phone = action.payload.phone },
+    updateHeaderLogo: (
+      state,
+      action: PayloadAction<{ header: { image: string, name: string } }>
+    ) => { state.headerLogo = action.payload.header },
+    updateFooterLogo: (
+      state,
+      action: PayloadAction<{ footer: { image: string, name: string } }>
+    ) => { state.footerLogo = action.payload.footer },
+    updateBanner: (
+      state,
+      action: PayloadAction<{ banner: { image: string, name: string } }>
+    ) => {
+      const newBanner = [...state.banner, action.payload.banner];
+      state.banner = newBanner;
+    },
+    deleteBanner: (
+      state,
+      action: PayloadAction<{ num: number }>
+    ) => {
+      const newBanner = state.banner.filter((item, index) => index !== action.payload.num);
+      state.banner = newBanner;
+    }
   }
 });
 
@@ -236,5 +264,9 @@ export const {
   updateAddress,
   updateAfterService,
   updateFax,
-  updatePhone } = ManagerSlice.actions;
+  updatePhone,
+  updateHeaderLogo,
+  updateFooterLogo,
+  updateBanner,
+  deleteBanner } = ManagerSlice.actions;
 export default ManagerSlice.reducer;

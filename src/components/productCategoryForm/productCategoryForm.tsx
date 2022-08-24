@@ -1,22 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { fileApi } from '../../network/file';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
+import { updateProductCategoryImage, updateProductCategoryShowInMain } from '../../app/reducers/categorySlice';
 import {
-  updateProductCategoryName,
-  addCategoryImage,
-  deleteCategoryImage,
-  updateProductCategoryImage
-} from '../../app/reducers/productCategoryContentSlice';
+  addProductCategoryImage,
+  deleteProductCategoryImage,
+  updateProductCategoryName
+} from '../../app/reducers/categorySlice';
 import {
   Container,
   styled,
   Typography,
   Box,
   Stack,
-  TextField
+  TextField,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
@@ -29,30 +31,32 @@ export default function ProductCategoryForm() {
   const productCategoryForm = new FormData(); // 카테고리 폼 데이터
 
   const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
-  const categoryName = useAppSelector(state => state.productCategoryContent.categoryName); // 카테고리 이름 state
-  const categoryImage = useAppSelector(state => state.productCategoryContent.categoryImage); // 카테고리 이미지 state
-  const categoryImagePath = useAppSelector(state => state.productCategoryContent.categoryImagePath); // 카테고리 이미지 미리보기 state
+  const productCategoryName = useAppSelector(state => state.category.productCategoryName); // 카테고리 이름 state
+  const productCategoryImage = useAppSelector(state => state.category.productCategoryImage); // 카테고리 이미지 state
+  const productCategoryImagePath = useAppSelector(state => state.category.productCategoryImagePath); // 카테고리 이미지 미리보기 state
+  const productCategoryShowInMain = useAppSelector(state => state.category.productCategoryShowInMain); // 메인 카테고리 설정 state
 
   // 제품 사진
   const selectCategoryImage = (event: any) => {
     // 미리보기
-    dispatch(addCategoryImage({ image: URL.createObjectURL(event.target.files[0]) }));
+    dispatch(addProductCategoryImage({ image: URL.createObjectURL(event.target.files[0]) }));
     // 전송할 데이터 업데이트
     dispatch(updateProductCategoryImage({ categoryImage: event.target.files[0] }));
   };
 
   // 카테고리 등록
   const postProductCategory = () => {
-    productCategoryForm.append('file', categoryImage);
+    productCategoryForm.append('file', productCategoryImage);
     fileApi.postUploadFile(productCategoryForm, 'category')
       .then(res => {
         categoryApi.postCreateCategory({
-          categoryName: categoryName,
+          categoryName: productCategoryName,
           imageFileId: res.id,
+          showInMain: productCategoryShowInMain,
           type: 'product'
         })
           .then(res => {
-            dispatch(addCategoryImage({ image: null }));
+            dispatch(addProductCategoryImage({ image: undefined }));
             navigate('/product');
           })
           .catch(error => console.log(error))
@@ -84,11 +88,7 @@ export default function ProductCategoryForm() {
             autoFocus={true}
             placeholder='카테고리명'
             onChange={event => dispatch(updateProductCategoryName({ categoryName: event?.target.value }))}
-            inputProps={{
-              style: {
-                fontSize: 20
-              }
-            }}
+            inputProps={{ style: { fontSize: 20 } }}
             sx={{
               width: '100%'
             }}
@@ -103,6 +103,19 @@ export default function ProductCategoryForm() {
               <input type='file' id='productCategoryInput' accept='image/*' onChange={(event) => selectCategoryImage(event)} />
             </label>
           </Box>
+
+          <FormControlLabel
+            control={<Checkbox
+              onChange={event => dispatch(updateProductCategoryShowInMain({ showInMain: event?.target.checked }))}
+              sx={{
+                color: 'darkgrey',
+                '&.Mui-checked': {
+                  color: 'green',
+                },
+              }} />}
+            label='메인 카테고리'
+            labelPlacement='start'
+            sx={{ color: 'darkgrey' }} />
         </Stack>
 
         {/* 제품 사진 미리보기 */}
@@ -118,15 +131,15 @@ export default function ProductCategoryForm() {
               overflow: 'auto',
               alignItems: 'center'
             }}>
-            {categoryImagePath === null ?
+            {!productCategoryImagePath ?
               <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>제품 사진 미리보기</Typography> :
               <Box sx={{ width: '23%', m: 1 }}>
                 <Box sx={{ textAlign: 'end' }}>
                   <ClearRoundedIcon
-                    onClick={() => dispatch(deleteCategoryImage())}
+                    onClick={() => dispatch(deleteProductCategoryImage())}
                     sx={{ color: 'darkgreen', cursor: 'pointer' }} />
                 </Box>
-                <img src={categoryImagePath} alt='제품 사진' width='100%' />
+                <img src={productCategoryImagePath} alt='제품 사진' width='100%' />
               </Box>
             }
           </Container>
@@ -149,7 +162,7 @@ export default function ProductCategoryForm() {
         text2='취소하시겠습니까?'
         yesAction={() => {
           dispatch(clickProductCategoryFormGoBack());
-          navigate(-1);
+          navigate('/product');
         }}
         closeAction={() => dispatch(clickProductCategoryFormGoBack())} />
     </Container >
