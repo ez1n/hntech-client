@@ -26,7 +26,7 @@ export default function ProductItem() {
     productApi.getAllProducts(currentProductCategoryName)
       .then(res => dispatch(getProductList({ productList: res })))
       .catch(error => console.log(error))
-  }, []);
+  }, [currentProductCategoryName]);
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
@@ -34,6 +34,7 @@ export default function ProductItem() {
       .then(res => {
         dispatch(getProductDetail({ detail: res }));
         navigate('/product-detail');
+        console.log(res)
       })
   };
 

@@ -45,9 +45,9 @@ export default function ProductCategoryModifyForm() {
     api.getImageData(productCurrentCategory.imageServerFilename)
       .then(res => {
         const fileReader = new FileReader();
-        fileReader.readAsBinaryString(res);
         const fileImage = fileReader.result;
         dispatch(updateProductCategoryImage({ categoryImage: fileImage }));
+        fileReader.readAsBinaryString(res);
       })
   }, []);
 

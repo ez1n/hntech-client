@@ -13,7 +13,9 @@ class Api {
 
   // 이미지 요청
   async getImageData(imageServerFilename: string) {
-    const response = await axios.get(`/api/files/category/${imageServerFilename}`);
+    const response = await axios.get(`/api/files/category/${imageServerFilename}`, {
+      responseType: 'blob',
+    });
     return response.data;
   }
 };

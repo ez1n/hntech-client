@@ -18,7 +18,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * updateArchiveTitle : 자료실 제목 입력
  * updateArchiveContent : 자료실 내용 입력
  * updateArchiveNoticeChecked : 자료실 공지사항 체크 (default: false)
- * updateArchiveCategory : 자료실 카테고리 선택
  * resetArchiveState : 자료실 state 초기화
  * modifyArchiveTitle : 자료실 제목 수정
  * modifyArchiveContent : 자료실 내용 수정
@@ -81,7 +80,9 @@ export const ArchiveSlice = createSlice({
           id: number,
           new: string,
           title: string,
-        }[], totalPage: number, currentPage: number
+        }[],
+        totalPage: number,
+        currentPage: number
       }>
     ) => {
       state.archives = action.payload.archives;

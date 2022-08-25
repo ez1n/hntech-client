@@ -16,6 +16,12 @@ class AdminApi {
     return response;
   };
 
+  // banner 받아오기
+
+  // banner 수정하기
+
+  // 로고 수정하기
+
   /* 관리자 정보 */
 
   // footer 정보 받아오기

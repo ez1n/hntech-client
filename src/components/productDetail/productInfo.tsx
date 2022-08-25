@@ -26,7 +26,7 @@ export default function ProductInfo() {
   const productInfoState = useAppSelector(state => state.dialog.productInfoState); // 제품 삭제 dialog state
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
-  const maxSteps = productDetail.files.length; // 이미지 개수
+  const maxSteps = productDetail.files.productImages.length; // 이미지 개수
 
   // 제품 삭제
   const deleteProduct = () => {
@@ -85,8 +85,8 @@ export default function ProductInfo() {
             alignItems: 'center'
           }}>
           <img
-            src={`${api.baseUrl()}/files/product/${productDetail.files[activeStep].serverFilename}`}
-            alt={productDetail.files[activeStep].originalFilename}
+            src={`${api.baseUrl()}/files/product/${productDetail.files.productImages[activeStep].serverFilename}`}
+            alt={productDetail.files.productImages[activeStep].originalFilename}
             width={300} />
         </Box>
         <MobileStepper

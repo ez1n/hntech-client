@@ -59,7 +59,7 @@ const ArchiveFormInitialState: archiveFormInitialState = {
     data: []
   },
   archiveModifyContent: { categoryName: '', content: '', files: [], notice: '', title: '', },
-  archiveContent: { categoryName: '', content: '', notice: 'false', title: '' }
+  archiveContent: { categoryName: '전체', content: '', notice: 'false', title: '' }
 };
 
 export const ArchiveFormSlice = createSlice({

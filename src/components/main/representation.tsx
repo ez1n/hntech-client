@@ -64,7 +64,7 @@ export default function Representation() {
           >
             {/* 버튼 이미지 */}
             <Container
-              style={{ backgroundImage: `url(${api.baseUrl()}/files/category/${item.imageServerFilename})` }}
+              style={{ backgroundImage: productMainCategories ? `url(${api.baseUrl()}/files/category/${item.imageServerFilename})` : '' }}
               sx={{
                 position: 'absolute',
                 left: 0,
