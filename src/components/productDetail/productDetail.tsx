@@ -9,6 +9,7 @@ import Specification from './specification';
 
 export default function ProductDetail() {
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(selectProductCategoryTrue());
   }, [])

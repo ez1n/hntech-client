@@ -50,7 +50,7 @@ export default function ArchiveDetail() {
         return res;
       })
       .then(file => {
-        const url = window.URL.createObjectURL(file);
+        const url = URL.createObjectURL(file);
         const a = document.createElement('a');
         a.href = url;
         a.download = originalFilename;

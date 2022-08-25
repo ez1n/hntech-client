@@ -29,16 +29,20 @@ export default function Files() {
 
   return (
     <Box>
-      {productDetail.files.map((item: {
+      {productDetail.files.docFiles.map((item: {
         id: number,
         originalFilename: string,
         savedPath: string,
-        serverFilename: string
+        serverFilename: string,
+        type: string
       }) =>
         <FileButton
           key={item.id}
-          onClick={() => downloadFile(item.serverFilename, item.originalFilename)}>
-          {item.originalFilename}
+          onClick={() => {
+            console.log(item.serverFilename, item.originalFilename)
+            downloadFile(item.serverFilename, item.originalFilename)
+          }}>
+          {item.type}
         </FileButton>)}
     </Box>
   )

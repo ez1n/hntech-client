@@ -11,7 +11,7 @@ export default function Products() {
 
   const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
 
-  //  제품 카테고리 목록 받아오기
+  // 제품 카테고리 목록 받아오기
   useEffect(() => {
     categoryApi.getAllProductCategories()
       .then(res => dispatch(setAllProductCategories({ categories: res.categories })));

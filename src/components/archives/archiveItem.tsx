@@ -9,7 +9,6 @@ import {
 } from '../../app/reducers/archiveSlice';
 import {
   Box,
-  Button,
   Container,
   Pagination,
   Stack,
@@ -19,6 +18,7 @@ import {
 } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import ArchiveCategorySelect from '../archiveCategorySelect';
 
 export default function ArchiveItem() {
   const navigate = useNavigate();
@@ -30,12 +30,12 @@ export default function ArchiveItem() {
   const currentPage = useAppSelector(state => state.archive.currentPage); // 현재 페이지
   const archives = useAppSelector(state => state.archive.archives); // 자료실 글 목록
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
+  const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName); // 선택한 카테고리
 
   useEffect(() => {
     // 자료실 목록 받아오기
     archiveApi.getArchives(0)
       .then(res => {
-        console.log(res)
         dispatch(getAllArchives({
           archives: res.archives,
           totalPage: res.totalPages,
@@ -75,23 +75,15 @@ export default function ArchiveItem() {
   };
 
   // 자료 검색
-  const postSearchArchive = () => {
-    console.log(searchContent) // 보내기
-
-    // 검색하고 목록 업데이트
-    dispatch(getAllArchives({
-      archives: [{
-        categoryName: '',
-        createTime: '',
-        id: 0,
-        new: '',
-        title: '',
-      },],
-      totalPage: 0,
-      currentPage: 0
-    }));
-
+  const getSearchArchive = () => {
+    archiveApi.getSearchArchive(categoryName === '전체' ? null : categoryName, searchContent, 0)
+      .then(res => {
+        console.log(res)
+        dispatch(getAllArchives({ archives: res.archives, totalPage: res.totalPages, currentPage: res.currentPage }))
+      })
+      .catch(error => console.log(error))
   };
+
 
   return (
     <>
@@ -198,6 +190,9 @@ export default function ArchiveItem() {
 
       {/* 자료 검색 */}
       <Stack direction='row' spacing={1} sx={{ justifyContent: 'center', alignItems: 'center' }}>
+        {/* 카테고리 */}
+        <ArchiveCategorySelect defaultCategory={'전체'} />
+
         <TextField
           placeholder='검색어를 입력하세요.'
           size='small'
@@ -205,7 +200,7 @@ export default function ArchiveItem() {
           onChange={event => setSearchContent(event?.target.value)}
           sx={{ width: '50%' }} />
         <SearchRoundedIcon
-          onClick={postSearchArchive}
+          onClick={getSearchArchive}
           sx={{ color: 'darkgreen', fontSize: 35, cursor: 'pointer' }} />
       </Stack>
 

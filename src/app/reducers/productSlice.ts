@@ -41,14 +41,39 @@ interface productInitialState {
   productDetail: {
     category: string,
     description: string,
-    files: [
-      {
+    files: {
+      docFiles: [
+        {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string,
+          type: string
+        }
+      ],
+      productImages: [
+        {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string
+        }
+      ],
+      representativeImage: {
         id: number,
         originalFilename: string,
         savedPath: string,
         serverFilename: string
-      }
-    ],
+      },
+      standardImages: [
+        {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string
+        }
+      ]
+    },
     id: number,
     productName: string
   },
@@ -70,14 +95,39 @@ const ProductInitialState: productInitialState = {
   productDetail: {
     category: '',
     description: '',
-    files: [
-      {
+    files: {
+      docFiles: [
+        {
+          id: 0,
+          originalFilename: '',
+          savedPath: '',
+          serverFilename: '',
+          type: ''
+        }
+      ],
+      productImages: [
+        {
+          id: 0,
+          originalFilename: '',
+          savedPath: '',
+          serverFilename: ''
+        }
+      ],
+      representativeImage: {
         id: 0,
         originalFilename: '',
         savedPath: '',
         serverFilename: ''
-      }
-    ],
+      },
+      standardImages: [
+        {
+          id: 0,
+          originalFilename: '',
+          savedPath: '',
+          serverFilename: ''
+        }
+      ]
+    },
     id: 0,
     productName: ''
   },
@@ -124,14 +174,39 @@ export const ProductSlice = createSlice({
         detail: {
           category: string,
           description: string,
-          files: [
-            {
+          files: {
+            docFiles: [
+              {
+                id: number,
+                originalFilename: string,
+                savedPath: string,
+                serverFilename: string,
+                type: string
+              }
+            ],
+            productImages: [
+              {
+                id: number,
+                originalFilename: string,
+                savedPath: string,
+                serverFilename: string
+              }
+            ],
+            representativeImage: {
               id: number,
               originalFilename: string,
               savedPath: string,
               serverFilename: string
-            }
-          ],
+            },
+            standardImages: [
+              {
+                id: number,
+                originalFilename: string,
+                savedPath: string,
+                serverFilename: string
+              }
+            ]
+          },
           id: number,
           productName: string
         }

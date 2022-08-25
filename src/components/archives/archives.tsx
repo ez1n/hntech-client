@@ -2,11 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
-import { Container, styled, TextField, Typography } from '@mui/material';
+import { Container, styled, Typography } from '@mui/material';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
 import EditArchiveCategory from './editArchiveCategory';
-import ArchiveCategorySelect from '../archiveCategorySelect';
 
 export default function Archives() {
   const navigate = useNavigate();
@@ -36,8 +35,6 @@ export default function Archives() {
           </>
         }
 
-        {/* 카테고리 */}
-        <ArchiveCategorySelect defaultCategory={'전체'} />
       </Spacing>
 
       {/* 자료 목록 */}

@@ -63,6 +63,7 @@ export default function EditArchiveCategory() {
         categoryApi.getAllCategories()
           .then(res => {
             dispatch(getArchiveCategory({ categories: res.categories }));
+            dispatch(setSelectedArchiveCategoryId({ id: undefined }));
           })
       })
       .catch(error => console.log(error))
@@ -70,10 +71,18 @@ export default function EditArchiveCategory() {
 
   // 카테고리 이름 수정
   const editArchiveCategory = (categoryId: number, categoryName: string) => {
-    categoryApi.putUpdateArchiveCategory(categoryId, { categoryName: categoryName })
+    categoryApi.putUpdateArchiveCategory(categoryId, {
+      categoryName: categoryName,
+      imageServerFilename: null,
+      showInMain: 'false'
+    })
       .then(res => {
         console.log(res);
         dispatch(setSelectedArchiveCategoryId({ id: undefined }));
+        categoryApi.getAllCategories()
+          .then(res => {
+            dispatch(getArchiveCategory({ categories: res.categories }));
+          })
       })
       .catch(error => console.warn(error))
   };
@@ -81,7 +90,10 @@ export default function EditArchiveCategory() {
   return (
     <Dialog
       open={archivesState}
-      onClose={() => dispatch(clickArchivesGoBack())}>
+      onClose={() => {
+        dispatch(clickArchivesGoBack());
+        dispatch(setSelectedArchiveCategoryId({ id: undefined }))
+      }}>
       <DialogTitle fontSize={30} sx={{ textAlign: 'center', mr: 10, ml: 10 }}>
         카테고리 수정
       </DialogTitle>
@@ -110,25 +122,32 @@ export default function EditArchiveCategory() {
               direction='row'
               spacing={2}
               sx={{ alignItems: 'center', pl: 2, pr: 2 }}>
+
+              {/* 카테고리 수정폼 */}
               {selectedArchiveCategoryId === item.id ?
                 <TextField
                   defaultValue={item.categoryName}
                   inputRef={categoryNameRef}
                   size='small'
+                  autoComplete='off'
                   sx={{ flex: 0.7 }}
                 /> :
                 <Typography sx={{ flex: 0.7 }}>{item.categoryName}</Typography>
               }
               {selectedArchiveCategoryId === undefined ?
+                // 카테고리 수정 전
                 <BorderColorRoundedIcon
                   fontSize='small'
                   onClick={() => dispatch(setSelectedArchiveCategoryId({ id: item.id }))}
                   sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} /> :
+
+                // 카테고리 수정 중
                 <CheckCircleRoundedIcon
                   fontSize='small'
                   onClick={() => editArchiveCategory(item.id, categoryNameRef.current.value)}
                   sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} />
               }
+
               <CancelRoundedIcon
                 fontSize='small'
                 onClick={() => {
