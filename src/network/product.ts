@@ -35,6 +35,12 @@ class ProductApi {
     const response = await axios.delete(`/api/${productId}`);
     return response.data;
   };
+
+  // 제품 순서 변경
+  async patchUpdateCategorySequence(productId: number, targetProductId: number) {
+    const response = await axios.patch(`/api/product`, { productId: productId, targetProductId: targetProductId });
+    return response.data;
+  };
 };
 
 export const productApi = new ProductApi();

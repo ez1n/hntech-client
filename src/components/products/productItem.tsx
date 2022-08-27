@@ -37,6 +37,7 @@ export default function ProductItem({ product, index }: propsType) {
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
   const productItems = useAppSelector(state => state.product.productItems); // 제품 id 리스트 (dnd)
   const someDragging = useAppSelector(state => state.product.someDragging);
+  const productList = useAppSelector(state => state.product.productList); // 제품 목록
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
@@ -61,7 +62,14 @@ export default function ProductItem({ product, index }: propsType) {
       .catch(error => console.log(error))
   };
 
-  // dnd
+  // 제품 순서변경
+  const patchUpdateCategorySequence = (productId: number, targetProductId: number) => {
+    productApi.patchUpdateCategorySequence(productId, targetProductId)
+      .then(res => console.log(res))
+      .catch(error => console.log(error))
+  };
+
+  // Drag and Drop
   const moveProductItem = (moveItem: number, index: number) => {
     const currentIndex = productItems.indexOf(moveItem);
     let newItems = [...productItems];
@@ -81,6 +89,8 @@ export default function ProductItem({ product, index }: propsType) {
       const didDrop = monitor.didDrop();
       if (!didDrop) {
         moveProductItem(originId, originIndex);
+        const targetId = productList[productItems.indexOf(productItems[originIndex])].id
+        patchUpdateCategorySequence(id, targetId)  // 자리를 바꾸는게 아니라 한칸씩 밀리는거 아닌가..?머지 어케해야하지
       }
     },
   }),
@@ -90,9 +100,10 @@ export default function ProductItem({ product, index }: propsType) {
   const [, dropLeft] = useDrop(() => ({
     accept: 'productItem',
     canDrop: () => false,
-    hover: (draggedItem, monitor) => {
-      if (draggedItem.id !== id) {
-        moveProductItem(draggedItem.id, index);
+    hover: (item: { id: number, index: number }, monitor) => {
+      const { id: draggedId, index: originIndex } = item;
+      if (draggedId !== id) {
+        moveProductItem(draggedId, index);
       }
     },
   }), [moveProductItem]);
@@ -100,9 +111,10 @@ export default function ProductItem({ product, index }: propsType) {
   const [, dropRight] = useDrop(() => ({
     accept: 'productItem',
     canDrop: () => false,
-    hover: (draggedItem, monitor) => {
-      if (draggedItem.id !== id) {
-        (draggedItem.index !== index + 1) && moveProductItem(draggedItem.id, index + 1);
+    hover: (item: { id: number, index: number }, monitor) => {
+      const { id: draggedId, index: originIndex } = item;
+      if (draggedId !== id) {
+        (originIndex !== index + 1) && moveProductItem(draggedId, index + 1);
       }
     },
   }), [moveProductItem]);
@@ -131,7 +143,7 @@ export default function ProductItem({ product, index }: propsType) {
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
               onClick={() => {
-                dispatch(getCurrentProductData({ productData: item }))
+                dispatch(getCurrentProductData({ productData: product }))
                 dispatch(clickProductItemGoBack());
               }}
               sx={{ color: 'red', padding: 0 }}>
