@@ -84,10 +84,11 @@ export default function ProductInfo() {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-          <img
-            src={`${api.baseUrl()}/files/product/${productDetail.files.productImages[activeStep].serverFilename}`}
-            alt={productDetail.files.productImages[activeStep].originalFilename}
-            width={300} />
+          {productDetail &&
+            <img
+              src={`${api.baseUrl()}/files/product/${productDetail.files.productImages[activeStep].serverFilename}`}
+              alt={productDetail.files.productImages[activeStep].originalFilename}
+              width={300} />}
         </Box>
         <MobileStepper
           steps={maxSteps}

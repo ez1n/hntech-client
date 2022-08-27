@@ -22,8 +22,7 @@ export default function Representation() {
   useEffect(() => {
     categoryApi.getMainCategories()
       .then(res => {
-        console.log(res)
-        dispatch(setMainCategories({ categories: res }));
+        dispatch(setMainCategories({ categories: res }))
       })
       .catch(error => console.warn(error))
   }, [])
@@ -64,7 +63,7 @@ export default function Representation() {
           >
             {/* 버튼 이미지 */}
             <Container
-              style={{ backgroundImage: productMainCategories ? `url(${api.baseUrl()}/files/category/${item.imageServerFilename})` : '' }}
+              style={{ backgroundImage: `url(${api.baseUrl()}/files/category/${item.imageServerFilename})` }}
               sx={{
                 position: 'absolute',
                 left: 0,

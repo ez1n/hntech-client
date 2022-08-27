@@ -10,7 +10,7 @@ export default function Specification() {
   return (
     <Container>
       <Box>
-        {productDetail.files.standardImages.map((item: {
+        {productDetail?.files.standardImages.map((item: {
           id: number,
           originalFilename: string,
           savedPath: string,
