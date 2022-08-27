@@ -3,6 +3,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // 제품 상세보기
 
 /**
+ * productItems : 제품 id 리스트 (dnd)
+ * someDragging : dnd 이동 공간 (zindex 설정 위함)
  * productList : 제품 목록
  * currentProductData : 선택한 제품 정보
  * productDetail : 제품 상세정보
@@ -10,6 +12,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  */
 
 /**
+ * setProductItems : 제품 순서 바꾸기
+ * setSomeDraggingTrue : 이동 공간 활성화 
+ * setSomeDraggingFalse : 이동 공간 비활성화 (제품 버튼 클릭 가능하도록)
  * getProductList : 제품 목록 받아오기
  * getCurrentProductData : 선택한 제품 정보 받아오기
  * getProductDetail : 제품 상세정보 받아오기
@@ -18,6 +23,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  */
 
 interface productInitialState {
+  productItems: number[],
+  someDragging: boolean,
   productList: {
     id: number,
     image: {
@@ -81,6 +88,8 @@ interface productInitialState {
 };
 
 const ProductInitialState: productInitialState = {
+  productItems: [],
+  someDragging: false,
   productList: [],
   currentProductData: {
     id: 0,
@@ -138,6 +147,12 @@ export const ProductSlice = createSlice({
   name: 'product',
   initialState: ProductInitialState,
   reducers: {
+    setProductItems: (
+      state,
+      action: PayloadAction<{ newProductItems: number[] }>
+    ) => { state.productItems = action.payload.newProductItems },
+    setSomeDraggingTrue: (state) => { state.someDragging = true },
+    setSomeDraggingFalse: (state) => { state.someDragging = false },
     getProductList: (
       state,
       action: PayloadAction<{
@@ -219,6 +234,9 @@ export const ProductSlice = createSlice({
 );
 
 export const {
+  setProductItems,
+  setSomeDraggingTrue,
+  setSomeDraggingFalse,
   getProductList,
   getCurrentProductData,
   getProductDetail,

@@ -11,9 +11,9 @@ SwiperCore.use([Navigation, Pagination, Autoplay])
 export default function Banner() {
   //임시데이터
   const bannerImage = [
-    { url: '../../public/images/banner/banner1.jpg' },
-    { url: '../../public/images/banner/banner2.jpg' },
-    { url: '../../public/images/banner/banner3.jpg' },
+    { url: '/images/banner/banner1.jpg' },
+    { url: '/images/banner/banner2.jpg' },
+    { url: '/images/banner/banner3.jpg' },
   ];
 
   return (

@@ -70,7 +70,7 @@ export default function ProductCategories() {
 
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-            {productCategories.map((value: {
+            {productCategories?.map((value: {
               categoryName: string;
               id: number;
               imageServerFilename: string;

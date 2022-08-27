@@ -39,7 +39,7 @@ export default function ProductCategoryModifyForm() {
 
   useEffect(() => {
     // 기존 사진 보여주기
-    dispatch(addProductCategoryImage({ image: `${api.baseUrl()}/files/category/${productCurrentCategory.imageServerFilename}` }))
+    { productCurrentCategory && dispatch(addProductCategoryImage({ image: `${api.baseUrl()}/files/category/${productCurrentCategory.imageServerFilename}` })) }
 
     // 기존 사진 정보 만들기
     api.getImageData(productCurrentCategory.imageServerFilename)

@@ -1,32 +1,31 @@
 import React, { useEffect } from 'react';
 import { categoryApi } from '../../network/category';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setAllProductCategories } from '../../app/reducers/categorySlice';
 import { Box } from '@mui/material';
 import ProductCategories from './productCategories';
 import ProductItem from './productItem';
+import { productApi } from '../../network/product';
+import { getProductList } from '../../app/reducers/productSlice';
 
 export default function Products() {
   const dispatch = useAppDispatch();
 
   const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
+  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
+  const productList = useAppSelector(state => state.product.productList); // 제품 목록
 
-  // 제품 카테고리 목록 받아오기
+  //제품 목록 받아오기
   useEffect(() => {
-    categoryApi.getAllProductCategories()
-      .then(res => dispatch(setAllProductCategories({ categories: res.categories })));
-  }, []);
+    productApi.getAllProducts(currentProductCategoryName)
+      .then(res => dispatch(getProductList({ productList: res })))
+      .catch(error => console.log(error))
+  }, [currentProductCategoryName]);
 
   return (
     <Box sx={{ display: 'flex', ml: 25, mr: 25 }}>
-      {/* default */}
-      {!productCategorySelected &&
-        <Box sx={{ p: 5, margin: 'auto', width: '100%', }}>
-          {/* 카테고리 */}
-          <ProductCategories />
-        </Box>
-      }
-
       {/* category selected */}
       {productCategorySelected &&
         <>
@@ -45,11 +44,27 @@ export default function Products() {
 
           {/* 제품 목록 */}
           <Box sx={{ flex: 0.8, pt: 5 }}>
-            <ProductItem />
+            <DndProvider backend={HTML5Backend}>
+              <Box sx={{ p: 1, display: 'flex', flexWrap: 'wrap' }}>
+                {productList.map((item: {
+                  id: number,
+                  image: {
+                    id: number,
+                    originalFilename: string,
+                    savedPath: string,
+                    serverFilename: string
+                  },
+                  productName: string
+                }, index: number) => (
+                  <ProductItem key={item.id} product={item} index={index} />
+                ))
+                }
+              </Box>
+            </DndProvider>
           </Box>
         </>
       }
-    </Box>
+    </Box >
   )
 };
 
