@@ -3,7 +3,7 @@ import { api } from '../../network/network';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setMainCategories } from '../../app/reducers/categorySlice';
+import { selectProductCategoryTrue, setCurrentProductCategoryName, setMainCategories } from '../../app/reducers/categorySlice';
 import {
   Box,
   ButtonBase,
@@ -28,9 +28,10 @@ export default function Representation() {
   }, [])
 
   // 제품 버튼 클릭 이벤트 (페이지 이동)
-  const onClickButton = (mode: string) => {
-    console.log(mode); // state 업데이트
-    navigate('#'); // 페이지 이동
+  const onClickButton = (categoryName: string) => {
+    dispatch(selectProductCategoryTrue());
+    dispatch(setCurrentProductCategoryName({ category: categoryName }));
+    navigate('/product'); // 페이지 이동
   };
 
   return (
@@ -48,20 +49,17 @@ export default function Representation() {
           <Typography sx={{ fontSize: 25 }}>이런 제품을 제작합니다.</Typography>
         </Container>
 
-        {/* 제품 버튼 */}
+        {/* 메인 카테고리 */}
         {productMainCategories?.map((item: { categoryName: string, id: number, imageServerFilename: string }) => (
           <RepProductionButton
-            onClick={() => {
-              onClickButton(item.categoryName);
-              navigate('/product');
-            }}
+            onClick={() => onClickButton(item.categoryName)}
             key={item.id}
             style={{
               width: '33%',
               height: 200
             }}
           >
-            {/* 버튼 이미지 */}
+            {/* 카테고리 이미지 */}
             <Container
               style={{ backgroundImage: `url(${api.baseUrl()}/files/category/${item.imageServerFilename})` }}
               sx={{
@@ -75,7 +73,7 @@ export default function Representation() {
               }} />
             <ImageBackdrop className='MuiImageBackdrop-root' />
 
-            {/* 제품 이름 */}
+            {/* 카테고리 이름 */}
             <Container sx={{
               display: 'flex',
               alignItems: 'center',

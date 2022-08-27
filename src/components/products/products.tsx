@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { categoryApi } from '../../network/category';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setAllProductCategories } from '../../app/reducers/categorySlice';
 import { Box } from '@mui/material';
 import ProductCategories from './productCategories';
 import ProductItem from './productItem';
