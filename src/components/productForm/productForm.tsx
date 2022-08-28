@@ -3,7 +3,6 @@ import { fileApi } from '../../network/file';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickProductFormGoBack } from '../../app/reducers/dialogSlice';
-import { resetArchiveFileData } from '../../app/reducers/archiveFormSlice';
 import {
   updateProductName,
   updateProductDescription,
@@ -120,7 +119,6 @@ export default function ProductForm() {
 
     fileApi.postUploadAllFiles(formData, 'product')
       .then(res => {
-        console.log(resetArchiveFileData);
         navigate('product');
         productApi.postCreateProduct(
           {
@@ -327,7 +325,7 @@ export default function ProductForm() {
                 <TextField
                   size='small'
                   placeholder='파일 이름'
-                  onChange={event => dispatch()}
+                  onChange={event => console.log('파일이름')}
                   inputProps={{ style: { fontSize: 18 } }} />
                 <Typography sx={{
                   pl: 2,

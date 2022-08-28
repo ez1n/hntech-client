@@ -5,11 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
-import { getCurrentProductData, getProductDetail, setProductItems, setSomeDraggingFalse, setSomeDraggingTrue } from '../../app/reducers/productSlice';
+import { getCurrentProductData, getProductDetail, getProductList, setProductItems, setSomeDraggingFalse, setSomeDraggingTrue, updateProductItems } from '../../app/reducers/productSlice';
 import { Box, Button, Container, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CancelModal from '../cancelModal';
 
 interface propsType {
@@ -69,71 +68,140 @@ export default function ProductItem({ product, index }: propsType) {
       .catch(error => console.log(error))
   };
 
-  // Drag and Drop
-  const moveProductItem = (moveItem: number, index: number) => {
-    const currentIndex = productItems.indexOf(moveItem);
-    let newItems = [...productItems];
+
+  /* 드래그 앤 드롭 */
+
+  // 제품 순서 변경 보여주기
+  const moveProductItem = (moveItem: {
+    id: number,
+    image: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string,
+    },
+    productName: string
+  }, index: number) => {
+    const currentIndex = productList.indexOf(moveItem);
+    let newItems = [...productList];
     newItems.splice(currentIndex, 1);
     newItems.splice(index, 0, moveItem);
-    dispatch(setProductItems({ newProductItems: newItems }))
+    dispatch(getProductList({ productList: newItems }));
   };
 
-  const [{ isDragging }, dragRef, previewRef] = useDrag(() => ({
+  // drag
+  const [{ isDragging }, dragRef] = useDrag(() => ({
     type: 'productItem',
-    item: { id, index },
+    item: { product, index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {
-      const { id: originId, index: originIndex } = item;
+      const { product: originProduct, index: originIndex } = item;
       const didDrop = monitor.didDrop();
       if (!didDrop) {
-        moveProductItem(originId, originIndex);
-        const targetId = productList[productItems.indexOf(productItems[originIndex])].id
-        patchUpdateCategorySequence(id, targetId) // 자리를 바꾸는게 아니라 한칸씩 밀리는거 아닌가..?머지 어케해야하지
+        moveProductItem(originProduct, originIndex);
       }
     },
   }),
     [id, index, moveProductItem]
   );
 
-  const [, dropLeft] = useDrop(() => ({
+  // drop
+  const [, leftDrop] = useDrop(() => ({
     accept: 'productItem',
-    canDrop: () => false,
-    hover: (item: { id: number, index: number }, monitor) => {
-      const { id: draggedId, index: originIndex } = item;
-      if (draggedId !== id) {
-        moveProductItem(draggedId, index);
+    canDrop: () => true,
+    hover: (item: {
+      product: {
+        id: number,
+        image: {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string,
+        },
+        productName: string
+      }, index: number
+    }) => {
+      const { product: draggedProduct, index: originIndex } = item;
+      if (draggedProduct.id !== id) {
+        moveProductItem(draggedProduct, index);
       }
     },
-  }), [moveProductItem]);
+    drop: (item: {
+      product: {
+        id: number,
+        image: {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string,
+        },
+        productName: string
+      }, index: number
+    }) => {
+      const { product: draggedProduct, index: originIndex } = item;
+      // productApi.patchUpdateCategorySequence(draggedProduct.id, id);
+      console.log(index, originIndex); // 어떻게 하징..
+    }
+  }));
 
-  const [, dropRight] = useDrop(() => ({
+  const [, rightDrop] = useDrop(() => ({
     accept: 'productItem',
-    canDrop: () => false,
-    hover: (item: { id: number, index: number }, monitor) => {
-      const { id: draggedId, index: originIndex } = item;
-      if (draggedId !== id) {
-        (originIndex !== index + 1) && moveProductItem(draggedId, index + 1);
+    canDrop: () => true,
+    hover: (item: {
+      product: {
+        id: number,
+        image: {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string,
+        },
+        productName: string
+      }, index: number
+    }) => {
+      const { product: draggedProduct, index: originIndex } = item;
+      if (draggedProduct.id !== id) {
+        originIndex !== index && moveProductItem(draggedProduct, index + 1);
       }
     },
-  }), [moveProductItem]);
+    drop: (item: {
+      product: {
+        id: number,
+        image: {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string,
+        },
+        productName: string
+      }, index: number
+    }) => {
+      const { product: draggedProduct, index: originIndex } = item;
+      if (draggedProduct.id !== id) {
+        // productApi.patchUpdateCategorySequence(draggedProduct.id, productList[index + 1].id);
+        console.log(draggedProduct.productName, productName);
+      }
+    }
+  }));
 
   useEffect(() => {
     isDragging ? dispatch(setSomeDraggingTrue()) : dispatch(setSomeDraggingFalse());
   }, [isDragging, someDragging]);
 
   return (
-    <Box ref={previewRef}>
-      <TotalBox ref={dragRef} sx={{ opacity: isDragging ? 0.3 : 1, cursor: 'move' }}>
-        <ProductButton
-          onClick={() => getProduct(id)}>
-          <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' alt='제품 이미지' />
-          <Typography sx={{
-            width: '100%',
-            borderRadius: 1,
-            backgroundColor: 'rgba(57, 150, 82, 0.2)'
-          }}>
+    <TotalBox>
+      <ProductBox ref={leftDrop}>
+        {/* 제품 */}
+        <ProductButton ref={dragRef} onClick={() => getProduct(id)} sx={{ opacity: isDragging ? 0.5 : 1, '&:focus': { cursor: managerMode ? 'grab' : 'pointer' } }}>
+          <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' alt={image.originalFilename} />
+          <Typography
+            sx={{
+              width: '100%',
+              borderRadius: 1,
+              backgroundColor: 'rgba(57, 150, 82, 0.2)'
+            }}>
             {productName}
           </Typography>
         </ProductButton>
@@ -156,16 +224,7 @@ export default function ProductItem({ product, index }: propsType) {
             </Button>
           </Box>
         }
-
-        {/* 위치 변경되는 공간 (left, right) */}
-        <NoneDndContainer ref={dropLeft} sx={{ zIndex: someDragging ? 30 : 0, left: 0 }} />
-        <NoneDndContainer ref={dropRight} sx={{ zIndex: someDragging ? 30 : 0, right: 0 }} />
-      </TotalBox>
-
-      {managerMode &&
-        <AddButton onClick={() => navigate('/product-form')}>
-          <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
-        </AddButton>}
+      </ProductBox>
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
@@ -173,24 +232,29 @@ export default function ProductItem({ product, index }: propsType) {
         title='제품 삭제'
         text1='해당 제품이 삭제됩니다.'
         text2='삭제하시겠습니까?'
-        yesAction={() => deleteProduct(currentProductData.id)}
+        yesAction={() => {
+          deleteProduct(currentProductData.id);
+          dispatch(clickProductItemGoBack());
+        }}
         closeAction={() => dispatch(clickProductItemGoBack())} />
-    </ Box>
+    </TotalBox>
   )
 };
 
 const TotalBox = styled(Box)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
-  [theme.breakpoints.down('lg')]: {
+  [theme.breakpoints.down('xl')]: {
     width: '30% !important'
   },
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('lg')]: {
     width: '45% !important'
   },
-  [theme.breakpoints.down('sm')]: {
-    width: '90% !important'
+  [theme.breakpoints.down('md')]: {
+    width: '100% !important'
   },
-  width: '19%',
+  width: '20%'
+}))
+
+const ProductBox = styled(Box)(() => ({
   margin: 3,
   display: 'flex',
   flexDirection: 'column',
@@ -212,32 +276,3 @@ const ProductButton = styled(Button)(() => ({
     fontWeight: 'bold'
   }
 })) as typeof Button;
-
-// 추가 버튼
-const AddButton = styled(Button)(({ theme }) => ({
-  [theme.breakpoints.down('lg')]: {
-    width: '30% !important'
-  },
-  [theme.breakpoints.down('md')]: {
-    width: '45% !important'
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: '90% !important'
-  },
-  margin: 10,
-  width: '18%',
-  color: '#0F0F0F',
-  backgroundColor: 'rgba(57, 150, 82, 0.1)',
-  borderRadius: 10,
-  transition: '0.5s',
-  '&: hover': {
-    transform: 'scale(1.02)',
-    backgroundColor: 'rgba(57, 150, 82, 0.2)',
-  }
-})) as typeof Button;
-
-// dnd 적용 안되는 위치
-const NoneDndContainer = styled(Container)(() => ({
-  position: 'absolute',
-  width: '10%'
-})) as typeof Container;

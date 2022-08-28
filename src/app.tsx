@@ -41,10 +41,13 @@ export default function App() {
     adminApi.getFooter()
       .then(res => dispatch(setFooter({ footer: res })))
 
+    // floatingButton 에서도 해야댐
     dispatch(updateHeaderLogo({ header: { image: '', name: 'header.jpg' } }));
     dispatch(updateFooterLogo({ footer: { image: '', name: 'footer.jpg' } }));
     dispatch(setBanner({ banner: [{ image: '', name: 'banner1.jpg' }, { image: '', name: 'banner2.jpg' }] }))
-  });
+
+    console.log('login') // 로그인 지속되는지.. 확인하는거..
+  }, []);
 
   return (
     <Box>

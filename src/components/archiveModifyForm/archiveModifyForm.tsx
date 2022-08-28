@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import '../style.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -13,8 +13,6 @@ import {
   deleteArchiveFile,
   deleteArchiveFileData,
   updateArchiveFileData,
-  resetArchiveFileData,
-  resetArchiveFileName,
   resetArchiveState,
   modifyArchiveTitle,
   modifyArchiveContent,
@@ -47,10 +45,6 @@ export default function ArchiveModifyForm() {
   const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
   const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록 state
   const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
-
-  useEffect(() => {
-    dispatch(resetArchiveFileName());
-  }, []);
 
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
@@ -85,8 +79,6 @@ export default function ArchiveModifyForm() {
     archiveApi.putUpdateArchive(archiveId, archiveData)
       .then(res => {
         dispatch(getDetailData(res));
-        dispatch(resetArchiveFileData());
-        dispatch(resetArchiveFileName());
         navigate('/archive');
       })
       .catch(error => console.log(error))
@@ -298,10 +290,8 @@ export default function ArchiveModifyForm() {
         text2={'취소하시겠습니까?'}
         yesAction={() => {
           dispatch(resetArchiveState());
-          dispatch(resetArchiveFileData());
           dispatch(clickArchiveModifyFormGoBack());
-          dispatch(resetArchiveFileName());
-          navigate(-1);
+          navigate('archive-detail');
         }}
         closeAction={() => dispatch(clickArchiveModifyFormGoBack())} />
     </Container >
