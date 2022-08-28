@@ -39,10 +39,7 @@ export default function ProductCategories() {
       .then(res => {
         dispatch(clickProductCategoryGoBack());
         categoryApi.getAllProductCategories()
-          .then(res => {
-            console.log(res)
-            dispatch(setAllProductCategories({ categories: res.categories }))
-          })
+          .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
       })
   };
 
@@ -79,6 +76,7 @@ export default function ProductCategories() {
             }) => (
               <ContainerBox key={value.id} sx={{ m: 1 }}>
                 <CategoryButton onClick={() => {
+                  console.log(`${api.baseUrl()}/files/category/${value.imageServerFilename}`)
                   dispatch(selectProductCategoryTrue());
                   dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
                 }}>

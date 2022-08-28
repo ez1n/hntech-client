@@ -11,7 +11,7 @@
 * 고객센터 문의사항 업로드 및 댓글 기능
 * 관리자 모드를 통한 회사 정보, 카테고리, 게시글 업로드 및 변경
 
-## Installation & Start
+## Installation
 
 ```
 npm create vite@latest 
@@ -19,7 +19,15 @@ or
 yarn create vite
 ```
 
-```npm install```
+```
+npm install
+```
+
+## Start
+
+```
+npm Start
+```
 
 ## Techs
 

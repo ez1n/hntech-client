@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { fileApi } from '../../network/file';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
