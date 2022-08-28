@@ -17,8 +17,20 @@ class AdminApi {
   };
 
   // banner 받아오기
+  async getBanner() {
+    const response = await axios.get(`/api/admin/banner`);
+    return response.data;
+  };
 
   // banner 수정하기
+  async putBanner(banner: FormData) {
+    const response = await axios.put(`/api/admin/banner`, banner, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  };
 
   // 로고 수정하기
 

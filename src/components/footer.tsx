@@ -33,12 +33,6 @@ export default function Footer() {
   const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
   const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
 
-  // 정보 받아오기
-  useEffect(() => {
-    adminApi.getFooter()
-      .then(res => dispatch(setFooter({ footer: res })))
-  }, []);
-
   // 로그인
   const postLogin = () => {
     adminApi.postLogin(password)

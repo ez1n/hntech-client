@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { categoryApi } from './network/category';
+import { adminApi } from './network/admin';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useAppSelector } from './app/hooks';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { setAllProductCategories } from './app/reducers/categorySlice';
+import { setBanner, setFooter, updateFooterLogo, updateHeaderLogo } from './app/reducers/managerModeSlice';
 import { Box } from '@mui/material';
 import Header from './components/header';
 import SideMenu from './components/sideMenu';
@@ -25,7 +29,22 @@ import ProductCategoryForm from './components/productCategoryForm/productCategor
 import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
 
 export default function App() {
+  const dispatch = useAppDispatch();
   const managerMode = useAppSelector(state => state.manager.managerMode);
+
+  useEffect(() => {
+    // 제품 카테고리 목록
+    categoryApi.getAllProductCategories()
+      .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
+
+    // 홈페이지 하단 정보
+    adminApi.getFooter()
+      .then(res => dispatch(setFooter({ footer: res })))
+
+    dispatch(updateHeaderLogo({ header: { image: '', name: 'header.jpg' } }));
+    dispatch(updateFooterLogo({ footer: { image: '', name: 'footer.jpg' } }));
+    dispatch(setBanner({ banner: [{ image: '', name: 'banner1.jpg' }, { image: '', name: 'banner2.jpg' }] }))
+  });
 
   return (
     <Box>

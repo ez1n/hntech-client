@@ -230,6 +230,10 @@ export const ManagerSlice = createSlice({
       state,
       action: PayloadAction<{ footer: { image: string, name: string } }>
     ) => { state.footerLogo = action.payload.footer },
+    setBanner: (
+      state,
+      action: PayloadAction<{ banner: { image: string, name: string }[] }>
+    ) => { state.banner = action.payload.banner },
     updateBanner: (
       state,
       action: PayloadAction<{ banner: { image: string, name: string } }>
@@ -267,6 +271,7 @@ export const {
   updatePhone,
   updateHeaderLogo,
   updateFooterLogo,
+  setBanner,
   updateBanner,
   deleteBanner } = ManagerSlice.actions;
 export default ManagerSlice.reducer;

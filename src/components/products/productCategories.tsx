@@ -29,10 +29,7 @@ export default function ProductCategories() {
 
     // 카테고리 목록 받아오기
     categoryApi.getAllProductCategories()
-      .then(res => {
-        console.log(res)
-        dispatch(setAllProductCategories({ categories: res.categories }))
-      })
+      .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
       .catch(error => console.log(error))
   }, []);
 
@@ -42,10 +39,7 @@ export default function ProductCategories() {
       .then(res => {
         dispatch(clickProductCategoryGoBack());
         categoryApi.getAllProductCategories()
-          .then(res => {
-            console.log(res)
-            dispatch(setAllProductCategories({ categories: res.categories }))
-          })
+          .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
       })
   };
 

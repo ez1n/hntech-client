@@ -59,7 +59,6 @@ export default function EditArchiveCategory() {
     console.log(categoryId)
     categoryApi.deleteArchiveCategory(categoryId)
       .then(res => {
-        console.log(res);
         categoryApi.getAllCategories()
           .then(res => {
             dispatch(getArchiveCategory({ categories: res.categories }));
@@ -80,9 +79,7 @@ export default function EditArchiveCategory() {
         console.log(res);
         dispatch(setSelectedArchiveCategoryId({ id: undefined }));
         categoryApi.getAllCategories()
-          .then(res => {
-            dispatch(getArchiveCategory({ categories: res.categories }));
-          })
+          .then(res => dispatch(getArchiveCategory({ categories: res.categories })))
       })
       .catch(error => console.warn(error))
   };
@@ -177,7 +174,7 @@ export default function EditArchiveCategory() {
       </DialogContent>
 
       <DialogActions sx={{ justifyContent: 'center' }}>
-        {EditButton('취소', () => {
+        {EditButton('나가기', () => {
           dispatch(setSelectedArchiveCategoryId({ id: undefined }));
           dispatch(clickArchivesGoBack());
         })}

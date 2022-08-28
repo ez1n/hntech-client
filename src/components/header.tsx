@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './style.css';
-import { categoryApi } from '../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import {
@@ -24,7 +23,6 @@ import {
   selectProductCategoryTrue,
   selectProductCategoryFalse
 } from '../app/reducers/categorySlice';
-import { setAllProductCategories } from '../app/reducers/categorySlice';
 import {
   Toolbar,
   Typography,
@@ -44,12 +42,6 @@ export default function Header() {
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productCategories = useAppSelector(state => state.category.productCategories); // 제품 카테고리 state
-
-  //  제품 카테고리 목록 받아오기
-  useEffect(() => {
-    categoryApi.getAllProductCategories()
-      .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
-  }, []);
 
   return (
     <Toolbar

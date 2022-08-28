@@ -1,6 +1,5 @@
 import React from 'react';
 import '../style.css';
-import { fileApi } from '../../network/file';
 import { useNavigate } from 'react-router-dom';
 import { archiveApi } from '../../network/archive';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -160,14 +159,8 @@ export default function ArchiveForm() {
             autoFocus={true}
             placeholder='제목을 입력해 주세요'
             onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
-            inputProps={{
-              style: {
-                fontSize: 20
-              }
-            }}
-            sx={{
-              width: '100%'
-            }}
+            inputProps={{ style: { fontSize: 20 } }}
+            sx={{ width: '100%' }}
           />
         </Box>
 
@@ -235,9 +228,7 @@ export default function ArchiveForm() {
               ))}
             </Stack>
           </Box>
-          <label className='fileUploadButton' htmlFor='archiveFile' onChange={event => {
-            selectFile(event);
-          }}>
+          <label className='fileUploadButton' htmlFor='archiveFile' onChange={event => selectFile(event)}>
             업로드
             <input type='file' id='archiveFile' multiple style={{ display: 'none' }} />
           </label>
