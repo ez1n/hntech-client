@@ -50,7 +50,7 @@ export default function ArchiveModifyForm() {
 
   useEffect(() => {
     dispatch(resetArchiveFileName());
-  }, [])
+  }, []);
 
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
@@ -76,41 +76,86 @@ export default function ArchiveModifyForm() {
 
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
-    let serverFileNameList: string[] = [];
-
     fileData.map(item => archiveData.append('files', item));
+    archiveData.append('categoryName', archiveModifyContent.categoryName);
+    archiveData.append('content', archiveModifyContent.content);
+    archiveData.append('notice', archiveModifyContent.notice);
+    archiveData.append('title', archiveModifyContent.title);
 
-    // 기존 파일 리스트 생성
-    archiveModifyContent.files.map(item => serverFileNameList.push(item.serverFilename));
-
-    fileApi.postUploadAllFiles(archiveData, 'archive')
+    archiveApi.putUpdateArchive(archiveId, archiveData)
       .then(res => {
-        // serverFilename 리스트에 추가
-        res.uploadedFiles.map((item: {
-          id: number,
-          originalFilename: string,
-          serverFilename: string,
-          savedPath: string
-        }) => (serverFileNameList.push(item.serverFilename)));
-
-        archiveApi.putUpdateArchive(archiveId, {
-          categoryName: archiveModifyContent.categoryName,
-          content: archiveModifyContent.content,
-          files: serverFileNameList,
-          notice: archiveModifyContent.notice,
-          title: archiveModifyContent.title,
-        })
-          .then(res => {
-            dispatch(getDetailData(res));
-            dispatch(resetArchiveFileData());
-            dispatch(resetArchiveFileName());
-            navigate('/archive');
-            serverFileNameList = [];
-            alert('수정완료')
-          })
-          .catch(error => console.log(error))
+        dispatch(getDetailData(res));
+        dispatch(resetArchiveFileData());
+        dispatch(resetArchiveFileName());
+        navigate('/archive');
       })
+      .catch(error => console.log(error))
+
+    // let serverFileNameList: string[] = [];
+
+    // fileData.map(item => archiveData.append('files', item));
+
+    // // 기존 파일 리스트 생성
+    // archiveModifyContent.files.map(item => serverFileNameList.push(item.serverFilename));
+
+    // fileApi.postUploadAllFiles(archiveData, 'archive')
+    //   .then(res => {
+    //     // serverFilename 리스트에 추가
+    //     res.uploadedFiles.map((item: {
+    //       id: number,
+    //       originalFilename: string,
+    //       serverFilename: string,
+    //       savedPath: string
+    //     }) => (serverFileNameList.push(item.serverFilename)));
+    //     console.log(res.uploadedFiles)
+
+    //     archiveApi.putUpdateArchive(archiveId, {
+    //       categoryName: archiveModifyContent.categoryName,
+    //       content: archiveModifyContent.content,
+    //       files: serverFileNameList,
+    //       notice: archiveModifyContent.notice,
+    //       title: archiveModifyContent.title,
+    //     })
+    //       .then(res => {
+    //         dispatch(getDetailData(res));
+    //         dispatch(resetArchiveFileData());
+    //         dispatch(resetArchiveFileName());
+    //         navigate('/archive');
+    //         serverFileNameList = [];
+    //       })
+    //       .catch(error => console.log(error))
+    //   })
+    //   .catch(error => { // 파일이 존재하지 않는 경우
+    //     if (error.response.data.message.includes('specified as non-null is null')) {
+    //       // 게시글 내용 보내기
+    //       archiveApi.putUpdateArchive(archiveId, {
+    //         categoryName: archiveModifyContent.categoryName,
+    //         content: archiveModifyContent.content,
+    //         files: serverFileNameList,
+    //         notice: archiveModifyContent.notice,
+    //         title: archiveModifyContent.title,
+    //       })
+    //         .then(res => {
+    //           dispatch(getDetailData(res));
+    //           dispatch(resetArchiveFileData());
+    //           dispatch(resetArchiveFileName());
+    //           navigate('/archive');
+    //           serverFileNameList = [];
+    //         })
+    //         .catch(error => console.log('postCreateArchive', error.config.data))
+    //     } else { // 첨부파일 보내기 오류
+    //       console.log('postUploadAllFiles', error);
+    //     }
+    //   })
   };
+
+  // 기존 파일 삭제
+  const deleteOriginalFile = (index: number, archiveId: number, fileId: number) => {
+    dispatch(deleteArchiveOriginFile({ num: index }));
+    archiveApi.deleteArchiveFile(archiveId, fileId)
+      .then(res => console.log(res))
+      .catch(error => console.log(error))
+  }
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -209,7 +254,7 @@ export default function ArchiveModifyForm() {
                 <Stack direction='row' key={item.id}>
                   <Typography>{item.originalFilename}</Typography>
                   <ClearRoundedIcon
-                    onClick={() => dispatch(deleteArchiveOriginFile({ num: index }))}
+                    onClick={() => deleteOriginalFile(index, archiveId, item.id)}
                     fontSize='small'
                     sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
                 </Stack>

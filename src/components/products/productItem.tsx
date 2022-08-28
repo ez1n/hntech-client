@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
-import { getCurrentProductData, getProductDetail, getProductList, setProductItems, setSomeDraggingFalse, setSomeDraggingTrue } from '../../app/reducers/productSlice';
+import { getCurrentProductData, getProductDetail, setProductItems, setSomeDraggingFalse, setSomeDraggingTrue } from '../../app/reducers/productSlice';
 import { Box, Button, Container, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
@@ -90,7 +90,7 @@ export default function ProductItem({ product, index }: propsType) {
       if (!didDrop) {
         moveProductItem(originId, originIndex);
         const targetId = productList[productItems.indexOf(productItems[originIndex])].id
-        patchUpdateCategorySequence(id, targetId)  // 자리를 바꾸는게 아니라 한칸씩 밀리는거 아닌가..?머지 어케해야하지
+        patchUpdateCategorySequence(id, targetId) // 자리를 바꾸는게 아니라 한칸씩 밀리는거 아닌가..?머지 어케해야하지
       }
     },
   }),
@@ -156,16 +156,16 @@ export default function ProductItem({ product, index }: propsType) {
             </Button>
           </Box>
         }
+
+        {/* 위치 변경되는 공간 (left, right) */}
+        <NoneDndContainer ref={dropLeft} sx={{ zIndex: someDragging ? 30 : 0, left: 0 }} />
+        <NoneDndContainer ref={dropRight} sx={{ zIndex: someDragging ? 30 : 0, right: 0 }} />
       </TotalBox>
 
       {managerMode &&
         <AddButton onClick={() => navigate('/product-form')}>
           <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
         </AddButton>}
-
-      {/* 위치 변경되는 공간 (left, right) */}
-      <NoneDndContainer ref={dropLeft} sx={{ zIndex: someDragging ? 30 : 0, left: 0 }} />
-      <NoneDndContainer ref={dropRight} sx={{ zIndex: someDragging ? 30 : 0, right: 0 }} />
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal

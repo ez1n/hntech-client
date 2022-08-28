@@ -24,15 +24,29 @@ class ArchiveApi {
 
   // 자료실 게시글 등록
   async postCreateArchive(archive: {}) {
-    const response = await axios.post(`/api/archive`, archive);
+    const response = await axios.post(`/api/archive`, archive, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   };
 
   // 자료실 게시글 수정
   async putUpdateArchive(archiveId: number, form: {}) {
-    const response = await axios.put(`/api/archive/${archiveId}`, form);
+    const response = await axios.put(`/api/archive/${archiveId}`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   };
+
+  // 자료실 기존 첨부파일 삭제
+  async deleteArchiveFile(archiveId: number, fileId: number) {
+    const response = await axios.delete(`/api/archive/${archiveId}/file/${fileId}`);
+    return response.data;
+  }
 
   // 자료실 게시글 삭제
   async deleteArchive(archiveId: number) {

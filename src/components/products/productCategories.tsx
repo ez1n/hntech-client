@@ -29,7 +29,10 @@ export default function ProductCategories() {
 
     // 카테고리 목록 받아오기
     categoryApi.getAllProductCategories()
-      .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
+      .then(res => {
+        console.log(res)
+        dispatch(setAllProductCategories({ categories: res.categories }))
+      })
       .catch(error => console.log(error))
   }, []);
 
@@ -79,6 +82,7 @@ export default function ProductCategories() {
             }) => (
               <ContainerBox key={value.id} sx={{ m: 1 }}>
                 <CategoryButton onClick={() => {
+                  console.log(`${api.baseUrl()}/files/category/${value.imageServerFilename}`)
                   dispatch(selectProductCategoryTrue());
                   dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
                 }}>

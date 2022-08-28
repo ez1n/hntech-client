@@ -12,8 +12,8 @@ export default function Products() {
   const dispatch = useAppDispatch();
 
   const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
-  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
+  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
 
   //제품 목록 받아오기
   useEffect(() => {
@@ -24,6 +24,13 @@ export default function Products() {
 
   return (
     <Box sx={{ display: 'flex', ml: 25, mr: 25 }}>
+      {!productCategorySelected &&
+        <Box sx={{ p: 5, margin: 'auto', width: '100%', }}>
+          {/* 카테고리 */}
+          <ProductCategories />
+        </Box>
+      }
+
       {/* category selected */}
       {productCategorySelected &&
         <>
