@@ -11,8 +11,6 @@ import {
   deleteArchiveFile,
   updateArchiveFileData,
   deleteArchiveFileData,
-  resetArchiveFileData,
-  resetArchiveFileName,
   updateArchiveTitle,
   updateArchiveContent,
   updateArchiveNoticeChecked,
@@ -74,10 +72,7 @@ export default function ArchiveForm() {
     // 게시글 내용 보내기
     archiveApi.postCreateArchive(archiveData)
       .then(res => {
-        console.log('postCreateArchive', res);
         dispatch(resetArchiveState());
-        dispatch(resetArchiveFileData());
-        dispatch(resetArchiveFileName());
         navigate('/archive');
       })
       .catch(error => {

@@ -14,6 +14,7 @@ export default function Banner() {
     { url: '/images/banner/banner1.jpg' },
     { url: '/images/banner/banner2.jpg' },
     { url: '/images/banner/banner3.jpg' },
+    { url: '/images/banner/banner4.png' },
   ];
 
   return (
@@ -24,8 +25,7 @@ export default function Banner() {
         slidesPerView={1}
         navigation
         pagination={{ clickable: true }}
-        autoplay={{ delay: 3000 }}
-      >
+        autoplay={{ delay: 3000 }}>
         {bannerImage.map((item: { url: string }, index: number) => (
           <SwiperSlide key={index}>
             <BannerBox sx={{ width: '100%' }}>

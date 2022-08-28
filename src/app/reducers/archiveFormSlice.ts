@@ -80,7 +80,6 @@ export const ArchiveFormSlice = createSlice({
       const newFile = state.archiveFile.name.filter((value, index) => index !== action.payload.num);
       state.archiveFile.name = newFile;
     },
-    resetArchiveFileName: (state) => { state.archiveFile.name = [] },
     updateArchiveFileData: (
       state,
       action: PayloadAction<{ file: string }>
@@ -95,7 +94,7 @@ export const ArchiveFormSlice = createSlice({
       const newFile = state.archiveFile.data.filter((value, index) => index !== action.payload.num);
       state.archiveFile.data = newFile;
     },
-    resetArchiveFileData: (state) => { state.archiveFile.data = [] },
+    resetArchiveFile: (state) => { state.archiveFile = { name: [], data: [] } },
     copyArchiveDetailData: (
       state,
       action: PayloadAction<{
@@ -169,10 +168,9 @@ export const ArchiveFormSlice = createSlice({
 export const {
   addArchiveFile,
   deleteArchiveFile,
-  resetArchiveFileName,
   updateArchiveFileData,
   deleteArchiveFileData,
-  resetArchiveFileData,
+  resetArchiveFile,
   copyArchiveDetailData,
   updateArchiveTitle,
   updateArchiveContent,

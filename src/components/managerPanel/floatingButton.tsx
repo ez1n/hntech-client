@@ -18,7 +18,8 @@ import {
   updateFooterLogo,
   updateHeaderLogo,
   updateBanner,
-  deleteBanner
+  deleteBanner,
+  setBanner
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -28,7 +29,9 @@ import {
   Stack,
   styled,
   Select,
-  MenuItem
+  MenuItem,
+  List,
+  ListItem
 } from '@mui/material';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
@@ -88,12 +91,21 @@ export default function FloatingButton() {
     // adminApi.putBanner
   };
 
+  // slide 나가기 이벤트
+  const closeDrawer = () => {
+    dispatch(clickEditGoBack());
+    // 정보 받아오기
+    dispatch(updateHeaderLogo({ header: { image: '', name: 'header.jpg' } }));
+    dispatch(updateFooterLogo({ footer: { image: '', name: 'footer.jpg' } }));
+    dispatch(setBanner({ banner: [{ image: '', name: 'banner1.jpg' }, { image: '', name: 'banner2.jpg' }] }))
+  };
+
   return (
     <>
       {managerMode &&
         <Fab
           variant='extended'
-          onClick={() => dispatch(clickEditGoBack())}
+          onClick={closeDrawer}
           sx={{
             position: 'fixed',
             right: 50,
@@ -114,6 +126,7 @@ export default function FloatingButton() {
           {/* 관리자 비밀번호 */}
           <ContentStack
             direction='row'
+            spacing={5}
             sx={{
               pt: 2,
               pb: 2,
@@ -249,7 +262,7 @@ export default function FloatingButton() {
           <ContentStack
             direction='row'
             sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
-            <LogoTitleBox>헤더 로고</LogoTitleBox>
+            <LogoTitleBox>상단 로고</LogoTitleBox>
             <Typography sx={{ flex: 0.8, color: 'darkgrey' }}>
               {headerLogo.name}
             </Typography>
@@ -263,7 +276,7 @@ export default function FloatingButton() {
           </ContentStack>
 
           <ContentStack direction='row'>
-            <LogoTitleBox>푸터 로고</LogoTitleBox>
+            <LogoTitleBox>하단 로고</LogoTitleBox>
             <Typography sx={{ flex: 0.8, color: 'darkgrey' }}>
               {footerLogo.name}
             </Typography>
@@ -279,17 +292,18 @@ export default function FloatingButton() {
           <ContentStack
             direction='row'
             sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }} >
-            <LogoTitleBox>배너 변경</LogoTitleBox>
+            <LogoTitleBox>배너 사진</LogoTitleBox>
             <Stack sx={{ flex: 0.8 }}>
               {banner?.map((item: { image: string, name: string }, index: number) => (
                 <Stack direction='row' sx={{ alignItems: 'center' }}>
                   <Typography sx={{ color: 'darkgrey' }}>
                     {item.name}
                   </Typography>
-                  <ClearRoundedIcon
-                    onClick={() => deleteBannerImage(index)}
-                    fontSize='small'
-                    sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
+                  {banner.length > 1 &&
+                    <ClearRoundedIcon
+                      onClick={() => deleteBannerImage(index)}
+                      fontSize='small'
+                      sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />}
                 </Stack>
               ))}
             </Stack>
@@ -301,6 +315,11 @@ export default function FloatingButton() {
               <input type={'file'} id='bannerInput' accept='image/*' multiple />
             </label>
           </ContentStack>
+
+          <List sx={{ mt: 1 }}>
+            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 배너 사진은 가로 세로 5:2 비율의 사진을 첨부해 주세요.</ListItem>
+            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 최소 한 장 이상의 사진이 필요합니다.</ListItem>
+          </List>
         </Stack>
 
         <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
@@ -308,7 +327,7 @@ export default function FloatingButton() {
             putUpdateLogo();
             putUpdateBanner();
           })}
-          {EditButton('나가기', () => dispatch(clickEditGoBack()))}
+          {EditButton('나가기', closeDrawer)}
         </Stack>
       </Drawer >
     </>

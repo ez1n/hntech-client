@@ -76,7 +76,6 @@ export default function ProductCategories() {
             }) => (
               <ContainerBox key={value.id} sx={{ m: 1 }}>
                 <CategoryButton onClick={() => {
-                  console.log(`${api.baseUrl()}/files/category/${value.imageServerFilename}`)
                   dispatch(selectProductCategoryTrue());
                   dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
                 }}>

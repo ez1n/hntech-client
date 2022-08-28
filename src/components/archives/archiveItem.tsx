@@ -216,11 +216,6 @@ export default function ArchiveItem() {
   )
 };
 
-
-const Spacing = styled(Container)(() => ({
-  height: 50
-})) as typeof Container;
-
 const SpacingMargin = styled(Container)(() => ({
   height: 30
 })) as typeof Container;

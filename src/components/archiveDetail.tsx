@@ -4,8 +4,7 @@ import { archiveApi } from '../network/archive';
 import { fileApi } from '../network/file';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
-import { copyArchiveDetailData } from '../app/reducers/archiveFormSlice';
-import { addArchiveFile } from '../app/reducers/archiveFormSlice';
+import { copyArchiveDetailData, resetArchiveFile } from '../app/reducers/archiveFormSlice';
 import {
   Box,
   Button,
@@ -28,9 +27,7 @@ export default function ArchiveDetail() {
   // 수정 정보 만들기
   useEffect(() => {
     dispatch(copyArchiveDetailData({ detail: detail }));
-    for (let i = 0; i < detail.files.length; i++) {
-      dispatch(addArchiveFile({ item: detail.files[i].originalFilename }));
-    };
+    dispatch(resetArchiveFile());
   }, []);
 
   // 게시글 삭제

@@ -149,8 +149,26 @@ export const ProductSlice = createSlice({
   reducers: {
     setProductItems: (
       state,
-      action: PayloadAction<{ newProductItems: number[] }>
-    ) => { state.productItems = action.payload.newProductItems },
+      action: PayloadAction<{
+        newProductItems: {
+          id: number,
+          image: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          },
+          productName: string
+        }[]
+      }>
+    ) => {
+      const newItems = action.payload.newProductItems.map(item => item.id);
+      state.productItems = newItems;
+    },
+    updateProductItems: (
+      state,
+      action: PayloadAction<{ item: number[] }>
+    ) => { state.productItems = action.payload.item },
     setSomeDraggingTrue: (state) => { state.someDragging = true },
     setSomeDraggingFalse: (state) => { state.someDragging = false },
     getProductList: (
@@ -235,6 +253,7 @@ export const ProductSlice = createSlice({
 
 export const {
   setProductItems,
+  updateProductItems,
   setSomeDraggingTrue,
   setSomeDraggingFalse,
   getProductList,
