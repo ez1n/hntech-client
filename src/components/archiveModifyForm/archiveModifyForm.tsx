@@ -2,7 +2,6 @@ import React from 'react';
 import '../style.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { fileApi } from '../../network/file';
 import { archiveApi } from '../../network/archive';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -43,7 +42,7 @@ export default function ArchiveModifyForm() {
   const archiveModifyFormState = useAppSelector(state => state.dialog.archiveModifyFormState); // 글쓰기 취소 state
   const archiveModifyContent = useAppSelector(state => state.archiveForm.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
   const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
-  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록 state
+  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 목록 state
   const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
 
   // 파일 선택 이벤트
@@ -70,7 +69,7 @@ export default function ArchiveModifyForm() {
 
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
-    fileData.map(item => archiveData.append('files', item));
+    fileData.map((item: string) => archiveData.append('files', item));
     archiveData.append('categoryName', archiveModifyContent.categoryName);
     archiveData.append('content', archiveModifyContent.content);
     archiveData.append('notice', archiveModifyContent.notice);

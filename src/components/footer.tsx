@@ -23,6 +23,7 @@ import {
   Typography
 } from '@mui/material';
 import CancelModal from './cancelModal';
+import { api } from '../network/network';
 
 export default function Footer() {
   const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ export default function Footer() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
   const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
+  const logo = useAppSelector(state => state.manager.logo); // 회사 로고
 
   // 로그인
   const postLogin = () => {
@@ -72,7 +74,7 @@ export default function Footer() {
           display: 'flex',
           alignItems: 'center'
         }}>
-        <img className='logoImage' src='/images/logo.png' alt='HNTECH logo' />
+        <img className='logoImage' src={`${api.baseUrl()}/files/admin/${logo.serverFilename}`} alt='HNTECH logo' />
         <img className='logoKor' src='/images/korLogo.png' alt='korean logo' />
       </Stack>
 

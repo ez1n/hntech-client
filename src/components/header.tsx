@@ -31,6 +31,7 @@ import {
   Paper,
   styled
 } from '@mui/material';
+import { api } from '../network/network';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ export default function Header() {
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productCategories = useAppSelector(state => state.category.productCategories); // 제품 카테고리 state
+  const logo = useAppSelector(state => state.manager.logo); // 회사 로고 
 
   return (
     <Toolbar
@@ -56,9 +58,8 @@ export default function Header() {
       {/* 로고 */}
       <Button sx={{ pl: 5, pr: 5 }} onClick={() => navigate('/')}>
         <Stack direction='column'>
-          {/* 로고 이미지 - 서버에서 받아오기 */}
           <Stack direction='row'>
-            <img className='logoImage' src='/images/logo.png' alt='HNTECH logo' />
+            <img className='logoImage' src={`${api.baseUrl()}/files/admin/${logo.serverFilename}`} alt='HNTECH logo' />
             <Typography sx={{ ml: 3, fontSize: '2.5em', fontWeight: 'bold', color: '#0F0F0F' }}>HNTECH</Typography>
           </Stack>
           {/* 관리자 모드 */}
