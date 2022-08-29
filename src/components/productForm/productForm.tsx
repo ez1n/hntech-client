@@ -127,7 +127,6 @@ export default function ProductForm() {
             files: {
               docFiles: [{ fileId: 0, filename: '' }],
               productImages: [0],
-
               representativeImage: res.uploadedFiles.map((item: {
                 id: number,
                 originalFilename: string,
@@ -138,7 +137,6 @@ export default function ProductForm() {
                   return item.id
                 }
               }),
-
               standardImages: [0]
             },
             productName: productContent.name
@@ -222,22 +220,22 @@ export default function ProductForm() {
               overflow: 'auto',
               alignItems: 'center'
             }}>
-            {productRepPath === undefined &&
+            {productRepPath === undefined ?
               <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>
                 대표 제품 사진 미리보기
-              </Typography>
-            }
-            <Box sx={{ width: '23%', m: 1 }}>
-              <Box sx={{ textAlign: 'end' }}>
-                <ClearRoundedIcon
-                  onClick={() => {
-                    dispatch(deleteRepProductImagePath());
-                    dispatch(deleteRepProductImage());
-                  }}
-                  sx={{ color: 'darkgreen', cursor: 'pointer' }} />
+              </Typography> :
+              <Box sx={{ width: '23%', m: 1 }}>
+                <Box sx={{ textAlign: 'end' }}>
+                  <ClearRoundedIcon
+                    onClick={() => {
+                      dispatch(deleteRepProductImagePath());
+                      dispatch(deleteRepProductImage());
+                    }}
+                    sx={{ color: 'darkgreen', cursor: 'pointer' }} />
+                </Box>
+                <img src={productRepPath} alt='대표 제품 사진' width='100%' />
               </Box>
-              <img src={productRepPath} alt='대표 제품 사진' width='100%' />
-            </Box>
+            }
           </Container>
 
           {/* 제품 사진 미리보기 */}

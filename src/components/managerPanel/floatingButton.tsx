@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../style.css'
 import { adminApi } from '../../network/admin';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -15,11 +15,12 @@ import {
   setManagerData,
   updateManagerSendEmailPassword,
   copyManagerData,
-  updateFooterLogo,
-  updateHeaderLogo,
-  updateBanner,
   deleteBanner,
-  setBanner
+  setBanner,
+  addBannerFile,
+  deleteOriginBanner,
+  setLogo,
+  addLogoFile
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -41,23 +42,30 @@ import PasswordUpdate from './passwordUpdate';
 export default function FloatingButton() {
   const dispatch = useAppDispatch();
 
+  const bannerForm = new FormData();
+  const logoForm = new FormData();
+
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
   const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
   const panelData = useAppSelector(state => state.manager.panelData); // 관리자 정보 state
   const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
-  const headerLogo = useAppSelector(state => state.manager.headerLogo); // 헤더 로고 state
-  const footerLogo = useAppSelector(state => state.manager.footerLogo); // 푸터 로고 state
-  const banner = useAppSelector(state => state.manager.banner); // 배너 로고 state
+  const logo = useAppSelector(state => state.manager.logo); // 기존 로고 state
+  const logoFile = useAppSelector(state => state.manager.logoFile); // 추가한 로고 state
+  const banner = useAppSelector(state => state.manager.banner); // 기존 배너 state
+  const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가되는 배너 state
 
   // 배너 사진 추가
   const addBannerImage = (event: any) => {
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(updateBanner({ banner: { image: event?.target.files[i], name: event?.target.files[i].name } }))
+      dispatch(addBannerFile({ banner: { file: event?.target.files[i], name: event?.target.files[i].name } }))
     }
   };
 
-  // 배너 사진 삭제
+  // 배너 삭제
   const deleteBannerImage = (index: number) => { dispatch(deleteBanner({ num: index })) };
+
+  // 기존 배너 삭제
+  const deleteOriginBannerImage = (index: number) => { dispatch(deleteOriginBanner({ num: index })) };
 
   // 관리자, 회사 정보 변경 요청
   const putUpdatePanelInfo = (panelData: {
@@ -79,25 +87,44 @@ export default function FloatingButton() {
   };
 
   // 로고 정보 변경 요청
-  const putUpdateLogo = () => {
-    console.log('headerLogo', headerLogo);
-    console.log('footerLogo', footerLogo);
+  const postUpdateLogo = () => {
+    logoForm.append('file', logoFile.file);
+    logoForm.append('where', 'logo');
+
+    adminApi.postLogo(logoForm)
+      .then(res => {
+        dispatch(setLogo({ logo: res }));
+        console.log(res);
+      })
+      .catch(error => console.log(error))
   };
 
-
   // 배너 정보 변경 요청
-  const putUpdateBanner = () => {
-    console.log(banner);
-    // adminApi.putBanner
+  const postUpdateBanner = () => {
+    bannerFile.map(item => bannerForm.append('files', item.file))
+
+    adminApi.postBanner(bannerForm)
+      .then(res => {
+        adminApi.getBanner()
+          .then(res => dispatch(setBanner({ banner: res })))
+          .catch(error => console.log(error))
+      })
+      .catch(error => console.log(error))
   };
 
   // slide 나가기 이벤트
   const closeDrawer = () => {
     dispatch(clickEditGoBack());
-    // 정보 받아오기
-    dispatch(updateHeaderLogo({ header: { image: '', name: 'header.jpg' } }));
-    dispatch(updateFooterLogo({ footer: { image: '', name: 'footer.jpg' } }));
-    dispatch(setBanner({ banner: [{ image: '', name: 'banner1.jpg' }, { image: '', name: 'banner2.jpg' }] }))
+
+    // Banner 
+    adminApi.getBanner()
+      .then(res => dispatch(setBanner(res)))
+      .catch(error => console.log(error))
+
+    // Logo
+    adminApi.getLogo()
+      .then(res => dispatch(setLogo({ logo: res })))
+      .catch(error => console.log(error))
   };
 
   return (
@@ -262,30 +289,17 @@ export default function FloatingButton() {
           <ContentStack
             direction='row'
             sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
-            <LogoTitleBox>상단 로고</LogoTitleBox>
+            <LogoTitleBox>회사 로고</LogoTitleBox>
             <Typography sx={{ flex: 0.8, color: 'darkgrey' }}>
-              {headerLogo.name}
+              {logoFile ? logoFile.name : logo.originalFilename}
             </Typography>
             <label
               className='uploadButton'
               htmlFor='headerLogoInput'
-              onChange={(event: any) => dispatch(updateHeaderLogo({ header: { image: event?.target.files[0], name: event?.target.files[0].name } }))}>
+              onChange={(event: any) => dispatch(addLogoFile({ logo: { file: event?.target.files[0], name: event?.target.files[0].name } }))}
+            >
               업로드
               <input type={'file'} id='headerLogoInput' accept='image/*' />
-            </label>
-          </ContentStack>
-
-          <ContentStack direction='row'>
-            <LogoTitleBox>하단 로고</LogoTitleBox>
-            <Typography sx={{ flex: 0.8, color: 'darkgrey' }}>
-              {footerLogo.name}
-            </Typography>
-            <label
-              className='uploadButton'
-              htmlFor='footerLogoInput'
-              onChange={(event: any) => dispatch(updateFooterLogo({ footer: { image: event?.target.files[0], name: event?.target.files[0].name } }))}>
-              업로드
-              <input type={'file'} id='footerLogoInput' accept='image/*' />
             </label>
           </ContentStack>
 
@@ -294,12 +308,32 @@ export default function FloatingButton() {
             sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }} >
             <LogoTitleBox>배너 사진</LogoTitleBox>
             <Stack sx={{ flex: 0.8 }}>
-              {banner?.map((item: { image: string, name: string }, index: number) => (
-                <Stack direction='row' sx={{ alignItems: 'center' }}>
+              {/* 기존 배너 사진 */}
+              {banner?.map((item: {
+                id: number,
+                originalFilename: string,
+                savedPath: string,
+                serverFilename: string
+              }, index: number) => (
+                <Stack key={index} direction='row' sx={{ alignItems: 'center' }}>
+                  <Typography sx={{ color: 'darkgrey' }}>
+                    {item.originalFilename}
+                  </Typography>
+                  {(banner.length + bannerFile?.length) > 1 &&
+                    <ClearRoundedIcon
+                      onClick={() => deleteOriginBannerImage(index)}
+                      fontSize='small'
+                      sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />}
+                </Stack>
+              ))}
+
+              {/* 추가한 배너 사진 */}
+              {bannerFile?.map((item: { file: string, name: string }, index: number) => (
+                <Stack key={index} direction='row' sx={{ alignItems: 'center' }}>
                   <Typography sx={{ color: 'darkgrey' }}>
                     {item.name}
                   </Typography>
-                  {banner.length > 1 &&
+                  {(banner?.length + bannerFile.length) > 1 &&
                     <ClearRoundedIcon
                       onClick={() => deleteBannerImage(index)}
                       fontSize='small'
@@ -324,8 +358,8 @@ export default function FloatingButton() {
 
         <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
           {EditButton('변경', () => {
-            putUpdateLogo();
-            putUpdateBanner();
+            postUpdateLogo();
+            postUpdateBanner();
           })}
           {EditButton('나가기', closeDrawer)}
         </Stack>

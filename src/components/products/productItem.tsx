@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { api } from '../../network/network';
 import { productApi } from '../../network/product';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +31,8 @@ export default function ProductItem({ product, index }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const [targetProductId, setTargetProductId] = useState(0);
+  const [draggedProductId, setDraggedProductId] = useState(0);
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
@@ -64,7 +66,10 @@ export default function ProductItem({ product, index }: propsType) {
   // 제품 순서변경
   const patchUpdateCategorySequence = (productId: number, targetProductId: number) => {
     productApi.patchUpdateCategorySequence(productId, targetProductId)
-      .then(res => console.log(res))
+      .then(res => {
+        console.log(res);
+        dispatch(getProductList(res));
+      })
       .catch(error => console.log(error))
   };
 
@@ -102,6 +107,8 @@ export default function ProductItem({ product, index }: propsType) {
       if (!didDrop) {
         moveProductItem(originProduct, originIndex);
       }
+      console.log('targetId', targetProductId, 'current id', draggedProductId)
+      // productApi.patchUpdateCategorySequence(draggedProduct.id, id);
     },
   }),
     [id, index, moveProductItem]
@@ -110,7 +117,10 @@ export default function ProductItem({ product, index }: propsType) {
   // drop
   const [, leftDrop] = useDrop(() => ({
     accept: 'productItem',
-    canDrop: () => true,
+    isDragging: () => {
+      setDraggedProductId(id);
+      console.log('dragging')
+    },
     hover: (item: {
       product: {
         id: number,
@@ -123,26 +133,11 @@ export default function ProductItem({ product, index }: propsType) {
         productName: string
       }, index: number
     }) => {
-      const { product: draggedProduct, index: originIndex } = item;
+      const { product: draggedProduct, index: originIndex } = item; // id : target id, draggedProduct.id : 이동 제품 id
       if (draggedProduct.id !== id) {
         moveProductItem(draggedProduct, index);
+        setTargetProductId(id);
       }
-    },
-    drop: (item: {
-      product: {
-        id: number,
-        image: {
-          id: number,
-          originalFilename: string,
-          savedPath: string,
-          serverFilename: string,
-        },
-        productName: string
-      }, index: number
-    }) => {
-      const { product: draggedProduct, index: originIndex } = item;
-      // productApi.patchUpdateCategorySequence(draggedProduct.id, id);
-      console.log(index, originIndex); // 어떻게 하징..
     }
   }));
 
@@ -194,9 +189,15 @@ export default function ProductItem({ product, index }: propsType) {
     <TotalBox>
       <ProductBox ref={leftDrop}>
         {/* 제품 */}
-        <ProductButton ref={dragRef} onClick={() => getProduct(id)} sx={{ opacity: isDragging ? 0.5 : 1, '&:focus': { cursor: managerMode ? 'grab' : 'pointer' } }}>
+        <ProductButton
+          onClick={() => getProduct(id)}
+          sx={{
+            opacity: isDragging ? 0.5 : 1,
+            '&:focus': { cursor: managerMode ? 'grab' : 'pointer' }
+          }}>
           <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' alt={image.originalFilename} />
           <Typography
+            ref={dragRef}
             sx={{
               width: '100%',
               borderRadius: 1,

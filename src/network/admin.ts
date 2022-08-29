@@ -18,21 +18,35 @@ class AdminApi {
 
   // banner 받아오기
   async getBanner() {
-    const response = await axios.get(`/api/admin/banner`);
-    return response.data;
+    const response = await axios.get(`/api/admin/images`);
+    return response.data.bannerImages;
   };
 
   // banner 수정하기
-  async putBanner(banner: FormData) {
-    const response = await axios.put(`/api/admin/banner`, banner, {
+  async postBanner(banner: FormData) {
+    const response = await axios.post(`/api/admin/banner`, banner, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data;
+    return response.data.bannerImages;
+  };
+
+  // 로고 받아오기
+  async getLogo() {
+    const response = await axios.get(`/api/admin/images`);
+    return response.data.logoImage;
   };
 
   // 로고 수정하기
+  async postLogo(logo: FormData) {
+    const response = await axios.post(`/api/admin/image`, logo, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data.logoImage;
+  };
 
   /* 관리자 정보 */
 
@@ -76,7 +90,7 @@ class AdminApi {
   async getOrgChart() {
     const response = await axios.get(`/api`);
     return response.data;
-  }
+  };
 
   // 조직도 변경
   async putOrgChart(orgChart: FormData) {

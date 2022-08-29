@@ -4,7 +4,7 @@ import { adminApi } from './network/admin';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { setAllProductCategories } from './app/reducers/categorySlice';
-import { setBanner, setFooter, updateFooterLogo, updateHeaderLogo } from './app/reducers/managerModeSlice';
+import { setBanner, setFooter, setLogo } from './app/reducers/managerModeSlice';
 import { Box } from '@mui/material';
 import Header from './components/header';
 import SideMenu from './components/sideMenu';
@@ -41,10 +41,18 @@ export default function App() {
     adminApi.getFooter()
       .then(res => dispatch(setFooter({ footer: res })))
 
-    // floatingButton 에서도 해야댐
-    dispatch(updateHeaderLogo({ header: { image: '', name: 'header.jpg' } }));
-    dispatch(updateFooterLogo({ footer: { image: '', name: 'footer.jpg' } }));
-    dispatch(setBanner({ banner: [{ image: '', name: 'banner1.jpg' }, { image: '', name: 'banner2.jpg' }] }))
+    // Banner 
+    adminApi.getBanner()
+      .then(res => {
+        dispatch(setBanner({ banner: res }));
+        console.log(res)
+      })
+      .catch(error => console.log(error))
+
+    // Logo
+    adminApi.getLogo()
+      .then(res => dispatch(setLogo({ logo: res })))
+      .catch(error => console.log(error))
 
     console.log('login') // 로그인 지속되는지.. 확인하는거..
   }, []);

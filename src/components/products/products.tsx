@@ -106,7 +106,7 @@ export default function Products() {
         },
         productName: 'h'
       }]
-    }))
+    }));
   }, []);
 
   return (

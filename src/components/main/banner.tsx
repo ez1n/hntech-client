@@ -1,24 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { api } from '../../network/network';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper';
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Box, styled, Typography } from '@mui/material';
+import { useAppSelector } from '../../app/hooks';
 
 SwiperCore.use([Navigation, Pagination, Autoplay])
 
 export default function Banner() {
-  //임시데이터
-  const bannerImage = [
-    { url: '/images/banner/banner1.jpg' },
-    { url: '/images/banner/banner2.jpg' },
-    { url: '/images/banner/banner3.jpg' },
-    { url: '/images/banner/banner4.png' },
-  ];
+  const banner = useAppSelector(state => state.manager.banner); // 배너 정보 state
 
   return (
-    // 배너 삽입 (배경, 멘트)
     <TotalBox>
       <Swiper
         spaceBetween={50}
@@ -26,14 +21,19 @@ export default function Banner() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 3000 }}>
-        {bannerImage.map((item: { url: string }, index: number) => (
+        {banner?.map((item: {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string
+        }, index: number) => (
           <SwiperSlide key={index}>
             <BannerBox sx={{ width: '100%' }}>
               <Box sx={{ position: 'absolute', bottom: '10%', left: '8%' }}>
                 <MainTypography>인간과 기술을 존중하여</MainTypography>
                 <MainTypography>미래를 연결하는 기업</MainTypography>
               </Box>
-              <img src={item.url} width={'100%'} />
+              <img src={`${api.baseUrl()}/files/admin/${item.serverFilename}`} width={'100%'} />
             </BannerBox>
           </SwiperSlide>
         ))}

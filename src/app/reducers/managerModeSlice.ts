@@ -63,9 +63,20 @@ interface managerInitialState {
     phone: string
   },
   updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string },
-  headerLogo: { image: string, name: string },
-  footerLogo: { image: string, name: string },
-  banner: { image: string, name: string }[]
+  logo: {
+    id: number,
+    originalFilename: string,
+    savedPath: string,
+    serverFilename: string
+  },
+  logoFile: { file: string, name: string },
+  banner: {
+    id: number,
+    originalFilename: string,
+    savedPath: string,
+    serverFilename: string
+  }[],
+  bannerFile: { file: string, name: string }[]
 };
 
 const ManagerInitialState: managerInitialState = {
@@ -101,9 +112,15 @@ const ManagerInitialState: managerInitialState = {
     phone: ''
   },
   updatePassword: { curPassword: '', newPassword: '', newPasswordCheck: '' },
-  headerLogo: { image: '', name: '' },
-  footerLogo: { image: '', name: '' },
-  banner: []
+  logo: {
+    id: 0,
+    originalFilename: '',
+    savedPath: '',
+    serverFilename: ''
+  },
+  logoFile: { file: '', name: '' },
+  banner: [],
+  bannerFile: []
 };
 
 // 관리자 모드 업데이트
@@ -222,31 +239,51 @@ export const ManagerSlice = createSlice({
       state,
       action: PayloadAction<{ phone: string }>
     ) => { state.newPanelData.phone = action.payload.phone },
-    updateHeaderLogo: (
+    setLogo: (
       state,
-      action: PayloadAction<{ header: { image: string, name: string } }>
-    ) => { state.headerLogo = action.payload.header },
-    updateFooterLogo: (
+      action: PayloadAction<{
+        logo: {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string
+        }
+      }>) => { state.logo = action.payload.logo },
+    addLogoFile: (
       state,
-      action: PayloadAction<{ footer: { image: string, name: string } }>
-    ) => { state.footerLogo = action.payload.footer },
+      action: PayloadAction<{ logo: { file: string, name: string } }>
+    ) => { state.logoFile = action.payload.logo },
     setBanner: (
       state,
-      action: PayloadAction<{ banner: { image: string, name: string }[] }>
+      action: PayloadAction<{
+        banner: {
+          id: number,
+          originalFilename: string,
+          savedPath: string,
+          serverFilename: string
+        }[]
+      }>
     ) => { state.banner = action.payload.banner },
-    updateBanner: (
+    addBannerFile: (
       state,
-      action: PayloadAction<{ banner: { image: string, name: string } }>
+      action: PayloadAction<{ banner: { file: string, name: string } }>
     ) => {
-      const newBanner = [...state.banner, action.payload.banner];
+      const newBanner = [...state.bannerFile, action.payload.banner];
+      state.bannerFile = newBanner;
+    },
+    deleteOriginBanner: (
+      state,
+      action: PayloadAction<{ num: number }>
+    ) => {
+      const newBanner = state.banner.filter((item, index) => index !== action.payload.num);
       state.banner = newBanner;
     },
     deleteBanner: (
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newBanner = state.banner.filter((item, index) => index !== action.payload.num);
-      state.banner = newBanner;
+      const newBanner = state.bannerFile.filter((item, index) => index !== action.payload.num);
+      state.bannerFile = newBanner;
     }
   }
 });
@@ -269,9 +306,10 @@ export const {
   updateAfterService,
   updateFax,
   updatePhone,
-  updateHeaderLogo,
-  updateFooterLogo,
+  setLogo,
+  addLogoFile,
   setBanner,
-  updateBanner,
+  addBannerFile,
+  deleteOriginBanner,
   deleteBanner } = ManagerSlice.actions;
 export default ManagerSlice.reducer;
