@@ -76,7 +76,17 @@ interface managerInitialState {
     savedPath: string,
     serverFilename: string
   }[],
-  bannerFile: { file: string, name: string }[]
+  bannerFile: { file: string, name: string }[],
+  document: {
+    catalogOriginalFilename: string,
+    catalogServerFilename: string,
+    materialOriginalFilename: string,
+    materialServerFilename: string
+  },
+  documentFile: {
+    catalog: { file: string, name: string },
+    approval: { file: string, name: string }
+  }
 };
 
 const ManagerInitialState: managerInitialState = {
@@ -120,7 +130,17 @@ const ManagerInitialState: managerInitialState = {
   },
   logoFile: { file: '', name: '' },
   banner: [],
-  bannerFile: []
+  bannerFile: [],
+  document: {
+    catalogOriginalFilename: '',
+    materialOriginalFilename: '',
+    catalogServerFilename: '',
+    materialServerFilename: ''
+  },
+  documentFile: {
+    catalog: { file: '', name: '' },
+    approval: { file: '', name: '' }
+  }
 };
 
 // 관리자 모드 업데이트
@@ -284,7 +304,33 @@ export const ManagerSlice = createSlice({
     ) => {
       const newBanner = state.bannerFile.filter((item, index) => index !== action.payload.num);
       state.bannerFile = newBanner;
-    }
+    },
+    setDocument: (
+      state,
+      action: PayloadAction<{
+        document: {
+          catalogOriginalFilename: string,
+          catalogServerFilename: string,
+          materialOriginalFilename: string,
+          materialServerFilename: string
+        }
+      }>
+    ) => { state.document = action.payload.document },
+    updateDocument: (
+      state,
+      action: PayloadAction<{ catalogOriginalFilename: string, materialOriginalFilename: string }>
+    ) => {
+      state.document.catalogOriginalFilename = action.payload.catalogOriginalFilename;
+      state.document.materialOriginalFilename = action.payload.materialOriginalFilename;
+    },
+    addCatalog: (
+      state,
+      action: PayloadAction<{ catalog: { file: string, name: string } }>
+    ) => { state.documentFile.catalog = action.payload.catalog },
+    addApproval: (
+      state,
+      action: PayloadAction<{ approval: { file: string, name: string } }>
+    ) => { state.documentFile.approval = action.payload.approval }
   }
 });
 
@@ -311,5 +357,9 @@ export const {
   setBanner,
   addBannerFile,
   deleteOriginBanner,
-  deleteBanner } = ManagerSlice.actions;
+  deleteBanner,
+  setDocument,
+  updateDocument,
+  addCatalog,
+  addApproval } = ManagerSlice.actions;
 export default ManagerSlice.reducer;

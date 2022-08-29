@@ -16,13 +16,13 @@ class AdminApi {
     return response;
   };
 
-  // banner 받아오기
+  // 배너 받아오기
   async getBanner() {
     const response = await axios.get(`/api/admin/images`);
     return response.data.bannerImages;
   };
 
-  // banner 수정하기
+  // 배너 수정하기
   async postBanner(banner: FormData) {
     const response = await axios.post(`/api/admin/banner`, banner, {
       headers: {
@@ -30,6 +30,12 @@ class AdminApi {
       }
     });
     return response.data.bannerImages;
+  };
+
+  // 배너 삭제하기
+  async deleteBanner(bannerName: string) {
+    const response = await axios.delete(`/api/admin/image/${bannerName}`);
+    return response.data;
   };
 
   // 로고 받아오기
@@ -46,6 +52,22 @@ class AdminApi {
       }
     });
     return response.data.logoImage;
+  };
+
+  // 카다록, 자재 승인서 받아오기
+  async getDocument() {
+    const response = await axios.get(`/api/admin/catalog-material`);
+    return response.data;
+  };
+
+  // 카다록, 자재 승인서 수정
+  async postDocument(documentForm: FormData) {
+    const response = await axios.post(`/api/admin/catalog-material`, documentForm, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
   };
 
   /* 관리자 정보 */

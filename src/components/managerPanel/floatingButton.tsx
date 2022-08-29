@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import '../style.css'
 import { adminApi } from '../../network/admin';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -20,7 +20,10 @@ import {
   addBannerFile,
   deleteOriginBanner,
   setLogo,
-  addLogoFile
+  addLogoFile,
+  addApproval,
+  addCatalog,
+  updateDocument
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -44,6 +47,7 @@ export default function FloatingButton() {
 
   const bannerForm = new FormData();
   const logoForm = new FormData();
+  const documentForm = new FormData();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
   const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
@@ -52,7 +56,9 @@ export default function FloatingButton() {
   const logo = useAppSelector(state => state.manager.logo); // 기존 로고 state
   const logoFile = useAppSelector(state => state.manager.logoFile); // 추가한 로고 state
   const banner = useAppSelector(state => state.manager.banner); // 기존 배너 state
-  const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가되는 배너 state
+  const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너 state
+  const documentName = useAppSelector(state => state.manager.document); // 기존 카다록, 자재승인서 이름 state
+  const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서 state
 
   // 배너 사진 추가
   const addBannerImage = (event: any) => {
@@ -61,11 +67,16 @@ export default function FloatingButton() {
     }
   };
 
-  // 배너 삭제
+  // 새로 추가한 배너 삭제
   const deleteBannerImage = (index: number) => { dispatch(deleteBanner({ num: index })) };
 
   // 기존 배너 삭제
-  const deleteOriginBannerImage = (index: number) => { dispatch(deleteOriginBanner({ num: index })) };
+  const deleteOriginBannerImage = (index: number, bannerName: string) => {
+    dispatch(deleteOriginBanner({ num: index }));
+    adminApi.deleteBanner(bannerName)
+      .then(res => console.log(res))
+      .catch(error => console.log(error))
+  };
 
   // 관리자, 회사 정보 변경 요청
   const putUpdatePanelInfo = (panelData: {
@@ -86,29 +97,39 @@ export default function FloatingButton() {
       .catch(error => console.log(error))
   };
 
-  // 로고 정보 변경 요청
-  const postUpdateLogo = () => {
+  // 로고, 배너 변경 요청
+  const putUpdateImageInfo = () => {
+    // 로고 사진
     logoForm.append('file', logoFile.file);
     logoForm.append('where', 'logo');
-
-    adminApi.postLogo(logoForm)
-      .then(res => {
-        dispatch(setLogo({ logo: res }));
-        console.log(res);
-      })
-      .catch(error => console.log(error))
-  };
-
-  // 배너 정보 변경 요청
-  const postUpdateBanner = () => {
+    // 배너 사진
     bannerFile.map(item => bannerForm.append('files', item.file))
 
+    // 로고 정보 변경 요청
+    adminApi.postLogo(logoForm)
+      .then(res => dispatch(setLogo({ logo: res })))
+      .catch(error => console.log('postLogo', error))
+
+    // 배너 정보 변경 요청
     adminApi.postBanner(bannerForm)
       .then(res => {
         adminApi.getBanner()
           .then(res => dispatch(setBanner({ banner: res })))
-          .catch(error => console.log(error))
+          .catch(error => console.log('getBanner', error))
       })
+      .catch(error => console.log('postBanner', error))
+  };
+
+  // 카다록, 자재승인서 변경 요청
+  const putUpdateDocumentInfo = () => {
+    documentForm.append('catalogFile', documentFile.catalog.file);
+    documentForm.append('materialFile', documentFile.approval.file);
+
+    adminApi.postDocument(documentForm)
+      .then(res => dispatch(updateDocument({
+        catalogOriginalFilename: res.catalogOriginalFilename,
+        materialOriginalFilename: res.materialOriginalFilename
+      })))
       .catch(error => console.log(error))
   };
 
@@ -129,6 +150,7 @@ export default function FloatingButton() {
 
   return (
     <>
+      {/* 플로팅 버튼 */}
       {managerMode &&
         <Fab
           variant='extended'
@@ -143,6 +165,7 @@ export default function FloatingButton() {
         </Fab>
       }
 
+      {/* 슬라이딩 패널 */}
       <Drawer
         anchor='right'
         open={editState}
@@ -319,11 +342,12 @@ export default function FloatingButton() {
                   <Typography sx={{ color: 'darkgrey' }}>
                     {item.originalFilename}
                   </Typography>
-                  {(banner.length + bannerFile?.length) > 1 &&
-                    <ClearRoundedIcon
-                      onClick={() => deleteOriginBannerImage(index)}
-                      fontSize='small'
-                      sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />}
+                  {/* {(banner.length + bannerFile?.length) > 1 && */}
+                  <ClearRoundedIcon
+                    onClick={() => deleteOriginBannerImage(index, item.serverFilename)}
+                    fontSize='small'
+                    sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
+                  {/* } */}
                 </Stack>
               ))}
 
@@ -333,11 +357,12 @@ export default function FloatingButton() {
                   <Typography sx={{ color: 'darkgrey' }}>
                     {item.name}
                   </Typography>
-                  {(banner?.length + bannerFile.length) > 1 &&
-                    <ClearRoundedIcon
-                      onClick={() => deleteBannerImage(index)}
-                      fontSize='small'
-                      sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />}
+                  {/* {(banner?.length + bannerFile.length) > 1 && */}
+                  <ClearRoundedIcon
+                    onClick={() => deleteBannerImage(index)}
+                    fontSize='small'
+                    sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
+                  {/* } */}
                 </Stack>
               ))}
             </Stack>
@@ -350,17 +375,55 @@ export default function FloatingButton() {
             </label>
           </ContentStack>
 
-          <List sx={{ mt: 1 }}>
+          <List>
             <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 배너 사진은 가로 세로 5:2 비율의 사진을 첨부해 주세요.</ListItem>
-            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 최소 한 장 이상의 사진이 필요합니다.</ListItem>
+            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 배너 사진은 최소 한 장 이상 필요합니다.</ListItem>
           </List>
+
+          <Stack sx={{ alignItems: 'center', mb: 5 }}>
+            {EditButton('변경', putUpdateImageInfo)}
+          </Stack>
+
+          <MainTitleTypography variant='h5'>카다록 / 자재승인서</MainTitleTypography>
+
+          {/* 카다록, 자재 승인서 */}
+          <ContentStack
+            direction='row'
+            sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
+            <LogoTitleBox sx={{ flex: 0.3 }}>카다록</LogoTitleBox>
+            <Typography sx={{ flex: 0.6, color: 'darkgrey' }}>
+              {documentFile.catalog ? documentFile.catalog.name : documentName.catalogOriginalFilename}
+            </Typography>
+            <label
+              className='uploadButton'
+              htmlFor='catalogInput'
+              onChange={(event: any) => dispatch(addCatalog({ catalog: { file: event?.target.files[0], name: event?.target.files[0].name } }))}
+            >
+              업로드
+              <input type={'file'} id='catalogInput' />
+            </label>
+          </ContentStack>
+
+          <ContentStack
+            direction='row'
+            sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>
+            <LogoTitleBox sx={{ flex: 0.3 }}>자재승인서</LogoTitleBox>
+            <Typography sx={{ flex: 0.6, color: 'darkgrey' }}>
+              {documentFile.approval ? documentFile.approval.name : documentName.materialOriginalFilename}
+            </Typography>
+            <label
+              className='uploadButton'
+              htmlFor='approvalInput'
+              onChange={(event: any) => dispatch(addApproval({ approval: { file: event?.target.files[0], name: event?.target.files[0].name } }))}
+            >
+              업로드
+              <input type={'file'} id='approvalInput' />
+            </label>
+          </ContentStack>
         </Stack>
 
         <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
-          {EditButton('변경', () => {
-            postUpdateLogo();
-            postUpdateBanner();
-          })}
+          {EditButton('변경', putUpdateDocumentInfo)}
           {EditButton('나가기', closeDrawer)}
         </Stack>
       </Drawer >

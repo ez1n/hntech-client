@@ -127,6 +127,8 @@
 
 #bannerInput,
 #headerLogoInput,
-#footerLogoInput {
+#footerLogoInput,
+#catalogInput,
+#approvalInput {
   display: none;
 }

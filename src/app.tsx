@@ -4,7 +4,7 @@ import { adminApi } from './network/admin';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { setAllProductCategories } from './app/reducers/categorySlice';
-import { setBanner, setFooter, setLogo } from './app/reducers/managerModeSlice';
+import { setBanner, setDocument, setFooter, setLogo } from './app/reducers/managerModeSlice';
 import { Box } from '@mui/material';
 import Header from './components/header';
 import SideMenu from './components/sideMenu';
@@ -43,15 +43,17 @@ export default function App() {
 
     // Banner 
     adminApi.getBanner()
-      .then(res => {
-        dispatch(setBanner({ banner: res }));
-        console.log(res)
-      })
+      .then(res => dispatch(setBanner({ banner: res })))
       .catch(error => console.log(error))
 
     // Logo
     adminApi.getLogo()
-      .then(res => dispatch(setLogo({ logo: res })))
+      .then(res => { dispatch(setLogo({ logo: res })) })
+      .catch(error => console.log(error))
+
+    // 카다록, 자재승인서
+    adminApi.getDocument()
+      .then(res => { dispatch(setDocument({ document: res })) })
       .catch(error => console.log(error))
 
     console.log('login') // 로그인 지속되는지.. 확인하는거..
