@@ -1,7 +1,32 @@
 import React from 'react';
 import { Box, Button, Container, Stack, styled, Typography } from '@mui/material';
+import { fileApi } from '../network/file';
+import { useAppSelector } from '../app/hooks';
 
 export default function MainData() {
+  const documentFile = useAppSelector(state => state.manager.document); // 카다록, 자재승인서 정보
+
+  // 파일 다운로드
+  const downloadFile = (serverFilename: string, originalFilename: string) => {
+    fileApi.downloadFile(serverFilename)
+      .then(res => {
+        return res;
+      })
+      .then(file => {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = originalFilename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 60000);
+        a.remove();
+      })
+      .catch(error => console.log(error))
+  };
+
   return (
     <Box sx={{ p: 5, pt: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Container sx={{
@@ -27,7 +52,7 @@ export default function MainData() {
             카다록 미리보기
           </FileBox>
 
-          <FileButton onClick={() => console.log('파일 다운로드')}>
+          <FileButton onClick={() => downloadFile(documentFile.catalogServerFilename, documentFile.catalogOriginalFilename)}>
             카다록 다운로드
           </FileButton>
         </Container>
@@ -37,7 +62,7 @@ export default function MainData() {
             자재 승인서 미리보기
           </FileBox>
 
-          <FileButton onClick={() => console.log('파일 다운로드')}>
+          <FileButton onClick={() => downloadFile(documentFile.materialServerFilename, documentFile.materialOriginalFilename)}>
             자재 승인서 다운로드
           </FileButton>
         </Container>

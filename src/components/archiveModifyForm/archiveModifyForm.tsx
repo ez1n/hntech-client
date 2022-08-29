@@ -146,7 +146,7 @@ export default function ArchiveModifyForm() {
     archiveApi.deleteArchiveFile(archiveId, fileId)
       .then(res => console.log(res))
       .catch(error => console.log(error))
-  }
+  };
 
   return (
     <Container sx={{ mt: 5 }}>
