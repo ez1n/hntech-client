@@ -65,7 +65,6 @@ export default function ProductCategories() {
             </Typography>
           </Container>
 
-
           <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
             {productCategories?.map((value: {
               categoryName: string;

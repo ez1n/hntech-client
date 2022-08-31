@@ -4,13 +4,12 @@ import { Box, Container, styled } from '@mui/material';
 import { api } from '../../network/network';
 
 export default function Specification() {
-  const managerMode = useAppSelector(state => state.manager.managerMode);
-  const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
+  const standardImages = useAppSelector(state => state.product.productDetail.files.standardImages); // 제품 정보
 
   return (
     <Container>
       <Box>
-        {productDetail?.files.standardImages.map((item: {
+        {standardImages.map((item: {
           id: number,
           originalFilename: string,
           savedPath: string,
@@ -22,7 +21,3 @@ export default function Specification() {
     </Container>
   )
 };
-
-const Spacing = styled(Container)(() => ({
-  height: 50
-})) as typeof Container;

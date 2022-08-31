@@ -167,7 +167,7 @@ export default function ArchiveForm() {
         }}>
 
           {/* 카테고리 선택 */}
-          <ArchiveCategorySelect defaultCategory='전체' />
+          <ArchiveCategorySelect defaultCategory={null} />
 
           {/* 공지사항 표시 */}
           <FormControlLabel

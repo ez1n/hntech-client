@@ -24,9 +24,11 @@ export default function ProductInfo() {
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productInfoState = useAppSelector(state => state.dialog.productInfoState); // 제품 삭제 dialog state
-  const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
-  const maxSteps = productDetail.files.productImages.length; // 이미지 개수
+
+  const { category, description, files, id, productName } = useAppSelector(state => state.product.productDetail); // 제품 정보
+  const { docFiles, productImages, representativeImage, standardImages } = files; // 파일
+  const maxSteps = productImages.length; // 이미지 개수
 
   // 제품 삭제
   const deleteProduct = () => {
@@ -62,7 +64,7 @@ export default function ProductInfo() {
           borderBottom: '3px solid #2E7D32',
           textAlign: 'start'
         }}>
-        {productDetail.productName}
+        {productName}
       </Typography>
 
       <Spacing sx={{ textAlign: 'end' }}>
@@ -84,11 +86,10 @@ export default function ProductInfo() {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-          {productDetail &&
-            <img
-              src={`${api.baseUrl()}/files/product/${productDetail.files.productImages[activeStep].serverFilename}`}
-              alt={productDetail.files.productImages[activeStep].originalFilename}
-              width={300} />}
+          <img
+            src={`${api.baseUrl()}/files/product/${productImages[activeStep].serverFilename}`}
+            alt={productImages[activeStep].originalFilename}
+            width={300} />
         </Box>
         <MobileStepper
           steps={maxSteps}
@@ -114,7 +115,7 @@ export default function ProductInfo() {
 
       {/* 부가 설명 */}
       <Typography sx={{ fontSize: 20 }}>
-        {productDetail.description}
+        {description}
       </Typography>
 
       {/* 삭제 버튼 Dialog */}
