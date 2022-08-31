@@ -21,7 +21,8 @@ import {
 } from '../app/reducers/companySlice';
 import {
   selectProductCategoryTrue,
-  selectProductCategoryFalse
+  selectProductCategoryFalse,
+  setCurrentProductCategoryName
 } from '../app/reducers/categorySlice';
 import {
   Toolbar,
@@ -161,6 +162,7 @@ export default function Header() {
                   onClick={() => {
                     navigate('/product');
                     dispatch(selectProductCategoryTrue());
+                    dispatch(setCurrentProductCategoryName({ category: item.categoryName }));
                   }}>
                   {item.categoryName}
                 </DropdownMenu>

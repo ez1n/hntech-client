@@ -3,224 +3,274 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // 제품 등록
 
 /**
- * productContent : 제품 정보
- * productRepPath : 대표 제품 이미지 경로 (미리보기)
- * productPath : 제품 이미지 경로 리스트 (미리보기)
- * standardPath : 규격 이미지 경로 리스트 (미리보기)
- * productImage : 전송할 제품 이미지 정보
- * productRepImage : 전송할 대표 제품 이미지 정보
- * standardImage :  전송할 규격 이미지 정보
- * productFileName : 제품 첨부파일 이름-버튼에 넣을 자료 (미리보기)
- * productFile : 전송할 제품 첨부파일 데이터
+ * productContent : 전송할 제품 정보
  */
 
 /**
- * updateProductName : 제품 이름 입력
- * updateProductDescription : 제품 설명 입력
- * updateProductCategory : 제품 카테고리 선택
- * updateRepProductImage : 전송할 대표 제품 이미지 추가
- * deleteRepProductImage : 전송할 대표 제품 이미지 삭제
- * updateProductImage : 전송할 제품 이미지 추가
- * deleteProductImage : 전송할 제품 이미지 삭제
- * updateGradeImage : 전송할 규격 이미지 추가
- * deleteGradeImage : 전송할 규격 이미지 삭제
- * addRepProductImagePath : 대표 제품 사진 추가 (미리보기)
- * deleteRepProductImagePath : 대표 제품 사진 삭제 (미리보기)
- * addProductImagePath : 제품 사진 추가 (미리보기)
- * deleteProductImagePath : 제품 사진 삭제 (미리보기)
- * addGradeImagePath : 규격 사진 추가 (미리보기)
- * deleteGradeImagePath : 규격 사진 삭제 (미리보기)
- * addProductFile : 제품 파일 업로드
- * deleteProductFileName : 제품 파일 삭제
- * addProductUploadButton : 제품 업로드 버튼 추가
- * deleteProductUploadButton : 제품 업로드 버튼 삭제
- * updateProductFile: 전송할 제품 파일 추가
- * deleteProductFile: 전송할 제품 파일 삭제
+ * getProductContent : 제품 수정 정보 받아오기
+ * addProductName : 제품 이름 변경
+ * addProductDescription : 제품 상세 정보 변경
+ * addProductCategory : 제품 카테고리 변경
+ * addRepProductImage : 제품 대표 이미지 변경
+ * addProductImage : 제품 이미지 추가
+ * deleteProductImage : 제품 이미지 삭제
+ * addStandardImage : 규격 이미지 추가
+ * deleteStandardImage : 규격 이미지 삭제
+ * addProductDocType : 첨부파일 버튼 이름 추가
+ * addProductDoc : 첨부파일 추가
+ * deleteProductDoc : 첨부파일 삭제
+ * addProductDocUploadButton : 첨부파일 업로드 버튼 추가 (빈 버튼)
+ * deleteProductDocUploadButton : 첨부파일 업로드 버튼 삭제
+ * resetProductForm : 폼 초기화
  */
 
 interface productFormInitialState {
   productContent: {
-    name: string,
+    category: string,
     description: string,
-    categoryName: string
+    productName: string,
+    files: {
+      docFiles: {
+        id: number,
+        file: string,
+        originalFilename: string,
+        type: string
+      }[],
+      productImages: {
+        file: string,
+        path: string,
+      }[],
+      representativeImage: {
+        file: string,
+        path: string | undefined
+      },
+      standardImages: {
+        file: string,
+        path: string
+      }[]
+    }
   },
-  productRepPath: string | undefined,
-  productPath: string[],
-  standardPath: string[],
-  productImage: string[],
-  productRepImage: string,
-  standardImage: string[],
-  productFileName: { key: number, name: string | undefined }[] | [],
-  productFile: string[]
 };
 
 const ProductFormInitialState: productFormInitialState = {
-  productContent: { name: '', description: '', categoryName: '' },
-  productRepPath: undefined,
-  productPath: [],
-  standardPath: [],
-  productImage: [],
-  productRepImage: '',
-  standardImage: [],
-  productFileName: [{ key: 0, name: undefined }],
-  productFile: []
+  productContent: {
+    category: '',
+    description: '',
+    productName: '',
+    files: {
+      docFiles: [
+        {
+          id: 0,
+          file: '',
+          originalFilename: '',
+          type: ''
+        }
+      ],
+      productImages: [],
+      representativeImage: {
+        file: '',
+        path: undefined
+      },
+      standardImages: []
+    }
+  },
 };
 
 export const ProductFormSlice = createSlice({
   name: 'productForm',
   initialState: ProductFormInitialState,
   reducers: {
-    updateProductName: (
+    getProductContent: (
       state,
-      action: PayloadAction<{ name: string }>
-    ) => { state.productContent.name = action.payload.name },
-    updateProductDescription: (
+      action: PayloadAction<{
+        detail: {
+          category: string,
+          description: string,
+          files: {
+            docFiles: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string,
+              type: string
+            }[],
+            productImages: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            }[],
+            representativeImage: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            },
+            standardImages: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            }[]
+          },
+          id: number,
+          productName: string
+        }
+      }>
+    ) => {
+      const newProductContent = {
+        ...state.productContent,
+        category: action.payload.detail.category,
+        description: action.payload.detail.description,
+        productName: action.payload.detail.productName
+      };
+      state.productContent = newProductContent;
+    },
+    addProductName: (
+      state,
+      action: PayloadAction<{ productName: string }>
+    ) => { state.productContent.productName = action.payload.productName },
+    addProductDescription: (
       state,
       action: PayloadAction<{ description: string }>
     ) => { state.productContent.description = action.payload.description },
-    updateProductCategory: (
+    addProductCategory: (
       state,
-      action: PayloadAction<{ categoryName: string }>
-    ) => { state.productContent.categoryName = action.payload.categoryName },
-    updateRepProductImage: (
+      action: PayloadAction<{ category: string }>
+    ) => { state.productContent.category = action.payload.category },
+    addRepProductImage: (
       state,
-      action: PayloadAction<{ file: string }>
-    ) => { state.productRepImage = action.payload.file },
-    deleteRepProductImage: (state) => { state.productRepImage = '' },
-    updateProductImage: (
+      action: PayloadAction<{ repProduct: { file: string, path: string } }>
+    ) => { state.productContent.files.representativeImage = action.payload.repProduct },
+    addProductImage: (
       state,
-      action: PayloadAction<{ file: string }>
+      action: PayloadAction<{ product: { file: string, path: string } }>
     ) => {
-      const newFile = [...state.productImage, action.payload.file];
-      state.productImage = newFile;
+      const newFile = [...state.productContent.files.productImages, action.payload.product];
+      state.productContent.files.productImages = newFile;
     },
     deleteProductImage: (
       state,
-      action: PayloadAction<{ num: number }>
+      action: PayloadAction<{ index: number }>
     ) => {
-      const newFile = state.productImage.filter((value, index) => index !== action.payload.num);
-      state.productImage = newFile;
+      const newFile = state.productContent.files.productImages.filter((value, index) => index !== action.payload.index);
+      state.productContent.files.productImages = newFile;
     },
-    updateGradeImage: (
+    addStandardImage: (
       state,
-      action: PayloadAction<{ file: string }>
+      action: PayloadAction<{ standard: { file: string, path: string } }>
     ) => {
-      const newFile = [...state.standardImage, action.payload.file];
-      state.standardImage = newFile;
+      const newFile = [...state.productContent.files.standardImages, action.payload.standard];
+      state.productContent.files.standardImages = newFile;
     },
-    deleteGradeImage: (
+    deleteStandardImage: (
       state,
-      action: PayloadAction<{ num: number }>
+      action: PayloadAction<{ index: number }>
     ) => {
-      const newFile = state.standardImage.filter((value, index) => index !== action.payload.num);
-      state.standardImage = newFile;
+      const newFile = state.productContent.files.standardImages.filter((value, index) => index !== action.payload.index);
+      state.productContent.files.standardImages = newFile;
     },
-    addRepProductImagePath: (
+    addProductDocType: (
       state,
-      action: PayloadAction<{ item: string }>
-    ) => { state.productRepPath = action.payload.item },
-    deleteRepProductImagePath: (state) => { state.productRepPath = undefined },
-    addProductImagePath: (
-      state,
-      action: PayloadAction<{ item: string }>
+      action: PayloadAction<{ id: Number, type: string }>
     ) => {
-      const newPath = [...state.productPath, action.payload.item];
-      state.productPath = newPath;
-    },
-    deleteProductImagePath: (
-      state,
-      action: PayloadAction<{ num: number }>
-    ) => {
-      const newPath = state.productPath.filter((path, index) => index !== action.payload.num);
-      state.productPath = newPath;
-    },
-    addGradeImagePath: (
-      state,
-      action: PayloadAction<{ item: string }>
-    ) => {
-      const newPath = [...state.standardPath, action.payload.item];
-      state.standardPath = newPath;
-    },
-    deleteGradeImagePath: (
-      state,
-      action: PayloadAction<{ num: number }>
-    ) => {
-      const newPath = state.standardPath.filter((path, index) => index !== action.payload.num)
-      state.standardPath = newPath;
-    },
-    addProductFile: (
-      state,
-      action: PayloadAction<{ key: number, item: string }>
-    ) => {
-      const newFile = state.productFileName.map(value => {
-        if (value.key === action.payload.key) {
-          return { ...value, name: action.payload.item }
+      const newFile = state.productContent.files.docFiles.map(item => {
+        if (item.id === action.payload.id) {
+          return { ...item, type: action.payload.type }
         }
-        return value;
+        return item;
       })
-      state.productFileName = newFile;
+      state.productContent.files.docFiles = newFile;
     },
-    deleteProductFileName: (
+    addProductDoc: (
       state,
-      action: PayloadAction<{ key: number }>
-    ) => {
-      const newFile = state.productFileName.map(value => {
-        if (value.key === action.payload.key) {
-          return { ...value, name: '' }
+      action: PayloadAction<{
+        id: number,
+        productDoc: {
+          file: string,
+          originalFilename: string
         }
-        return value;
+      }>
+    ) => {
+      const newFile = state.productContent.files.docFiles.map(item => {
+        if (item.id === action.payload.id) {
+          return { ...item, file: action.payload.productDoc.file, originalFilename: action.payload.productDoc.originalFilename }
+        }
+        return item;
       })
-      state.productFileName = newFile;
+      state.productContent.files.docFiles = newFile;
     },
-    addProductUploadButton: (state) => {
-      const fileLen = state.productFileName['length'];
-      const newFile = [...state.productFileName, { key: state.productFileName[fileLen - 1].key + 1, name: '' }];
-      state.productFileName = newFile;
-    },
-    deleteProductUploadButton: (
+
+    deleteProductDoc: (
       state,
-      action: PayloadAction<{ key: number }>
+      action: PayloadAction<{ id: number }>
     ) => {
-      const newFile = state.productFileName.filter((item, index) => index !== action.payload.key);
-      state.productFileName = newFile;
+      const newFile = state.productContent.files.docFiles.map(item => {
+        if (item.id === action.payload.id) {
+          return { ...item, originalFilename: '', file: '' }
+        }
+        return item;
+      })
+      state.productContent.files.docFiles = newFile;
     },
-    updateProductFile: (
-      state,
-      action: PayloadAction<{ file: string }>
-    ) => {
-      const newFile = [...state.productFile, action.payload.file];
-      state.productFile = newFile;
+    addProductDocUploadButton: (state) => {
+      const fileLen = state.productContent.files.docFiles['length'];
+      const newFile = [...state.productContent.files.docFiles, {
+        id: state.productContent.files.docFiles[fileLen - 1].id + 1,
+        file: '',
+        originalFilename: '',
+        type: ''
+      }
+      ];
+      state.productContent.files.docFiles = newFile;
     },
-    deleteProductFile: (
+    deleteProductDocUploadButton: (
       state,
-      action: PayloadAction<{ num: number }>
+      action: PayloadAction<{ index: number }>
     ) => {
-      const newFile = state.productFile.filter((file, index) => index !== action.payload.num);
-      state.productFile = newFile;
+      const newFile = state.productContent.files.docFiles.filter((item, index) => index !== action.payload.index);
+      state.productContent.files.docFiles = newFile;
+    },
+    resetProductForm: (state) => {
+      state.productContent = {
+        category: '',
+        description: '',
+        productName: '',
+        files: {
+          docFiles: [
+            {
+              id: 0,
+              file: '',
+              originalFilename: '',
+              type: ''
+            }
+          ],
+          productImages: [],
+          representativeImage: {
+            file: '',
+            path: undefined
+          },
+          standardImages: []
+        }
+      }
     }
   }
 });
 
 export const {
-  updateProductName,
-  updateProductDescription,
-  updateProductCategory,
-  updateRepProductImage,
-  deleteRepProductImage,
-  updateProductImage,
+  getProductContent,
+  addProductName,
+  addProductDescription,
+  addProductCategory,
+  addRepProductImage,
+  addProductImage,
   deleteProductImage,
-  updateGradeImage,
-  deleteGradeImage,
-  addRepProductImagePath,
-  deleteRepProductImagePath,
-  addProductImagePath,
-  deleteProductImagePath,
-  addGradeImagePath,
-  deleteGradeImagePath,
-  addProductFile,
-  deleteProductFileName,
-  addProductUploadButton,
-  deleteProductUploadButton,
-  updateProductFile,
-  deleteProductFile } = ProductFormSlice.actions;
+  addStandardImage,
+  deleteStandardImage,
+  addProductDocType,
+  addProductDoc,
+  deleteProductDoc,
+  addProductDocUploadButton,
+  deleteProductDocUploadButton,
+  resetProductForm } = ProductFormSlice.actions;
 export default ProductFormSlice.reducer;

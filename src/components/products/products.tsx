@@ -18,96 +18,13 @@ export default function Products() {
   const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
-  const productItems = useAppSelector(state => state.product.productItems); // 제품 id 리스트 (dnd)
 
   //제품 목록 받아오기
   useEffect(() => {
-    // productApi.getAllProducts(currentProductCategoryName)
-    //   .then(res => dispatch(getProductList({ productList: res })))
-    //   .catch(error => console.log(error))
-    dispatch(getProductList({
-      productList: [{
-        id: 1,
-        image: {
-          id: 0,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'aa'
-      },
-      {
-        id: 2,
-        image: {
-          id: 1,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'bb'
-      },
-      {
-        id: 3,
-        image: {
-          id: 2,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'cc'
-      },
-      {
-        id: 4,
-        image: {
-          id: 2,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'ddd'
-      },
-      {
-        id: 5,
-        image: {
-          id: 2,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'e'
-      },
-      {
-        id: 6,
-        image: {
-          id: 2,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'ffffffffff'
-      },
-      {
-        id: 7,
-        image: {
-          id: 2,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'ggggg'
-      },
-      {
-        id: 8,
-        image: {
-          id: 2,
-          originalFilename: 'hi',
-          savedPath: 'dd',
-          serverFilename: 'gkgk',
-        },
-        productName: 'h'
-      }]
-    }));
-  }, []);
+    productApi.getAllProducts(currentProductCategoryName)
+      .then(res => dispatch(getProductList({ productList: res })))
+      .catch(error => console.log(error))
+  }, [currentProductCategoryName]);
 
   return (
     <Box sx={{ display: 'flex', ml: 25, mr: 25 }}>

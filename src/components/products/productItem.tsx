@@ -5,11 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
-import { getCurrentProductData, getProductDetail, getProductList, setProductItems, setSomeDraggingFalse, setSomeDraggingTrue, updateProductItems } from '../../app/reducers/productSlice';
-import { Box, Button, Container, styled, Typography } from '@mui/material';
+import { getCurrentProductData, getProductDetail, getProductList, setSomeDraggingFalse, setSomeDraggingTrue } from '../../app/reducers/productSlice';
+import { Box, Button, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import CancelModal from '../cancelModal';
+import { getProductContent } from '../../app/reducers/productFormSlice';
 
 interface propsType {
   product: {
@@ -31,35 +32,33 @@ export default function ProductItem({ product, index }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [targetProductId, setTargetProductId] = useState(0);
-  const [draggedProductId, setDraggedProductId] = useState(0);
+  const [productId, setProductId] = useState({ targetProductId: 0, draggedProductId: 0 });
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
-  const productItems = useAppSelector(state => state.product.productItems); // 제품 id 리스트 (dnd)
   const someDragging = useAppSelector(state => state.product.someDragging);
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
+  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
     productApi.getProduct(productId)
       .then(res => {
         dispatch(getProductDetail({ detail: res }));
+        dispatch(getProductContent({ detail: res }));
         navigate('/product-detail');
-        console.log(res)
       })
-  };
-
-  // 수정 요청
-  const modifyProduct = () => {
-    navigate('/product-modify');
-    // 뭐 보내야 정보 받아올거아냐
   };
 
   // 제품 삭제
   const deleteProduct = (productId: number) => {
     productApi.deleteProduct(productId)
-      .then(res => console.log(res))
+      .then(res => {
+        productApi.getAllProducts(currentProductCategoryName)
+          .then(res => dispatch(getProductList({ productList: res })))
+          .catch(error => console.log(error))
+        dispatch(clickProductItemGoBack());
+      })
       .catch(error => console.log(error))
   };
 
@@ -107,7 +106,7 @@ export default function ProductItem({ product, index }: propsType) {
       if (!didDrop) {
         moveProductItem(originProduct, originIndex);
       }
-      console.log('targetId', targetProductId, 'current id', draggedProductId)
+      console.log(productId)
       // productApi.patchUpdateCategorySequence(draggedProduct.id, id);
     },
   }),
@@ -118,7 +117,7 @@ export default function ProductItem({ product, index }: propsType) {
   const [, leftDrop] = useDrop(() => ({
     accept: 'productItem',
     isDragging: () => {
-      setDraggedProductId(id);
+      setProductId({ ...productId, draggedProductId: id });
       console.log('dragging')
     },
     hover: (item: {
@@ -136,47 +135,7 @@ export default function ProductItem({ product, index }: propsType) {
       const { product: draggedProduct, index: originIndex } = item; // id : target id, draggedProduct.id : 이동 제품 id
       if (draggedProduct.id !== id) {
         moveProductItem(draggedProduct, index);
-        setTargetProductId(id);
-      }
-    }
-  }));
-
-  const [, rightDrop] = useDrop(() => ({
-    accept: 'productItem',
-    canDrop: () => true,
-    hover: (item: {
-      product: {
-        id: number,
-        image: {
-          id: number,
-          originalFilename: string,
-          savedPath: string,
-          serverFilename: string,
-        },
-        productName: string
-      }, index: number
-    }) => {
-      const { product: draggedProduct, index: originIndex } = item;
-      if (draggedProduct.id !== id) {
-        originIndex !== index && moveProductItem(draggedProduct, index + 1);
-      }
-    },
-    drop: (item: {
-      product: {
-        id: number,
-        image: {
-          id: number,
-          originalFilename: string,
-          savedPath: string,
-          serverFilename: string,
-        },
-        productName: string
-      }, index: number
-    }) => {
-      const { product: draggedProduct, index: originIndex } = item;
-      if (draggedProduct.id !== id) {
-        // productApi.patchUpdateCategorySequence(draggedProduct.id, productList[index + 1].id);
-        console.log(draggedProduct.productName, productName);
+        setProductId({ ...productId, targetProductId: id });
       }
     }
   }));
@@ -219,7 +178,14 @@ export default function ProductItem({ product, index }: propsType) {
               <RemoveCircleRoundedIcon sx={{ fontSize: 25 }} />
             </Button>
             <Button
-              onClick={modifyProduct}
+              onClick={() => {
+                productApi.getProduct(product.id)
+                  .then(res => {
+                    dispatch(getProductDetail({ detail: res }));
+                    dispatch(getProductContent({ detail: res }));
+                    navigate('/product-modify');
+                  })
+              }}
               sx={{ color: 'green', padding: 0 }}>
               <CreateRoundedIcon sx={{ fontSize: 25 }} />
             </Button>
@@ -233,10 +199,7 @@ export default function ProductItem({ product, index }: propsType) {
         title='제품 삭제'
         text1='해당 제품이 삭제됩니다.'
         text2='삭제하시겠습니까?'
-        yesAction={() => {
-          deleteProduct(currentProductData.id);
-          dispatch(clickProductItemGoBack());
-        }}
+        yesAction={() => deleteProduct(currentProductData.id)}
         closeAction={() => dispatch(clickProductItemGoBack())} />
     </TotalBox>
   )

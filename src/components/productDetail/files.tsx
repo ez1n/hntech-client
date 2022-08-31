@@ -4,7 +4,7 @@ import { Box, Button, styled } from '@mui/material';
 import { fileApi } from '../../network/file';
 
 export default function Files() {
-  const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
+  const docFiles = useAppSelector(state => state.product.productDetail.files.docFiles)
 
   // 파일 다운로드
   const downloadFile = (serverFilename: string, originalFilename: string) => {
@@ -29,7 +29,7 @@ export default function Files() {
 
   return (
     <Box>
-      {productDetail.files.docFiles.map((item: {
+      {docFiles.map((item: {
         id: number,
         originalFilename: string,
         savedPath: string,

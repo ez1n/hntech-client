@@ -49,37 +49,31 @@ interface productInitialState {
     category: string,
     description: string,
     files: {
-      docFiles: [
-        {
-          id: number,
-          originalFilename: string,
-          savedPath: string,
-          serverFilename: string,
-          type: string
-        }
-      ],
-      productImages: [
-        {
-          id: number,
-          originalFilename: string,
-          savedPath: string,
-          serverFilename: string
-        }
-      ],
+      docFiles: {
+        id: number,
+        originalFilename: string,
+        savedPath: string,
+        serverFilename: string,
+        type: string
+      }[],
+      productImages: {
+        id: number,
+        originalFilename: string,
+        savedPath: string,
+        serverFilename: string
+      }[],
       representativeImage: {
         id: number,
         originalFilename: string,
         savedPath: string,
         serverFilename: string
       },
-      standardImages: [
-        {
-          id: number,
-          originalFilename: string,
-          savedPath: string,
-          serverFilename: string
-        }
-      ]
+      standardImages: {
+        id: number,
+        originalFilename: string,
+        savedPath: string,
+        serverFilename: string
+      }[]
     },
     id: number,
     productName: string
@@ -105,37 +99,21 @@ const ProductInitialState: productInitialState = {
     category: '',
     description: '',
     files: {
-      docFiles: [
-        {
-          id: 0,
-          originalFilename: '',
-          savedPath: '',
-          serverFilename: '',
-          type: ''
-        }
-      ],
-      productImages: [
-        {
-          id: 0,
-          originalFilename: '',
-          savedPath: '',
-          serverFilename: ''
-        }
-      ],
+      docFiles: [{
+        id: 0,
+        originalFilename: '',
+        savedPath: '',
+        serverFilename: '',
+        type: ''
+      }],
+      productImages: [],
       representativeImage: {
         id: 0,
         originalFilename: '',
         savedPath: '',
         serverFilename: ''
       },
-      standardImages: [
-        {
-          id: 0,
-          originalFilename: '',
-          savedPath: '',
-          serverFilename: ''
-        }
-      ]
+      standardImages: []
     },
     id: 0,
     productName: ''
