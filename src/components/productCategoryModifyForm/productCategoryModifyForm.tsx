@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { fileApi } from '../../network/file';
-import { api } from '../../network/network';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -36,24 +35,6 @@ export default function ProductCategoryModifyForm() {
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보 state
   const productCategoryImagePath = useAppSelector(state => state.category.productCategoryImagePath);
   const productCategoryImage = useAppSelector(state => state.category.productCategoryImage); // 카테고리 이미지 state
-
-  useEffect(() => {
-    // 기존 사진 보여주기
-    { productCurrentCategory && dispatch(addProductCategoryImage({ image: `${api.baseUrl()}/files/category/${productCurrentCategory.imageServerFilename}` })) }
-
-    // 기존 사진 정보 만들기
-    api.getImageData(productCurrentCategory.imageServerFilename)
-      .then(res => {
-        const fileReader = new FileReader();
-        fileReader.readAsBinaryString(res);
-        const fileImage = fileReader.result;
-        dispatch(updateProductCategoryImage({ categoryImage: fileImage }));
-        console.log(fileImage);
-
-        // const newBlob = new Blob([new Uint8Array(res)]);
-        // const newFile = new File([newBlob], res.imageOriginalFilename)
-      })
-  }, []);
 
   // 제품 사진
   const selectCategoryImage = (event: any) => {
