@@ -47,20 +47,16 @@ export default function ProductCategoryForm() {
   // 카테고리 등록
   const postProductCategory = () => {
     productCategoryForm.append('file', productCategoryImage);
-    fileApi.postUploadFile(productCategoryForm, 'category')
+    productCategoryForm.append('categoryName', productCategoryName);
+    productCategoryForm.append('showInMain', productCategoryShowInMain);
+    productCategoryForm.append('type', 'product')
+
+    categoryApi.postCreateCategory(productCategoryForm)
       .then(res => {
-        categoryApi.postCreateCategory({
-          categoryName: productCategoryName,
-          imageFileId: res.id,
-          showInMain: productCategoryShowInMain,
-          type: 'product'
-        })
-          .then(res => {
-            dispatch(addProductCategoryImage({ image: undefined }));
-            navigate('/product');
-          })
-          .catch(error => console.log(error))
+        dispatch(addProductCategoryImage({ image: undefined }));
+        navigate('/product');
       })
+      .catch(error => console.log(error))
   };
 
   return (

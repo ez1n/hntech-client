@@ -31,10 +31,6 @@ import ProductCategoryModifyForm from './components/productCategoryModifyForm/pr
 export default function App() {
   const dispatch = useAppDispatch();
   const managerMode = useAppSelector(state => state.manager.managerMode);
-  const logo = useAppSelector(state => state.manager.logo);
-  const banner = useAppSelector(state => state.manager.banner);
-  const document = useAppSelector(state => state.manager.document);
-
 
   useEffect(() => {
     // 제품 카테고리 목록
