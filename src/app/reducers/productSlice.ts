@@ -232,14 +232,21 @@ export const ProductSlice = createSlice({
       action: PayloadAction<{ index: number }>
     ) => {
       const newFiles = state.productDetail.files.productImages.filter((value, index) => index !== action.payload.index);
-      state.productDetail.files.productImages = newFiles
+      state.productDetail.files.productImages = newFiles;
     },
     deleteOriginalStandardFile: (
       state,
       action: PayloadAction<{ index: number }>
     ) => {
       const newFiles = state.productDetail.files.standardImages.filter((value, index) => index !== action.payload.index);
-      state.productDetail.files.standardImages = newFiles
+      state.productDetail.files.standardImages = newFiles;
+    },
+    deleteOriginalDocFileButton: (
+      state,
+      action: PayloadAction<{ index: number }>
+    ) => {
+      const newFiles = state.productDetail.files.docFiles.filter((value, index) => index !== action.payload.index);
+      state.productDetail.files.docFiles = newFiles;
     }
   }
 }
@@ -256,5 +263,6 @@ export const {
   nextImage,
   prevImage,
   deleteOriginalProductFile,
-  deleteOriginalStandardFile } = ProductSlice.actions;
+  deleteOriginalStandardFile,
+  deleteOriginalDocFileButton } = ProductSlice.actions;
 export default ProductSlice.reducer;

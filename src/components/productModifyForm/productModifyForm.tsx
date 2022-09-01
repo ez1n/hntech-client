@@ -33,7 +33,7 @@ import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
 import { api } from '../../network/network';
 import { productApi } from '../../network/product';
-import { deleteOriginalProductFile, deleteOriginalStandardFile, getProductDetail } from '../../app/reducers/productSlice';
+import { deleteOriginalDocFileButton, deleteOriginalProductFile, deleteOriginalStandardFile, getProductDetail } from '../../app/reducers/productSlice';
 
 export default function ProductModifyForm() {
   const navigate = useNavigate();
@@ -93,25 +93,26 @@ export default function ProductModifyForm() {
     }));
   };
 
-  // 첨부파일 버튼 삭제
-  const deleteButton = (index: number, productId: number, fileId: number) => {
-    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }])
+  // 기존 첨부파일 버튼 삭제
+  const deleteOriginDocFileButton = (index: number, productId: number, fileId: number) => {
+    dispatch(deleteOriginalDocFileButton({ index: index }));
+    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }]);
   };
 
   // 기존 제품 이미지 삭제
   const deleteOriginProductFile = (index: number, productId: number, fileId: number) => {
     dispatch(deleteOriginalProductFile({ index: index }));
-    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }])
+    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }]);
   };
 
   // 기존 규격 이미지 삭제
-  const deleteOriginStandardFile = (index: number, productId: number, fileId: number) => {
+  const deleteOriginStandardFile = (index: number, standardId: number, fileId: number) => {
     dispatch(deleteOriginalStandardFile({ index: index }));
-    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }])
+    setDeleteProductId([...deleteProductId, { productId: standardId, fileId: fileId }]);
   };
 
   // 제품 정보 수정 
-  const putProduct = () => {
+  const putProduct = (productId: number) => {
     productForm.append('categoryName', category);
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
@@ -126,7 +127,7 @@ export default function ProductModifyForm() {
         .catch(error => console.log(error))
     ))
 
-    productApi.putUpdateProduct(productDetail.id, productForm)
+    productApi.putUpdateProduct(productId, productForm)
       .then(res => {
         dispatch(getProductDetail({ detail: res }));
         navigate(-1);
@@ -238,7 +239,7 @@ export default function ProductModifyForm() {
             <Box sx={{ width: '23%', m: 1 }}>
               {representativeImage.path ?
                 <img src={representativeImage.path} alt={'대표 이미지'} width={'100%'} /> :
-                <img src={`${api.baseUrl()}/files/image/${productDetail.files.representativeImage.serverFilename}`} alt={productDetail.files.representativeImage.originalFilename} width='100%' />
+                <img src={`${api.baseUrl()}/files/product/${productDetail.files.representativeImage.serverFilename}`} alt={productDetail.files.representativeImage.originalFilename} width='100%' />
               }
             </Box>
           </Container>
@@ -264,7 +265,7 @@ export default function ProductModifyForm() {
                     onClick={() => deleteOriginProductFile(index, productDetail.id, item.id)}
                     sx={{ color: 'darkgreen', cursor: 'pointer' }} />
                 </Box>
-                <img src={`${api.baseUrl()}/files/image/${item.serverFilename}`} alt={item.originalFilename} width='100%' />
+                <img src={`${api.baseUrl()}/files/product/${item.serverFilename}`} alt={item.originalFilename} width='100%' />
               </Box>
             ))}
 
@@ -299,10 +300,10 @@ export default function ProductModifyForm() {
               <Box key={index} sx={{ width: '23%', m: 1 }}>
                 <Box sx={{ textAlign: 'end' }}>
                   <ClearRoundedIcon
-                    onClick={() => setDeleteProductId([...deleteProductId, { productId: productDetail.id, fileId: item.id }])}
+                    onClick={() => deleteOriginStandardFile(index, productDetail.id, item.id)}
                     sx={{ color: 'darkgreen', cursor: 'pointer' }} />
                 </Box>
-                <img src={`${api.baseUrl()}/files/image/${item.serverFilename}`} alt={item.originalFilename} width='100%' />
+                <img src={`${api.baseUrl()}/files/product/${item.serverFilename}`} alt={item.originalFilename} width='100%' />
               </Box>
             ))}
 
@@ -349,31 +350,16 @@ export default function ProductModifyForm() {
                   display: 'flex',
                   alignItems: 'center'
                 }}>
-                  <>
-                    {item.originalFilename}
-                    {item.originalFilename ?
-                      <ClearRoundedIcon
-                        onClick={() => deleteOriginStandardFile(index, productDetail.id, item.id)}
-                        fontSize='small'
-                        sx={{ ml: 1, cursor: 'pointer' }} /> :
-                      '파일'}
-                  </>
+                  {item.originalFilename}
                 </Typography>
                 <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={(event) => { selectFile(item.id, event) }}>
                   업로드
                   <input className='productInput' type='file' id={`inputFile${item.id}`} />
                 </label>
-                {productDetail.files.docFiles.length + docFiles.length === 1 ?
-                  <Button disabled>
-                    <DeleteIcon />
-                  </Button> :
-                  <Button onClick={() => {
-                    dispatch(deleteProductDoc({ id: item.id }));
 
-                  }} sx={{ color: 'darkgreen' }}>
-                    <DeleteIcon />
-                  </Button>
-                }
+                <Button onClick={() => deleteOriginDocFileButton(index, productDetail.id, item.id)} sx={{ color: 'darkgreen' }}>
+                  <DeleteIcon />
+                </Button>
               </Stack>
             ))}
 
@@ -420,7 +406,7 @@ export default function ProductModifyForm() {
                 </label>
 
                 <Button onClick={() => {
-                  deleteButton(index, productDetail.id, item.id);
+
                   dispatch(deleteProductDocUploadButton({ index: index }));
                 }} sx={{ color: 'darkgreen' }}>
                   <DeleteIcon />
@@ -437,7 +423,7 @@ export default function ProductModifyForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('수정', putProduct)}
+        {EditButton('수정', () => putProduct(productDetail.id))}
         {EditButton('취소', () => dispatch(clickProductModifyFormGoBack()))}
       </Spacing>
 

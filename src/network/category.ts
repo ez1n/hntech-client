@@ -21,8 +21,12 @@ class CategoryApi {
   };
 
   // 제품 카테고리 등록
-  async postCreateCategory(category: {}) {
-    const response = await axios.post(`/api/category`, category);
+  async postCreateCategory(category: FormData) {
+    const response = await axios.post(`/api/category`, category, {
+      headers: {
+        'Category-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   };
 
