@@ -6,6 +6,7 @@ import {
   addProductCategory,
   addProductDescription,
   addProductDoc,
+  addProductDocType,
   addProductDocUploadButton,
   addProductImage,
   addProductName,
@@ -56,7 +57,7 @@ export default function ProductForm() {
   useEffect(() => {
     dispatch(resetProductForm());
     dispatch(addProductCategory({ category: currentProductCategoryName }));
-  }, [])
+  }, []);
 
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => { item.current?.click() };
@@ -98,9 +99,31 @@ export default function ProductForm() {
     }));
   };
 
+  // 파일 이름 추출
+  const putUpdateProductDocFiles = (productData: {
+    id: number,
+    originalFilename: string,
+    savedPath: string,
+    serverFilename: string,
+    type: string
+  },
+    productId: number) => {
+    docFiles.map((item: {
+      id: number,
+      file: string,
+      originalFilename: string,
+      type: string
+    }) => {
+      item.originalFilename === productData.originalFilename &&
+        productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
+          .then(res => navigate('/product'))
+          .catch(error => console.log(error))
+    })
+  };
+
   // 제품 등록
   const postProduct = () => {
-    productForm.append('categoryName', category);
+    productForm.append('categoryName', category)
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
@@ -110,17 +133,17 @@ export default function ProductForm() {
 
     productApi.postCreateProduct(productForm)
       .then(res => {
-        console.log(res);
-        productApi.getAllProducts(currentProductCategoryName)
-          .then(res => {
-            // 파일 아이디를 어떻게 구분해서 보내깆..??
-            // productApi.putProductFileButtonName(res.id,)
-            dispatch(getProductList({ productList: res }));
-            navigate('/product');
-          })
-          .catch(error => console.log(error))
+        res.files.docFiles.length === 0 ?
+          navigate('/product') :
+          res.files.docFiles.map((item: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string,
+            type: string
+          }) => putUpdateProductDocFiles(item, res.id))
       })
-      .catch(error => console.log(category))
+      .catch(error => console.log(error))
   };
 
   return (
@@ -191,6 +214,20 @@ export default function ProductForm() {
 
         {/* 미리보기 */}
         <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
+          {/* 제품 설명 */}
+          <TextField
+            placeholder='제품 설명'
+            multiline
+            minRows={3}
+            onChange={event => dispatch(addProductDescription({ description: event.target.value }))}
+            inputProps={{
+              style: {
+                fontSize: 18
+              }
+            }}
+            sx={{ width: '100%', mb: 2 }}
+          />
+
           {/* 대표 제품 이미지 미리보기 */}
           <Container
             sx={{
@@ -242,20 +279,6 @@ export default function ProductForm() {
             ))}
           </Container>
 
-          {/* 제품 설명 */}
-          <TextField
-            placeholder='제품 설명'
-            multiline
-            minRows={3}
-            onChange={event => dispatch(addProductDescription({ description: event.target.value }))}
-            inputProps={{
-              style: {
-                fontSize: 18
-              }
-            }}
-            sx={{ width: '100%', mb: 2 }}
-          />
-
           {/* 규격 이미지 미리보기 */}
           <Container
             sx={{
@@ -297,7 +320,7 @@ export default function ProductForm() {
                 <TextField
                   size='small'
                   placeholder='파일 이름'
-                  onChange={event => console.log('파일이름')}
+                  onChange={event => dispatch(addProductDocType({ id: item.id, type: event.target.value }))}
                   inputProps={{ style: { fontSize: 18 } }} />
                 <Typography sx={{
                   pl: 2,
@@ -321,14 +344,10 @@ export default function ProductForm() {
                   업로드
                   <input className='productInput' type='file' id={`inputFile${item.id}`} />
                 </label>
-                {docFiles.length === 1 ?
-                  <Button disabled sx={{ color: 'darkgreen' }}>
-                    <DeleteIcon />
-                  </Button> :
-                  <Button onClick={() => dispatch(deleteProductDocUploadButton({ index: index }))} sx={{ color: 'darkgreen' }}>
-                    <DeleteIcon />
-                  </Button>
-                }
+
+                <Button onClick={() => dispatch(deleteProductDocUploadButton({ index: index }))} sx={{ color: 'darkgreen' }}>
+                  <DeleteIcon />
+                </Button>
               </Stack>
             ))}
 

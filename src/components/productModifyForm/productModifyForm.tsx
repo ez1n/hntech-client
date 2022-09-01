@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickProductModifyFormGoBack } from '../../app/reducers/dialogSlice';
@@ -33,11 +33,13 @@ import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
 import { api } from '../../network/network';
 import { productApi } from '../../network/product';
-import { getProductDetail } from '../../app/reducers/productSlice';
+import { deleteOriginalProductFile, deleteOriginalStandardFile, getProductDetail } from '../../app/reducers/productSlice';
 
 export default function ProductModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const [deleteProductId, setDeleteProductId] = useState<{ productId: number, fileId: number }[]>([]);
 
   // 제품, 규격 이미지 Ref
   const repPhotoInputRef: any = useRef();
@@ -93,12 +95,22 @@ export default function ProductModifyForm() {
 
   // 첨부파일 버튼 삭제
   const deleteButton = (index: number, productId: number, fileId: number) => {
-    productApi.deleteProductFile(productId, fileId)
-      .then(res => dispatch(deleteProductDocUploadButton({ index: index })))
-      .catch(error => console.log(error))
+    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }])
   };
 
-  // 제품 정보 수정
+  // 기존 제품 이미지 삭제
+  const deleteOriginProductFile = (index: number, productId: number, fileId: number) => {
+    dispatch(deleteOriginalProductFile({ index: index }));
+    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }])
+  };
+
+  // 기존 규격 이미지 삭제
+  const deleteOriginStandardFile = (index: number, productId: number, fileId: number) => {
+    dispatch(deleteOriginalStandardFile({ index: index }));
+    setDeleteProductId([...deleteProductId, { productId: productId, fileId: fileId }])
+  };
+
+  // 제품 정보 수정 
   const putProduct = () => {
     productForm.append('categoryName', category);
     productForm.append('description', description);
@@ -107,6 +119,12 @@ export default function ProductModifyForm() {
     productForm.append('productName', productName);
     productForm.append('representativeImage', representativeImage.file);
     standardImages.map(item => productForm.append('standardImages', item.file));
+
+    deleteProductId.map((item: { productId: number, fileId: number }) => (
+      productApi.deleteProductFile(item.productId, item.fileId)
+        .then(res => console.log(res))
+        .catch(error => console.log(error))
+    ))
 
     productApi.putUpdateProduct(productDetail.id, productForm)
       .then(res => {
@@ -171,7 +189,10 @@ export default function ProductModifyForm() {
             </label>
 
             {/* 보여지는 button */}
-            {EditButton('대표 제품 이미지 추가', () => selectInput(repPhotoInputRef))}
+            {EditButton('대표 제품 이미지 추가', () => {
+              selectInput(repPhotoInputRef);
+              setDeleteProductId([...deleteProductId, { productId: productDetail.id, fileId: productDetail.files.representativeImage.id }]);
+            })}
             {EditButton('제품 이미지 추가', () => selectInput(photoInputRef))}
             {EditButton('규격 이미지 추가', () => selectInput(standardInputRef))}
           </Box>
@@ -187,6 +208,21 @@ export default function ProductModifyForm() {
 
         {/* 미리보기 */}
         <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
+          {/* 제품 설명 */}
+          <TextField
+            placeholder='제품 설명'
+            multiline
+            minRows={3}
+            value={description}
+            onChange={event => dispatch(addProductDescription({ description: event.target.value }))}
+            inputProps={{
+              style: {
+                fontSize: 18
+              }
+            }}
+            sx={{ width: '100%', mb: 2 }}
+          />
+
           {/* 대표 제품 이미지 미리보기 */}
           <Container
             sx={{
@@ -200,12 +236,6 @@ export default function ProductModifyForm() {
               alignItems: 'center'
             }}>
             <Box sx={{ width: '23%', m: 1 }}>
-              <Box sx={{ textAlign: 'end' }}>
-                {/* 대표 제품 이미지은 변경하면 안바뀌나? 삭제하는게 꼭 있엉하나? */}
-                <ClearRoundedIcon
-                  onClick={() => productApi.deleteProductFile(productDetail.id, productDetail.files.representativeImage.id)}
-                  sx={{ color: 'darkgreen', cursor: 'pointer' }} />
-              </Box>
               {representativeImage.path ?
                 <img src={representativeImage.path} alt={'대표 이미지'} width={'100%'} /> :
                 <img src={`${api.baseUrl()}/files/image/${productDetail.files.representativeImage.serverFilename}`} alt={productDetail.files.representativeImage.originalFilename} width='100%' />
@@ -231,7 +261,7 @@ export default function ProductModifyForm() {
               <Box key={index} sx={{ width: '23%', m: 1 }}>
                 <Box sx={{ textAlign: 'end' }}>
                   <ClearRoundedIcon
-                    onClick={() => productApi.deleteProductFile(productDetail.id, item.id)}
+                    onClick={() => deleteOriginProductFile(index, productDetail.id, item.id)}
                     sx={{ color: 'darkgreen', cursor: 'pointer' }} />
                 </Box>
                 <img src={`${api.baseUrl()}/files/image/${item.serverFilename}`} alt={item.originalFilename} width='100%' />
@@ -251,21 +281,6 @@ export default function ProductModifyForm() {
             ))}
           </Container>
 
-          {/* 제품 설명 */}
-          <TextField
-            placeholder='제품 설명'
-            multiline
-            minRows={3}
-            value={description}
-            onChange={event => dispatch(addProductDescription({ description: event.target.value }))}
-            inputProps={{
-              style: {
-                fontSize: 18
-              }
-            }}
-            sx={{ width: '100%', mb: 2 }}
-          />
-
           {/* 규격 이미지 미리보기 */}
           <Container
             sx={{
@@ -284,7 +299,7 @@ export default function ProductModifyForm() {
               <Box key={index} sx={{ width: '23%', m: 1 }}>
                 <Box sx={{ textAlign: 'end' }}>
                   <ClearRoundedIcon
-                    onClick={() => productApi.deleteProductFile(productDetail.id, item.id)}
+                    onClick={() => setDeleteProductId([...deleteProductId, { productId: productDetail.id, fileId: item.id }])}
                     sx={{ color: 'darkgreen', cursor: 'pointer' }} />
                 </Box>
                 <img src={`${api.baseUrl()}/files/image/${item.serverFilename}`} alt={item.originalFilename} width='100%' />
@@ -338,7 +353,7 @@ export default function ProductModifyForm() {
                     {item.originalFilename}
                     {item.originalFilename ?
                       <ClearRoundedIcon
-                        onClick={() => productApi.deleteProductFile(productDetail.id, item.id)}
+                        onClick={() => deleteOriginStandardFile(index, productDetail.id, item.id)}
                         fontSize='small'
                         sx={{ ml: 1, cursor: 'pointer' }} /> :
                       '파일'}
@@ -346,13 +361,16 @@ export default function ProductModifyForm() {
                 </Typography>
                 <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={(event) => { selectFile(item.id, event) }}>
                   업로드
-                  <input className='productInput' type='file' id={`inputFile${item.id}`} multiple accept='.pdf, .doc, .docx, .hwp, .hwpx' />
+                  <input className='productInput' type='file' id={`inputFile${item.id}`} />
                 </label>
                 {productDetail.files.docFiles.length + docFiles.length === 1 ?
                   <Button disabled>
                     <DeleteIcon />
                   </Button> :
-                  <Button onClick={() => dispatch(deleteProductDoc({ id: item.id }))} sx={{ color: 'darkgreen' }}>
+                  <Button onClick={() => {
+                    dispatch(deleteProductDoc({ id: item.id }));
+
+                  }} sx={{ color: 'darkgreen' }}>
                     <DeleteIcon />
                   </Button>
                 }
@@ -390,7 +408,7 @@ export default function ProductModifyForm() {
                     {item.originalFilename}
                     {item.originalFilename ?
                       <ClearRoundedIcon
-                        onClick={() => productApi.deleteProductFile(productDetail.id, item.id)}
+                        onClick={() => dispatch(deleteProductDoc({ id: item.id }))}
                         fontSize='small'
                         sx={{ ml: 1, cursor: 'pointer' }} /> :
                       '파일'}
@@ -398,16 +416,15 @@ export default function ProductModifyForm() {
                 </Typography>
                 <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={(event) => { selectFile(item.id, event) }}>
                   업로드
-                  <input className='productInput' type='file' id={`inputFile${item.id}`} multiple accept='.pdf, .doc, .docx, .hwp, .hwpx' />
+                  <input className='productInput' type='file' id={`inputFile${item.id}`} />
                 </label>
-                {productDetail.files.docFiles.length + docFiles.length === 1 ?
-                  <Button disabled>
-                    <DeleteIcon />
-                  </Button> :
-                  <Button onClick={() => deleteButton(index, productDetail.id, item.id)} sx={{ color: 'darkgreen' }}>
-                    <DeleteIcon />
-                  </Button>
-                }
+
+                <Button onClick={() => {
+                  deleteButton(index, productDetail.id, item.id);
+                  dispatch(deleteProductDocUploadButton({ index: index }));
+                }} sx={{ color: 'darkgreen' }}>
+                  <DeleteIcon />
+                </Button>
               </Stack>
             ))}
 

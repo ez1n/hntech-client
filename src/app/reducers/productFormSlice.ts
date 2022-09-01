@@ -22,6 +22,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * addProductDocUploadButton : 첨부파일 업로드 버튼 추가 (빈 버튼)
  * deleteProductDocUploadButton : 첨부파일 업로드 버튼 삭제
  * resetProductForm : 폼 초기화
+ * deleteOriginalProductFile: 기존 제품 이미지 삭
  */
 
 interface productFormInitialState {
@@ -58,14 +59,7 @@ const ProductFormInitialState: productFormInitialState = {
     description: '',
     productName: '',
     files: {
-      docFiles: [
-        {
-          id: 0,
-          file: '',
-          originalFilename: '',
-          type: ''
-        }
-      ],
+      docFiles: [],
       productImages: [],
       representativeImage: {
         file: '',
@@ -215,14 +209,24 @@ export const ProductFormSlice = createSlice({
     },
     addProductDocUploadButton: (state) => {
       const fileLen = state.productContent.files.docFiles['length'];
-      const newFile = [...state.productContent.files.docFiles, {
-        id: state.productContent.files.docFiles[fileLen - 1].id + 1,
-        file: '',
-        originalFilename: '',
-        type: ''
+      if (fileLen === 0) {
+        const newFile = [{
+          id: 0,
+          file: '',
+          originalFilename: '',
+          type: ''
+        }];
+        state.productContent.files.docFiles = newFile;
+      } else {
+        const newFile = [...state.productContent.files.docFiles, {
+          id: state.productContent.files.docFiles[fileLen - 1].id + 1,
+          file: '',
+          originalFilename: '',
+          type: ''
+        }
+        ];
+        state.productContent.files.docFiles = newFile;
       }
-      ];
-      state.productContent.files.docFiles = newFile;
     },
     deleteProductDocUploadButton: (
       state,
@@ -237,14 +241,7 @@ export const ProductFormSlice = createSlice({
         description: '',
         productName: '',
         files: {
-          docFiles: [
-            {
-              id: 0,
-              file: '',
-              originalFilename: '',
-              type: ''
-            }
-          ],
+          docFiles: [],
           productImages: [],
           representativeImage: {
             file: '',
