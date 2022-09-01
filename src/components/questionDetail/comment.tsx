@@ -177,7 +177,7 @@ export default function Comment({ item, questionId }: propsType) {
         title={'댓글 삭제'}
         text1={'삭제된 댓글은 복구할 수 없습니다.'}
         text2={'삭제하시겠습니까?'}
-        yesAction={() => deleteComment(questionId, currentComment.id)}
+        yesAction={() => deleteComment(questionId, currentComment.id !== null ? currentComment.id : 0)}
         closeAction={() => dispatch(clickCommentRemoveGoBack())} />
     </Stack>
   )
