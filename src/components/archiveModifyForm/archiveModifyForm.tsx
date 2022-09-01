@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../style.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -36,6 +36,8 @@ import CancelModal from '../cancelModal';
 export default function ArchiveModifyForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const [deleteArchiveId, setDeleteArchiveId] = useState<{ archiveId: number, fileId: number }[]>([]);
 
   const archiveData = new FormData(); // 자료실 첨부파일
 
@@ -75,77 +77,24 @@ export default function ArchiveModifyForm() {
     archiveData.append('notice', archiveModifyContent.notice);
     archiveData.append('title', archiveModifyContent.title);
 
+    deleteArchiveId.map((item: { archiveId: number, fileId: number }) => (
+      archiveApi.deleteArchiveFile(item.archiveId, item.fileId)
+        .then(res => console.log(res))
+        .catch(error => console.log(error))
+    ))
+
     archiveApi.putUpdateArchive(archiveId, archiveData)
       .then(res => {
         dispatch(getDetailData(res));
         navigate('/archive');
       })
       .catch(error => console.log(error))
-
-    // let serverFileNameList: string[] = [];
-
-    // fileData.map(item => archiveData.append('files', item));
-
-    // // 기존 파일 리스트 생성
-    // archiveModifyContent.files.map(item => serverFileNameList.push(item.serverFilename));
-
-    // fileApi.postUploadAllFiles(archiveData, 'archive')
-    //   .then(res => {
-    //     // serverFilename 리스트에 추가
-    //     res.uploadedFiles.map((item: {
-    //       id: number,
-    //       originalFilename: string,
-    //       serverFilename: string,
-    //       savedPath: string
-    //     }) => (serverFileNameList.push(item.serverFilename)));
-    //     console.log(res.uploadedFiles)
-
-    //     archiveApi.putUpdateArchive(archiveId, {
-    //       categoryName: archiveModifyContent.categoryName,
-    //       content: archiveModifyContent.content,
-    //       files: serverFileNameList,
-    //       notice: archiveModifyContent.notice,
-    //       title: archiveModifyContent.title,
-    //     })
-    //       .then(res => {
-    //         dispatch(getDetailData(res));
-    //         dispatch(resetArchiveFileData());
-    //         dispatch(resetArchiveFileName());
-    //         navigate('/archive');
-    //         serverFileNameList = [];
-    //       })
-    //       .catch(error => console.log(error))
-    //   })
-    //   .catch(error => { // 파일이 존재하지 않는 경우
-    //     if (error.response.data.message.includes('specified as non-null is null')) {
-    //       // 게시글 내용 보내기
-    //       archiveApi.putUpdateArchive(archiveId, {
-    //         categoryName: archiveModifyContent.categoryName,
-    //         content: archiveModifyContent.content,
-    //         files: serverFileNameList,
-    //         notice: archiveModifyContent.notice,
-    //         title: archiveModifyContent.title,
-    //       })
-    //         .then(res => {
-    //           dispatch(getDetailData(res));
-    //           dispatch(resetArchiveFileData());
-    //           dispatch(resetArchiveFileName());
-    //           navigate('/archive');
-    //           serverFileNameList = [];
-    //         })
-    //         .catch(error => console.log('postCreateArchive', error.config.data))
-    //     } else { // 첨부파일 보내기 오류
-    //       console.log('postUploadAllFiles', error);
-    //     }
-    //   })
   };
 
   // 기존 파일 삭제
   const deleteOriginalFile = (index: number, archiveId: number, fileId: number) => {
     dispatch(deleteArchiveOriginFile({ num: index }));
-    archiveApi.deleteArchiveFile(archiveId, fileId)
-      .then(res => console.log(res))
-      .catch(error => console.log(error))
+    setDeleteArchiveId([...deleteArchiveId, { archiveId: archiveId, fileId: fileId }])
   };
 
   return (
@@ -290,7 +239,7 @@ export default function ArchiveModifyForm() {
         yesAction={() => {
           dispatch(resetArchiveState());
           dispatch(clickArchiveModifyFormGoBack());
-          navigate('archive-detail');
+          navigate(-1);
         }}
         closeAction={() => dispatch(clickArchiveModifyFormGoBack())} />
     </Container >

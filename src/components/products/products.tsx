@@ -6,9 +6,10 @@ import { Box, Button, styled } from '@mui/material';
 import ProductCategories from './productCategories';
 import ProductItem from './productItem';
 import { productApi } from '../../network/product';
-import { getProductList, setProductItems } from '../../app/reducers/productSlice';
+import { getProductList } from '../../app/reducers/productSlice';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useNavigate } from 'react-router-dom';
+import { resetProductForm } from '../../app/reducers/productFormSlice';
 
 export default function Products() {
   const dispatch = useAppDispatch();
@@ -21,6 +22,7 @@ export default function Products() {
 
   //제품 목록 받아오기
   useEffect(() => {
+    dispatch(resetProductForm());
     productApi.getAllProducts(currentProductCategoryName)
       .then(res => dispatch(getProductList({ productList: res })))
       .catch(error => console.log(error))

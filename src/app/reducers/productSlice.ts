@@ -20,6 +20,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * getProductDetail : 제품 상세정보 받아오기
  * nextImage : 다음 이미지
  * prevImage : 이전 이미지
+ * deleteOriginalProductFile : 기존 제품 이미지 삭제
+ * deleteOriginalStandardFile : 기존 규격 이미지 삭제
  */
 
 interface productInitialState {
@@ -224,7 +226,21 @@ export const ProductSlice = createSlice({
       }>
     ) => { state.productDetail = action.payload.detail },
     nextImage: (state) => { state.activeStep = state.activeStep + 1 },
-    prevImage: (state) => { state.activeStep = state.activeStep - 1 }
+    prevImage: (state) => { state.activeStep = state.activeStep - 1 },
+    deleteOriginalProductFile: (
+      state,
+      action: PayloadAction<{ index: number }>
+    ) => {
+      const newFiles = state.productDetail.files.productImages.filter((value, index) => index !== action.payload.index);
+      state.productDetail.files.productImages = newFiles
+    },
+    deleteOriginalStandardFile: (
+      state,
+      action: PayloadAction<{ index: number }>
+    ) => {
+      const newFiles = state.productDetail.files.standardImages.filter((value, index) => index !== action.payload.index);
+      state.productDetail.files.standardImages = newFiles
+    }
   }
 }
 );
@@ -238,5 +254,7 @@ export const {
   getCurrentProductData,
   getProductDetail,
   nextImage,
-  prevImage } = ProductSlice.actions;
+  prevImage,
+  deleteOriginalProductFile,
+  deleteOriginalStandardFile } = ProductSlice.actions;
 export default ProductSlice.reducer;

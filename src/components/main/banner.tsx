@@ -28,12 +28,8 @@ export default function Banner() {
           serverFilename: string
         }, index: number) => (
           <SwiperSlide key={index}>
-            <BannerBox sx={{ width: '100%' }}>
-              <Box sx={{ position: 'absolute', bottom: '10%', left: '8%' }}>
-                <MainTypography>인간과 기술을 존중하여</MainTypography>
-                <MainTypography>미래를 연결하는 기업</MainTypography>
-              </Box>
-              <img src={`${api.baseUrl()}/files/admin/${item.serverFilename}`} width={'100%'} />
+            <BannerBox sx={{ width: '100%', height: '80vh ' }}>
+              <img src={`${api.baseUrl()}/files/admin/${item.serverFilename}`} width={'100%'} height={'100%'} />
             </BannerBox>
           </SwiperSlide>
         ))}

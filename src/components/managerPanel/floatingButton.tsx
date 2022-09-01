@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../style.css'
 import { adminApi } from '../../network/admin';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -45,6 +45,8 @@ import PasswordUpdate from './passwordUpdate';
 export default function FloatingButton() {
   const dispatch = useAppDispatch();
 
+  const [deleteBannerName, setDeleteBannerName] = useState<{ name: string }[]>([])
+
   const bannerForm = new FormData();
   const logoForm = new FormData();
   const documentForm = new FormData();
@@ -72,10 +74,8 @@ export default function FloatingButton() {
 
   // 기존 배너 삭제
   const deleteOriginBannerImage = (index: number, bannerName: string) => {
+    setDeleteBannerName([...deleteBannerName, { name: bannerName }])
     dispatch(deleteOriginBanner({ num: index }));
-    adminApi.deleteBanner(bannerName)
-      .then(res => console.log(res))
-      .catch(error => console.log(error))
   };
 
   // 관리자, 회사 정보 변경 요청
@@ -103,12 +103,19 @@ export default function FloatingButton() {
     logoForm.append('file', logoFile.file);
     logoForm.append('where', 'logo');
     // 배너 사진
-    bannerFile.map(item => bannerForm.append('files', item.file))
+    bannerFile.map((item: { file: string, name: string }) => bannerForm.append('files', item.file))
 
     // 로고 정보 변경 요청
     adminApi.postLogo(logoForm)
       .then(res => dispatch(setLogo({ logo: res })))
       .catch(error => console.log('postLogo', error))
+
+    // 배너 삭제
+    deleteBannerName.map((item: { name: string }) => (
+      adminApi.deleteBanner(item.name)
+        .then(res => console.log(res))
+        .catch(error => console.log(error))
+    ))
 
     // 배너 정보 변경 요청
     adminApi.postBanner(bannerForm)
@@ -342,12 +349,10 @@ export default function FloatingButton() {
                   <Typography sx={{ color: 'darkgrey' }}>
                     {item.originalFilename}
                   </Typography>
-                  {/* {(banner.length + bannerFile?.length) > 1 && */}
                   <ClearRoundedIcon
                     onClick={() => deleteOriginBannerImage(index, item.serverFilename)}
                     fontSize='small'
                     sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
-                  {/* } */}
                 </Stack>
               ))}
 

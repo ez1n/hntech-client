@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { getProductDetail, nextImage, prevImage } from '../../app/reducers/productSlice';
+import { getProductDetail, getProductList, nextImage, prevImage } from '../../app/reducers/productSlice';
 import { clickProductInfoGoBack } from '../../app/reducers/dialogSlice';
 import {
   Box,
@@ -17,6 +17,7 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import { productApi } from '../../network/product';
 import { api } from '../../network/network';
+import { getProductContent } from '../../app/reducers/productFormSlice';
 
 export default function ProductInfo() {
   const navigate = useNavigate();
@@ -25,28 +26,33 @@ export default function ProductInfo() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productInfoState = useAppSelector(state => state.dialog.productInfoState); // 제품 삭제 dialog state
   const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
-
   const { category, description, files, id, productName } = useAppSelector(state => state.product.productDetail); // 제품 정보
   const { docFiles, productImages, representativeImage, standardImages } = files; // 파일
   const maxSteps = productImages.length; // 이미지 개수
 
   // 제품 삭제
-  const deleteProduct = () => {
-    dispatch(clickProductInfoGoBack());
-    navigate('/product');
+  const deleteProduct = (productId: number) => {
+    productApi.deleteProduct(productId)
+      .then(res => {
+        productApi.getAllProducts(category)
+          .then(res => {
+            dispatch(getProductList({ productList: res }));
+            dispatch(clickProductInfoGoBack());
+            navigate('/product');
+          })
+          .catch(error => console.log(error))
+      })
+      .catch(error => console.log(error))
   };
 
   // 수정 요청
   const modifyProduct = () => {
-    navigate('/product-modify');
-    // 뭐 보내야 정보 받아올거아냐
+    productApi.getProduct(id)
+      .then(res => {
+        dispatch(getProductContent({ detail: res }));
+        navigate('/product-modify');
+      })
   };
-
-
-
-  /** 제품 사진 수정하기 */
-
-
 
   return (
     <Container
@@ -55,7 +61,7 @@ export default function ProductInfo() {
         flexDirection: 'column',
         alignItems: 'center'
       }}>
-      {/* 제품 이름 */}
+      { }
       <Typography
         variant='h5'
         sx={{
@@ -86,10 +92,12 @@ export default function ProductInfo() {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-          <img
-            src={`${api.baseUrl()}/files/product/${productImages[activeStep].serverFilename}`}
-            alt={productImages[activeStep].originalFilename}
-            width={300} />
+          {productImages.length !== 0 &&
+            <img
+              src={`${api.baseUrl()}/files/product/${productImages[activeStep].serverFilename}`}
+              alt={productImages[activeStep].originalFilename}
+              width={300} />
+          }
         </Box>
         <MobileStepper
           steps={maxSteps}
@@ -124,7 +132,7 @@ export default function ProductInfo() {
         title='제품 삭제'
         text1='해당 제품이 삭제됩니다.'
         text2='삭제하시겠습니까?'
-        yesAction={() => deleteProduct()}
+        yesAction={() => deleteProduct(id)}
         closeAction={() => dispatch(clickProductInfoGoBack())} />
     </Container>
   )

@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectProductCategoryTrue } from '../../app/reducers/categorySlice';
 import { Box, Button, Container, styled, Typography } from '@mui/material';
-import ProductCategories from '../products/productCategories';
 import ProductInfo from './productInfo';
 import Files from './files';
 import Specification from './specification';
 import { getProductDetail } from '../../app/reducers/productSlice';
-import { getProductContent } from '../../app/reducers/productFormSlice';
+import { getProductContent, resetProductForm } from '../../app/reducers/productFormSlice';
 import { productApi } from '../../network/product';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,6 +18,7 @@ export default function ProductDetail() {
 
   useEffect(() => {
     dispatch(selectProductCategoryTrue());
+    dispatch(resetProductForm());
   }, []);
 
   // 제품 정보 받아오기
@@ -33,7 +33,7 @@ export default function ProductDetail() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      {/* 카테고리 */}
+      {/* 제품목록 */}
       <Box sx={{ flex: 0.3 }}>
         <Box sx={{
           ml: '50%',

@@ -31,6 +31,10 @@ import ProductCategoryModifyForm from './components/productCategoryModifyForm/pr
 export default function App() {
   const dispatch = useAppDispatch();
   const managerMode = useAppSelector(state => state.manager.managerMode);
+  const logo = useAppSelector(state => state.manager.logo);
+  const banner = useAppSelector(state => state.manager.banner);
+  const document = useAppSelector(state => state.manager.document);
+
 
   useEffect(() => {
     // 제품 카테고리 목록
@@ -55,7 +59,6 @@ export default function App() {
     adminApi.getDocument()
       .then(res => { dispatch(setDocument({ document: res })) })
       .catch(error => console.log(error))
-
     console.log('login') // 로그인 지속되는지.. 확인하는거..
   }, []);
 

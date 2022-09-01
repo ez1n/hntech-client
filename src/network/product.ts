@@ -29,7 +29,7 @@ class ProductApi {
   };
 
   // 제품 첨부파일 버튼명 수정
-  async putProductFileButtonName(productId: number, fileId: number, filename: {}) {
+  async putUpdateProductDocFiles(productId: number, fileId: number, filename: {}) {
     const response = await axios.put(`/api/product/${productId}/file/${fileId}`, filename);
     return response.data
   }
