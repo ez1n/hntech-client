@@ -23,6 +23,8 @@ import CancelModal from '../cancelModal';
 export default function EditArchiveCategory() {
   const dispatch = useAppDispatch();
 
+  const categoryForm = new FormData();
+
   const inputRef: any = useRef(); // 카테고리 input ref
   const categoryNameRef: any = useRef(); // 카테고리 이름 ref
 
@@ -70,16 +72,13 @@ export default function EditArchiveCategory() {
 
   // 카테고리 이름 수정
   const editArchiveCategory = (categoryId: number, categoryName: string) => {
-    categoryApi.putUpdateArchiveCategory(categoryId, {
-      categoryName: categoryName,
-      imageServerFilename: null,
-      showInMain: 'false'
-    })
+    categoryForm.append('categoryName', categoryName);
+    [].map(item => categoryForm.append('image', item));
+    categoryForm.append('showInMain', 'false')
+    categoryApi.putUpdateArchiveCategory(categoryId, categoryForm)
       .then(res => {
-        console.log(res);
         dispatch(setSelectedArchiveCategoryId({ id: undefined }));
-        categoryApi.getAllCategories()
-          .then(res => dispatch(getArchiveCategory({ categories: res.categories })))
+        dispatch(getArchiveCategory({ categories: res }));
       })
       .catch(error => console.warn(error))
   };
@@ -131,17 +130,16 @@ export default function EditArchiveCategory() {
                 /> :
                 <Typography sx={{ flex: 0.7 }}>{item.categoryName}</Typography>
               }
-              {selectedArchiveCategoryId === undefined ?
-                // 카테고리 수정 전
-                <BorderColorRoundedIcon
-                  fontSize='small'
-                  onClick={() => dispatch(setSelectedArchiveCategoryId({ id: item.id }))}
-                  sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} /> :
-
+              {selectedArchiveCategoryId === item.id ?
                 // 카테고리 수정 중
                 <CheckCircleRoundedIcon
                   fontSize='small'
                   onClick={() => editArchiveCategory(item.id, categoryNameRef.current.value)}
+                  sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} /> :
+                // 카테고리 수정 전
+                <BorderColorRoundedIcon
+                  fontSize='small'
+                  onClick={() => dispatch(setSelectedArchiveCategoryId({ id: item.id }))}
                   sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} />
               }
 
@@ -183,7 +181,7 @@ export default function EditArchiveCategory() {
       <CancelModal
         openState={editArchiveCategoryState}
         title='카테고리 삭제'
-        text1='해당 카테고리의 제품이 모두 삭제됩니다.'
+        text1='해당 카테고리의 제품 및 게시글이 모두 삭제됩니다.'
         text2='삭제하시겠습니까?'
         yesAction={() => {
           { selectedArchiveCategoryId && deleteArchiveCategory(selectedArchiveCategoryId) };

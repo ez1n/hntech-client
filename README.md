@@ -36,6 +36,7 @@ library
 * redux
 * Material-UI
 * react-dnd
+* react-pdf
 
 language
 * TypeScript

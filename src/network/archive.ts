@@ -57,7 +57,6 @@ class ArchiveApi {
   // 자료실 검색
   async getSearchArchive(categoryName: string | null, keyword: string, pageNumber: number) {
     const response = await axios.get(`/api/archive?${categoryName !== null ? `category=${categoryName}&` : ''}${keyword !== '' ? `keyword=${keyword}&` : ''}page=${pageNumber}`);
-    console.log(response)
     return response.data;
   }
 };

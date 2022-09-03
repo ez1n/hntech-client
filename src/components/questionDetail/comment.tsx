@@ -71,7 +71,8 @@ export default function Comment({ item, questionId }: propsType) {
       }}>
       {/*  댓글 내용 */}
       {commentModifyState === item.id ?
-        <>
+        <Stack sx={{ width: '100%' }}>
+          <Typography sx={{ fontSize: 20 }}>{item.writer}</Typography>
           <TextField
             defaultValue={currentComment.content}
             onChange={event => dispatch(updateComment({ content: event?.target.value }))}
@@ -92,7 +93,7 @@ export default function Comment({ item, questionId }: propsType) {
               취소
             </Button>
           </Stack>
-        </>
+        </Stack>
         :
         <Stack
           direction='column'

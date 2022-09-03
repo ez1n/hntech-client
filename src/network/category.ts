@@ -67,8 +67,12 @@ class CategoryApi {
   };
 
   // 자료실 카테고리 수정
-  async putUpdateArchiveCategory(categoryId: number, categoryData: {}) {
-    const response = await axios.put(`/api/category/${categoryId}`, categoryData);
+  async putUpdateArchiveCategory(categoryId: number, categoryData: FormData) {
+    const response = await axios.put(`/api/category/${categoryId}`, categoryData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data.categories;
   };
 };
