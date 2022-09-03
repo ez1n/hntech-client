@@ -42,7 +42,7 @@ interface productFormInitialState {
         path: string,
       }[],
       representativeImage: {
-        file: string,
+        file: string[],
         path: string | undefined
       },
       standardImages: {
@@ -62,7 +62,7 @@ const ProductFormInitialState: productFormInitialState = {
       docFiles: [],
       productImages: [],
       representativeImage: {
-        file: '',
+        file: [],
         path: undefined
       },
       standardImages: []
@@ -135,7 +135,10 @@ export const ProductFormSlice = createSlice({
     addRepProductImage: (
       state,
       action: PayloadAction<{ repProduct: { file: string, path: string } }>
-    ) => { state.productContent.files.representativeImage = action.payload.repProduct },
+    ) => {
+      const newFile = { file: [action.payload.repProduct.file], path: action.payload.repProduct.path };
+      state.productContent.files.representativeImage = newFile;
+    },
     addProductImage: (
       state,
       action: PayloadAction<{ product: { file: string, path: string } }>
@@ -244,7 +247,7 @@ export const ProductFormSlice = createSlice({
           docFiles: [],
           productImages: [],
           representativeImage: {
-            file: '',
+            file: [],
             path: undefined
           },
           standardImages: []

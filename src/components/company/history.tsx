@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { adminApi } from '../../network/admin';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { previewHistory, updateCompanyData, updateHistory } from '../../app/reducers/companyModifySlice';
+import { getHistoryImage, updateHistory } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
+import { api } from '../../network/network';
 
 export default function History() {
   const dispatch = useAppDispatch();
@@ -12,34 +13,26 @@ export default function History() {
   const historyForm = new FormData(); // 회사 연혁 (전송 데이터)
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const history = useAppSelector(state => state.companyModify.history); // 회사 연혁 state (받아온 데이터)
-  const historyPreview = useAppSelector(state => state.companyModify.historyPreview); // 회사 연혁 미리보기 state
-  const newData = useAppSelector(state => state.companyModify.newData); // 업로드한 데이터
-
-  // 임시
-  const image = '/images/organizationChart.png';
+  const history = useAppSelector(state => state.companyModify.companyImage.historyImage); // 회사 연혁 state (받아온 데이터)
 
   // 회사 연혁 받아오기
   useEffect(() => {
-    dispatch(updateHistory({ history: image }));
-    dispatch(previewHistory({ path: history.updatedServerFilename }));
+    adminApi.getHistory()
+      .then(res => dispatch(getHistoryImage({ historyImage: res })))
+      .catch(error => console.log(error))
   }, []);
 
-  // 회사 연혁 사진 업로드 -> 됐는지 확인해야함
+  // 회사 연혁 사진 업로드
   const updateHistoryImage = (event: any) => {
-    dispatch(previewHistory({ path: URL.createObjectURL(event.target.files[0]) }));
-    dispatch(updateCompanyData({ data: event.target.files[0] }))
+    dispatch(updateHistory({ file: event.target.files[0], path: URL.createObjectURL(event.target.files[0]) }))
   };
 
   // 회사연혁 변경 요청
-  const putHistory = () => {
-    historyForm.append('file', newData);
+  const postHistory = () => {
+    historyForm.append('file', history.file);
     historyForm.append('where', 'companyHistory');
-    adminApi.putHistory(historyForm)
-      .then(res => {
-        console.log(res); // get 요청 어떻게 하는지?
-        alert('등록되었습니다.');
-      })
+    adminApi.postHistory(historyForm)
+      .then(res => dispatch(getHistoryImage({ historyImage: res })))
   };
 
   return (
@@ -67,13 +60,13 @@ export default function History() {
                 type='file'
                 accept='image*'
                 id='historyInput'
-                onChange={event => updateHistoryImage(event)} />
+                onChange={updateHistoryImage} />
             </label>
-            {EditButton('수정', putHistory)}
+            {EditButton('수정', postHistory)}
           </>}
       </Spacing>
 
-      {/* 회사 연혁 => 수정할때 스크롤로 보이게 할지 아니면 그냥 높이 자체가 늘어나게 할지? */}
+      {/* 회사 연혁 */}
       <Box sx={{ textAlign: 'center' }}>
         {managerMode ?
           <Container
@@ -81,11 +74,12 @@ export default function History() {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              minHeight: 500
+              minHeight: 500,
+              overflow: 'scroll'
             }}>
-            <img src={historyPreview} alt='조직도' width={'80%'} />
+            <img src={history.path === '' ? `${api.baseUrl()}/files/admin/${history.serverFilename}` : history.path} alt='회사 연혁' width={'80%'} />
           </Container> :
-          <img className='companyImage' src={history.updatedServerFilename} alt='조직도' />
+          <img className='companyImage' src={`${api.baseUrl()}/files/admin/${history.serverFilename}`} alt='회사 연혁' />
         }
       </Box>
     </Box>

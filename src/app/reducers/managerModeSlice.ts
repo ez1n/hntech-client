@@ -291,6 +291,7 @@ export const ManagerSlice = createSlice({
       const newBanner = [...state.bannerFile, action.payload.banner];
       state.bannerFile = newBanner;
     },
+    resetBannerFile: (state) => { state.bannerFile = [] },
     deleteOriginBanner: (
       state,
       action: PayloadAction<{ num: number }>
@@ -356,6 +357,7 @@ export const {
   addLogoFile,
   setBanner,
   addBannerFile,
+  resetBannerFile,
   deleteOriginBanner,
   deleteBanner,
   setDocument,

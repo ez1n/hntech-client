@@ -1,5 +1,4 @@
 import React from 'react';
-import { fileApi } from '../../network/file';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -46,13 +45,14 @@ export default function ProductCategoryForm() {
 
   // 카테고리 등록
   const postProductCategory = () => {
-    productCategoryForm.append('file', productCategoryImage);
+    productCategoryForm.append('image', productCategoryImage);
     productCategoryForm.append('categoryName', productCategoryName);
     productCategoryForm.append('showInMain', productCategoryShowInMain);
-    productCategoryForm.append('type', 'product')
+    productCategoryForm.append('type', 'product');
 
     categoryApi.postCreateCategory(productCategoryForm)
       .then(res => {
+        console.log(productCategoryForm.get('file'))
         dispatch(addProductCategoryImage({ image: undefined }));
         navigate('/product');
       })

@@ -73,18 +73,8 @@ const CategoryInitialState: categoryInitialState = {
   productCategoryName: '',
   productCategoryImage: '',
   productCategoryShowInMain: 'false',
-  productMainCategories: [{
-    categoryName: '',
-    id: 0,
-    imageServerFilename: ''
-  },],
-  productCategories: [{
-    categoryName: '',
-    id: 0,
-    imageServerFilename: '',
-    imageOriginalFilename: '',
-    showInMain: 'false',
-  },],
+  productMainCategories: [],
+  productCategories: [],
   productCurrentCategory: {
     categoryName: '',
     id: 0,

@@ -96,6 +96,12 @@ class AdminApi {
     return response.data;
   };
 
+  // 회사 정보 받아오기
+  async getCompany() {
+    const response = await axios.get(`/api/admin/images`);
+    return response.data;
+  };
+
   // 인사말 받아오기
   async getIntroduce() {
     const response = await axios.get(`/api/admin/introduce`);
@@ -110,38 +116,50 @@ class AdminApi {
 
   // 조직도 받아오기
   async getOrgChart() {
-    const response = await axios.get(`/api`);
-    return response.data;
+    const response = await axios.get(`/api/admin/images`);
+    return response.data.orgChartImage;
   };
 
   // 조직도 변경
-  async putOrgChart(orgChart: FormData) {
+  async postOrgChart(orgChart: FormData) {
     const response = await axios.post(`/api/admin/image`, orgChart, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data;
+    return response.data.orgChartImage;
+  };
+
+  // 회사연혁 받아오기
+  async getHistory() {
+    const response = await axios.get(`/api/admin/images`);
+    return response.data.historyImage;
   };
 
   // 회사 연혁 변경
-  async putHistory(history: FormData) {
-    const response = await axios.put(`/api/admin/image`, history, {
+  async postHistory(history: FormData) {
+    const response = await axios.post(`/api/admin/image`, history, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data;
+    return response.data.historyImage;
+  };
+
+  // CI 소개 받아오기
+  async getCompanyInfo() {
+    const response = await axios.get(`/api/admin/images`);
+    return response.data.compInfoImage;
   };
 
   // CI 소개 변경
-  async putCompanyInfo(company: FormData) {
-    const response = await axios.put(`/api/admin/image`, company, {
+  async postCompanyInfo(company: FormData) {
+    const response = await axios.post(`/api/admin/image`, company, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data;
+    return response.data.compInfoImage;
   };
 };
 

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { adminApi } from '../../network/admin';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { previewCompanyInfo, updateCompanyData, updateCompanyInfo } from '../../app/reducers/companyModifySlice';
+import { getCompanyInfoImage, updateCompanyInfo } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
+import { api } from '../../network/network';
 
 export default function CompanyInfo() {
   const dispatch = useAppDispatch();
@@ -12,34 +13,27 @@ export default function CompanyInfo() {
   const ciForm = new FormData(); // CI 소개 (전송 데이터)
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const ci = useAppSelector(state => state.companyModify.ci); // CI 소개 state (받아온 데이터)
-  const ciPreview = useAppSelector(state => state.companyModify.ciPreview); // CI 소개 미리보기 state
-  const newData = useAppSelector(state => state.companyModify.newData); // 업로드한 데이터
-
-  // 임시
-  const image = '/images/organizationChart.png';
+  const companyInfo = useAppSelector(state => state.companyModify.companyImage.compInfoImage); // CI 소개 state (받아온 데이터)
 
   // CI 받아오기
   useEffect(() => {
-    dispatch(updateCompanyInfo({ ci: image }));
-    dispatch(previewCompanyInfo({ path: ci.updatedServerFilename }));
+    adminApi.getCompanyInfo()
+      .then(res => dispatch(getCompanyInfoImage({ companyInfoImage: res })))
+      .catch(error => console.log(error))
   }, []);
 
-  // CI 사진 업로드 -> 됐는지 확인해야함
+  // CI 사진 업로드
   const updateCompanyInfoImage = (event: any) => {
-    dispatch(previewCompanyInfo({ path: URL.createObjectURL(event.target.files[0]) }));
-    dispatch(updateCompanyData({ data: event.target.files[0] }))
+    dispatch(updateCompanyInfo({ file: event.target.files[0], path: URL.createObjectURL(event.target.files[0]) }));
   };
 
   // CI 변경 요청
-  const putCompanyInfo = () => {
-    ciForm.append('file', newData);
+  const postCompanyInfo = () => {
+    ciForm.append('file', companyInfo.file);
     ciForm.append('where', 'ci');
-    adminApi.putCompanyInfo(ciForm)
-      .then(res => {
-        console.log(res); // get 요청 어떻게 하는지?
-        alert('등록되었습니다.');
-      })
+    adminApi.postCompanyInfo(ciForm)
+      .then(res => dispatch(getCompanyInfoImage({ companyInfoImage: res })))
+      .catch(error => console.log(error))
   };
 
   return (
@@ -67,9 +61,9 @@ export default function CompanyInfo() {
                 type='file'
                 accept='image*'
                 id='orgChartInput'
-                onChange={event => updateCompanyInfoImage(event)} />
+                onChange={updateCompanyInfoImage} />
             </label>
-            {EditButton('수정', putCompanyInfo)}
+            {EditButton('수정', postCompanyInfo)}
           </>}
       </Spacing>
 
@@ -83,9 +77,9 @@ export default function CompanyInfo() {
               alignItems: 'center',
               minHeight: 300
             }}>
-            <img src={ciPreview} alt='조직도' width={'80%'} />
+            <img src={companyInfo.path === '' ? `${api.baseUrl()}/files/admin/${companyInfo.serverFilename}` : companyInfo.path} alt='Company Info' width={'80%'} />
           </Container> :
-          <img className='companyImage' src={ci.updatedServerFilename} alt='조직도' />
+          <img className='companyImage' src={`${api.baseUrl()}/files/admin/${companyInfo.serverFilename}`} alt='Company Info' />
         }
       </Box>
     </Box>

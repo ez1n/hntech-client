@@ -114,7 +114,7 @@ export default function ProductItem({ product, index }: propsType) {
   );
 
   // drop
-  const [, leftDrop] = useDrop(() => ({
+  const [, dropRef] = useDrop(() => ({
     accept: 'productItem',
     isDragging: () => {
       setProductId({ ...productId, draggedProductId: id });
@@ -146,7 +146,7 @@ export default function ProductItem({ product, index }: propsType) {
 
   return (
     <TotalBox>
-      <ProductBox ref={leftDrop}>
+      <ProductBox ref={dropRef}>
         {/* 제품 */}
         <ProductButton
           onClick={() => getProduct(id)}
@@ -154,7 +154,7 @@ export default function ProductItem({ product, index }: propsType) {
             opacity: isDragging ? 0.5 : 1,
             '&:focus': { cursor: managerMode ? 'grab' : 'pointer' }
           }}>
-          <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' alt={image.originalFilename} />
+          <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' height='100%' alt={image.originalFilename} />
           <Typography
             ref={dragRef}
             sx={{
@@ -228,7 +228,7 @@ const ProductBox = styled(Box)(() => ({
 // Item 버튼
 const ProductButton = styled(Button)(() => ({
   margin: 10,
-  width: '100%',
+  height: 200,
   color: '#0F0F0F',
   display: 'flex',
   flexDirection: 'column',

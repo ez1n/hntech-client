@@ -128,7 +128,7 @@ export default function ProductForm() {
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
     productForm.append('productName', productName);
-    productForm.append('representativeImage', representativeImage.file);
+    productForm.append('representativeImage', representativeImage.file[0]);
     standardImages.map(item => productForm.append('standardImages', item.file));
 
     productApi.postCreateProduct(productForm)

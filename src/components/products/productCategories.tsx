@@ -79,7 +79,7 @@ export default function ProductCategories() {
                   dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
                 }}>
                   {/* 카테고리 목록 */}
-                  <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt='카테고리 이미지' />
+                  <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt={value.imageOriginalFilename} />
                   <Typography sx={{
                     width: '100%',
                     pt: 1,

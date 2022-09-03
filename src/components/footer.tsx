@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './style.css';
 import { adminApi } from '../network/admin';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -19,6 +19,7 @@ import {
   DialogContentText,
   DialogTitle,
   Stack,
+  styled,
   TextField,
   Typography
 } from '@mui/material';
@@ -64,61 +65,52 @@ export default function Footer() {
   return (
     <Box sx={{ p: 3, pb: 0, mt: 10, backgroundColor: '#042709' }}>
       {/* 로고 */}
-      <Stack
-        direction='row'
-        spacing={2}
-        sx={{
-          m: 'auto',
-          mb: 3,
-          width: '60%',
-          display: 'flex',
-          alignItems: 'center'
-        }}>
+      <LogoStack direction='row' spacing={2}>
         <img className='logoImage' src={`${api.baseUrl()}/files/admin/${logo.serverFilename}`} alt='HNTECH logo' />
         <img className='logoKor' src='/images/korLogo.png' alt='korean logo' />
-      </Stack>
+      </LogoStack>
 
       {/* 회사 정보 */}
-      <Stack direction='row' sx={{ width: '60%', m: 'auto' }}>
-        <Box sx={{ width: 'max-content', flex: 0.7 }}>
-          <Typography sx={{ color: '#FCFCFC', opacity: 0.8, mb: 1 }}>
+      <FooterStack direction='row'>
+        <InfoBox>
+          <ContentTypography sx={{ mb: 1 }}>
             본사 : {footer.address}
-          </Typography>
+          </ContentTypography>
 
-          <Stack direction='row' spacing={3}>
-            <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
+          <ContentBox>
+            <ContentTypography>
               A/S : {footer.afterService}
-            </Typography>
+            </ContentTypography>
 
-            <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
+            <ContentTypography>
               TEL : {footer.phone}
-            </Typography>
+            </ContentTypography>
 
-            <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
+            <ContentTypography>
               FAX : {footer.fax}
-            </Typography>
-          </Stack>
+            </ContentTypography>
+          </ContentBox>
 
-          <Typography sx={{ color: '#FCFCFC', opacity: 0.8, mt: 2 }}>
+          <ContentTypography sx={{ mt: 2 }}>
             https://www.hntec.co.kr
-          </Typography>
-        </Box>
+          </ContentTypography>
+        </InfoBox>
 
         {/* FAMILY SITE */}
-        <Box sx={{ flex: 0.3, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Typography sx={{ color: '#FCFCFC', opacity: 0.8, mb: 1 }}>
+        <SiteBox>
+          <ContentTypography sx={{ mb: 1 }}>
             FAMILY SITE
-          </Typography>
+          </ContentTypography>
 
-          <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
+          <ContentTypography>
             한국소방산업기술원
-          </Typography>
+          </ContentTypography>
 
-          <Typography sx={{ color: '#FCFCFC', opacity: 0.8 }}>
+          <ContentTypography>
             한국소방안전협회
-          </Typography>
-        </Box>
-      </Stack>
+          </ContentTypography>
+        </SiteBox>
+      </FooterStack>
 
       {/* 관리자 모드 버튼 */}
       <Box
@@ -170,3 +162,60 @@ export default function Footer() {
   )
 };
 
+const LogoStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down('lg')]: {
+    width: '80% !important'
+  },
+  margin: 'auto',
+  marginBottom: 15,
+  width: '60%',
+  display: 'flex',
+  alignItems: 'center'
+})) as typeof Stack;
+
+const FooterStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down('lg')]: {
+    width: '80% !important'
+  },
+  width: '60%',
+  margin: 'auto'
+})) as typeof Stack;
+
+const InfoBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    flexWrap: 'wrap',
+    flex: 0.6,
+  },
+  width: 'max-content',
+  flex: 0.7
+})) as typeof Box;
+
+const ContentBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    flexWrap: 'wrap'
+  },
+  display: 'flex'
+})) as typeof Box;
+
+const ContentTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 'small'
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '10px',
+    marginRight: 10
+  },
+  color: '#FCFCFC',
+  opacity: 0.8,
+  marginRight: 15
+})) as typeof Typography;
+
+const SiteBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    flex: 0.4
+  },
+  flex: 0.3,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start'
+})) as typeof Box;

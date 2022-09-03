@@ -5,13 +5,11 @@
   height: 3rem;
 }
 
-
 /* footer */
 
 .logoKor {
   height: 2.3rem;
 }
-
 
 /* orgChart, history */
 
@@ -102,7 +100,6 @@
   background-color: rgba(239, 245, 241, 0.5);
 }
 
-
 /* archiveForm, noticeForm */
 
 .ck-editor__editable {
@@ -131,4 +128,21 @@
 #catalogInput,
 #approvalInput {
   display: none;
+}
+
+@media screen and (max-width: 900px) {
+  .logoImage {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .logoKor {
+    height: 2rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .logoKor {
+    height: 1.3rem;
+  }
 }

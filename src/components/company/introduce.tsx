@@ -17,18 +17,11 @@ export default function Introduce() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const introduce = useAppSelector(state => state.companyModify.introduce); // 인사말 state
 
-  // 임시
-  const comment = `
-  화재로부터 "인명", "재산"을 보호하는 소방용 기계기구를 제조, 보급하는 에이치엔테크는
-  화재안전보국을 기치로 "사람과 기술을 소중히하여 미래로의 연결"이란 창립이념을 바탕으로
-  항상 안전과 안심을 담보로 세상이 필요로하고 가치를 인정받는 제품으로 사회에 공헌하겠습니다.
-  - 주식회사 에이치엔테크 임직원 일동 -`
-
   // 인사말 받아오기
   useEffect(() => {
     adminApi.getIntroduce()
-      .then(res => dispatch(updateIntroduce({ newIntroduce: res.data.newIntroduce })));
-    dispatch(updateIntroduce({ newIntroduce: comment }));
+      .then(res => dispatch(updateIntroduce({ newIntroduce: res.data.newIntroduce })))
+      .catch(error => console.log(error))
   }, []);
 
   // 인사말 수정
@@ -36,7 +29,6 @@ export default function Introduce() {
     adminApi.putIntroduce(introduce)
       .then(res => {
         dispatch(updateIntroduce({ newIntroduce: res.newIntroduce }));
-        alert('수정되었습니다.');
       })
       .catch(error => console.log(error))
   };

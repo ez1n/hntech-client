@@ -118,7 +118,7 @@ export default function ProductModifyForm() {
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
     productForm.append('productName', productName);
-    productForm.append('representativeImage', representativeImage.file);
+    representativeImage.file.map(item => productForm.append('representativeImage', item));
     standardImages.map(item => productForm.append('standardImages', item.file));
 
     deleteProductId.map((item: { productId: number, fileId: number }) => (
