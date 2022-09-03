@@ -46,7 +46,7 @@ export default function ProductCategoryModifyForm() {
 
   // 카테고리 수정
   const putProductCategory = (categoryId: number) => {
-    productCategoryForm.append('file', productCategoryImage);
+    productCategoryForm.append('image', productCategoryImage);
     productCategoryForm.append('categoryName', productCurrentCategory.categoryName);
     productCategoryForm.append('showInMain', productCurrentCategory.showInMain);
 

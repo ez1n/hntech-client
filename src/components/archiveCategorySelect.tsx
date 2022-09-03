@@ -15,7 +15,7 @@ export default function ArchiveCategorySelect({ defaultCategory }: propsType) {
   return (
     <Select
       size={'small'}
-      defaultValue={defaultCategory ? defaultCategory : archiveCategory[0].categoryName}
+      defaultValue={defaultCategory ? defaultCategory : undefined}
       onChange={event => dispatch(updateArchiveCategory({ categoryName: event.target.value }))}
       sx={{ width: '18%', m: 1, textAlign: 'center' }}>
       {defaultCategory === '전체' && <MenuItem value={'전체'}>전체</MenuItem>}

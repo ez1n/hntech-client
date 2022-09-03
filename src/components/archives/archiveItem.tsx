@@ -77,11 +77,12 @@ export default function ArchiveItem() {
   // 자료 검색
   const getSearchArchive = () => {
     archiveApi.getSearchArchive(categoryName === '전체' ? null : categoryName, searchContent, 0)
-      .then(res => {
-        console.log(res)
-        dispatch(getAllArchives({ archives: res.archives, totalPage: res.totalPages, currentPage: res.currentPage }))
-      })
+      .then(res => dispatch(getAllArchives({ archives: res.archives, totalPage: res.totalPages, currentPage: res.currentPage })))
       .catch(error => console.log(error))
+  };
+
+  const onEnterKey = (event: any) => {
+    if (event.key === 'Enter') { getSearchArchive() };
   };
 
 
@@ -198,6 +199,7 @@ export default function ArchiveItem() {
           size='small'
           autoComplete='off'
           onChange={event => setSearchContent(event?.target.value)}
+          onKeyUp={onEnterKey}
           sx={{ width: '50%' }} />
         <SearchRoundedIcon
           onClick={getSearchArchive}

@@ -24,7 +24,8 @@ import {
   addApproval,
   addCatalog,
   updateDocument,
-  resetBannerFile
+  resetBannerFile,
+  setFooter
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -75,7 +76,7 @@ export default function FloatingButton() {
 
   // 기존 배너 삭제
   const deleteOriginBannerImage = (index: number, bannerName: string) => {
-    setDeleteBannerName([...deleteBannerName, { name: bannerName }])
+    setDeleteBannerName([...deleteBannerName, { name: bannerName }]);
     dispatch(deleteOriginBanner({ num: index }));
   };
 
@@ -94,6 +95,7 @@ export default function FloatingButton() {
       .then(res => {
         dispatch(setManagerData({ panelData: res }));
         dispatch(copyManagerData({ panelData: res }));
+        dispatch(setFooter({ footer: res.footer }));
       })
       .catch(error => console.log(error))
   };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../style.css';
 import { useNavigate } from 'react-router-dom';
 import { archiveApi } from '../../network/archive';
@@ -14,7 +14,8 @@ import {
   updateArchiveTitle,
   updateArchiveContent,
   updateArchiveNoticeChecked,
-  resetArchiveState
+  resetArchiveState,
+  resetArchiveFile
 } from '../../app/reducers/archiveFormSlice';
 import {
   Container,
@@ -41,6 +42,10 @@ export default function ArchiveForm() {
   const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용 state
   const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록 state
   const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
+
+  useEffect(() => {
+    dispatch(resetArchiveFile());
+  }, []);
 
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
@@ -78,55 +83,6 @@ export default function ArchiveForm() {
       .catch(error => {
         console.log('postCreateArchive', error);
       })
-
-    // 첨부파일 보내기
-    //   fileApi.postUploadAllFiles(archiveData, 'archive')
-    //     .then(res => { // 파일이 존재하는 경우
-    //       console.log('postUploadAllFiles', res.uploadedFiles);
-    //       // 게시글 내용 보내기
-    //       archiveApi.postCreateArchive({
-    //         categoryName: archiveContent.categoryName,
-    //         content: archiveContent.content,
-    //         files: res.uploadedFiles.map((item: {
-    //           id: number,
-    //           originalFilename: string,
-    //           serverFilename: string,
-    //           savedPath: string
-    //         }) => {
-    //           return item.serverFilename
-    //         }),
-    //         notice: archiveContent.notice,
-    //         title: archiveContent.title,
-    //       })
-    //         .then(res => {
-    //           console.log('postCreateArchive', res);
-    //           dispatch(resetArchiveState());
-    //           dispatch(resetArchiveFileData());
-    //           dispatch(resetArchiveFileName());
-    //           navigate('/archive');
-    //         })
-    //         .catch(error => console.log('postCreateArchive', error.config.data))
-    //     })
-    //     .catch(error => { // 파일이 존재하지 않는 경우
-    //       if (error.response.data.message.includes('specified as non-null is null')) {
-    //         // 게시글 내용 보내기
-    //         archiveApi.postCreateArchive({
-    //           categoryName: archiveContent.categoryName,
-    //           content: archiveContent.content,
-    //           files: [],
-    //           notice: archiveContent.notice,
-    //           title: archiveContent.title,
-    //         })
-    //           .then(res => {
-    //             dispatch(resetArchiveState());
-    //             dispatch(resetArchiveFileData());
-    //             navigate('/archive');
-    //           })
-    //           .catch(error => console.log('postCreateArchive', error))
-    //       } else { // 첨부파일 보내기 오류
-    //         console.log('postUploadAllFiles', error);
-    //       }
-    //     })
   };
 
   return (
