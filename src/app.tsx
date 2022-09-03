@@ -27,6 +27,7 @@ import QuestionModifyForm from './components/questionModifyForm/questionModifyFo
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
 import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
 import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
+import { getCompanyImage } from './app/reducers/companyModifySlice';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -48,13 +49,19 @@ export default function App() {
 
     // Logo
     adminApi.getLogo()
-      .then(res => { dispatch(setLogo({ logo: res })) })
+      .then(res => dispatch(setLogo({ logo: res })))
       .catch(error => console.log(error))
 
     // 카다록, 자재승인서
     adminApi.getDocument()
-      .then(res => { dispatch(setDocument({ document: res })) })
+      .then(res => dispatch(setDocument({ document: res })))
       .catch(error => console.log(error))
+
+    // 회사 소개 정보 받아오기
+    adminApi.getCompany()
+      .then(res => dispatch(getCompanyImage({ data: res })))
+      .catch(error => console.log(error))
+
     console.log('login') // 로그인 지속되는지.. 확인하는거..
   }, []);
 

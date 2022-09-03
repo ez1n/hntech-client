@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { adminApi } from '../../network/admin';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { updateOrgChart, previewOrgChart, updateCompanyData } from '../../app/reducers/companyModifySlice';
+import { getOrgChartImage, updateOrgChart } from '../../app/reducers/companyModifySlice';
 import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
+import { api } from '../../network/network';
 
 export default function OrgChart() {
   const dispatch = useAppDispatch();
@@ -12,34 +13,27 @@ export default function OrgChart() {
   const orgChartForm = new FormData(); // 조직도 (전송 데이터)
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const orgChart = useAppSelector(state => state.companyModify.orgChart); // 조직도 state (받아온 데이터)
-  const orgChartPreview = useAppSelector(state => state.companyModify.orgChartPreview); // 조직도 미리보기 state
-  const newData = useAppSelector(state => state.companyModify.newData); // 업로드한 데이터
-
-  // 임시
-  const image = '/images/organizationChart.png';
+  const orgChart = useAppSelector(state => state.companyModify.companyImage.orgChartImage); // 조직도 state (받아온 데이터)
 
   // 조직도 받아오기
   useEffect(() => {
-    dispatch(updateOrgChart({ orgChart: image }));
-    dispatch(previewOrgChart({ path: orgChart.updatedServerFilename }));
+    adminApi.getOrgChart()
+      .then(res => dispatch(getOrgChartImage({ orgChartImage: res })))
+      .catch(error => console.log(error))
   }, []);
 
   // 조직도 사진 업로드 -> 됐는지 확인해야함
   const updateOrgChartImage = (event: any) => {
-    dispatch(previewOrgChart({ path: URL.createObjectURL(event.target.files[0]) }));
-    dispatch(updateCompanyData({ data: event.target.files[0] }))
+    dispatch(updateOrgChart({ file: event.target.files[0], path: URL.createObjectURL(event.target.files[0]) }));
   };
 
   // 조직도 변경 요청
-  const putOrgChart = () => {
-    orgChartForm.append('file', newData);
+  const postOrgChart = () => {
+    orgChartForm.append('file', orgChart.file);
     orgChartForm.append('where', 'orgChart');
-    adminApi.putOrgChart(orgChartForm)
-      .then(res => {
-        console.log(res); // get 요청 어떻게 하는지?
-        alert('등록되었습니다.');
-      })
+    adminApi.postOrgChart(orgChartForm)
+      .then(res => dispatch(getOrgChartImage({ orgChartImage: res })))
+      .catch(error => console.log(error))
   };
 
   return (
@@ -61,14 +55,17 @@ export default function OrgChart() {
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         {managerMode &&
           <>
-            <label className='imageUploadButton' htmlFor='orgChartInput' onChange={event => updateOrgChartImage(event)}>
+            <label
+              className='imageUploadButton'
+              htmlFor='orgChartInput'
+              onChange={updateOrgChartImage}>
               이미지 가져오기
               <input
                 type='file'
                 accept='image*'
                 id='orgChartInput' />
             </label>
-            {EditButton('수정', putOrgChart)}
+            {EditButton('수정', postOrgChart)}
           </>}
       </Spacing>
 
@@ -82,9 +79,9 @@ export default function OrgChart() {
               alignItems: 'center',
               minHeight: 300
             }}>
-            <img src={orgChartPreview} alt='조직도' width={'80%'} />
+            <img src={orgChart.path === '' ? `${api.baseUrl()}/files/admin/${orgChart.serverFilename}` : orgChart.path} alt='조직도' width={'80%'} />
           </Container> :
-          <img className='companyImage' src={orgChart.updatedServerFilename} alt='조직도' />
+          <img className='companyImage' src={`${api.baseUrl()}/files/admin/${orgChart.serverFilename}`} alt='조직도' />
         }
       </Box>
     </Box>
