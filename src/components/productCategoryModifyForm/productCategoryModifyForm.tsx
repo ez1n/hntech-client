@@ -1,5 +1,4 @@
 import React from 'react';
-import { fileApi } from '../../network/file';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -46,21 +45,17 @@ export default function ProductCategoryModifyForm() {
   };
 
   // 카테고리 수정
-  const postProductCategory = (categoryId: number) => {
-    productCategoryForm.append('file', productCategoryImage)
-    fileApi.postUploadFile(productCategoryForm, 'category')
+  const putProductCategory = (categoryId: number) => {
+    productCategoryForm.append('file', productCategoryImage);
+    productCategoryForm.append('categoryName', productCurrentCategory.categoryName);
+    productCategoryForm.append('showInMain', productCurrentCategory.showInMain);
+
+    categoryApi.putUpdateProductCategory(categoryId, productCategoryForm)
       .then(res => {
-        categoryApi.putUpdateProductCategory(categoryId, {
-          categoryName: productCurrentCategory.categoryName,
-          imageServerFilename: res.serverFilename,
-          showInMain: productCurrentCategory.showInMain
-        })
-          .then(res => {
-            navigate('/product');
-            dispatch(updateProductCategoryImage({ categoryImage: '' }));
-          })
-          .catch(error => console.log(error))
+        navigate('/product');
+        dispatch(updateProductCategoryImage({ categoryImage: '' }));
       })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -153,7 +148,7 @@ export default function ProductCategoryModifyForm() {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('변경완료', () => postProductCategory(productCurrentCategory.id))}
+        {EditButton('변경완료', () => putProductCategory(productCurrentCategory.id))}
         {EditButton('변경취소', () => dispatch(clickProductCategoryFormGoBack()))}
       </Spacing>
 

@@ -49,7 +49,7 @@ export default function ProductCategoryForm() {
     productCategoryForm.append('file', productCategoryImage);
     productCategoryForm.append('categoryName', productCategoryName);
     productCategoryForm.append('showInMain', productCategoryShowInMain);
-    productCategoryForm.append('type', 'product')
+    productCategoryForm.append('type', 'product');
 
     categoryApi.postCreateCategory(productCategoryForm)
       .then(res => {

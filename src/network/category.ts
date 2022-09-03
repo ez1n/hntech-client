@@ -31,9 +31,13 @@ class CategoryApi {
   };
 
   // 제품 카테고리 수정
-  async putUpdateProductCategory(categoryId: number, categoryData: {}) {
-    const response = await axios.put(`/api/category/${categoryId}`, categoryData);
-    return response.data;
+  async putUpdateProductCategory(categoryId: number, categoryData: FormData) {
+    const response = await axios.put(`/api/category/${categoryId}`, categoryData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data.categories;
   };
 
   // 제품 카테고리 삭제
