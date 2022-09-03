@@ -22,6 +22,7 @@ export default function Representation() {
   useEffect(() => {
     categoryApi.getMainCategories()
       .then(res => {
+        console.log(res)
         dispatch(setMainCategories({ categories: res }))
       })
       .catch(error => console.warn(error))

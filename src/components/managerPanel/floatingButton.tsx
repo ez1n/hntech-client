@@ -23,7 +23,8 @@ import {
   addLogoFile,
   addApproval,
   addCatalog,
-  updateDocument
+  updateDocument,
+  resetBannerFile
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -113,16 +114,16 @@ export default function FloatingButton() {
     // 배너 삭제
     deleteBannerName.map((item: { name: string }) => (
       adminApi.deleteBanner(item.name)
-        .then(res => console.log(res))
+        .then(res => setDeleteBannerName([]))
         .catch(error => console.log(error))
     ))
 
     // 배너 정보 변경 요청
     adminApi.postBanner(bannerForm)
       .then(res => {
-        adminApi.getBanner()
-          .then(res => dispatch(setBanner({ banner: res })))
-          .catch(error => console.log('getBanner', error))
+        console.log(res)
+        dispatch(setBanner({ banner: res }));
+        dispatch(resetBannerFile());
       })
       .catch(error => console.log('postBanner', error))
   };
@@ -140,28 +141,13 @@ export default function FloatingButton() {
       .catch(error => console.log(error))
   };
 
-  // slide 나가기 이벤트
-  const closeDrawer = () => {
-    dispatch(clickEditGoBack());
-
-    // Banner 
-    adminApi.getBanner()
-      .then(res => dispatch(setBanner(res)))
-      .catch(error => console.log(error))
-
-    // Logo
-    adminApi.getLogo()
-      .then(res => dispatch(setLogo({ logo: res })))
-      .catch(error => console.log(error))
-  };
-
   return (
     <>
       {/* 플로팅 버튼 */}
       {managerMode &&
         <Fab
           variant='extended'
-          onClick={closeDrawer}
+          onClick={() => dispatch(clickEditGoBack())}
           sx={{
             position: 'fixed',
             right: 50,
@@ -321,7 +307,7 @@ export default function FloatingButton() {
             sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <LogoTitleBox>회사 로고</LogoTitleBox>
             <Typography sx={{ flex: 0.8, color: 'darkgrey' }}>
-              {logoFile ? logoFile.name : logo.originalFilename}
+              {logoFile.name !== '' ? logoFile.name : logo.originalFilename}
             </Typography>
             <label
               className='uploadButton'
@@ -362,12 +348,10 @@ export default function FloatingButton() {
                   <Typography sx={{ color: 'darkgrey' }}>
                     {item.name}
                   </Typography>
-                  {/* {(banner?.length + bannerFile.length) > 1 && */}
                   <ClearRoundedIcon
                     onClick={() => deleteBannerImage(index)}
                     fontSize='small'
                     sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
-                  {/* } */}
                 </Stack>
               ))}
             </Stack>
@@ -397,7 +381,7 @@ export default function FloatingButton() {
             sx={{ pt: 2, borderTop: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <LogoTitleBox sx={{ flex: 0.3 }}>카다록</LogoTitleBox>
             <Typography sx={{ flex: 0.6, color: 'darkgrey' }}>
-              {documentFile.catalog ? documentFile.catalog.name : documentName.catalogOriginalFilename}
+              {documentFile.catalog.name !== '' ? documentFile.catalog.name : documentName.catalogOriginalFilename}
             </Typography>
             <label
               className='uploadButton'
@@ -414,7 +398,7 @@ export default function FloatingButton() {
             sx={{ pb: 2, borderBottom: '2px solid rgba(46, 125, 50, 0.5)' }}>
             <LogoTitleBox sx={{ flex: 0.3 }}>자재승인서</LogoTitleBox>
             <Typography sx={{ flex: 0.6, color: 'darkgrey' }}>
-              {documentFile.approval ? documentFile.approval.name : documentName.materialOriginalFilename}
+              {documentFile.approval.name !== '' ? documentFile.approval.name : documentName.materialOriginalFilename}
             </Typography>
             <label
               className='uploadButton'
@@ -429,7 +413,7 @@ export default function FloatingButton() {
 
         <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
           {EditButton('변경', putUpdateDocumentInfo)}
-          {EditButton('나가기', closeDrawer)}
+          {EditButton('나가기', () => dispatch(clickEditGoBack()))}
         </Stack>
       </Drawer >
     </>

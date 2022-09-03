@@ -54,7 +54,7 @@ export default function App() {
 
     // 카다록, 자재승인서
     adminApi.getDocument()
-      .then(res => dispatch(setDocument({ document: res })))
+      .then(res => { dispatch(setDocument({ document: res })) })
       .catch(error => console.log(error))
 
     // 회사 소개 정보 받아오기
@@ -66,84 +66,86 @@ export default function App() {
   }, []);
 
   return (
-    <Box>
-      <BrowserRouter>
-        <Header />
-        <SideMenu />
+    <BrowserRouter>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+        <Box sx={{ flex: 1 }}>
+          <Header />
+          <SideMenu />
 
-        <Routes>
-          <Route path='/' element={
-            <Main />
-          }></Route>
+          <Routes>
+            <Route path='/' element={
+              <Main />
+            }></Route>
 
-          <Route path='/company' element={
-            <Company />
-          }></Route>
+            <Route path='/company' element={
+              <Company />
+            }></Route>
 
-          <Route path='/product' element={
-            <Products />
-          }></Route>
+            <Route path='/product' element={
+              <Products />
+            }></Route>
 
-          <Route path='/product-detail' element={
-            <ProductDetail />
-          }></Route>
+            <Route path='/product-detail' element={
+              <ProductDetail />
+            }></Route>
 
-          <Route path='/product-form' element={
-            managerMode && <ProductForm />
-          }></Route>
+            <Route path='/product-form' element={
+              managerMode && <ProductForm />
+            }></Route>
 
-          <Route path='/product-modify' element={
-            managerMode && <ProductModifyForm />
-          }></Route>
+            <Route path='/product-modify' element={
+              managerMode && <ProductModifyForm />
+            }></Route>
 
-          <Route path='/productCategory-form' element={
-            managerMode && <ProductCategoryForm />
-          }></Route>
+            <Route path='/productCategory-form' element={
+              managerMode && <ProductCategoryForm />
+            }></Route>
 
-          <Route path='/productCategory-modify' element={
-            managerMode && <ProductCategoryModifyForm />
-          }></Route>
+            <Route path='/productCategory-modify' element={
+              managerMode && <ProductCategoryModifyForm />
+            }></Route>
 
-          <Route path='/data' element={
-            <MainData />
-          }></Route>
+            <Route path='/data' element={
+              <MainData />
+            }></Route>
 
-          <Route path='/question' element={
-            <Questions />
-          }></Route>
+            <Route path='/question' element={
+              <Questions />
+            }></Route>
 
-          <Route path='/question-form' element={
-            <QuestionForm />
-          }></Route>
+            <Route path='/question-form' element={
+              <QuestionForm />
+            }></Route>
 
-          <Route path='/question-modify' element={
-            <QuestionModifyForm />
-          }></Route>
+            <Route path='/question-modify' element={
+              <QuestionModifyForm />
+            }></Route>
 
-          <Route path='/question-detail' element={
-            <QuestionDetail />
-          }></Route>
+            <Route path='/question-detail' element={
+              <QuestionDetail />
+            }></Route>
 
-          <Route path='/archive' element={
-            <Archives />
-          }></Route>
+            <Route path='/archive' element={
+              <Archives />
+            }></Route>
 
-          <Route path='/archive-form' element={
-            managerMode && <ArchiveForm />
-          }></Route>
+            <Route path='/archive-form' element={
+              managerMode && <ArchiveForm />
+            }></Route>
 
-          <Route path='/archive-modify' element={
-            managerMode && <ArchiveModifyForm />
-          }></Route>
+            <Route path='/archive-modify' element={
+              managerMode && <ArchiveModifyForm />
+            }></Route>
 
-          <Route path='/archive-detail' element={
-            <ArchiveDetail />
-          }></Route>
-        </Routes>
+            <Route path='/archive-detail' element={
+              <ArchiveDetail />
+            }></Route>
+          </Routes>
 
-        <FloatingButton />
+          <FloatingButton />
+        </Box>
         <Footer />
-      </BrowserRouter>
-    </Box>
+      </Box>
+    </BrowserRouter>
   )
 };

@@ -38,7 +38,7 @@ export default function Banner() {
   )
 };
 const TotalBox = styled(Box)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
+  // screen width - xs: 0px ~, sm: 600px ~, md: 900px ~, lg: 1200px ~, xl: 1920px ~
   [theme.breakpoints.down('lg')]: {
     width: '100% !important',
     height: '50% !important'
@@ -55,30 +55,8 @@ const TotalBox = styled(Box)(({ theme }) => ({
 })) as typeof Box;
 
 const BannerBox = styled(Box)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
-  [theme.breakpoints.down('lg')]: {
-    height: '100% !important'
+  [theme.breakpoints.down('xl')]: {
+    height: '80% !important'
   },
-  [theme.breakpoints.down('md')]: {
-    height: '100% !important'
-  },
-  [theme.breakpoints.down('sm')]: {
-    height: '100% !important'
-  },
-  height: '100%'
+  height: '80%'
 })) as typeof Box;
-
-const MainTypography = styled(Typography)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
-  [theme.breakpoints.down('lg')]: {
-    fontSize: '30px !important'
-  },
-  [theme.breakpoints.down('md')]: {
-    fontSize: '25px !important'
-  },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: '20px !important'
-  },
-  fontSize: 40,
-  color: '#FCFCFC'
-})) as typeof Typography;
