@@ -139,10 +139,18 @@
   .logoKor {
     height: 2rem;
   }
+
+  .CIImage {
+    width: 10%
+  }
 }
 
 @media screen and (max-width: 600px) {
   .logoKor {
     height: 1.3rem;
+  }
+
+  .CIImage {
+    display: none;
   }
 }

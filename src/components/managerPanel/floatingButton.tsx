@@ -123,7 +123,6 @@ export default function FloatingButton() {
     // 배너 정보 변경 요청
     adminApi.postBanner(bannerForm)
       .then(res => {
-        console.log(res)
         dispatch(setBanner({ banner: res }));
         dispatch(resetBannerFile());
       })

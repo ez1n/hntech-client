@@ -44,7 +44,7 @@ export default function App() {
 
     // Banner 
     adminApi.getBanner()
-      .then(res => dispatch(setBanner({ banner: res })))
+      .then(res => { dispatch(setBanner({ banner: res })); console.log(res) })
       .catch(error => console.log(error))
 
     // Logo

@@ -8,18 +8,12 @@ export default function Location() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
 
   return (
-    <Box p={5}>
+    <TotalBox>
       {/* 소제목 */}
       <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Typography
-          variant='h5'
-          sx={{
-            p: 1,
-            width: 'max-content',
-            borderBottom: '3px solid #2E7D32',
-          }}>
+        <TitleTypography variant='h5'>
           찾아오시는 길
-        </Typography>
+        </TitleTypography>
       </Container>
 
       {/* 수정 버튼 */}
@@ -31,10 +25,33 @@ export default function Location() {
       <Container>
 
       </Container>
-    </Box>
+    </TotalBox>
   )
 };
 
-const Spacing = styled(Container)(() => ({
+const Spacing = styled(Container)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    height: 20
+  },
   height: 50
 })) as typeof Container;
+
+const TotalBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    padding: 10,
+  },
+  padding: 20,
+  paddingBottom: 0
+})) as typeof Box;
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  padding: 1,
+  width: 'max-content',
+  borderBottom: '3px solid #2E7D32',
+})) as typeof Typography;
