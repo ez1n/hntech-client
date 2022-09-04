@@ -71,10 +71,10 @@ export default function EditArchiveCategory() {
   };
 
   // 카테고리 이름 수정
-  const editArchiveCategory = (categoryId: number, categoryName: string) => {
+  const editArchiveCategory = (categoryId: number, categoryName: string, showInMain: string) => {
     categoryForm.append('categoryName', categoryName);
     [].map(item => categoryForm.append('image', item));
-    categoryForm.append('showInMain', 'false')
+    categoryForm.append('showInMain', showInMain)
     categoryApi.putUpdateArchiveCategory(categoryId, categoryForm)
       .then(res => {
         dispatch(setSelectedArchiveCategoryId({ id: undefined }));
@@ -112,7 +112,7 @@ export default function EditArchiveCategory() {
             height: 150,
             overflow: 'auto',
           }}>
-          {archiveCategory.map((item: { id: number, categoryName: string }) => (
+          {archiveCategory.map((item: { id: number, categoryName: string, showInMain: string }) => (
             <Stack
               key={item.id}
               direction='row'
@@ -134,7 +134,7 @@ export default function EditArchiveCategory() {
                 // 카테고리 수정 중
                 <CheckCircleRoundedIcon
                   fontSize='small'
-                  onClick={() => editArchiveCategory(item.id, categoryNameRef.current.value)}
+                  onClick={() => editArchiveCategory(item.id, categoryNameRef.current.value, item.showInMain)}
                   sx={{ color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15 }} /> :
                 // 카테고리 수정 전
                 <BorderColorRoundedIcon

@@ -36,7 +36,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  */
 
 interface categoryInitialState {
-  archiveCategory: { id: number, categoryName: string }[],
+  archiveCategory: { id: number, categoryName: string, showInMain: string }[],
   selectedArchiveCategoryId: number | undefined,
   productCategoryImagePath: string | undefined,
   productCategoryName: string,
@@ -67,7 +67,7 @@ interface categoryInitialState {
 };
 
 const CategoryInitialState: categoryInitialState = {
-  archiveCategory: [{ id: 0, categoryName: '' },],
+  archiveCategory: [{ id: 0, categoryName: '', showInMain: '' },],
   selectedArchiveCategoryId: undefined,
   productCategoryImagePath: undefined,
   productCategoryName: '',
@@ -93,7 +93,7 @@ export const CategorySlice = createSlice({
   reducers: {
     getArchiveCategory: (
       state,
-      action: PayloadAction<{ categories: { id: number, categoryName: string }[] }>
+      action: PayloadAction<{ categories: { id: number, categoryName: string, showInMain: string }[] }>
     ) => { state.archiveCategory = action.payload.categories },
     setSelectedArchiveCategoryId: (
       state,

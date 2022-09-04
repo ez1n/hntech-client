@@ -23,6 +23,7 @@ import {
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import { api } from '../../network/network';
 
 export default function ProductCategoryModifyForm() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function ProductCategoryModifyForm() {
 
   // 카테고리 수정
   const putProductCategory = (categoryId: number) => {
-    productCategoryForm.append('image', productCategoryImage);
+    productCategoryImage === '' ? [].map(item => productCategoryForm.append('image', item)) : productCategoryForm.append('image', productCategoryImage);
     productCategoryForm.append('categoryName', productCurrentCategory.categoryName);
     productCategoryForm.append('showInMain', productCurrentCategory.showInMain);
 
@@ -128,17 +129,12 @@ export default function ProductCategoryModifyForm() {
             }}>
             {productCategoryImagePath ?
               <Box sx={{ width: '23%', m: 1 }}>
-                <Box sx={{ textAlign: 'end' }}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteProductCategoryImage())}
-                    sx={{ color: 'darkgreen', cursor: 'pointer' }} />
-                </Box>
                 {/* 수정 */}
                 <img src={productCategoryImagePath} alt='제품 사진' width='100%' />
               </Box> :
-              <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>
-                제품 사진 미리보기
-              </Typography>
+              <Box sx={{ width: '23%', m: 1 }}>
+                <img src={`${api.baseUrl()}/files/category/${productCurrentCategory.imageServerFilename}`} alt='제품 사진' width='100%' />
+              </Box>
             }
           </Container>
         </Box>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { api } from '../../network/network';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
@@ -18,16 +18,6 @@ export default function Representation() {
 
   const productMainCategories = useAppSelector(state => state.category.productMainCategories); // 메인 카테고리 목록
 
-  // 메인 카테고리 받아오기
-  useEffect(() => {
-    categoryApi.getMainCategories()
-      .then(res => {
-        console.log(res)
-        dispatch(setMainCategories({ categories: res }))
-      })
-      .catch(error => console.warn(error))
-  }, [])
-
   // 제품 버튼 클릭 이벤트 (페이지 이동)
   const onClickButton = (categoryName: string) => {
     dispatch(selectProductCategoryTrue());
@@ -42,13 +32,13 @@ export default function Representation() {
         width: '85%',
         display: 'flex',
         flexWrap: 'wrap',
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
         alignItems: 'center'
       }}>
-        <Container sx={{ width: '33%', m: 0, textAlign: 'start', userSelect: 'none' }}>
-          <Typography sx={{ fontSize: 25 }}>우리는</Typography>
-          <Typography sx={{ fontSize: 25 }}>이런 제품을 제작합니다.</Typography>
-        </Container>
+        <MainTypographyContainer>
+          <MainTypography>우리는</MainTypography>
+          <MainTypography>이런 제품을 제작합니다.</MainTypography>
+        </MainTypographyContainer>
 
         {/* 메인 카테고리 */}
         {productMainCategories?.map((item: { categoryName: string, id: number, imageServerFilename: string }) => (
@@ -99,16 +89,40 @@ export default function Representation() {
   )
 };
 
+const MainTypographyContainer = styled(Container)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    width: '100% !important',
+    display: 'flex',
+    margin: 30
+  },
+  [theme.breakpoints.down('sm')]: {
+    margin: 10
+  },
+  width: '33%',
+  margin: 0,
+  textAlign: 'start',
+  userSelect: 'none'
+})) as typeof Container;
+
+const MainTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 22
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 15
+  },
+  fontSize: 25
+})) as typeof Typography;
+
 // 메인 버튼
 const RepProductionButton = styled(ButtonBase)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('md')]: {
     width: '50% !important',
     height: 100
   },
   [theme.breakpoints.down('sm')]: {
-    width: '100% !important',
-    height: 100
+    width: '80% !important',
+    height: 60
   },
   '&:hover': {
     '& .MuiImageBackdrop-root': {

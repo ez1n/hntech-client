@@ -3,7 +3,7 @@ import { categoryApi } from './network/category';
 import { adminApi } from './network/admin';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './app/hooks';
-import { setAllProductCategories } from './app/reducers/categorySlice';
+import { setAllProductCategories, setMainCategories } from './app/reducers/categorySlice';
 import { setBanner, setDocument, setFooter, setLogo } from './app/reducers/managerModeSlice';
 import { Box } from '@mui/material';
 import Header from './components/header';
@@ -34,6 +34,10 @@ export default function App() {
   const managerMode = useAppSelector(state => state.manager.managerMode);
 
   useEffect(() => {
+    // 메인 카테고리 목록
+    categoryApi.getMainCategories()
+      .then(res => dispatch(setMainCategories({ categories: res })))
+
     // 제품 카테고리 목록
     categoryApi.getAllProductCategories()
       .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
@@ -44,23 +48,19 @@ export default function App() {
 
     // Banner 
     adminApi.getBanner()
-      .then(res => { dispatch(setBanner({ banner: res })); console.log(res) })
-      .catch(error => console.log(error))
+      .then(res => dispatch(setBanner({ banner: res })))
 
     // Logo
     adminApi.getLogo()
       .then(res => dispatch(setLogo({ logo: res })))
-      .catch(error => console.log(error))
 
     // 카다록, 자재승인서
     adminApi.getDocument()
       .then(res => { dispatch(setDocument({ document: res })) })
-      .catch(error => console.log(error))
 
     // 회사 소개 정보 받아오기
     adminApi.getCompany()
       .then(res => dispatch(getCompanyImage({ data: res })))
-      .catch(error => console.log(error))
 
     console.log('login') // 로그인 지속되는지.. 확인하는거..
   }, []);

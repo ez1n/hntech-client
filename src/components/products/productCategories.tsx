@@ -79,7 +79,9 @@ export default function ProductCategories() {
                   dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
                 }}>
                   {/* 카테고리 목록 */}
-                  <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt={value.imageOriginalFilename} />
+                  <Box sx={{ height: 150 }}>
+                    <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt={value.imageOriginalFilename} width='100%' height='100%' />
+                  </Box>
                   <Typography sx={{
                     width: '100%',
                     pt: 1,
@@ -114,14 +116,14 @@ export default function ProductCategories() {
                 }
               </ContainerBox>
             ))}
-
-            {/* 추가 버튼 */}
-            {managerMode &&
-              <AddButton onClick={() => navigate('/productCategory-form')}>
-                <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
-              </AddButton>
-            }
           </Box>
+
+          {/* 추가 버튼 */}
+          {managerMode &&
+            <AddButton onClick={() => navigate('/productCategory-form')}>
+              <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
+            </AddButton>
+          }
         </>
       }
 
@@ -179,7 +181,6 @@ export default function ProductCategories() {
 };
 
 const ContainerBox = styled(Box)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('lg')]: {
     width: '30% !important'
   },
@@ -190,12 +191,14 @@ const ContainerBox = styled(Box)(({ theme }) => ({
     width: '90% !important'
   },
   width: '23%',
-  margin: 1
+  margin: 1,
 })) as typeof Box;
 
 // Image 버튼
 const CategoryButton = styled(Button)(() => ({
   width: '100%',
+  overflow: 'hidden',
+  height: 200,
   color: '#0F0F0F',
   display: 'flex',
   flexDirection: 'column',
@@ -209,7 +212,6 @@ const CategoryButton = styled(Button)(() => ({
 
 // 추가 버튼
 const AddButton = styled(Button)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('lg')]: {
     width: '30% !important'
   },
