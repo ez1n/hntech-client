@@ -34,18 +34,12 @@ export default function Introduce() {
   };
 
   return (
-    <Box sx={{ p: 5, pb: 0 }}>
+    <TotalBox>
       {/* 소제목 */}
       <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Typography
-          variant='h5'
-          sx={{
-            p: 1,
-            width: 'max-content',
-            borderBottom: '3px solid #2E7D32',
-          }}>
+        <TitleTypography variant='h5'>
           인사말
-        </Typography>
+        </TitleTypography>
       </Container>
 
       {/* 수정 버튼 */}
@@ -72,20 +66,50 @@ export default function Introduce() {
         </Container> :
         <Container sx={{ textAlign: 'center' }}>
           {introduce.newIntroduce.split('\n').map((value, index) => (
-            <Typography sx={{
-              fontSize: 18,
-              mb: 5,
-              textAlign: 'center'
-            }}
-              key={index}>
+            <IntroduceContentTypography key={index}>
               {value}
-            </Typography>
+            </IntroduceContentTypography>
           ))}
         </Container>}
-    </Box>
+    </TotalBox>
   )
 };
 
-const Spacing = styled(Container)(() => ({
+const Spacing = styled(Container)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    height: 20
+  },
   height: 50
 })) as typeof Container;
+
+const TotalBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    padding: 10,
+  },
+  padding: 20,
+  paddingBottom: 0
+})) as typeof Box;
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  padding: 1,
+  width: 'max-content',
+  borderBottom: '3px solid #2E7D32',
+})) as typeof Typography;
+
+const IntroduceContentTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 15
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 12
+  },
+  fontSize: 18,
+  marginBottom: 20,
+  textAlign: 'center'
+})) as typeof Typography;

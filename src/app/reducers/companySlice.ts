@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // 회사소개
 
@@ -12,6 +12,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * clickChangeOrgChart : 조직도
  * clickChangeInfo : CI소개
  * clickChangeLocation : 찾아오시는 길
+ * clickChangeMode : 모바일 버전
  */
 
 interface modeInitialState {
@@ -30,9 +31,18 @@ export const ModeSlice = createSlice({
     clickChangeHistory: state => { state.mode = 'HISTORY' },
     clickChangeOrgChart: state => { state.mode = 'CHART' },
     clickChangeInfo: state => { state.mode = 'INFORMATION' },
-    clickChangeLocation: state => { state.mode = 'LOCATION' }
+    clickChangeLocation: state => { state.mode = 'LOCATION' },
+    clickChangeMode: (
+      state,
+      action: PayloadAction<{ mode: string }>) => { state.mode = action.payload.mode }
   }
 });
 
-export const { clickChangeIntroduce, clickChangeHistory, clickChangeOrgChart, clickChangeInfo, clickChangeLocation } = ModeSlice.actions;
+export const {
+  clickChangeIntroduce,
+  clickChangeHistory,
+  clickChangeOrgChart,
+  clickChangeInfo,
+  clickChangeLocation,
+  clickChangeMode } = ModeSlice.actions;
 export default ModeSlice.reducer;

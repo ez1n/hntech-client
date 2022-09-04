@@ -1,80 +1,107 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   clickChangeIntroduce,
   clickChangeHistory,
   clickChangeOrgChart,
   clickChangeInfo,
-  clickChangeLocation
+  clickChangeLocation,
+  clickChangeMode
 } from '../../app/reducers/companySlice';
 import { styled } from '@mui/system';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, MenuItem, Select, Stack, Typography } from '@mui/material';
 
 export default function CompanySideMenu() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const companyMode = useAppSelector(state => state.company.mode);
+
   return (
-    <Box sx={{
-      ml: '50%',
-      pt: 1,
-      pb: 1,
-      mt: 5,
-      borderLeft: '4px solid rgb(46, 125, 50)'
-    }}>
+    <SideMenuBox>
 
-      {/* title (회사소개) */}
-      <Container>
-        <Typography
-          variant='h5'
-          sx={{
-            pl: 1,
-            pb: 2
-          }}>
-          회사소개
-        </Typography>
-      </Container>
+      <TitleStack>
+        {/* title (회사소개) */}
+        <Container sx={{ width: 'max-content' }}>
+          <Typography
+            variant='h5' sx={{ pl: 1, pb: 2, width: 'max-content' }}>
+            회사소개
+          </Typography>
+        </Container>
 
-      {/* 하위 메뉴 */}
-      <MenuButton onClick={() => {
-        dispatch(clickChangeIntroduce())
-        navigate('/company');
-      }}>
-        인사말
-      </MenuButton>
-      <MenuButton onClick={() => {
-        dispatch(clickChangeHistory())
-        navigate('/company');
-      }}>
-        회사 연혁
-      </MenuButton>
-      <MenuButton onClick={() => {
-        dispatch(clickChangeOrgChart())
-        navigate('/company');
-      }}>
-        조직도
-      </MenuButton>
-      <MenuButton onClick={() => {
-        dispatch(clickChangeInfo())
-        navigate('/company');
-      }}>
-        CI 소개
-      </MenuButton>
-      <MenuButton onClick={() => {
-        dispatch(clickChangeLocation())
-        navigate('/company');
-      }}>
-        찾아오시는 길
-      </MenuButton>
-    </Box>
+        {/* 하위 메뉴 */}
+        <MenuButton onClick={() => {
+          dispatch(clickChangeIntroduce());
+          navigate('/company');
+        }}>
+          인사말
+        </MenuButton>
+        <MenuButton onClick={() => {
+          dispatch(clickChangeHistory());
+          navigate('/company');
+        }}>
+          회사 연혁
+        </MenuButton>
+        <MenuButton onClick={() => {
+          dispatch(clickChangeOrgChart());
+          navigate('/company');
+        }}>
+          조직도
+        </MenuButton>
+        <MenuButton onClick={() => {
+          dispatch(clickChangeInfo());
+          navigate('/company');
+        }}>
+          CI 소개
+        </MenuButton>
+        <MenuButton onClick={() => {
+          dispatch(clickChangeLocation());
+          navigate('/company');
+        }}>
+          찾아오시는 길
+        </MenuButton>
+      </TitleStack>
+
+      {/* 900px 이하 */}
+
+      <MenuSelect
+        defaultValue={companyMode}
+        onChange={event => dispatch(clickChangeMode({ mode: event.target.value }))}
+        size='small'>
+        <MenuList value='INTRODUCE' onChange={() => dispatch(clickChangeIntroduce())}>인사말</MenuList>
+        <MenuList value='HISTORY' onChange={() => dispatch(clickChangeHistory())}>회사연혁</MenuList>
+        <MenuList value='CHART' onChange={() => dispatch(clickChangeOrgChart())}> 조직도</MenuList >
+        <MenuList value='INFORMATION' onChange={() => dispatch(clickChangeInfo())}>CI 소개</MenuList>
+        <MenuList value='LOCATION' onChange={() => dispatch(clickChangeLocation())}>찾아오시는 길</MenuList>
+      </MenuSelect>
+    </SideMenuBox >
   )
 };
+
+const SideMenuBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    justifyContent: 'center',
+  },
+  paddingTop: 1,
+  paddingBottom: 1,
+  marginTop: 5,
+  display: 'flex',
+  justifyContent: 'flex-end'
+})) as typeof Box;
+
+const TitleStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    borderLeft: 'none',
+    display: 'none'
+  },
+  borderLeft: '4px solid rgb(46, 125, 50)'
+})) as typeof Stack;
 
 const MenuButton = styled(Button)(() => ({
   padding: 10,
   marginLeft: 20,
-  width: '100%',
+  width: 'max-content',
   color: '#0F0F0F',
   fontSize: 15,
   marginBottom: 2,
@@ -86,4 +113,18 @@ const MenuButton = styled(Button)(() => ({
     transform: 'scale(1.02)',
     fontWeight: 'bold'
   }
-}))
+})) as typeof Button;
+
+const MenuSelect = styled(Select)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'flex',
+    width: '80%'
+  },
+  display: 'none',
+  textAlign: 'center',
+  margin: 20
+}));
+
+const MenuList = styled(MenuItem)(() => ({
+  justifyContent: 'center'
+})) as typeof MenuItem;
