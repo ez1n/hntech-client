@@ -18,15 +18,6 @@ export default function Products() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
-  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
-
-  //제품 목록 받아오기
-  useEffect(() => {
-    dispatch(resetProductForm());
-    productApi.getAllProducts(currentProductCategoryName)
-      .then(res => dispatch(getProductList({ productList: res })))
-      .catch(error => console.log(error))
-  }, [currentProductCategoryName]);
 
   return (
     <Box sx={{ display: 'flex', ml: 25, mr: 25 }}>
