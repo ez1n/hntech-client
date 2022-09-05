@@ -11,20 +11,33 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useNavigate } from 'react-router-dom';
 import { resetProductForm } from '../../app/reducers/productFormSlice';
 
-export default function Products() {
+interface propsType {
+  successDelete: () => void
+}
+
+export default function Products({ successDelete }: propsType) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
+  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
+
+  //제품 목록 받아오기
+  useEffect(() => {
+    dispatch(resetProductForm());
+    productApi.getAllProducts(currentProductCategoryName)
+      .then(res => dispatch(getProductList({ productList: res })))
+      .catch(error => console.log(error))
+  }, [currentProductCategoryName]);
 
   return (
     <Box sx={{ display: 'flex', ml: 25, mr: 25 }}>
       {!productCategorySelected &&
         <Box sx={{ p: 5, margin: 'auto', width: '100%', }}>
           {/* 카테고리 */}
-          <ProductCategories />
+          <ProductCategories successDelete={successDelete} />
         </Box>
       }
 
@@ -40,7 +53,7 @@ export default function Products() {
               borderLeft: '4px solid rgb(46, 125, 50)',
               minWidth: '130px'
             }}>
-              <ProductCategories />
+              <ProductCategories successDelete={successDelete} />
             </Box>
           </Box>
 

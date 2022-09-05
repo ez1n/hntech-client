@@ -28,6 +28,7 @@ import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm'
 import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
 import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
 import { getCompanyImage } from './app/reducers/companyModifySlice';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -65,9 +66,20 @@ export default function App() {
     console.log('login') // 로그인 지속되는지.. 확인하는거..
   }, []);
 
+  // toast
+  const success = () => toast.success('등록되었습니다.');
+  const successDelete = () => toast.success('삭제되었습니다.');
+  const successModify = () => toast.success('변경되었습니다.');
+  const successAnswer = () => toast.success('답변 완료 처리되었습니다.');
+
   return (
     <BrowserRouter>
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+        <ToastContainer
+          position="top-center"
+          autoClose={1500}
+        />
+
         <Box sx={{ flex: 1 }}>
           <Header />
           <SideMenu />
@@ -78,31 +90,31 @@ export default function App() {
             }></Route>
 
             <Route path='/company' element={
-              <Company />
+              <Company success={success} />
             }></Route>
 
             <Route path='/product' element={
-              <Products />
+              <Products successDelete={successDelete} />
             }></Route>
 
             <Route path='/product-detail' element={
-              <ProductDetail />
+              <ProductDetail successDelete={successDelete} />
             }></Route>
 
             <Route path='/product-form' element={
-              managerMode && <ProductForm />
+              managerMode && <ProductForm success={success} />
             }></Route>
 
             <Route path='/product-modify' element={
-              managerMode && <ProductModifyForm />
+              managerMode && <ProductModifyForm successModify={successModify} />
             }></Route>
 
             <Route path='/productCategory-form' element={
-              managerMode && <ProductCategoryForm />
+              managerMode && <ProductCategoryForm success={success} />
             }></Route>
 
             <Route path='/productCategory-modify' element={
-              managerMode && <ProductCategoryModifyForm />
+              managerMode && <ProductCategoryModifyForm successModify={successModify} />
             }></Route>
 
             <Route path='/data' element={
@@ -114,15 +126,15 @@ export default function App() {
             }></Route>
 
             <Route path='/question-form' element={
-              <QuestionForm />
+              <QuestionForm success={success} />
             }></Route>
 
             <Route path='/question-modify' element={
-              <QuestionModifyForm />
+              <QuestionModifyForm successModify={successModify} />
             }></Route>
 
             <Route path='/question-detail' element={
-              <QuestionDetail />
+              <QuestionDetail successAnswer={successAnswer} successDelete={successDelete} />
             }></Route>
 
             <Route path='/archive' element={
@@ -130,19 +142,19 @@ export default function App() {
             }></Route>
 
             <Route path='/archive-form' element={
-              managerMode && <ArchiveForm />
+              managerMode && <ArchiveForm success={success} />
             }></Route>
 
             <Route path='/archive-modify' element={
-              managerMode && <ArchiveModifyForm />
+              managerMode && <ArchiveModifyForm successModify={successModify} />
             }></Route>
 
             <Route path='/archive-detail' element={
-              <ArchiveDetail />
+              <ArchiveDetail successDelete={successDelete} />
             }></Route>
           </Routes>
 
-          <FloatingButton />
+          <FloatingButton successModify={successModify} />
         </Box>
         <Footer />
       </Box>

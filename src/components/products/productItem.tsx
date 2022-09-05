@@ -9,8 +9,10 @@ import { getCurrentProductData, getProductDetail, getProductList, setSomeDraggin
 import { Box, Button, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import CancelModal from '../cancelModal';
-import { getProductContent, resetProductForm } from '../../app/reducers/productFormSlice';
+import { getProductContent } from '../../app/reducers/productFormSlice';
 
 interface propsType {
   product: {
@@ -40,14 +42,6 @@ export default function ProductItem({ product, index }: propsType) {
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
 
-  //제품 목록 받아오기
-  useEffect(() => {
-    dispatch(resetProductForm());
-    productApi.getAllProducts(currentProductCategoryName)
-      .then(res => dispatch(getProductList({ productList: res })))
-      .catch(error => console.log(error))
-  }, [currentProductCategoryName]);
-
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
     productApi.getProduct(productId)
@@ -58,12 +52,18 @@ export default function ProductItem({ product, index }: propsType) {
       })
   };
 
+  // toast
+  const success = () => toast.success('삭제되었습니다.');
+
   // 제품 삭제
   const deleteProduct = (productId: number) => {
     productApi.deleteProduct(productId)
       .then(res => {
         productApi.getAllProducts(currentProductCategoryName)
-          .then(res => dispatch(getProductList({ productList: res })))
+          .then(res => {
+            success();
+            dispatch(getProductList({ productList: res }));
+          })
           .catch(error => console.log(error))
         dispatch(clickProductItemGoBack());
       })

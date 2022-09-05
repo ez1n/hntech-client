@@ -16,7 +16,11 @@ import {
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
 
-export default function ArchiveDetail() {
+interface propsType {
+  successDelete: () => void
+}
+
+export default function ArchiveDetail({ successDelete }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -34,6 +38,7 @@ export default function ArchiveDetail() {
   const deleteArchive = (archiveId: number) => {
     archiveApi.deleteArchive(archiveId)
       .then(res => {
+        successDelete();
         dispatch(archiveDetailGoBack());
         navigate('/archive');
       })

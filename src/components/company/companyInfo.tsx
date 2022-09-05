@@ -7,7 +7,11 @@ import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import { api } from '../../network/network';
 
-export default function CompanyInfo() {
+interface propsType {
+  success: () => void
+}
+
+export default function CompanyInfo({ success }: propsType) {
   const dispatch = useAppDispatch();
 
   const ciForm = new FormData(); // CI 소개 (전송 데이터)
@@ -32,7 +36,10 @@ export default function CompanyInfo() {
     ciForm.append('file', companyInfo.file);
     ciForm.append('where', 'ci');
     adminApi.postCompanyInfo(ciForm)
-      .then(res => dispatch(getCompanyInfoImage({ companyInfoImage: res })))
+      .then(res => {
+        success();
+        dispatch(getCompanyInfoImage({ companyInfoImage: res }));
+      })
       .catch(error => console.log(error))
   };
 

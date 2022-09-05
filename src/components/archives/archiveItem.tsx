@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   getAllArchives,
-  getNotice,
   getDetailData
 } from '../../app/reducers/archiveSlice';
 import {
@@ -27,29 +26,11 @@ export default function ArchiveItem() {
   const [searchContent, setSearchContent] = useState<string>('');
 
   const TotalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
+  const TotalElements = useAppSelector(state => state.archive.totalElements); // 전체 페이지
   const currentPage = useAppSelector(state => state.archive.currentPage); // 현재 페이지
   const archives = useAppSelector(state => state.archive.archives); // 자료실 글 목록
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
   const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName); // 선택한 카테고리
-
-  useEffect(() => {
-    // 자료실 목록 받아오기
-    archiveApi.getArchives(0)
-      .then(res => {
-        dispatch(getAllArchives({
-          archives: res.archives,
-          totalPage: res.totalPages,
-          currentPage: res.currentPage
-        }));
-      })
-
-    // 공지 목록 받아오기
-    archiveApi.getArchivesNotice()
-      .then(res => {
-        dispatch(getNotice({ notice: res.notices }))
-      })
-      .catch(error => console.log(error))
-  }, []);
 
   // 게시글 보기 (정보 받아오기)
   const openDetail = (archiveId: number) => {
@@ -68,7 +49,8 @@ export default function ArchiveItem() {
         dispatch(getAllArchives({
           archives: res.archives,
           totalPage: res.totalPages,
-          currentPage: res.currentPage
+          currentPage: res.currentPage,
+          totalElements: res.totalElements
         }))
       })
       .catch(error => console.log(error))
@@ -77,7 +59,7 @@ export default function ArchiveItem() {
   // 자료 검색
   const getSearchArchive = () => {
     archiveApi.getSearchArchive(categoryName === '전체' ? null : categoryName, searchContent, 0)
-      .then(res => dispatch(getAllArchives({ archives: res.archives, totalPage: res.totalPages, currentPage: res.currentPage })))
+      .then(res => dispatch(getAllArchives({ archives: res.archives, totalPage: res.totalPages, currentPage: res.currentPage, totalElements: res.totalElements })))
       .catch(error => console.log(error))
   };
 
@@ -143,7 +125,7 @@ export default function ArchiveItem() {
         ))}
 
         {/* 자료 목록 */}
-        {archives.map((item) => (
+        {archives.map((item, index) => (
           <Box
             key={item.id}
             sx={{
@@ -152,7 +134,7 @@ export default function ArchiveItem() {
               p: 1.5,
               borderBottom: '1px solid #3B6C46'
             }}>
-            <List sx={{ flex: 0.1 }}>{item.id}</List>
+            <List sx={{ flex: 0.1 }}>{TotalElements - index}</List>
             <List sx={{ flex: 0.1 }}>{item.categoryName}</List>
             <List
               onClick={() => openDetail(item.id)}
@@ -192,7 +174,7 @@ export default function ArchiveItem() {
       {/* 자료 검색 */}
       <Stack direction='row' spacing={1} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         {/* 카테고리 */}
-        <ArchiveCategorySelect defaultCategory={'전체'} />
+        <ArchiveCategorySelect defaultCategory={'전체'} categoryErrorMsg={undefined} />
 
         <TextField
           placeholder='검색어를 입력하세요.'

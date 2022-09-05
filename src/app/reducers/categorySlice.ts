@@ -21,7 +21,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * getArchiveCategory : 자료실 카테고리 목록 받아오기
  * setSelectedArchiveCategoryId : 현재 선택한 자료실 카테고리 아이디 업데이트
  * addProductCategoryImage : 제품 카테고리 이미지 경로 추가
- * deleteProductCategoryImage : 제품 카테고리 이미지 삭제
  * updateProductCategoryName : 제품 카테고리 이름 입력
  * updateProductCategoryImage : 제품 카테고리 이미지 입력
  * updateProductCategoryShowInMain : 메인 제품 카테고리 설정
@@ -103,7 +102,6 @@ export const CategorySlice = createSlice({
       state,
       action: PayloadAction<{ image: string | undefined }>
     ) => { state.productCategoryImagePath = action.payload.image },
-    deleteProductCategoryImage: (state) => { state.productCategoryImagePath = undefined },
     updateProductCategoryName: (
       state,
       action: PayloadAction<{ categoryName: string }>
@@ -176,7 +174,6 @@ export const {
   getArchiveCategory,
   setSelectedArchiveCategoryId,
   addProductCategoryImage,
-  deleteProductCategoryImage,
   updateProductCategoryName,
   updateProductCategoryImage,
   updateProductCategoryShowInMain,

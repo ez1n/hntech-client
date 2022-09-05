@@ -29,6 +29,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface archiveInitialState {
   totalPage: number,
   currentPage: number,
+  totalElements: number,
   archives: {
     categoryName: string,
     createTime: string,
@@ -62,6 +63,7 @@ interface archiveInitialState {
 const ArchiveInitialState: archiveInitialState = {
   totalPage: 0,
   currentPage: 0,
+  totalElements: 0,
   archives: [],
   notice: [],
   detail: { categoryName: '', content: '', createTime: '', id: 0, files: [], title: '', notice: '' },
@@ -82,12 +84,14 @@ export const ArchiveSlice = createSlice({
           title: string,
         }[],
         totalPage: number,
-        currentPage: number
+        currentPage: number,
+        totalElements: number
       }>
     ) => {
       state.archives = action.payload.archives;
       state.totalPage = action.payload.totalPage;
       state.currentPage = action.payload.currentPage;
+      state.totalElements = action.payload.totalElements;
     },
     getNotice: (
       state,

@@ -31,7 +31,7 @@ export const QuestionFormSlice = createSlice({
   name: 'questionForm',
   initialState: InitialState,
   reducers: {
-    // 문의사항
+    resetQuestionContent: state => { state.questionContent = { title: '', writer: '', password: '', content: '' } },
     updateQuestionTitle: (
       state,
       action: PayloadAction<{ title: string }>
@@ -67,6 +67,7 @@ export const QuestionFormSlice = createSlice({
 });
 
 export const {
+  resetQuestionContent,
   updateQuestionTitle,
   updateQuestionName,
   updateQuestionPassword,

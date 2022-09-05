@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../style.css';
 import { useNavigate } from 'react-router-dom';
 import { archiveApi } from '../../network/archive';
@@ -15,7 +15,8 @@ import {
   updateArchiveContent,
   updateArchiveNoticeChecked,
   resetArchiveState,
-  resetArchiveFile
+  resetArchiveFile,
+  updateArchiveCategory
 } from '../../app/reducers/archiveFormSlice';
 import {
   Container,
@@ -32,7 +33,11 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ArchiveCategorySelect from '../archiveCategorySelect';
 
-export default function ArchiveForm() {
+interface propsType {
+  success: () => void
+}
+
+export default function ArchiveForm({ success }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -42,10 +47,26 @@ export default function ArchiveForm() {
   const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용 state
   const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록 state
   const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const [categoryErrorMsg, setCategoryErrorMsg] = useState('');
 
   useEffect(() => {
     dispatch(resetArchiveFile());
+    dispatch(updateArchiveCategory({ categoryName: '' }));
   }, []);
+
+  const validate = () => {
+    let isValid = true;
+    if (archiveContent.title === '') {
+      setTitleErrorMsg('제목을 입력해 주세요.');
+      isValid = false;
+    } else setTitleErrorMsg('');
+    if (archiveContent.categoryName === '') {
+      setCategoryErrorMsg('카테고리를 선택해 주세요.');
+      isValid = false;
+    } else setCategoryErrorMsg('');
+    return isValid;
+  };
 
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
@@ -75,14 +96,16 @@ export default function ArchiveForm() {
     archiveData.append('title', archiveContent.title)
 
     // 게시글 내용 보내기
-    archiveApi.postCreateArchive(archiveData)
-      .then(res => {
-        dispatch(resetArchiveState());
-        navigate('/archive');
-      })
-      .catch(error => {
-        console.log('postCreateArchive', error);
-      })
+    validate() &&
+      archiveApi.postCreateArchive(archiveData)
+        .then(res => {
+          success();
+          dispatch(resetArchiveState());
+          navigate('/archive');
+        })
+        .catch(error => {
+          console.log('postCreateArchive', error);
+        })
   };
 
   return (
@@ -109,6 +132,8 @@ export default function ArchiveForm() {
             required={true}
             autoFocus={true}
             placeholder='제목을 입력해 주세요'
+            error={titleErrorMsg ? true : false}
+            helperText={titleErrorMsg}
             onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
             inputProps={{ style: { fontSize: 20 } }}
             sx={{ width: '100%' }}
@@ -123,7 +148,7 @@ export default function ArchiveForm() {
         }}>
 
           {/* 카테고리 선택 */}
-          <ArchiveCategorySelect defaultCategory={null} />
+          <ArchiveCategorySelect defaultCategory={null} categoryErrorMsg={categoryErrorMsg} />
 
           {/* 공지사항 표시 */}
           <FormControlLabel

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { questionApi } from '../../network/question';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { setCurrentId, setDetailData } from '../../app/reducers/questionSlice';
+import { setCurrentId, setDetailData, setFaqState } from '../../app/reducers/questionSlice';
 import { getAllQuestions, setPassword, inputPassword, getFaq } from '../../app/reducers/questionSlice';
 import {
   Box,
@@ -72,6 +72,7 @@ export default function QuestionItem() {
       questionApi.getQuestionByAdmin(questionId)
         .then(res => {
           dispatch(setDetailData({ detail: res }));
+          dispatch(setFaqState({ faq: false }));
           navigate('/question-detail');
         })
     } else {
@@ -85,6 +86,7 @@ export default function QuestionItem() {
     questionApi.getFAQDetail(questionId)
       .then(res => {
         dispatch(setDetailData({ detail: res }));
+        dispatch(setFaqState({ faq: true }));
         navigate('/question-detail');
       })
       .catch(error => console.log(error))

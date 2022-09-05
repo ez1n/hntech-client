@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../style.css'
 import { adminApi } from '../../network/admin';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickEditGoBack, clickPasswordStateGoBack } from '../../app/reducers/dialogSlice';
 import {
-  updateManagerPassword,
   updateManagerSentMail,
   updateManagerReceivedMail,
   updateManagerTime,
@@ -25,7 +24,10 @@ import {
   addCatalog,
   updateDocument,
   resetBannerFile,
-  setFooter
+  setFooter,
+  updateCurPassword,
+  updateNewPassword,
+  updateNewPasswordCheck
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -44,7 +46,11 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import PasswordUpdate from './passwordUpdate';
 
-export default function FloatingButton() {
+interface propsType {
+  successModify: () => void
+}
+
+export default function FloatingButton({ successModify }: propsType) {
   const dispatch = useAppDispatch();
 
   const [deleteBannerName, setDeleteBannerName] = useState<{ name: string }[]>([])
@@ -63,6 +69,12 @@ export default function FloatingButton() {
   const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너 state
   const documentName = useAppSelector(state => state.manager.document); // 기존 카다록, 자재승인서 이름 state
   const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서 state
+
+  useEffect(() => {
+    dispatch(updateCurPassword({ curPassword: '' }));
+    dispatch(updateNewPassword({ newPassword: '' }));
+    dispatch(updateNewPasswordCheck({ newPasswordCheck: '' }));
+  }, [panelData.adminPassword]);
 
   // 배너 사진 추가
   const addBannerImage = (event: any) => {
@@ -93,6 +105,7 @@ export default function FloatingButton() {
   }) => {
     adminApi.putUpdatePanelInfo(panelData)
       .then(res => {
+        successModify();
         dispatch(setManagerData({ panelData: res }));
         dispatch(copyManagerData({ panelData: res }));
         dispatch(setFooter({ footer: res.footer }));
@@ -123,6 +136,7 @@ export default function FloatingButton() {
     // 배너 정보 변경 요청
     adminApi.postBanner(bannerForm)
       .then(res => {
+        successModify();
         dispatch(setBanner({ banner: res }));
         dispatch(resetBannerFile());
       })
@@ -135,16 +149,19 @@ export default function FloatingButton() {
     documentForm.append('materialFile', documentFile.approval.file);
 
     adminApi.postDocument(documentForm)
-      .then(res => dispatch(updateDocument({
-        catalogOriginalFilename: res.catalogOriginalFilename,
-        materialOriginalFilename: res.materialOriginalFilename
-      })))
+      .then(res => {
+        successModify();
+        dispatch(updateDocument({
+          catalogOriginalFilename: res.catalogOriginalFilename,
+          materialOriginalFilename: res.materialOriginalFilename
+        }));
+      })
       .catch(error => console.log(error))
   };
 
   return (
     <>
-      {/* 플로팅 버튼 */}
+      {/*  정보변경 버튼 */}
       {managerMode &&
         <Fab
           variant='extended'
@@ -182,12 +199,11 @@ export default function FloatingButton() {
               label={'관리자 비밀번호'}
               value={panelData.adminPassword}
               disabled
-              onChange={event => dispatch(updateManagerPassword({ adminPassword: event?.target.value }))}
               placeholder={'현재 비밀번호'} />
 
             {EditButton('변경', () => dispatch(clickPasswordStateGoBack()))}
 
-            <PasswordUpdate />
+            <PasswordUpdate successModify={successModify} />
           </ContentStack>
 
           {/* 메일 주소 */}

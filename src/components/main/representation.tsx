@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { api } from '../../network/network';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,11 @@ export default function Representation() {
   const dispatch = useAppDispatch();
 
   const productMainCategories = useAppSelector(state => state.category.productMainCategories); // 메인 카테고리 목록
+
+  useEffect(() => {
+    categoryApi.getMainCategories()
+      .then(res => dispatch(setMainCategories({ categories: res })))
+  }, []);
 
   // 제품 버튼 클릭 이벤트 (페이지 이동)
   const onClickButton = (categoryName: string) => {

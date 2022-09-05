@@ -10,16 +10,16 @@ import { getProductContent, resetProductForm } from '../../app/reducers/productF
 import { productApi } from '../../network/product';
 import { useNavigate } from 'react-router-dom';
 
-export default function ProductDetail() {
+interface propsType {
+  successDelete: () => void
+}
+
+export default function ProductDetail({ successDelete }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
-
-  useEffect(() => {
-    dispatch(selectProductCategoryTrue());
-    dispatch(resetProductForm());
-  }, []);
+  const productId = useAppSelector(state => state.product.productDetail.id);
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
@@ -27,9 +27,14 @@ export default function ProductDetail() {
       .then(res => {
         dispatch(getProductDetail({ detail: res }));
         dispatch(getProductContent({ detail: res }));
-        navigate('/product-detail');
       })
   };
+
+  useEffect(() => {
+    getProduct(productId)
+    dispatch(selectProductCategoryTrue());
+    dispatch(resetProductForm());
+  }, []);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -83,7 +88,7 @@ export default function ProductDetail() {
 
       {/* 제품 정보 */}
       <Box sx={{ flex: 0.7, pt: 5, mr: '10%', textAlign: 'center' }}>
-        <ProductInfo />
+        <ProductInfo successDelete={successDelete} />
 
         <Spacing />
 

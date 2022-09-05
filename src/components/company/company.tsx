@@ -7,8 +7,13 @@ import History from './history';
 import OrgChart from './orgChart';
 import CompanyInfo from './companyInfo';
 import Location from './location';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function Company() {
+interface propsType {
+  success: () => void
+}
+
+export default function Company({ success }: propsType) {
   const mode = useAppSelector(state => state.company.mode);
 
   return (
@@ -30,15 +35,16 @@ export default function Company() {
         </Container>
 
         {/* 컴포넌트 (페이지) */}
-        {mode === 'INTRODUCE' && <Introduce />}
+        {mode === 'INTRODUCE' && <Introduce success={success} />}
 
-        {mode === 'HISTORY' && <History />}
+        {mode === 'HISTORY' && <History success={success} />}
 
-        {mode === 'CHART' && <OrgChart />}
+        {mode === 'CHART' && <OrgChart success={success} />}
 
-        {mode === 'INFORMATION' && <CompanyInfo />}
+        {mode === 'INFORMATION' && <CompanyInfo success={success} />}
 
         {mode === 'LOCATION' && <Location />}
+
       </ContentsBox>
     </CompanyBox>
   )

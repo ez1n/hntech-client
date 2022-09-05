@@ -19,7 +19,11 @@ import { productApi } from '../../network/product';
 import { api } from '../../network/network';
 import { getProductContent } from '../../app/reducers/productFormSlice';
 
-export default function ProductInfo() {
+interface propsType {
+  successDelete: () => void
+}
+
+export default function ProductInfo({ successDelete }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -36,6 +40,7 @@ export default function ProductInfo() {
       .then(res => {
         productApi.getAllProducts(category)
           .then(res => {
+            successDelete();
             dispatch(getProductList({ productList: res }));
             dispatch(clickProductInfoGoBack());
             navigate('/product');

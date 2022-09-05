@@ -1,14 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
 import { updateProductCategoryImage, updateProductCategoryShowInMain } from '../../app/reducers/categorySlice';
-import {
-  addProductCategoryImage,
-  deleteProductCategoryImage,
-  updateProductCategoryName
-} from '../../app/reducers/categorySlice';
+import { addProductCategoryImage, updateProductCategoryName } from '../../app/reducers/categorySlice';
 import {
   Container,
   styled,
@@ -16,14 +12,19 @@ import {
   Box,
   Stack,
   TextField,
+  FormControl,
   FormControlLabel,
+  FormHelperText,
   Checkbox
 } from '@mui/material';
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
-export default function ProductCategoryForm() {
+interface propsType {
+  success: () => void
+}
+
+export default function ProductCategoryForm({ success }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -34,12 +35,29 @@ export default function ProductCategoryForm() {
   const productCategoryImage = useAppSelector(state => state.category.productCategoryImage); // 카테고리 이미지 state
   const productCategoryImagePath = useAppSelector(state => state.category.productCategoryImagePath); // 카테고리 이미지 미리보기 state
   const productCategoryShowInMain = useAppSelector(state => state.category.productCategoryShowInMain); // 메인 카테고리 설정 state
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const [imageErrorMsg, setImageErrorMsg] = useState('');
+
+  useEffect(() => {
+    dispatch(updateProductCategoryImage({ categoryImage: '' }));
+  }, []);
+
+  const validate = () => {
+    let isValid = true;
+    if (productCategoryName === '') {
+      setTitleErrorMsg('카테고리 이름을 작성해 주세요.');
+      isValid = false;
+    } else setTitleErrorMsg('');
+    if (productCategoryImage === '') {
+      setImageErrorMsg('사진을 등록해 주세요');
+      isValid = false;
+    } else setImageErrorMsg('');
+    return isValid;
+  };
 
   // 제품 사진
   const selectCategoryImage = (event: any) => {
-    // 미리보기
     dispatch(addProductCategoryImage({ image: URL.createObjectURL(event.target.files[0]) }));
-    // 전송할 데이터 업데이트
     dispatch(updateProductCategoryImage({ categoryImage: event.target.files[0] }));
   };
 
@@ -50,13 +68,14 @@ export default function ProductCategoryForm() {
     productCategoryForm.append('showInMain', productCategoryShowInMain);
     productCategoryForm.append('type', 'product');
 
-    categoryApi.postCreateCategory(productCategoryForm)
-      .then(res => {
-        console.log(productCategoryForm.get('file'))
-        dispatch(addProductCategoryImage({ image: undefined }));
-        navigate('/product');
-      })
-      .catch(error => console.log(error))
+    validate() &&
+      categoryApi.postCreateCategory(productCategoryForm)
+        .then(res => {
+          success();
+          dispatch(addProductCategoryImage({ image: undefined }));
+          navigate('/product');
+        })
+        .catch(error => console.log(error))
   };
 
   return (
@@ -83,6 +102,8 @@ export default function ProductCategoryForm() {
             required={true}
             autoFocus={true}
             placeholder='카테고리명'
+            error={titleErrorMsg ? true : false}
+            helperText={titleErrorMsg}
             onChange={event => dispatch(updateProductCategoryName({ categoryName: event?.target.value }))}
             inputProps={{ style: { fontSize: 20 } }}
             sx={{
@@ -94,9 +115,9 @@ export default function ProductCategoryForm() {
         <Stack direction='row' sx={{ mt: 2, alignItems: 'center' }}>
           {/* 사진 추가 */}
           <Box sx={{ pl: 1 }}>
-            <label className='categoryUploadButton' htmlFor='productCategoryInput'>
+            <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage}>
               사진 추가
-              <input type='file' id='productCategoryInput' accept='image/*' onChange={(event) => selectCategoryImage(event)} />
+              <input type='file' id='productCategoryInput' accept='image/*' />
             </label>
           </Box>
 
@@ -115,31 +136,29 @@ export default function ProductCategoryForm() {
         </Stack>
 
         {/* 제품 사진 미리보기 */}
-        <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 300,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {!productCategoryImagePath ?
-              <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>제품 사진 미리보기</Typography> :
-              <Box sx={{ width: '23%', m: 1 }}>
-                <Box sx={{ textAlign: 'end' }}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteProductCategoryImage())}
-                    sx={{ color: 'darkgreen', cursor: 'pointer' }} />
+        <FormControl error={imageErrorMsg ? true : false} sx={{ width: '100%' }}>
+          <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)' }}>
+            <FormHelperText>{imageErrorMsg}</FormHelperText>
+            <Container
+              sx={{
+                border: '1.8px solid lightgrey',
+                borderRadius: 1,
+                mb: 2,
+                height: 300,
+                display: 'flex',
+                flexWrap: 'wrap',
+                overflow: 'auto',
+                alignItems: 'center'
+              }}>
+              {!productCategoryImagePath ?
+                <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>제품 사진 미리보기</Typography> :
+                <Box sx={{ width: '23%', m: 1 }}>
+                  <img src={productCategoryImagePath} alt='제품 사진' width='100%' />
                 </Box>
-                <img src={productCategoryImagePath} alt='제품 사진' width='100%' />
-              </Box>
-            }
-          </Container>
-        </Box>
+              }
+            </Container>
+          </Box>
+        </FormControl>
       </Box>
 
       <Spacing />

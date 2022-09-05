@@ -11,7 +11,11 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 
-export default function Introduce() {
+interface propsType {
+  success: () => void
+}
+
+export default function Introduce({ success }: propsType) {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
@@ -20,7 +24,7 @@ export default function Introduce() {
   // 인사말 받아오기
   useEffect(() => {
     adminApi.getIntroduce()
-      .then(res => dispatch(updateIntroduce({ newIntroduce: res.data.newIntroduce })))
+      .then(res => { dispatch(updateIntroduce({ newIntroduce: res.newIntroduce })); console.log(res) })
       .catch(error => console.log(error))
   }, []);
 
@@ -28,6 +32,7 @@ export default function Introduce() {
   const putIntroduce = () => {
     adminApi.putIntroduce(introduce)
       .then(res => {
+        success();
         dispatch(updateIntroduce({ newIntroduce: res.newIntroduce }));
       })
       .catch(error => console.log(error))
