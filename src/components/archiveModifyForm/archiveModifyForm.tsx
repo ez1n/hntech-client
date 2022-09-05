@@ -34,10 +34,11 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
 interface propsType {
-  successModify: () => void
+  successModify: () => void,
+  errorToast: (message) => void
 }
 
-export default function ArchiveModifyForm({ successModify }: propsType) {
+export default function ArchiveModifyForm({ successModify, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -103,7 +104,7 @@ export default function ArchiveModifyForm({ successModify }: propsType) {
           dispatch(getDetailData({ detail: res }));
           navigate(-1);
         })
-        .catch(error => console.log(error))
+        .catch(error => errorToast(error.response.data.message))
   };
 
   // 기존 파일 삭제

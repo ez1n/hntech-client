@@ -24,10 +24,11 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
 interface propsType {
-  successModify: () => void
+  successModify: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function QuestionModifyForm({ successModify }: propsType) {
+export default function QuestionModifyForm({ successModify, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -66,7 +67,7 @@ export default function QuestionModifyForm({ successModify }: propsType) {
             dispatch(setDetailData({ detail: res }));
             navigate('/question-detail');
           })
-          .catch(error => console.log(error))
+          .catch(error => errorToast(error.response.data.message))
     }
   };
 

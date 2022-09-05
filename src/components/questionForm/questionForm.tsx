@@ -23,10 +23,11 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function QuestionForm({ success }: propsType) {
+export default function QuestionForm({ success, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -66,7 +67,7 @@ export default function QuestionForm({ success }: propsType) {
           success();
           navigate('/question');
         })
-        .catch(error => console.log('error', error))
+        .catch(error => errorToast(error.response.data.message))
   };
 
   // 비밀번호 숫자 제한

@@ -24,10 +24,11 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
 interface propsType {
-  successModify: () => void
+  successModify: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function ProductCategoryModifyForm({ successModify }: propsType) {
+export default function ProductCategoryModifyForm({ successModify, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -70,7 +71,7 @@ export default function ProductCategoryModifyForm({ successModify }: propsType) 
           dispatch(updateProductCategoryImage({ categoryImage: '' }));
           navigate('/product');
         })
-        .catch(error => console.log(error))
+        .catch(error => errorToast(error.response.data.message))
   };
 
   return (

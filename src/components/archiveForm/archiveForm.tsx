@@ -34,10 +34,11 @@ import CancelModal from '../cancelModal';
 import ArchiveCategorySelect from '../archiveCategorySelect';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function ArchiveForm({ success }: propsType) {
+export default function ArchiveForm({ success, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -53,6 +54,7 @@ export default function ArchiveForm({ success }: propsType) {
   useEffect(() => {
     dispatch(resetArchiveFile());
     dispatch(updateArchiveCategory({ categoryName: '' }));
+    dispatch(updateArchiveNoticeChecked({ isNotice: false }));
   }, []);
 
   const validate = () => {
@@ -103,9 +105,7 @@ export default function ArchiveForm({ success }: propsType) {
           dispatch(resetArchiveState());
           navigate('/archive');
         })
-        .catch(error => {
-          console.log('postCreateArchive', error);
-        })
+        .catch(error => errorToast(error.response.data.message))
   };
 
   return (

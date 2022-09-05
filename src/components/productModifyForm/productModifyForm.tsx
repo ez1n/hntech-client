@@ -61,7 +61,7 @@ export default function ProductModifyForm({ successModify }: propsType) {
 
   const validate = () => {
     let isValid = true;
-    if (productName === '' | productName === null) {
+    if (productName === '' || productName === null) {
       setTitleErrorMsg('제품 이름을 작성해 주세요.');
       isValid = false;
     } else setTitleErrorMsg('');

@@ -21,10 +21,11 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function ProductCategoryForm({ success }: propsType) {
+export default function ProductCategoryForm({ success, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -39,7 +40,9 @@ export default function ProductCategoryForm({ success }: propsType) {
   const [imageErrorMsg, setImageErrorMsg] = useState('');
 
   useEffect(() => {
+    dispatch(updateProductCategoryName({ categoryName: '' }));
     dispatch(updateProductCategoryImage({ categoryImage: '' }));
+    dispatch(updateProductCategoryShowInMain({ showInMain: false }));
   }, []);
 
   const validate = () => {
@@ -75,7 +78,7 @@ export default function ProductCategoryForm({ success }: propsType) {
           dispatch(addProductCategoryImage({ image: undefined }));
           navigate('/product');
         })
-        .catch(error => console.log(error))
+        .catch(error => errorToast(error.response.data.message))
   };
 
   return (

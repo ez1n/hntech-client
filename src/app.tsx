@@ -71,6 +71,7 @@ export default function App() {
   const successDelete = () => toast.success('삭제되었습니다.');
   const successModify = () => toast.success('변경되었습니다.');
   const successAnswer = () => toast.success('답변 완료 처리되었습니다.');
+  const errorToast = (message: string) => toast.error(message);
 
   return (
     <BrowserRouter>
@@ -110,11 +111,15 @@ export default function App() {
             }></Route>
 
             <Route path='/productCategory-form' element={
-              managerMode && <ProductCategoryForm success={success} />
+              managerMode && <ProductCategoryForm
+                success={success}
+                errorToast={errorToast} />
             }></Route>
 
             <Route path='/productCategory-modify' element={
-              managerMode && <ProductCategoryModifyForm successModify={successModify} />
+              managerMode && <ProductCategoryModifyForm
+                successModify={successModify}
+                errorToast={errorToast} />
             }></Route>
 
             <Route path='/data' element={
@@ -126,15 +131,21 @@ export default function App() {
             }></Route>
 
             <Route path='/question-form' element={
-              <QuestionForm success={success} />
+              <QuestionForm
+                success={success}
+                errorToast={errorToast} />
             }></Route>
 
             <Route path='/question-modify' element={
-              <QuestionModifyForm successModify={successModify} />
+              <QuestionModifyForm
+                successModify={successModify}
+                errorToast={errorToast} />
             }></Route>
 
             <Route path='/question-detail' element={
-              <QuestionDetail successAnswer={successAnswer} successDelete={successDelete} />
+              <QuestionDetail
+                successAnswer={successAnswer}
+                successDelete={successDelete} />
             }></Route>
 
             <Route path='/archive' element={
@@ -142,11 +153,17 @@ export default function App() {
             }></Route>
 
             <Route path='/archive-form' element={
-              managerMode && <ArchiveForm success={success} />
+              managerMode && <ArchiveForm
+                success={success}
+                errorToast={errorToast}
+              />
             }></Route>
 
             <Route path='/archive-modify' element={
-              managerMode && <ArchiveModifyForm successModify={successModify} />
+              managerMode && <ArchiveModifyForm
+                successModify={successModify}
+                errorToast={errorToast}
+              />
             }></Route>
 
             <Route path='/archive-detail' element={
