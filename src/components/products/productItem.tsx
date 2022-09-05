@@ -214,16 +214,16 @@ export default function ProductItem({ product, index }: propsType) {
 };
 
 const TotalBox = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down('xl')]: {
+  [theme.breakpoints.down('lg')]: {
     width: '30% !important'
   },
-  [theme.breakpoints.down('lg')]: {
+  [theme.breakpoints.down('md')]: {
     width: '45% !important'
   },
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('sm')]: {
     width: '100% !important'
   },
-  width: '20%'
+  width: '25%'
 }))
 
 const ProductBox = styled(Box)(() => ({
@@ -234,7 +234,15 @@ const ProductBox = styled(Box)(() => ({
 })) as typeof Box;
 
 // Item 버튼
-const ProductButton = styled(Button)(() => ({
+const ProductButton = styled(Button)(({ theme }) => ({
+  [theme.breakpoints.down('lg')]: {
+    height: 180,
+  },
+  [theme.breakpoints.down('md')]: {
+    height: 180,
+  },
+  [theme.breakpoints.down('sm')]: {
+  },
   margin: 10,
   height: 200,
   color: '#0F0F0F',
@@ -242,6 +250,7 @@ const ProductButton = styled(Button)(() => ({
   flexDirection: 'column',
   border: '1px solid rgba(57, 150, 82, 0.2)',
   borderRadius: 10,
+  overflow: 'hidden',
   transition: '0.5s',
   '&: hover': {
     transform: 'scale(1.04)',

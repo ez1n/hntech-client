@@ -49,7 +49,7 @@ export default function ProductCategories({ successDelete }: propsType) {
   };
 
   return (
-    <>
+    <Box sx={{ width: '100%' }}>
       {/* default */}
       {!productCategorySelected &&
         <>
@@ -58,16 +58,9 @@ export default function ProductCategories({ successDelete }: propsType) {
             justifyContent: 'center',
             mb: 5
           }}>
-            <Typography
-              variant='h5'
-              sx={{
-                p: 1,
-                width: 'max-content',
-                borderBottom: '3px solid #2E7D32',
-                userSelect: 'none'
-              }}>
+            <TitleTypography variant='h5'>
               제품 소개
-            </Typography>
+            </TitleTypography>
           </Container>
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -78,7 +71,7 @@ export default function ProductCategories({ successDelete }: propsType) {
               imageOriginalFilename: string;
               showInMain: string;
             }) => (
-              <ContainerBox key={value.id} sx={{ m: 1 }}>
+              <CategoryBox key={value.id} sx={{ m: 1 }}>
                 <CategoryButton onClick={() => {
                   dispatch(selectProductCategoryTrue());
                   dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
@@ -87,15 +80,9 @@ export default function ProductCategories({ successDelete }: propsType) {
                   <Box sx={{ height: 150 }}>
                     <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt={value.imageOriginalFilename} width='100%' height='100%' />
                   </Box>
-                  <Typography sx={{
-                    width: '100%',
-                    pt: 1,
-                    pb: 1,
-                    borderRadius: 1,
-                    backgroundColor: 'rgba(57, 150, 82, 0.2)'
-                  }}>
+                  <CategoryNameTypography>
                     {value.categoryName}
-                  </Typography>
+                  </CategoryNameTypography>
                 </CategoryButton>
 
                 {/* 수정 버튼 */}
@@ -119,7 +106,7 @@ export default function ProductCategories({ successDelete }: propsType) {
                     </Button>
                   </Box>
                 }
-              </ContainerBox>
+              </CategoryBox>
             ))}
           </Box>
 
@@ -152,7 +139,6 @@ export default function ProductCategories({ successDelete }: propsType) {
             display: 'flex',
             flexDirection: 'column'
           }}>
-
             {productCategories.map((value: {
               categoryName: string;
               id: number;
@@ -181,23 +167,50 @@ export default function ProductCategories({ successDelete }: propsType) {
         text2='삭제하시겠습니까?'
         yesAction={() => deleteProductCategory(productCurrentCategory.id)}
         closeAction={() => dispatch(clickProductCategoryGoBack())} />
-    </>
+    </Box>
   )
 };
 
-const ContainerBox = styled(Box)(({ theme }) => ({
+const CategoryBox = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
-    width: '30% !important'
+    width: '31% !important'
   },
   [theme.breakpoints.down('md')]: {
-    width: '45% !important'
+    width: '47% !important'
   },
   [theme.breakpoints.down('sm')]: {
-    width: '90% !important'
+    width: '100% !important'
   },
   width: '23%',
   margin: 1,
 })) as typeof Box;
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  userSelect: 'none',
+  padding: 1,
+  width: 'max-content',
+  borderBottom: '3px solid #2E7D32',
+})) as typeof Typography;
+
+const CategoryNameTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 15
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 13
+  },
+  width: '100%',
+  paddingTop: 4,
+  paddingBottom: 4,
+  borderRadius: 1,
+  backgroundColor: 'rgba(57, 150, 82, 0.2)'
+})) as typeof Typography;
 
 // Image 버튼
 const CategoryButton = styled(Button)(() => ({

@@ -67,13 +67,13 @@ export default function CompanySideMenu() {
 
       <MenuSelect
         defaultValue={companyMode}
-        onChange={event => dispatch(clickChangeMode({ mode: event.target.value }))}
+        onChange={event => dispatch(clickChangeMode({ mode: event?.target.value }))}
         size='small'>
-        <MenuList value='INTRODUCE' onChange={() => dispatch(clickChangeIntroduce())}>인사말</MenuList>
-        <MenuList value='HISTORY' onChange={() => dispatch(clickChangeHistory())}>회사연혁</MenuList>
-        <MenuList value='CHART' onChange={() => dispatch(clickChangeOrgChart())}> 조직도</MenuList >
-        <MenuList value='INFORMATION' onChange={() => dispatch(clickChangeInfo())}>CI 소개</MenuList>
-        <MenuList value='LOCATION' onChange={() => dispatch(clickChangeLocation())}>찾아오시는 길</MenuList>
+        <MenuList value='INTRODUCE'>인사말</MenuList>
+        <MenuList value='HISTORY'>회사연혁</MenuList>
+        <MenuList value='CHART'> 조직도</MenuList >
+        <MenuList value='INFORMATION'>CI 소개</MenuList>
+        <MenuList value='LOCATION'>찾아오시는 길</MenuList>
       </MenuSelect>
     </SideMenuBox >
   )
