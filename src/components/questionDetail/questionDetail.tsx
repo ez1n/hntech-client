@@ -12,7 +12,12 @@ import Comment from './comment';
 import CommentForm from './commentForm';
 import CancelModal from '../cancelModal';
 
-export default function QuestionDetail() {
+interface propsType {
+  successAnswer: () => void,
+  successDelete: () => void
+}
+
+export default function QuestionDetail({ successAnswer, successDelete }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -30,6 +35,7 @@ export default function QuestionDetail() {
   const deleteQuestion = (id: number) => {
     questionApi.deleteQuestion(id)
       .then(res => {
+        successDelete();
         dispatch(clickQuestionDetailGoBack());
         navigate('/question');
       });
@@ -39,6 +45,7 @@ export default function QuestionDetail() {
   const putUpdateQuestionStatus = (questionId: number) => {
     questionApi.putUpdateQuestionStatus(questionId)
       .then(res => {
+        successAnswer();
         dispatch(setDetailData({ detail: res }));
         dispatch(clickQuestionStatusGoBack());
       });

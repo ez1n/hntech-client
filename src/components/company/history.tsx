@@ -7,7 +7,11 @@ import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import { api } from '../../network/network';
 
-export default function History() {
+interface propsType {
+  success: () => void
+}
+
+export default function History({ success }: propsType) {
   const dispatch = useAppDispatch();
 
   const historyForm = new FormData(); // 회사 연혁 (전송 데이터)
@@ -32,7 +36,10 @@ export default function History() {
     historyForm.append('file', history.file);
     historyForm.append('where', 'companyHistory');
     adminApi.postHistory(historyForm)
-      .then(res => dispatch(getHistoryImage({ historyImage: res })))
+      .then(res => {
+        success();
+        dispatch(getHistoryImage({ historyImage: res }))
+      })
   };
 
   return (

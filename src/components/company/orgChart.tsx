@@ -7,7 +7,11 @@ import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import { api } from '../../network/network';
 
-export default function OrgChart() {
+interface propsType {
+  success: () => void
+}
+
+export default function OrgChart({ success }: propsType) {
   const dispatch = useAppDispatch();
 
   const orgChartForm = new FormData(); // 조직도 (전송 데이터)
@@ -32,7 +36,10 @@ export default function OrgChart() {
     orgChartForm.append('file', orgChart.file);
     orgChartForm.append('where', 'orgChart');
     adminApi.postOrgChart(orgChartForm)
-      .then(res => dispatch(getOrgChartImage({ orgChartImage: res })))
+      .then(res => {
+        success();
+        dispatch(getOrgChartImage({ orgChartImage: res }));
+      })
       .catch(error => console.log(error))
   };
 

@@ -12,7 +12,11 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CancelModal from '../cancelModal';
 
-export default function ProductCategories() {
+interface propsType {
+  successDelete: () => void
+}
+
+export default function ProductCategories({ successDelete }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -37,6 +41,7 @@ export default function ProductCategories() {
   const deleteProductCategory = (categoryId: number) => {
     categoryApi.deleteProductCategory(categoryId)
       .then(res => {
+        successDelete();
         dispatch(clickProductCategoryGoBack());
         categoryApi.getAllProductCategories()
           .then(res => dispatch(setAllProductCategories({ categories: res.categories })))

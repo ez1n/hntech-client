@@ -33,11 +33,14 @@ import ArchiveCategorySelect from '../archiveCategorySelect';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
-export default function ArchiveModifyForm() {
+interface propsType {
+  successModify: () => void,
+  errorToast: (message) => void
+}
+
+export default function ArchiveModifyForm({ successModify, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const [deleteArchiveId, setDeleteArchiveId] = useState<{ archiveId: number, fileId: number }[]>([]);
 
   const archiveData = new FormData(); // 자료실 첨부파일
 
@@ -46,6 +49,17 @@ export default function ArchiveModifyForm() {
   const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
   const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 목록 state
   const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
+  const [deleteArchiveId, setDeleteArchiveId] = useState<{ archiveId: number, fileId: number }[]>([]);
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+
+  const validate = () => {
+    let isValid = true;
+    if (archiveModifyContent.title === null || archiveModifyContent.title === '') {
+      setTitleErrorMsg('제목을 입력해 주세요.');
+      isValid = false;
+    } else setTitleErrorMsg('');
+    return isValid;
+  };
 
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
@@ -83,12 +97,14 @@ export default function ArchiveModifyForm() {
         .catch(error => console.log(error))
     ))
 
-    archiveApi.putUpdateArchive(archiveId, archiveData)
-      .then(res => {
-        dispatch(getDetailData(res));
-        navigate('/archive');
-      })
-      .catch(error => console.log(error))
+    validate() &&
+      archiveApi.putUpdateArchive(archiveId, archiveData)
+        .then(res => {
+          successModify();
+          dispatch(getDetailData({ detail: res }));
+          navigate(-1);
+        })
+        .catch(error => errorToast(error.response.data.message))
   };
 
   // 기존 파일 삭제
@@ -120,7 +136,9 @@ export default function ArchiveModifyForm() {
             type='text'
             value={archiveModifyContent.title}
             required={true}
-            onChange={event => dispatch(modifyArchiveTitle({ title: event?.target.value }))}
+            error={titleErrorMsg ? true : false}
+            helperText={titleErrorMsg}
+            onChange={event => { dispatch(modifyArchiveTitle({ title: event?.target.value })) }}
             placeholder='제목을 입력해 주세요'
             inputProps={{
               style: {
@@ -140,7 +158,7 @@ export default function ArchiveModifyForm() {
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
           pl: 1
         }}>
-          <ArchiveCategorySelect defaultCategory={archiveModifyContent.categoryName} />
+          <ArchiveCategorySelect defaultCategory={archiveModifyContent.categoryName} categoryErrorMsg={undefined} />
           <FormControlLabel
             control={<Checkbox
               defaultChecked={archiveModifyContent.notice === 'true' ? true : false}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickProductFormGoBack } from '../../app/reducers/dialogSlice';
@@ -27,7 +27,9 @@ import {
   Stack,
   TextField,
   List,
-  ListItem
+  ListItem,
+  FormControl,
+  FormHelperText
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -37,7 +39,11 @@ import ProductCategorySelect from '../productCategorySelect';
 import { productApi } from '../../network/product';
 import { getProductList } from '../../app/reducers/productSlice';
 
-export default function ProductForm() {
+interface propsType {
+  success: () => void
+}
+
+export default function ProductForm({ success }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -53,11 +59,26 @@ export default function ProductForm() {
   const productFormState = useAppSelector(state => state.dialog.productFormState); // 글쓰기 취소 state
   const { category, description, productName, files } = useAppSelector(state => state.productForm.productContent); // 제품 등록 내용
   const { docFiles, productImages, representativeImage, standardImages } = files; // 첨부파일, 제품이미지, 대표이미지, 규격이미지
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const [repImgErrorMsg, setRepImgErrorMsg] = useState('');
 
   useEffect(() => {
     dispatch(resetProductForm());
     dispatch(addProductCategory({ category: currentProductCategoryName }));
   }, []);
+
+  const validate = () => {
+    let isValid = true;
+    if (productName === '') {
+      setTitleErrorMsg('제품 이름을 작성해 주세요.');
+      isValid = false;
+    } else setTitleErrorMsg('');
+    if (representativeImage.file.length === 0) {
+      setRepImgErrorMsg('대표사진을 등록해 주세요');
+      isValid = false;
+    } else setRepImgErrorMsg('');
+    return isValid;
+  };
 
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => { item.current?.click() };
@@ -116,7 +137,10 @@ export default function ProductForm() {
     }) => {
       item.originalFilename === productData.originalFilename &&
         productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
-          .then(res => navigate('/product'))
+          .then(res => {
+            success();
+            navigate('/product');
+          })
           .catch(error => console.log(error))
     })
   };
@@ -131,19 +155,23 @@ export default function ProductForm() {
     productForm.append('representativeImage', representativeImage.file[0]);
     standardImages.map(item => productForm.append('standardImages', item.file));
 
-    productApi.postCreateProduct(productForm)
-      .then(res => {
-        res.files.docFiles.length === 0 ?
-          navigate('/product') :
-          res.files.docFiles.map((item: {
-            id: number,
-            originalFilename: string,
-            savedPath: string,
-            serverFilename: string,
-            type: string
-          }) => putUpdateProductDocFiles(item, res.id))
-      })
-      .catch(error => console.log(error))
+    validate() &&
+      productApi.postCreateProduct(productForm)
+        .then(res => {
+          if (res.files.docFiles.length === 0) {
+            success();
+            navigate('/product')
+          } else {
+            res.files.docFiles.map((item: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string,
+              type: string
+            }) => putUpdateProductDocFiles(item, res.id))
+          }
+        })
+        .catch(error => console.log(error))
   };
 
   return (
@@ -170,6 +198,8 @@ export default function ProductForm() {
             required={true}
             autoFocus={true}
             placeholder='제품명'
+            error={titleErrorMsg ? true : false}
+            helperText={titleErrorMsg}
             onChange={event => dispatch(addProductName({ productName: event?.target.value }))}
             inputProps={{ style: { fontSize: 20 } }}
             sx={{ width: '100%' }}
@@ -209,7 +239,6 @@ export default function ProductForm() {
         </Box>
         <List>
           <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 대표 이미지는 필수입니다.</ListItem>
-          <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 제품 및 규격 이미지는 한 장 이상 필요합니다.</ListItem>
         </List>
 
         {/* 미리보기 */}
@@ -229,26 +258,29 @@ export default function ProductForm() {
           />
 
           {/* 대표 제품 이미지 미리보기 */}
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 250,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {representativeImage.path === undefined ?
-              <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>
-                대표 제품 이미지 미리보기
-              </Typography> :
-              <Box sx={{ width: '23%', m: 1 }}>
-                <img src={representativeImage.path} alt='대표 제품 이미지' width='100%' />
-              </Box>
-            }
-          </Container>
+          <FormControl error={repImgErrorMsg ? true : false} sx={{ width: '100%' }}>
+            <FormHelperText>{repImgErrorMsg}</FormHelperText>
+            <Container
+              sx={{
+                border: '1.8px solid lightgrey',
+                borderRadius: 1,
+                mb: 2,
+                height: 250,
+                display: 'flex',
+                flexWrap: 'wrap',
+                overflow: 'auto',
+                alignItems: 'center'
+              }}>
+              {representativeImage.path === undefined ?
+                <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>
+                  대표 제품 이미지 미리보기
+                </Typography> :
+                <Box sx={{ width: '23%', m: 1 }}>
+                  <img src={representativeImage.path} alt='대표 제품 이미지' width='100%' />
+                </Box>
+              }
+            </Container>
+          </FormControl>
 
           {/* 제품 이미지 미리보기 */}
           <Container

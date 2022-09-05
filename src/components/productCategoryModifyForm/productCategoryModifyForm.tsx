@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { api } from '../../network/network';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
-  deleteProductCategoryImage,
   updateCurrentProductCategoryName,
   updateCurrentProductCategoryShowInMain,
   updateProductCategoryImage
@@ -20,12 +20,15 @@ import {
   Stack,
   TextField
 } from '@mui/material';
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
-import { api } from '../../network/network';
 
-export default function ProductCategoryModifyForm() {
+interface propsType {
+  successModify: () => void,
+  errorToast: (message: string) => void
+}
+
+export default function ProductCategoryModifyForm({ successModify, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -35,6 +38,16 @@ export default function ProductCategoryModifyForm() {
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보 state
   const productCategoryImagePath = useAppSelector(state => state.category.productCategoryImagePath);
   const productCategoryImage = useAppSelector(state => state.category.productCategoryImage); // 카테고리 이미지 state
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+
+  const validate = () => {
+    let isValid = true;
+    if (productCurrentCategory.categoryName === '' || productCurrentCategory.categoryName === null) {
+      setTitleErrorMsg('카테고리 이름을 작성해 주세요.');
+      isValid = false;
+    } else setTitleErrorMsg('');
+    return isValid;
+  };
 
   // 제품 사진
   const selectCategoryImage = (event: any) => {
@@ -51,12 +64,14 @@ export default function ProductCategoryModifyForm() {
     productCategoryForm.append('categoryName', productCurrentCategory.categoryName);
     productCategoryForm.append('showInMain', productCurrentCategory.showInMain);
 
-    categoryApi.putUpdateProductCategory(categoryId, productCategoryForm)
-      .then(res => {
-        navigate('/product');
-        dispatch(updateProductCategoryImage({ categoryImage: '' }));
-      })
-      .catch(error => console.log(error))
+    validate() &&
+      categoryApi.putUpdateProductCategory(categoryId, productCategoryForm)
+        .then(res => {
+          successModify();
+          dispatch(updateProductCategoryImage({ categoryImage: '' }));
+          navigate('/product');
+        })
+        .catch(error => errorToast(error.response.data.message))
   };
 
   return (
@@ -82,6 +97,8 @@ export default function ProductCategoryModifyForm() {
             type='text'
             required={true}
             value={productCurrentCategory.categoryName}
+            error={titleErrorMsg ? true : false}
+            helperText={titleErrorMsg}
             placeholder='카테고리명'
             onChange={event => dispatch(updateCurrentProductCategoryName({ categoryName: event?.target.value }))}
             inputProps={{ style: { fontSize: 20 } }}

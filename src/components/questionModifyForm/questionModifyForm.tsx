@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { questionApi } from '../../network/question';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -23,7 +23,12 @@ import {
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
-export default function QuestionModifyForm() {
+interface propsType {
+  successModify: () => void,
+  errorToast: (message: string) => void
+}
+
+export default function QuestionModifyForm({ successModify, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -32,25 +37,37 @@ export default function QuestionModifyForm() {
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
   const currentQuestion = useAppSelector(state => state.questionForm.currentQuestion); // 현재 문의사항 정보 (수정용)
   const faqState = useAppSelector(state => state.question.faqState); // FAQ state
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+
+  const validate = () => {
+    let isValid = true;
+    if (currentQuestion.title === '' || currentQuestion.title === null) {
+      setTitleErrorMsg('제목을 작성해 주세요.');
+      isValid = false;
+    } else setTitleErrorMsg('');
+    return isValid;
+  };
 
   // 문의사항 변경하기
   const putQuestion = (questionId: number, currentQuestion: { title: string, content: string }) => {
     if (managerMode) {
-      questionApi.putUpdateFAQ(questionId, { title: currentQuestion.title, content: currentQuestion.content, faq: faqState })
-        .then(res => {
-          console.log(res)
-          dispatch(setDetailData({ detail: res }));
-          navigate('/question-detail');
-        })
-        .catch(error => console.log(error))
+      validate() &&
+        questionApi.putUpdateFAQ(questionId, { title: currentQuestion.title, content: currentQuestion.content, faq: faqState })
+          .then(res => {
+            successModify();
+            dispatch(setDetailData({ detail: res }));
+            navigate('/question-detail');
+          })
+          .catch(error => console.log(error))
     } else {
-      questionApi.putQuestion(questionId, currentQuestion)
-        .then(res => {
-          console.log(res)
-          dispatch(setDetailData({ detail: res }));
-          navigate('/question-detail');
-        })
-        .catch(error => console.log(error))
+      validate() &&
+        questionApi.putQuestion(questionId, currentQuestion)
+          .then(res => {
+            successModify();
+            dispatch(setDetailData({ detail: res }));
+            navigate('/question-detail');
+          })
+          .catch(error => errorToast(error.response.data.message))
     }
   };
 
@@ -78,15 +95,13 @@ export default function QuestionModifyForm() {
             value={currentQuestion.title}
             required={true}
             onChange={event => dispatch(modifyQuestionTitle({ title: event?.target.value }))}
+            error={titleErrorMsg ? true : false}
+            helperText={titleErrorMsg}
             placeholder='제목을 입력해 주세요'
             inputProps={{
-              style: {
-                fontSize: 20
-              }
+              style: { fontSize: 20 }
             }}
-            sx={{
-              width: '100%'
-            }}
+            sx={{ width: '100%' }}
           />
         </Box>
 
@@ -112,7 +127,7 @@ export default function QuestionModifyForm() {
 
             <FormControlLabel
               control={<Checkbox
-                defaultChecked={false}
+                defaultChecked={faqState === 'true' ? true : false}
                 onChange={event => dispatch(setFaqState({ faq: event.target.checked }))}
                 sx={{
                   color: 'darkgrey',

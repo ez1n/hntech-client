@@ -5,6 +5,7 @@ import { clickProductModifyFormGoBack } from '../../app/reducers/dialogSlice';
 import {
   addProductDescription,
   addProductDoc,
+  addProductDocType,
   addProductDocUploadButton,
   addProductImage,
   addProductName,
@@ -24,7 +25,7 @@ import {
   Stack,
   TextField,
   List,
-  ListItem,
+  ListItem
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -35,7 +36,11 @@ import { api } from '../../network/network';
 import { productApi } from '../../network/product';
 import { deleteOriginalDocFileButton, deleteOriginalProductFile, deleteOriginalStandardFile, getProductDetail } from '../../app/reducers/productSlice';
 
-export default function ProductModifyForm() {
+interface propsType {
+  successModify: () => void
+}
+
+export default function ProductModifyForm({ successModify }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -52,6 +57,16 @@ export default function ProductModifyForm() {
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const { category, description, productName, files } = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
   const { docFiles, productImages, representativeImage, standardImages } = files;
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+
+  const validate = () => {
+    let isValid = true;
+    if (productName === '' || productName === null) {
+      setTitleErrorMsg('제품 이름을 작성해 주세요.');
+      isValid = false;
+    } else setTitleErrorMsg('');
+    return isValid;
+  };
 
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => { item.current?.click() };
@@ -111,6 +126,32 @@ export default function ProductModifyForm() {
     setDeleteProductId([...deleteProductId, { productId: standardId, fileId: fileId }]);
   };
 
+  // 파일 이름 추출
+  const putUpdateProductDocFiles = (
+    productData: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string,
+      type: string
+    },
+    productId: number) => {
+    docFiles.map((item: {
+      id: number,
+      file: string,
+      originalFilename: string,
+      type: string
+    }) => {
+      item.originalFilename === productData.originalFilename &&
+        productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
+          .then(res => {
+            successModify();
+            navigate('/product-detail');
+          })
+          .catch(error => console.log(error))
+    })
+  };
+
   // 제품 정보 수정 
   const putProduct = (productId: number) => {
     productForm.append('categoryName', category);
@@ -125,14 +166,24 @@ export default function ProductModifyForm() {
       productApi.deleteProductFile(item.productId, item.fileId)
         .then(res => console.log(res))
         .catch(error => console.log(error))
-    ))
+    ));
 
-    productApi.putUpdateProduct(productId, productForm)
-      .then(res => {
-        dispatch(getProductDetail({ detail: res }));
-        navigate(-1);
-      })
-      .catch(error => console.log(error))
+    validate() &&
+      productApi.putUpdateProduct(productId, productForm)
+        .then(res => {
+          if (docFiles.length === 0) {
+            successModify();
+            navigate(-1);
+          }
+          res.files.docFiles.map((item: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string,
+            type: string
+          }) => putUpdateProductDocFiles(item, productId))
+        })
+        .catch(error => console.log(error))
   };
 
   return (
@@ -158,6 +209,8 @@ export default function ProductModifyForm() {
             type='text'
             value={productName}
             onChange={event => dispatch(addProductName({ productName: event?.target.value }))}
+            error={titleErrorMsg ? true : false}
+            helperText={titleErrorMsg}
             required={true}
             placeholder='제품명'
             inputProps={{
@@ -334,11 +387,10 @@ export default function ProductModifyForm() {
                 <TextField
                   size='small'
                   defaultValue={item.type}
+                  disabled
                   placeholder='파일 이름'
                   inputProps={{
-                    style: {
-                      fontSize: 18
-                    }
+                    style: { fontSize: 18 }
                   }} />
                 <Typography sx={{
                   pl: 2,
@@ -352,7 +404,7 @@ export default function ProductModifyForm() {
                 }}>
                   {item.originalFilename}
                 </Typography>
-                <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={(event) => { selectFile(item.id, event) }}>
+                <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={event => { selectFile(item.id, event) }}>
                   업로드
                   <input className='productInput' type='file' id={`inputFile${item.id}`} />
                 </label>
@@ -374,11 +426,10 @@ export default function ProductModifyForm() {
                 <TextField
                   size='small'
                   defaultValue={item.type}
+                  onChange={event => dispatch(addProductDocType({ id: item.id, type: event.target.value }))}
                   placeholder='파일 이름'
                   inputProps={{
-                    style: {
-                      fontSize: 18
-                    }
+                    style: { fontSize: 18 }
                   }} />
                 <Typography sx={{
                   pl: 2,
