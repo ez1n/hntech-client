@@ -67,15 +67,14 @@ export default function ArchiveItem() {
     if (event.key === 'Enter') { getSearchArchive() };
   };
 
-
   return (
     <>
       <Box sx={{ borderTop: '3px solid #2E7D32', borderBottom: '3px solid #3B6C46' }}>
         {/* 분류 */}
-        <Box sx={{ display: 'flex', flex: 1, p: 2, borderBottom: '3px solid #3B6C46' }}>
+        <Box sx={{ display: 'flex', flex: 1, p: '12px', borderBottom: '3px solid #3B6C46' }}>
           <Title sx={{ flex: 0.1 }}>번호</Title>
-          <Title sx={{ flex: 0.1 }}>분류</Title>
-          <Title sx={{ flex: 0.6 }}>제목</Title>
+          <Title sx={{ flex: 0.2 }}>분류</Title>
+          <Title sx={{ flex: 0.5 }}>제목</Title>
           <Title sx={{ flex: 0.2 }}>작성일</Title>
         </Box>
 
@@ -88,14 +87,15 @@ export default function ArchiveItem() {
               flex: 1,
               p: 1.5,
               borderBottom: '1px solid #3B6C46',
-              backgroundColor: 'rgba(46, 125, 50, 0.1)'
+              backgroundColor: 'rgba(46, 125, 50, 0.1)',
+              alignItems: 'center'
             }}>
-            <List sx={{ flex: 0.1 }}><ErrorIcon sx={{ color: 'darkgreen' }} /></List>
-            <List sx={{ flex: 0.1 }}>{item.categoryName}</List>
+            <List sx={{ flex: 0.1 }}><Icon /></List>
+            <List sx={{ flex: 0.2 }}>{item.categoryName}</List>
             <List
               onClick={() => openDetail(item.id)}
               sx={{
-                flex: 0.6,
+                flex: 0.5,
                 cursor: 'pointer',
                 display: 'flex',
                 justifyContent: 'center',
@@ -103,20 +103,9 @@ export default function ArchiveItem() {
                   color: 'blue'
                 }
               }}>
-              <Typography>
-                {item.title}
-              </Typography>
+              {item.title}
               {item.new == 'true' &&
-                <Typography
-                  sx={{
-                    ml: 1,
-                    fontSize: 'small',
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'lightseagreen'
-                  }}>
-                  [new]
-                </Typography>
+                <New>[new]</New>
               }
             </List>
             <List sx={{ flex: 0.2 }}>{item.createTime}</List>
@@ -135,32 +124,22 @@ export default function ArchiveItem() {
               borderBottom: '1px solid #3B6C46'
             }}>
             <List sx={{ flex: 0.1 }}>{TotalElements - index}</List>
-            <List sx={{ flex: 0.1 }}>{item.categoryName}</List>
+            <List sx={{ flex: 0.2 }}>{item.categoryName}</List>
             <List
               onClick={() => openDetail(item.id)}
               sx={{
-                flex: 0.6,
+                flex: 0.5,
                 cursor: 'pointer',
                 display: 'flex',
                 justifyContent: 'center',
+                alignItems: 'center',
                 '&: hover': {
                   color: 'blue'
                 }
               }}>
-              <Typography>
-                {item.title}
-              </Typography>
+              {item.title}
               {item.new == 'true' &&
-                <Typography
-                  sx={{
-                    ml: 1,
-                    fontSize: 'small',
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'lightseagreen'
-                  }}>
-                  [new]
-                </Typography>
+                <New>[new]</New>
               }
             </List>
             <List sx={{ flex: 0.2 }}>{item.createTime}</List>
@@ -169,7 +148,7 @@ export default function ArchiveItem() {
         ))}
       </Box>
 
-      <SpacingMargin />
+      <Spacing />
 
       {/* 자료 검색 */}
       <Stack direction='row' spacing={1} sx={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -188,7 +167,7 @@ export default function ArchiveItem() {
           sx={{ color: 'darkgreen', fontSize: 35, cursor: 'pointer' }} />
       </Stack>
 
-      <SpacingMargin />
+      <Spacing />
 
       <Stack>
         <Pagination
@@ -200,17 +179,53 @@ export default function ArchiveItem() {
   )
 };
 
-const SpacingMargin = styled(Container)(() => ({
+const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
 
-const Title = styled(Typography)(() => ({
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 17,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14,
+  },
   textAlign: 'center',
   fontSize: 20,
   fontWeight: 'bold'
 })) as typeof Typography;
 
-const List = styled(Typography)(() => ({
+const List = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 13,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 11,
+  },
   textAlign: 'center',
-  fontSize: 15,
+  alignItems: 'center',
+  fontSize: 15
+})) as typeof Typography;
+
+const Icon = styled(ErrorIcon)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 17,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 13,
+  },
+  color: 'darkgreen'
+}));
+
+const New = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 10,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 8,
+  },
+  marginLeft: 7,
+  fontSize: 13,
+  display: 'flex',
+  color: 'lightseagreen'
 })) as typeof Typography;

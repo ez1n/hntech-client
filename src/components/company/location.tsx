@@ -18,7 +18,7 @@ export default function Location() {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && EditButton('수정', console.log('#'))}
+        <EditButton name='수정' onClick={() => console.log('#')} />
       </Spacing>
 
       {/* 지도 */}
@@ -30,9 +30,6 @@ export default function Location() {
 };
 
 const Spacing = styled(Container)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    height: 20
-  },
   height: 50
 })) as typeof Container;
 

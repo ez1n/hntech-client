@@ -49,7 +49,7 @@ export default function Introduce({ success }: propsType) {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && EditButton('수정', putIntroduce)}
+        {managerMode && <EditButton name='수정' onClick={putIntroduce} />}
       </Spacing>
 
       {/* 내용 */}
@@ -64,10 +64,7 @@ export default function Introduce({ success }: propsType) {
             InputProps={{
               style: { fontSize: 18 }
             }}
-            sx={{
-              m: 3,
-              width: '90%'
-            }} />
+            sx={{ mt: 3, width: '100%' }} />
         </Container> :
         <Container sx={{ textAlign: 'center' }}>
           {introduce.newIntroduce.split('\n').map((value, index) => (
@@ -82,7 +79,7 @@ export default function Introduce({ success }: propsType) {
 
 const Spacing = styled(Container)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
-    height: 20
+    height: 30
   },
   height: 50
 })) as typeof Container;

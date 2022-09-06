@@ -34,6 +34,7 @@ export default function App() {
   const dispatch = useAppDispatch();
   const managerMode = useAppSelector(state => state.manager.managerMode);
 
+  // data
   useEffect(() => {
     // 메인 카테고리 목록
     categoryApi.getMainCategories()
@@ -59,11 +60,9 @@ export default function App() {
     adminApi.getDocument()
       .then(res => { dispatch(setDocument({ document: res })) })
 
-    // 회사 소개 정보 받아오기
+    // 회사 소개 정보
     adminApi.getCompany()
       .then(res => dispatch(getCompanyImage({ data: res })))
-
-    console.log('login') // 로그인 지속되는지.. 확인하는거..
   }, []);
 
   // toast
@@ -103,7 +102,9 @@ export default function App() {
             }></Route>
 
             <Route path='/product-form' element={
-              managerMode && <ProductForm success={success} />
+              managerMode && <ProductForm
+                success={success}
+                errorToast={errorToast} />
             }></Route>
 
             <Route path='/product-modify' element={

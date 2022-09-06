@@ -53,9 +53,9 @@ export default function CompanyInfo({ success }: propsType) {
       </Container>
 
       {/* 수정 버튼 */}
-      <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <Spacing>
         {managerMode &&
-          <>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <label className='imageUploadButton' htmlFor='orgChartInput'>
               이미지 가져오기
               <input
@@ -64,8 +64,8 @@ export default function CompanyInfo({ success }: propsType) {
                 id='orgChartInput'
                 onChange={updateCompanyInfoImage} />
             </label>
-            {EditButton('수정', postCompanyInfo)}
-          </>}
+            <EditButton name='수정' onClick={postCompanyInfo} />
+          </Box>}
       </Spacing>
 
       {/* CI */}
@@ -76,7 +76,8 @@ export default function CompanyInfo({ success }: propsType) {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              minHeight: 300
+              minHeight: 300,
+              overflow: 'scroll'
             }}>
             <img src={companyInfo.path === '' ? `${api.baseUrl()}/files/admin/${companyInfo.serverFilename}` : companyInfo.path} alt='Company Info' width={'80%'} />
           </Container> :
@@ -87,10 +88,7 @@ export default function CompanyInfo({ success }: propsType) {
   )
 };
 
-const Spacing = styled(Container)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    height: 20
-  },
+const Spacing = styled(Container)(() => ({
   height: 50
 })) as typeof Container;
 

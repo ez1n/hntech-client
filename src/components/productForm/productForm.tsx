@@ -40,10 +40,11 @@ import { productApi } from '../../network/product';
 import { getProductList } from '../../app/reducers/productSlice';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function ProductForm({ success }: propsType) {
+export default function ProductForm({ success, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -141,7 +142,7 @@ export default function ProductForm({ success }: propsType) {
             success();
             navigate('/product');
           })
-          .catch(error => console.log(error))
+          .catch(error => errorToast(error.response.data.message))
     })
   };
 
@@ -171,7 +172,7 @@ export default function ProductForm({ success }: propsType) {
             }) => putUpdateProductDocFiles(item, res.id))
           }
         })
-        .catch(error => console.log(error))
+        .catch(error => errorToast(error.response.data.message))
   };
 
   return (

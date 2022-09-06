@@ -59,7 +59,7 @@ export default function Products({ successDelete }: propsType) {
               defaultValue={currentProductCategoryName}
               onChange={event => {
                 dispatch(selectProductCategoryTrue());
-                dispatch(setCurrentProductCategoryName({ category: event?.target.value }));
+                dispatch(setCurrentProductCategoryName({ category: event.target.value }));
               }}
               size='small'>
               {productCategories.map((item: {
@@ -131,9 +131,9 @@ const SelectBox = styled(Box)(({ theme }) => ({
     display: 'block'
   },
   display: 'none',
-}))
+}));
 
-const MenuSelect = styled(Select)(({ theme }) => ({
+const MenuSelect = styled(Select)(() => ({
   textAlign: 'center',
   marginTop: 20,
   width: '100%'

@@ -26,7 +26,7 @@ npm install
 ## Start
 
 ```
-npm Start
+npm start
 ```
 
 ## Techs

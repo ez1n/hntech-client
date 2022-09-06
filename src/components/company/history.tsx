@@ -52,9 +52,9 @@ export default function History({ success }: propsType) {
       </Container>
 
       {/* 수정 버튼 */}
-      <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <Spacing>
         {managerMode &&
-          <>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <label className='imageUploadButton' htmlFor='historyInput'>
               이미지 가져오기
               <input
@@ -63,8 +63,8 @@ export default function History({ success }: propsType) {
                 id='historyInput'
                 onChange={updateHistoryImage} />
             </label>
-            {EditButton('수정', postHistory)}
-          </>}
+            <EditButton name='수정' onClick={postHistory} />
+          </Box>}
       </Spacing>
 
       {/* 회사 연혁 */}
@@ -75,7 +75,7 @@ export default function History({ success }: propsType) {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              minHeight: 500,
+              minHeight: 300,
               overflow: 'scroll'
             }}>
             <img src={history.path === '' ? `${api.baseUrl()}/files/admin/${history.serverFilename}` : history.path} alt='회사 연혁' width={'80%'} />
@@ -88,9 +88,6 @@ export default function History({ success }: propsType) {
 };
 
 const Spacing = styled(Container)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    height: 20
-  },
   height: 50
 })) as typeof Container;
 

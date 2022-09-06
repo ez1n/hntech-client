@@ -7,7 +7,7 @@ export default function Specification() {
   const standardImages = useAppSelector(state => state.product.productDetail.files.standardImages); // 제품 정보
 
   return (
-    <Container>
+    <Container sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box>
         {standardImages.map((item: {
           id: number,
@@ -15,7 +15,7 @@ export default function Specification() {
           savedPath: string,
           serverFilename: string
         }) => (
-          <img key={item.id} src={`${api.baseUrl()}/files/product/${item.serverFilename}`} width={300} alt={item.originalFilename} />
+          <img key={item.id} src={`${api.baseUrl()}/files/product/${item.serverFilename}`} width={'100%'} alt={item.originalFilename} />
         ))}
       </Box>
     </Container>

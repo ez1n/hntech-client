@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectProductCategoryTrue } from '../../app/reducers/categorySlice';
-import { Box, Button, Container, styled, Typography } from '@mui/material';
+import { Box, Button, Container, MenuItem, Select, styled, Typography } from '@mui/material';
 import ProductInfo from './productInfo';
 import Files from './files';
 import Specification from './specification';
@@ -37,17 +37,10 @@ export default function ProductDetail({ successDelete }: propsType) {
   }, []);
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <TotalBox>
       {/* 제품목록 */}
-      <Box sx={{ flex: 0.3 }}>
-        <Box sx={{
-          ml: '50%',
-          pt: 1,
-          pb: 1,
-          mt: 5,
-          borderLeft: '4px solid rgb(46, 125, 50)',
-          minWidth: '130px'
-        }}>
+      <CategoryTotalBox>
+        <CategoryBox>
           <Container sx={{ display: 'flex' }}>
             <Typography
               variant='h5'
@@ -83,11 +76,32 @@ export default function ProductDetail({ successDelete }: propsType) {
               </MenuButton>
             ))}
           </Box >
-        </Box>
-      </Box>
+        </CategoryBox>
+      </CategoryTotalBox>
+
+      {/* 900px 이하 사이드 메뉴 */}
+      <SelectBox>
+        <MenuSelect
+          defaultValue={productId}
+          onChange={event => getProduct(event?.target.value)}
+          size='small'>
+          {productList.map((item: {
+            id: number,
+            image: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string,
+            },
+            productName: string
+          }) => (
+            <MenuList key={item.id} value={item.id}>{item.productName}</MenuList>
+          ))}
+        </MenuSelect>
+      </SelectBox>
 
       {/* 제품 정보 */}
-      <Box sx={{ flex: 0.7, pt: 5, mr: '10%', textAlign: 'center' }}>
+      <Box sx={{ flex: 0.8, pt: 5, textAlign: 'center' }}>
         <ProductInfo successDelete={successDelete} />
 
         <Spacing />
@@ -100,11 +114,14 @@ export default function ProductDetail({ successDelete }: propsType) {
         {/* 상세 정보 */}
         <Specification />
       </Box>
-    </Box>
+    </TotalBox>
   )
 };
 
-const Spacing = styled(Container)(() => ({
+const Spacing = styled(Container)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    height: 30
+  },
   height: 50
 })) as typeof Container;
 
@@ -120,3 +137,45 @@ const MenuButton = styled(Button)(() => ({
     transform: 'scale(1.02)'
   }
 })) as typeof Button;
+
+const CategoryTotalBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
+  },
+  flex: 0.2,
+  paddingTop: 20
+})) as typeof Box;
+
+const CategoryBox = styled(Box)(({ theme }) => ({
+  paddingTop: 10,
+  paddingBottom: 10,
+  marginTop: 20,
+  borderLeft: '4px solid rgb(46, 125, 50)',
+  minWidth: '130px'
+})) as typeof Box;
+
+const TotalBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column'
+  },
+  display: 'flex',
+  width: '80vw',
+  margin: 'auto'
+})) as typeof Box;
+
+const SelectBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'block'
+  },
+  display: 'none',
+}));
+
+const MenuSelect = styled(Select)(() => ({
+  textAlign: 'center',
+  marginTop: 20,
+  width: '100%'
+}));
+
+const MenuList = styled(MenuItem)(() => ({
+  justifyContent: 'center'
+})) as typeof MenuItem;

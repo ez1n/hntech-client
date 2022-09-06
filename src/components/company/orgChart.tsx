@@ -53,9 +53,9 @@ export default function OrgChart({ success }: propsType) {
       </Container>
 
       {/* 수정 버튼 */}
-      <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <Spacing>
         {managerMode &&
-          <>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <label
               className='imageUploadButton'
               htmlFor='orgChartInput'
@@ -66,8 +66,8 @@ export default function OrgChart({ success }: propsType) {
                 accept='image*'
                 id='orgChartInput' />
             </label>
-            {EditButton('수정', postOrgChart)}
-          </>}
+            <EditButton name='수정' onClick={postOrgChart} />
+          </Box>}
       </Spacing>
 
       {/* 조직도 */}
@@ -78,7 +78,8 @@ export default function OrgChart({ success }: propsType) {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              minHeight: 300
+              minHeight: 300,
+              overflow: 'scroll'
             }}>
             <img src={orgChart.path === '' ? `${api.baseUrl()}/files/admin/${orgChart.serverFilename}` : orgChart.path} alt='조직도' width={'80%'} />
           </Container> :
@@ -90,9 +91,6 @@ export default function OrgChart({ success }: propsType) {
 };
 
 const Spacing = styled(Container)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    height: 20
-  },
   height: 50
 })) as typeof Container;
 
