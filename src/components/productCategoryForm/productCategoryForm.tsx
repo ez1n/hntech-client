@@ -168,8 +168,8 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('등록완료', postProductCategory)}
-        {EditButton('취소', () => dispatch(clickProductCategoryFormGoBack()))}
+        <EditButton name='등록완료' onClick={postProductCategory} />
+        <EditButton name='취소' onClick={() => dispatch(clickProductCategoryFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

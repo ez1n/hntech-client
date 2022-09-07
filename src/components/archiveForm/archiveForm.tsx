@@ -135,7 +135,10 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
-            inputProps={{ style: { fontSize: 20 } }}
+            inputProps={{
+              style: { fontSize: 20 },
+              maxLength: 34
+            }}
             sx={{ width: '100%' }}
           />
         </Box>
@@ -170,8 +173,7 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
           <CKEditor
             editor={ClassicEditor}
             config={{
-              allowedContent: true,
-              placeholder: '내용을 입력하세요',
+              placeholder: '내용을 입력하세요'
             }}
             onChange={(event: any, editor: { getData: () => any; }) => {
               const data = editor.getData();
@@ -215,8 +217,8 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', postArchiveForm)}
-        {EditButton('취소', () => dispatch(archiveFormGoBack()))}
+        <EditButton name='작성완료' onClick={postArchiveForm} />
+        <EditButton name='취소' onClick={() => dispatch(archiveFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

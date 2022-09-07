@@ -169,8 +169,8 @@ export default function QuestionForm({ success, errorToast }: propsType) {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', postCreateQuestion)}
-        {EditButton('취소', () => dispatch(clickQuestionFormGoBack()))}
+        <EditButton name='작성완료' onClick={postCreateQuestion} />
+        <EditButton name='취소' onClick={() => dispatch(clickQuestionFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

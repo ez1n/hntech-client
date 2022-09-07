@@ -35,7 +35,7 @@ import CancelModal from '../cancelModal';
 
 interface propsType {
   successModify: () => void,
-  errorToast: (message) => void
+  errorToast: (message: string) => void
 }
 
 export default function ArchiveModifyForm({ successModify, errorToast }: propsType) {
@@ -244,8 +244,8 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('변경완료', () => putArchiveForm(archiveId))}
-        {EditButton('취소', () => dispatch(clickArchiveModifyFormGoBack()))}
+        <EditButton name='변경완료' onClick={() => putArchiveForm(archiveId)} />
+        <EditButton name='취소' onClick={() => dispatch(clickArchiveModifyFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

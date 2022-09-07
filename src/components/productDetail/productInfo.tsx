@@ -66,23 +66,15 @@ export default function ProductInfo({ successDelete }: propsType) {
         flexDirection: 'column',
         alignItems: 'center'
       }}>
-      { }
-      <Typography
-        variant='h5'
-        sx={{
-          p: 1,
-          width: 'max-content',
-          borderBottom: '3px solid #2E7D32',
-          textAlign: 'start'
-        }}>
+      <TitleTypography variant='h5'>
         {productName}
-      </Typography>
+      </TitleTypography>
 
       <Spacing sx={{ textAlign: 'end' }}>
         {managerMode &&
           <>
-            {EditButton('수정', modifyProduct)}
-            {EditButton('삭제', () => dispatch(clickProductInfoGoBack()))}
+            <EditButton name='수정' onClick={modifyProduct} />
+            <EditButton name='삭제' onClick={() => dispatch(clickProductInfoGoBack())} />
           </>
         }
       </Spacing>
@@ -127,9 +119,13 @@ export default function ProductInfo({ successDelete }: propsType) {
       <Spacing />
 
       {/* 부가 설명 */}
-      <Typography sx={{ fontSize: 20 }}>
-        {description}
-      </Typography>
+      <Container sx={{ textAlign: 'center' }}>
+        {description.split('\n').map((value, index) => (
+          <DescriptionTypography key={index}>
+            {value}
+          </DescriptionTypography>
+        ))}
+      </Container>
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
@@ -143,6 +139,29 @@ export default function ProductInfo({ successDelete }: propsType) {
   )
 };
 
-const Spacing = styled(Container)(() => ({
+const Spacing = styled(Container)(({ theme }) => ({
   height: 50
 })) as typeof Container;
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  userSelect: 'none',
+  padding: 1,
+  width: 'max-content',
+  borderBottom: '3px solid #2E7D32',
+})) as typeof Typography;
+
+const DescriptionTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  fontSize: 20
+})) as typeof Typography;

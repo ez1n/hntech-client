@@ -31,7 +31,7 @@ export default function Questions() {
             console.log('customer')
         }}
         sx={{ textAlign: 'end' }}>
-        {EditButton('글쓰기', () => navigate('/question-form'))}
+        <EditButton name='글쓰기' onClick={() => navigate('/question-form')} />
       </Box>
 
       {/* 문의 목록 */}

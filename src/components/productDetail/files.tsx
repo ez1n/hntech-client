@@ -49,7 +49,12 @@ export default function Files() {
 };
 
 // 버튼 스타일
-const FileButton = styled(Button)(() => ({
+const FileButton = styled(Button)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 12,
+    paddingTop: 5,
+    paddingBottom: 5
+  },
   color: '#FCFCFC',
   backgroundColor: 'green',
   marginLeft: 5,

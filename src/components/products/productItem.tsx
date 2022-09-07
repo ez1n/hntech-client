@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { api } from '../../network/network';
 import { productApi } from '../../network/product';
 import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
-import { getCurrentProductData, getProductDetail, getProductList, setSomeDraggingFalse, setSomeDraggingTrue } from '../../app/reducers/productSlice';
+import { getCurrentProductData, getProductDetail, getProductList, setTargetProductId } from '../../app/reducers/productSlice';
 import { Box, Button, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
-import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CancelModal from '../cancelModal';
 import { getProductContent } from '../../app/reducers/productFormSlice';
 
 interface propsType {
@@ -34,13 +32,11 @@ export default function ProductItem({ product, index }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [productId, setProductId] = useState({ targetProductId: 0, draggedProductId: 0 });
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
-  const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
-  const someDragging = useAppSelector(state => state.product.someDragging);
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
+  const targetProductId = useAppSelector(state => state.product.targetProductId);
+  const draggedProductId = id;
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
@@ -52,34 +48,21 @@ export default function ProductItem({ product, index }: propsType) {
       })
   };
 
-  // toast
-  const success = () => toast.success('삭제되었습니다.');
-
-  // 제품 삭제
-  const deleteProduct = (productId: number) => {
-    productApi.deleteProduct(productId)
-      .then(res => {
-        productApi.getAllProducts(currentProductCategoryName)
-          .then(res => {
-            success();
-            dispatch(getProductList({ productList: res }));
-          })
-          .catch(error => console.log(error))
-        dispatch(clickProductItemGoBack());
-      })
-      .catch(error => console.log(error))
-  };
-
   // 제품 순서변경
-  const patchUpdateCategorySequence = (productId: number, targetProductId: number) => {
-    productApi.patchUpdateCategorySequence(productId, targetProductId)
-      .then(res => {
-        console.log(res);
-        dispatch(getProductList(res));
-      })
-      .catch(error => console.log(error))
+  const patchUpdateCategorySequence = (draggedId: number, targetId: number) => {
+    managerMode &&
+      productApi.patchUpdateCategorySequence(draggedId, targetId)
+        .then(res => {
+          console.log(res)
+          productApi.getAllProducts(currentProductCategoryName)
+            .then(res => {
+              dispatch(getProductList({ productList: res }))
+              console.log(res)
+            })
+            .catch(error => console.log(error))
+        })
+        .catch(error => console.log(error))
   };
-
 
   /* 드래그 앤 드롭 */
 
@@ -114,20 +97,15 @@ export default function ProductItem({ product, index }: propsType) {
       if (!didDrop) {
         moveProductItem(originProduct, originIndex);
       }
-      console.log(productId)
-      // productApi.patchUpdateCategorySequence(draggedProduct.id, id);
+      patchUpdateCategorySequence(draggedProductId, targetProductId);
     },
   }),
-    [id, index, moveProductItem]
+    [id, index]
   );
 
   // drop
   const [, dropRef] = useDrop(() => ({
     accept: 'productItem',
-    isDragging: () => {
-      setProductId({ ...productId, draggedProductId: id });
-      console.log('dragging')
-    },
     hover: (item: {
       product: {
         id: number,
@@ -138,25 +116,23 @@ export default function ProductItem({ product, index }: propsType) {
           serverFilename: string,
         },
         productName: string
-      }, index: number
+      },
+      index: number
     }) => {
-      const { product: draggedProduct, index: originIndex } = item; // id : target id, draggedProduct.id : 이동 제품 id
+      const { product: draggedProduct, index: originIndex } = item;
       if (draggedProduct.id !== id) {
         moveProductItem(draggedProduct, index);
-        setProductId({ ...productId, targetProductId: id });
+        dispatch(setTargetProductId({ id: product.id }));
       }
     }
   }));
 
-  useEffect(() => {
-    isDragging ? dispatch(setSomeDraggingTrue()) : dispatch(setSomeDraggingFalse());
-  }, [isDragging, someDragging]);
-
   return (
     <TotalBox>
-      <ProductBox ref={dropRef}>
+      <ProductBox ref={dragRef}>
         {/* 제품 */}
         <ProductButton
+          ref={dropRef}
           onClick={() => getProduct(id)}
           sx={{
             opacity: isDragging ? 0.5 : 1,
@@ -164,7 +140,6 @@ export default function ProductItem({ product, index }: propsType) {
           }}>
           <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' height='100%' alt={image.originalFilename} />
           <Typography
-            ref={dragRef}
             sx={{
               width: '100%',
               borderRadius: 1,
@@ -200,15 +175,6 @@ export default function ProductItem({ product, index }: propsType) {
           </Box>
         }
       </ProductBox>
-
-      {/* 삭제 버튼 Dialog */}
-      <CancelModal
-        openState={productItemState}
-        title='제품 삭제'
-        text1='해당 제품이 삭제됩니다.'
-        text2='삭제하시겠습니까?'
-        yesAction={() => deleteProduct(currentProductData.id)}
-        closeAction={() => dispatch(clickProductItemGoBack())} />
     </TotalBox>
   )
 };

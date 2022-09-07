@@ -80,7 +80,8 @@ interface productInitialState {
     id: number,
     productName: string
   },
-  activeStep: number
+  activeStep: number,
+  targetProductId: number
 };
 
 const ProductInitialState: productInitialState = {
@@ -120,7 +121,8 @@ const ProductInitialState: productInitialState = {
     id: 0,
     productName: ''
   },
-  activeStep: 0
+  activeStep: 0,
+  targetProductId: 0
 };
 
 export const ProductSlice = createSlice({
@@ -247,7 +249,11 @@ export const ProductSlice = createSlice({
     ) => {
       const newFiles = state.productDetail.files.docFiles.filter((value, index) => index !== action.payload.index);
       state.productDetail.files.docFiles = newFiles;
-    }
+    },
+    setTargetProductId: (
+      state,
+      action: PayloadAction<{ id: number }>
+    ) => { state.targetProductId = action.payload.id }
   }
 }
 );
@@ -264,5 +270,6 @@ export const {
   prevImage,
   deleteOriginalProductFile,
   deleteOriginalStandardFile,
-  deleteOriginalDocFileButton } = ProductSlice.actions;
+  deleteOriginalDocFileButton,
+  setTargetProductId } = ProductSlice.actions;
 export default ProductSlice.reducer;

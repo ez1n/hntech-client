@@ -40,10 +40,11 @@ import { productApi } from '../../network/product';
 import { getProductList } from '../../app/reducers/productSlice';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function ProductForm({ success }: propsType) {
+export default function ProductForm({ success, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -141,7 +142,7 @@ export default function ProductForm({ success }: propsType) {
             success();
             navigate('/product');
           })
-          .catch(error => console.log(error))
+          .catch(error => errorToast(error.response.data.message))
     })
   };
 
@@ -171,7 +172,7 @@ export default function ProductForm({ success }: propsType) {
             }) => putUpdateProductDocFiles(item, res.id))
           }
         })
-        .catch(error => console.log(error))
+        .catch(error => errorToast(error.response.data.message))
   };
 
   return (
@@ -229,9 +230,9 @@ export default function ProductForm({ success }: propsType) {
             </label>
 
             {/* 보여지는 button */}
-            {EditButton('대표 제품 이미지 추가', () => selectInput(repPhotoInputRef))}
-            {EditButton('제품 이미지 추가', () => selectInput(photoInputRef))}
-            {EditButton('규격 이미지 추가', () => selectInput(gradeInputRef))}
+            <EditButton name='대표 제품 이미지 추가' onClick={() => selectInput(repPhotoInputRef)} />
+            <EditButton name='제품 이미지 추가' onClick={() => selectInput(photoInputRef)} />
+            <EditButton name='규격 이미지 추가' onClick={() => selectInput(gradeInputRef)} />
           </Box>
 
           {/* 카테고리 */}
@@ -399,8 +400,8 @@ export default function ProductForm({ success }: propsType) {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', postProduct)}
-        {EditButton('취소', () => dispatch(clickProductFormGoBack()))}
+        <EditButton name='작성완료' onClick={postProduct} />
+        <EditButton name='취소' onClick={() => dispatch(clickProductFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

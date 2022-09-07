@@ -78,8 +78,8 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
           }}>
           답변완료
         </Button>
-        {EditButton('수정', () => navigate('/question-modify'))}
-        {EditButton('삭제', () => dispatch(clickQuestionDetailGoBack()))}
+        <EditButton name='수정' onClick={() => navigate('/question-modify')} />
+        <EditButton name='삭제' onClick={() => dispatch(clickQuestionDetailGoBack())} />
       </Spacing>
 
 

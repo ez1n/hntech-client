@@ -24,14 +24,15 @@
 .imageUploadButton {
   color: #2E7D32;
   border: 1px solid rgba(46, 125, 50, 0.5);
-  border-radius: 8px;
+  border-radius: 9px;
   background-color: rgba(46, 125, 50, 0.1);
   cursor: pointer;
-  width: 150px;
+  width: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 8px;
+  padding: 9px;
+  font-size: 14px;
 }
 
 .imageUploadButton:hover {
@@ -143,6 +144,11 @@
   .CIImage {
     width: 10%
   }
+
+  .imageUploadButton {
+    font-size: 13px;
+    padding: 8px;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -152,5 +158,12 @@
 
   .CIImage {
     display: none;
+  }
+
+  .imageUploadButton {
+    font-size: 11px;
+    padding: 7px;
+    width: 100px;
+
   }
 }

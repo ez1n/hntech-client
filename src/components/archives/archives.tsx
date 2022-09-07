@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
-import { Container, styled, Typography } from '@mui/material';
+import { Box, Container, styled, Typography } from '@mui/material';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
 import EditArchiveCategory from './editArchiveCategory';
@@ -37,23 +37,17 @@ export default function Archives() {
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography
-        variant='h5'
-        sx={{
-          p: 1,
-          width: 'max-content',
-          borderBottom: '3px solid #2E7D32',
-        }}>
+      <TitleTypography variant='h5'>
         고객 자료실
-      </Typography>
+      </TitleTypography>
 
       {/* 버튼 */}
-      <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <Spacing>
         {managerMode &&
-          <>
-            {EditButton('카테고리 수정', () => dispatch(clickArchivesGoBack()))}
-            {EditButton('글쓰기', () => navigate('/archive-form'))}
-          </>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <EditButton name='카테고리 수정' onClick={() => dispatch(clickArchivesGoBack())} />
+            <EditButton name='글쓰기' onClick={() => navigate('/archive-form')} />
+          </Box>
         }
 
       </Spacing>
@@ -70,3 +64,15 @@ export default function Archives() {
 const Spacing = styled(Container)(() => ({
   height: 50
 })) as typeof Container;
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  padding: 1,
+  width: 'max-content',
+  borderBottom: '3px solid #2E7D32'
+})) as typeof Typography;
