@@ -24,7 +24,7 @@ export default function Introduce({ success }: propsType) {
   // 인사말 받아오기
   useEffect(() => {
     adminApi.getIntroduce()
-      .then(res => { dispatch(updateIntroduce({ newIntroduce: res.newIntroduce })); console.log(res) })
+      .then(res => dispatch(updateIntroduce({ newIntroduce: res.newIntroduce })))
       .catch(error => console.log(error))
   }, []);
 

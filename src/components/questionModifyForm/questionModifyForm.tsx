@@ -170,8 +170,8 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('변경완료', () => putQuestion(detail.id, currentQuestion))}
-        {EditButton('변경취소', () => dispatch(clickQuestionModifyFormGoBack()))}
+        <EditButton name='변경완료' onClick={() => putQuestion(detail.id, currentQuestion)} />
+        <EditButton name='변경취소' onClick={() => dispatch(clickQuestionModifyFormGoBack())} />
       </Spacing>
 
       {/* 변경취소 Dialog */}

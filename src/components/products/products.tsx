@@ -11,6 +11,8 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useNavigate } from 'react-router-dom';
 import { resetProductForm } from '../../app/reducers/productFormSlice';
 import { selectProductCategoryTrue, setCurrentProductCategoryName } from '../../app/reducers/categorySlice';
+import CancelModal from '../cancelModal';
+import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
 
 interface propsType {
   successDelete: () => void
@@ -25,6 +27,8 @@ export default function Products({ successDelete }: propsType) {
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
+  const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
+  const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
 
   //제품 목록 받아오기
   useEffect(() => {
@@ -33,6 +37,21 @@ export default function Products({ successDelete }: propsType) {
       .then(res => dispatch(getProductList({ productList: res })))
       .catch(error => console.log(error))
   }, [currentProductCategoryName]);
+
+  // 제품 삭제
+  const deleteProduct = (productId: number) => {
+    productApi.deleteProduct(productId)
+      .then(res => {
+        productApi.getAllProducts(currentProductCategoryName)
+          .then(res => {
+            successDelete();
+            dispatch(getProductList({ productList: res }));
+          })
+          .catch(error => console.log(error))
+        dispatch(clickProductItemGoBack());
+      })
+      .catch(error => console.log(error))
+  };
 
   return (
     <Box>
@@ -99,6 +118,15 @@ export default function Products({ successDelete }: propsType) {
           </Box>
         </TotalBox>
       }
+
+      {/* 삭제 버튼 Dialog */}
+      <CancelModal
+        openState={productItemState}
+        title='제품 삭제'
+        text1='해당 제품이 삭제됩니다.'
+        text2='삭제하시겠습니까?'
+        yesAction={() => deleteProduct(currentProductData.id)}
+        closeAction={() => dispatch(clickProductItemGoBack())} />
     </Box >
   )
 };

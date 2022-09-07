@@ -230,9 +230,9 @@ export default function ProductForm({ success, errorToast }: propsType) {
             </label>
 
             {/* 보여지는 button */}
-            {EditButton('대표 제품 이미지 추가', () => selectInput(repPhotoInputRef))}
-            {EditButton('제품 이미지 추가', () => selectInput(photoInputRef))}
-            {EditButton('규격 이미지 추가', () => selectInput(gradeInputRef))}
+            <EditButton name='대표 제품 이미지 추가' onClick={() => selectInput(repPhotoInputRef)} />
+            <EditButton name='제품 이미지 추가' onClick={() => selectInput(photoInputRef)} />
+            <EditButton name='규격 이미지 추가' onClick={() => selectInput(gradeInputRef)} />
           </Box>
 
           {/* 카테고리 */}
@@ -400,8 +400,8 @@ export default function ProductForm({ success, errorToast }: propsType) {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('작성완료', postProduct)}
-        {EditButton('취소', () => dispatch(clickProductFormGoBack()))}
+        <EditButton name='작성완료' onClick={postProduct} />
+        <EditButton name='취소' onClick={() => dispatch(clickProductFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

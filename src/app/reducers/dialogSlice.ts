@@ -22,6 +22,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * archiveModifyFormState : 자료실 글 수정
  * editState : 관리자 정보 수정 (drawer)
  * questionStatusState : 문의사항 처리 상태
+ * backdrop : 글쓰기 처리중
  */
 
 /**
@@ -68,7 +69,8 @@ interface dialogInitialState {
   archiveModifyFormState: boolean,
   editArchiveCategoryState: boolean,
   editState: boolean,
-  questionStatusState: boolean
+  questionStatusState: boolean,
+  backdrop: boolean
 };
 
 const DialogInitialState: dialogInitialState = {
@@ -93,35 +95,37 @@ const DialogInitialState: dialogInitialState = {
   archiveModifyFormState: false,
   editArchiveCategoryState: false,
   editState: false,
-  questionStatusState: false
+  questionStatusState: false,
+  backdrop: false
 };
 
 export const DialogSlice = createSlice({
   name: 'dialog',
   initialState: DialogInitialState,
   reducers: {
-    clickManagerLogin: (state) => { state.loginState = !state.loginState },
-    clickLogoutGoBack: (state) => { state.logoutState = !state.logoutState },
-    clickPasswordStateGoBack: (state) => { state.passwordState = !state.passwordState },
-    clickSendMailPasswordStateGoBack: (state) => { state.sendMailPasswordState = !state.sendMailPasswordState },
-    clickProductCategoryGoBack: (state) => { state.productCategoryState = !state.productCategoryState },
-    clickProductFormGoBack: (state) => { state.productFormState = !state.productFormState },
-    clickProductModifyFormGoBack: (state) => { state.productModifyFormState = !state.productModifyFormState },
-    clickProductInfoGoBack: (state) => { state.productInfoState = !state.productInfoState },
-    clickProductItemGoBack: (state) => { state.productItemState = !state.productItemState },
-    clickProductCategoryFormGoBack: (state) => { state.productCategoryFormState = !state.productCategoryFormState },
-    clickQuestionFormGoBack: (state) => { state.questionFormState = !state.questionFormState },
-    clickQuestionDetailGoBack: (state) => { state.questionDetailState = !state.questionDetailState },
-    clickQuestionModifyFormGoBack: (state) => { state.questionModifyFormState = !state.questionModifyFormState },
-    clickCommentGoBack: (state) => { state.commentState = !state.commentState },
-    clickCommentRemoveGoBack: (state) => { state.commentRemoveState = !state.commentRemoveState },
-    clickArchivesGoBack: (state) => { state.archiveState = !state.archiveState },
-    archiveFormGoBack: (state) => { state.archiveFormState = !state.archiveFormState },
-    archiveDetailGoBack: (state) => { state.archiveDetailState = !state.archiveDetailState },
-    clickArchiveModifyFormGoBack: (state) => { state.archiveModifyFormState = !state.archiveModifyFormState },
-    clickArchiveCategoryGoBack: (state) => { state.editArchiveCategoryState = !state.editArchiveCategoryState },
-    clickEditGoBack: (state) => { state.editState = !state.editState },
-    clickQuestionStatusGoBack: (state) => { state.questionStatusState = !state.questionStatusState }
+    clickManagerLogin: state => { state.loginState = !state.loginState },
+    clickLogoutGoBack: state => { state.logoutState = !state.logoutState },
+    clickPasswordStateGoBack: state => { state.passwordState = !state.passwordState },
+    clickSendMailPasswordStateGoBack: state => { state.sendMailPasswordState = !state.sendMailPasswordState },
+    clickProductCategoryGoBack: state => { state.productCategoryState = !state.productCategoryState },
+    clickProductFormGoBack: state => { state.productFormState = !state.productFormState },
+    clickProductModifyFormGoBack: state => { state.productModifyFormState = !state.productModifyFormState },
+    clickProductInfoGoBack: state => { state.productInfoState = !state.productInfoState },
+    clickProductItemGoBack: state => { state.productItemState = !state.productItemState },
+    clickProductCategoryFormGoBack: state => { state.productCategoryFormState = !state.productCategoryFormState },
+    clickQuestionFormGoBack: state => { state.questionFormState = !state.questionFormState },
+    clickQuestionDetailGoBack: state => { state.questionDetailState = !state.questionDetailState },
+    clickQuestionModifyFormGoBack: state => { state.questionModifyFormState = !state.questionModifyFormState },
+    clickCommentGoBack: state => { state.commentState = !state.commentState },
+    clickCommentRemoveGoBack: state => { state.commentRemoveState = !state.commentRemoveState },
+    clickArchivesGoBack: state => { state.archiveState = !state.archiveState },
+    archiveFormGoBack: state => { state.archiveFormState = !state.archiveFormState },
+    archiveDetailGoBack: state => { state.archiveDetailState = !state.archiveDetailState },
+    clickArchiveModifyFormGoBack: state => { state.archiveModifyFormState = !state.archiveModifyFormState },
+    clickArchiveCategoryGoBack: state => { state.editArchiveCategoryState = !state.editArchiveCategoryState },
+    clickEditGoBack: state => { state.editState = !state.editState },
+    clickQuestionStatusGoBack: state => { state.questionStatusState = !state.questionStatusState },
+    proceedBackdrop: state => { state.backdrop = !state.backdrop }
   }
 });
 
@@ -147,5 +151,6 @@ export const {
   clickArchiveModifyFormGoBack,
   clickArchiveCategoryGoBack,
   clickEditGoBack,
-  clickQuestionStatusGoBack } = DialogSlice.actions;
+  clickQuestionStatusGoBack,
+  proceedBackdrop } = DialogSlice.actions;
 export default DialogSlice.reducer;

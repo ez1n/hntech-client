@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './style.css';
 import { adminApi } from '../network/admin';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
   clickChangeMode,
   copyManagerData,
-  setFooter,
   setManagerData,
   setPassword
 } from '../app/reducers/managerModeSlice';
@@ -35,11 +34,13 @@ export default function Footer() {
   const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
   const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
   const logo = useAppSelector(state => state.manager.logo); // 회사 로고
+  const [loginErrorMsg, setLoginErrorMsg] = useState('');
 
   // 로그인
   const postLogin = () => {
     adminApi.postLogin(password)
       .then(res => {
+        setLoginErrorMsg('');
         dispatch(clickChangeMode());
         dispatch(clickManagerLogin());
 
@@ -50,7 +51,9 @@ export default function Footer() {
             dispatch(copyManagerData({ panelData: res }));
           })
       })
-      .catch(error => console.log('password', error))
+      .catch(error => {
+        setLoginErrorMsg(error.response.data.message);
+      })
   };
 
   // 로그아웃
@@ -131,21 +134,32 @@ export default function Footer() {
       {/* 관리자 모드 로그인 dialog */}
       <Dialog
         open={loginState}
-        onClose={() => dispatch(clickManagerLogin())}>
+        onClose={() => {
+          dispatch(clickManagerLogin());
+          setLoginErrorMsg('');
+        }}>
         <DialogTitle>
           관리자 모드 로그인
         </DialogTitle>
 
         <DialogContent>
           <DialogContentText>비밀번호</DialogContentText>
-          <TextField type={'password'} onChange={event => dispatch(setPassword({ password: event?.target.value }))} inputProps={{ maxLength: 4 }} />
+          <TextField
+            error={loginErrorMsg ? true : false}
+            helperText={loginErrorMsg}
+            type={'password'}
+            onChange={event => dispatch(setPassword({ password: event?.target.value }))}
+            inputProps={{ maxLength: 4 }} />
         </DialogContent>
 
         <DialogActions>
           <Button onClick={postLogin}>
             로그인
           </Button>
-          <Button onClick={() => dispatch(clickManagerLogin())}>취소</Button>
+          <Button onClick={() => {
+            dispatch(clickManagerLogin());
+            setLoginErrorMsg('');
+          }}>취소</Button>
         </DialogActions>
       </Dialog>
 

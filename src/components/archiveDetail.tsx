@@ -13,6 +13,7 @@ import {
   styled,
   Typography
 } from '@mui/material';
+import HTMLReactParser from 'html-react-parser';
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
 
@@ -82,8 +83,8 @@ export default function ArchiveDetail({ successDelete }: propsType) {
       <Spacing>
         {managerMode &&
           <Box sx={{ textAlign: 'end' }}>
-            {EditButton('수정', () => navigate('/archive-modify'))}
-            {EditButton('삭제', () => dispatch(archiveDetailGoBack()))}
+            <EditButton name='수정' onClick={() => navigate('/archive-modify')} />
+            <EditButton name='삭제' onClick={() => dispatch(archiveDetailGoBack())} />
           </Box>
         }
       </Spacing>
@@ -117,7 +118,7 @@ export default function ArchiveDetail({ successDelete }: propsType) {
 
         {/* 자료 부가 설명 */}
         <Box sx={{ p: 3, minHeight: 300, borderBottom: '1px solid #3B6C46' }}>
-          {detail.content}
+          {HTMLReactParser(detail.content)}
         </Box>
 
         {/* 첨부파일 */}

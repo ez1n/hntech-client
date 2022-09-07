@@ -173,8 +173,7 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
           <CKEditor
             editor={ClassicEditor}
             config={{
-              allowedContent: true,
-              placeholder: '내용을 입력하세요',
+              placeholder: '내용을 입력하세요'
             }}
             onChange={(event: any, editor: { getData: () => any; }) => {
               const data = editor.getData();

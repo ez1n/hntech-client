@@ -5,7 +5,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { setAllProductCategories, setMainCategories } from './app/reducers/categorySlice';
 import { setBanner, setDocument, setFooter, setLogo } from './app/reducers/managerModeSlice';
-import { Box } from '@mui/material';
+import { getCompanyImage } from './app/reducers/companyModifySlice';
+import { Box, Typography, Divider } from '@mui/material';
+import ReportProblemRoundedIcon from '@mui/icons-material/ReportProblemRounded';
+import { toast, ToastContainer } from 'react-toastify';
+import { ErrorBoundary } from 'react-error-boundary';
 import Header from './components/header';
 import SideMenu from './components/sideMenu';
 import Footer from './components/footer';
@@ -27,8 +31,6 @@ import QuestionModifyForm from './components/questionModifyForm/questionModifyFo
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
 import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
 import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
-import { getCompanyImage } from './app/reducers/companyModifySlice';
-import { toast, ToastContainer } from 'react-toastify';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -72,110 +74,122 @@ export default function App() {
   const successAnswer = () => toast.success('답변 완료 처리되었습니다.');
   const errorToast = (message: string) => toast.error(message);
 
-  return (
-    <BrowserRouter>
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
-        <ToastContainer
-          position="top-center"
-          autoClose={1500}
-        />
-
-        <Box sx={{ flex: 1 }}>
-          <Header />
-          <SideMenu />
-
-          <Routes>
-            <Route path='/' element={
-              <Main />
-            }></Route>
-
-            <Route path='/company' element={
-              <Company success={success} />
-            }></Route>
-
-            <Route path='/product' element={
-              <Products successDelete={successDelete} />
-            }></Route>
-
-            <Route path='/product-detail' element={
-              <ProductDetail successDelete={successDelete} />
-            }></Route>
-
-            <Route path='/product-form' element={
-              managerMode && <ProductForm
-                success={success}
-                errorToast={errorToast} />
-            }></Route>
-
-            <Route path='/product-modify' element={
-              managerMode && <ProductModifyForm successModify={successModify} />
-            }></Route>
-
-            <Route path='/productCategory-form' element={
-              managerMode && <ProductCategoryForm
-                success={success}
-                errorToast={errorToast} />
-            }></Route>
-
-            <Route path='/productCategory-modify' element={
-              managerMode && <ProductCategoryModifyForm
-                successModify={successModify}
-                errorToast={errorToast} />
-            }></Route>
-
-            <Route path='/data' element={
-              <MainData />
-            }></Route>
-
-            <Route path='/question' element={
-              <Questions />
-            }></Route>
-
-            <Route path='/question-form' element={
-              <QuestionForm
-                success={success}
-                errorToast={errorToast} />
-            }></Route>
-
-            <Route path='/question-modify' element={
-              <QuestionModifyForm
-                successModify={successModify}
-                errorToast={errorToast} />
-            }></Route>
-
-            <Route path='/question-detail' element={
-              <QuestionDetail
-                successAnswer={successAnswer}
-                successDelete={successDelete} />
-            }></Route>
-
-            <Route path='/archive' element={
-              <Archives />
-            }></Route>
-
-            <Route path='/archive-form' element={
-              managerMode && <ArchiveForm
-                success={success}
-                errorToast={errorToast}
-              />
-            }></Route>
-
-            <Route path='/archive-modify' element={
-              managerMode && <ArchiveModifyForm
-                successModify={successModify}
-                errorToast={errorToast}
-              />
-            }></Route>
-
-            <Route path='/archive-detail' element={
-              <ArchiveDetail successDelete={successDelete} />
-            }></Route>
-          </Routes>
-
-          <FloatingButton successModify={successModify} />
-        </Box>
-        <Footer />
+  // error boundary
+  function ErrorFallback(error: any) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+        <ReportProblemRoundedIcon sx={{ color: '#FFCC00', fontSize: 150 }} />
+        <Typography sx={{ fontSize: 18, mt: 8 }}>{error.message ? error.message : '오류가 발생했습니다.'}</Typography>
       </Box>
-    </BrowserRouter>
+    )
+  };
+
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <BrowserRouter>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+          <ToastContainer
+            position="top-center"
+            autoClose={1500}
+          />
+
+          <Box sx={{ flex: 1 }}>
+            <Header />
+            <SideMenu />
+
+            <Routes>
+              <Route path='/' element={
+                <Main />
+              }></Route>
+
+              <Route path='/company' element={
+                <Company success={success} />
+              }></Route>
+
+              <Route path='/product' element={
+                <Products successDelete={successDelete} />
+              }></Route>
+
+              <Route path='/product-detail' element={
+                <ProductDetail successDelete={successDelete} />
+              }></Route>
+
+              <Route path='/product-form' element={
+                <ProductForm
+                  success={success}
+                  errorToast={errorToast} />
+              }></Route>
+
+              <Route path='/product-modify' element={
+                <ProductModifyForm successModify={successModify} />
+              }></Route>
+
+              <Route path='/productCategory-form' element={
+                <ProductCategoryForm
+                  success={success}
+                  errorToast={errorToast} />
+              }></Route>
+
+              <Route path='/productCategory-modify' element={
+                <ProductCategoryModifyForm
+                  successModify={successModify}
+                  errorToast={errorToast} />
+              }></Route>
+
+              <Route path='/data' element={
+                <MainData />
+              }></Route>
+
+              <Route path='/question' element={
+                <Questions />
+              }></Route>
+
+              <Route path='/question-form' element={
+                <QuestionForm
+                  success={success}
+                  errorToast={errorToast} />
+              }></Route>
+
+              <Route path='/question-modify' element={
+                <QuestionModifyForm
+                  successModify={successModify}
+                  errorToast={errorToast} />
+              }></Route>
+
+              <Route path='/question-detail' element={
+                <QuestionDetail
+                  successAnswer={successAnswer}
+                  successDelete={successDelete} />
+              }></Route>
+
+              <Route path='/archive' element={
+                <Archives />
+              }></Route>
+
+              <Route path='/archive-form' element={
+                <ArchiveForm
+                  success={success}
+                  errorToast={errorToast}
+                />
+              }></Route>
+
+              <Route path='/archive-modify' element={
+                <ArchiveModifyForm
+                  successModify={successModify}
+                  errorToast={errorToast}
+                />
+              }></Route>
+
+              <Route path='/archive-detail' element={
+                <ArchiveDetail successDelete={successDelete} />
+              }></Route>
+            </Routes>
+
+            <FloatingButton successModify={successModify} />
+          </Box>
+          <Footer />
+        </Box>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 };

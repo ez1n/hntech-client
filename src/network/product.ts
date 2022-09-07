@@ -54,8 +54,8 @@ class ProductApi {
 
   // 제품 순서 변경
   async patchUpdateCategorySequence(productId: number, targetProductId: number) {
-    const response = await axios.patch(`/api/product`, { productId: productId, targetProductId: targetProductId });
-    return response.data;
+    const response = await axios.patch(`/api/product?productId=${productId}&targetProductId=${targetProductId}`);
+    return response;
   };
 };
 
