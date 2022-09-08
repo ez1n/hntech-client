@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { clickProductModifyFormGoBack } from '../../app/reducers/dialogSlice';
 import {
+  addProductCategory,
   addProductDescription,
   addProductDoc,
   addProductDocType,
@@ -37,10 +38,11 @@ import { productApi } from '../../network/product';
 import { deleteOriginalDocFileButton, deleteOriginalProductFile, deleteOriginalStandardFile, getProductDetail } from '../../app/reducers/productSlice';
 
 interface propsType {
-  successModify: () => void
+  successModify: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function ProductModifyForm({ successModify }: propsType) {
+export default function ProductModifyForm({ successModify, errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -141,14 +143,14 @@ export default function ProductModifyForm({ successModify }: propsType) {
       file: string,
       originalFilename: string,
       type: string
-    }) => {
+    }, index: number) => {
       item.originalFilename === productData.originalFilename &&
         productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
           .then(res => {
-            successModify();
-            navigate('/product-detail');
+            navigate(-1);
+            index === docFiles.length - 1 && successModify();
           })
-          .catch(error => console.log(error))
+          .catch(error => errorToast(error.response.data.message))
     })
   };
 
@@ -164,26 +166,29 @@ export default function ProductModifyForm({ successModify }: propsType) {
 
     deleteProductId.map((item: { productId: number, fileId: number }) => (
       productApi.deleteProductFile(item.productId, item.fileId)
-        .then(res => console.log(res))
+        .then()
         .catch(error => console.log(error))
     ));
 
     validate() &&
       productApi.putUpdateProduct(productId, productForm)
         .then(res => {
-          if (docFiles.length === 0) {
-            successModify();
-            navigate(-1);
-          }
           res.files.docFiles.map((item: {
             id: number,
             originalFilename: string,
             savedPath: string,
             serverFilename: string,
             type: string
-          }) => putUpdateProductDocFiles(item, productId))
+          }) => {
+            if (docFiles.length === 0) {
+              successModify();
+              navigate(-1);
+            } else {
+              putUpdateProductDocFiles(item, productId);
+            }
+          })
         })
-        .catch(error => console.log(error))
+        .catch(error => errorToast(error.response.data.message))
   };
 
   return (

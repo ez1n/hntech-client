@@ -59,7 +59,7 @@ export default function History({ success }: propsType) {
               이미지 가져오기
               <input
                 type='file'
-                accept='image*'
+                accept='image/*'
                 id='historyInput'
                 onChange={updateHistoryImage} />
             </label>

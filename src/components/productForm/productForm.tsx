@@ -135,14 +135,19 @@ export default function ProductForm({ success, errorToast }: propsType) {
       file: string,
       originalFilename: string,
       type: string
-    }) => {
-      item.originalFilename === productData.originalFilename &&
-        productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
-          .then(res => {
-            success();
-            navigate('/product');
-          })
-          .catch(error => errorToast(error.response.data.message))
+    }, index: number) => {
+      if (docFiles.length === 0) {
+        success();
+        navigate('/product')
+      } else {
+        item.originalFilename === productData.originalFilename &&
+          productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
+            .then(res => {
+              navigate('/product');
+              index === docFiles.length - 1 && success();
+            })
+            .catch(error => errorToast(error.response.data.message))
+      }
     })
   };
 
@@ -159,18 +164,13 @@ export default function ProductForm({ success, errorToast }: propsType) {
     validate() &&
       productApi.postCreateProduct(productForm)
         .then(res => {
-          if (res.files.docFiles.length === 0) {
-            success();
-            navigate('/product')
-          } else {
-            res.files.docFiles.map((item: {
-              id: number,
-              originalFilename: string,
-              savedPath: string,
-              serverFilename: string,
-              type: string
-            }) => putUpdateProductDocFiles(item, res.id))
-          }
+          res.files.docFiles.map((item: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string,
+            type: string
+          }) => putUpdateProductDocFiles(item, res.id))
         })
         .catch(error => errorToast(error.response.data.message))
   };
@@ -349,7 +349,7 @@ export default function ProductForm({ success, errorToast }: propsType) {
               originalFilename: string,
               type: string
             }, index) => (
-              <Stack key={index} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
+              <Stack key={item.id} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
                 <TextField
                   size='small'
                   placeholder='파일 이름'

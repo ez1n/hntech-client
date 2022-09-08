@@ -76,6 +76,12 @@ interface managerInitialState {
     savedPath: string,
     serverFilename: string
   }[],
+  copyBanner: {
+    id: number,
+    originalFilename: string,
+    savedPath: string,
+    serverFilename: string
+  }[],
   bannerFile: { file: string, name: string }[],
   document: {
     catalogOriginalFilename: string,
@@ -130,6 +136,7 @@ const ManagerInitialState: managerInitialState = {
   },
   logoFile: { file: '', name: '' },
   banner: [],
+  copyBanner: [],
   bannerFile: [],
   document: {
     catalogOriginalFilename: '',
@@ -283,7 +290,10 @@ export const ManagerSlice = createSlice({
           serverFilename: string
         }[]
       }>
-    ) => { state.banner = action.payload.banner },
+    ) => {
+      state.banner = action.payload.banner;
+      state.copyBanner = action.payload.banner;
+    },
     addBannerFile: (
       state,
       action: PayloadAction<{ banner: { file: string, name: string } }>
@@ -296,8 +306,8 @@ export const ManagerSlice = createSlice({
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newBanner = state.banner.filter((item, index) => index !== action.payload.num);
-      state.banner = newBanner;
+      const newBanner = state.copyBanner.filter((item, index) => index !== action.payload.num);
+      state.copyBanner = newBanner;
     },
     deleteBanner: (
       state,

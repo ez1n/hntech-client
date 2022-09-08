@@ -46,6 +46,7 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
 
   const archiveModifyFormState = useAppSelector(state => state.dialog.archiveModifyFormState); // 글쓰기 취소 state
   const archiveModifyContent = useAppSelector(state => state.archiveForm.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
+  const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName);
   const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
   const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 목록 state
   const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
@@ -86,14 +87,14 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
     fileData.map((item: string) => archiveData.append('files', item));
-    archiveData.append('categoryName', archiveModifyContent.categoryName);
+    archiveData.append('categoryName', categoryName);
     archiveData.append('content', archiveModifyContent.content);
     archiveData.append('notice', archiveModifyContent.notice);
     archiveData.append('title', archiveModifyContent.title);
 
     deleteArchiveId.map((item: { archiveId: number, fileId: number }) => (
       archiveApi.deleteArchiveFile(item.archiveId, item.fileId)
-        .then(res => console.log(res))
+        .then()
         .catch(error => console.log(error))
     ))
 
@@ -143,7 +144,8 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
             inputProps={{
               style: {
                 fontSize: 20
-              }
+              },
+              maxLength: 30
             }}
             sx={{
               width: '100%'
@@ -184,7 +186,6 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
             }}
             onChange={(event: any, editor: { getData: () => any }) => {
               const data = editor.getData();
-              console.log({ event, editor, data });
               dispatch(modifyArchiveContent({ content: data }));
             }}
           />

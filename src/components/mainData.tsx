@@ -19,7 +19,7 @@ export default function MainData() {
     fileApi.downloadFile(documentFile.materialServerFilename)
       .then(res => setApprovalPDF(URL.createObjectURL(res)))
       .catch(error => console.log(error))
-  }, [])
+  }, [documentFile.catalogOriginalFilename, documentFile.materialOriginalFilename])
 
   // 파일 다운로드
   const downloadFile = (serverFilename: string, originalFilename: string) => {

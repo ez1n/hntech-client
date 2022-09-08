@@ -172,5 +172,6 @@ export default function ArchiveDetail({ successDelete }: propsType) {
 };
 
 const Spacing = styled(Container)(() => ({
-  height: 50
+  height: 50,
+  marginBottom: 10
 })) as typeof Container;

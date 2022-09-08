@@ -20,7 +20,11 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import CancelModal from '../cancelModal';
 
-export default function EditArchiveCategory() {
+interface propsType {
+  errorToast: (message: string) => void
+}
+
+export default function EditArchiveCategory({ errorToast }: propsType) {
   const dispatch = useAppDispatch();
 
   const categoryForm = new FormData();
@@ -36,17 +40,20 @@ export default function EditArchiveCategory() {
   // 카테고리 목록 받아오기
   useEffect(() => {
     categoryApi.getAllCategories()
-      .then(res => {
-        dispatch(getArchiveCategory({ categories: res.categories }));
-      })
+      .then(res => dispatch(getArchiveCategory({ categories: res.categories })))
   }, []);
 
   // 카테고리 목록에 추가
   const addCategory = () => {
     if (inputRef.current.value === '') {
       return;
-    }
-    categoryApi.createArchiveCategory({ categoryName: inputRef.current.value })
+    };
+
+    categoryForm.append('categoryName', inputRef.current.value);
+    [].map(item => categoryForm.append('image', item));
+    categoryForm.append('showInMain', 'false');
+
+    categoryApi.createArchiveCategory(categoryForm)
       .then(res => {
         inputRef.current.value = '';
         categoryApi.getAllCategories()
@@ -54,11 +61,15 @@ export default function EditArchiveCategory() {
             dispatch(getArchiveCategory({ categories: res.categories }));
           })
       })
+      .catch(error => errorToast(error.response.data.message))
+  };
+
+  const onAddCategoryKeyUp = (event: any) => {
+    if (event.key === 'Enter') { addCategory() };
   };
 
   // 카테고리 삭제
   const deleteArchiveCategory = (categoryId: number) => {
-    console.log(categoryId)
     categoryApi.deleteArchiveCategory(categoryId)
       .then(res => {
         categoryApi.getAllCategories()
@@ -74,13 +85,15 @@ export default function EditArchiveCategory() {
   const editArchiveCategory = (categoryId: number, categoryName: string, showInMain: string) => {
     categoryForm.append('categoryName', categoryName);
     [].map(item => categoryForm.append('image', item));
-    categoryForm.append('showInMain', showInMain)
+    categoryForm.append('showInMain', showInMain);
     categoryApi.putUpdateArchiveCategory(categoryId, categoryForm)
       .then(res => {
         dispatch(setSelectedArchiveCategoryId({ id: undefined }));
-        dispatch(getArchiveCategory({ categories: res }));
+
+        categoryApi.getAllCategories()
+          .then(res => dispatch(getArchiveCategory({ categories: res.categories })))
       })
-      .catch(error => console.warn(error))
+      .catch(error => errorToast(error.response.data.message))
   };
 
   return (
@@ -126,6 +139,7 @@ export default function EditArchiveCategory() {
                   inputRef={categoryNameRef}
                   size='small'
                   autoComplete='off'
+                  autoFocus={true}
                   sx={{ flex: 0.7 }}
                 /> :
                 <Typography sx={{ flex: 0.7 }}>{item.categoryName}</Typography>
@@ -164,9 +178,11 @@ export default function EditArchiveCategory() {
             borderBottom: '2px solid rgba(46, 125, 50, 0.5)'
           }}>
           <TextField
+            onKeyUp={onAddCategoryKeyUp}
             inputRef={inputRef}
             size='small'
-            autoComplete='off' />
+            autoComplete='off'
+            autoFocus={true} />
           <EditButton name='추가' onClick={addCategory} />
         </Box>
       </DialogContent>

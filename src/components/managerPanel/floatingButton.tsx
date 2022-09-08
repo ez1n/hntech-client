@@ -27,7 +27,8 @@ import {
   setFooter,
   updateCurPassword,
   updateNewPassword,
-  updateNewPasswordCheck
+  updateNewPasswordCheck,
+  setDocument
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -65,7 +66,7 @@ export default function FloatingButton({ successModify }: propsType) {
   const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
   const logo = useAppSelector(state => state.manager.logo); // 기존 로고 state
   const logoFile = useAppSelector(state => state.manager.logoFile); // 추가한 로고 state
-  const banner = useAppSelector(state => state.manager.banner); // 기존 배너 state
+  const copyBanner = useAppSelector(state => state.manager.copyBanner); // 기존 배너 state
   const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너 state
   const documentName = useAppSelector(state => state.manager.document); // 기존 카다록, 자재승인서 이름 state
   const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서 state
@@ -74,7 +75,7 @@ export default function FloatingButton({ successModify }: propsType) {
     dispatch(updateCurPassword({ curPassword: '' }));
     dispatch(updateNewPassword({ newPassword: '' }));
     dispatch(updateNewPasswordCheck({ newPasswordCheck: '' }));
-  }, [panelData.adminPassword]);
+  }, []);
 
   // 배너 사진 추가
   const addBannerImage = (event: any) => {
@@ -123,15 +124,24 @@ export default function FloatingButton({ successModify }: propsType) {
 
     // 로고 정보 변경 요청
     adminApi.postLogo(logoForm)
-      .then(res => dispatch(setLogo({ logo: res })))
-      .catch(error => console.log('postLogo', error))
+      .then(res => {
+        dispatch(addLogoFile({ logo: { file: '', name: '' } }));
+
+        adminApi.getLogo()
+          .then(res => dispatch(setLogo({ logo: res })))
+      })
+      .catch(error => console.log(error))
 
     // 배너 삭제
     deleteBannerName.map((item: { name: string }) => (
       adminApi.deleteBanner(item.name)
-        .then(res => setDeleteBannerName([]))
+        .then(res => {
+          setDeleteBannerName([]);
+          adminApi.getBanner()
+            .then(res => dispatch(setBanner({ banner: res })));
+        })
         .catch(error => console.log(error))
-    ))
+    ));
 
     // 배너 정보 변경 요청
     adminApi.postBanner(bannerForm)
@@ -140,7 +150,7 @@ export default function FloatingButton({ successModify }: propsType) {
         dispatch(setBanner({ banner: res }));
         dispatch(resetBannerFile());
       })
-      .catch(error => console.log('postBanner', error))
+      .catch(error => console.log(error))
   };
 
   // 카다록, 자재승인서 변경 요청
@@ -150,11 +160,11 @@ export default function FloatingButton({ successModify }: propsType) {
 
     adminApi.postDocument(documentForm)
       .then(res => {
-        successModify();
-        dispatch(updateDocument({
-          catalogOriginalFilename: res.catalogOriginalFilename,
-          materialOriginalFilename: res.materialOriginalFilename
-        }));
+        adminApi.getDocument()
+          .then(res => {
+            dispatch(setDocument({ document: res }));
+            successModify();
+          })
       })
       .catch(error => console.log(error))
   };
@@ -199,6 +209,7 @@ export default function FloatingButton({ successModify }: propsType) {
               label={'관리자 비밀번호'}
               value={panelData.adminPassword}
               disabled
+              autoComplete='off'
               placeholder={'현재 비밀번호'} />
 
             <EditButton name='변경' onClick={() => dispatch(clickPasswordStateGoBack())} />
@@ -214,6 +225,7 @@ export default function FloatingButton({ successModify }: propsType) {
               value={newPanelData.receiveEmailAccount}
               onChange={event => dispatch(updateManagerReceivedMail({ receiveEmailAccount: event?.target.value }))}
               placeholder={'메일 주소'}
+              autoComplete='off'
               sx={{ flex: 0.45 }} />
 
             <TextField
@@ -222,6 +234,7 @@ export default function FloatingButton({ successModify }: propsType) {
               value={newPanelData.sendEmailAccount}
               onChange={event => dispatch(updateManagerSentMail({ sendEmailAccount: event?.target.value }))}
               placeholder={'메일 주소'}
+              autoComplete='off'
               sx={{ flex: 0.45 }} />
           </ContentStack>
 
@@ -236,6 +249,7 @@ export default function FloatingButton({ successModify }: propsType) {
               value={newPanelData.sendEmailPassword}
               onChange={event => dispatch(updateManagerSendEmailPassword({ sendEmailPassword: event?.target.value }))}
               placeholder={'발신 메일 비밀번호'}
+              autoComplete='off'
               sx={{ flex: 0.45 }} />
 
             <ContentStack
@@ -282,6 +296,7 @@ export default function FloatingButton({ successModify }: propsType) {
               value={newPanelData.address}
               onChange={event => dispatch(updateAddress({ address: event?.target.value }))}
               placeholder={'본사 주소'}
+              autoComplete='off'
               sx={{ flex: 0.45 }} />
             <TextField
               type={'text'}
@@ -289,6 +304,7 @@ export default function FloatingButton({ successModify }: propsType) {
               value={newPanelData.afterService}
               onChange={event => dispatch(updateAfterService({ afterService: event?.target.value }))}
               placeholder={'A/S'}
+              autoComplete='off'
               sx={{ flex: 0.45 }} />
           </ContentStack>
 
@@ -302,6 +318,7 @@ export default function FloatingButton({ successModify }: propsType) {
               value={newPanelData.phone}
               onChange={event => dispatch(updatePhone({ phone: event?.target.value }))}
               placeholder={'TEL'}
+              autoComplete='off'
               sx={{ flex: 0.45 }} />
 
             <TextField
@@ -310,6 +327,7 @@ export default function FloatingButton({ successModify }: propsType) {
               value={newPanelData.fax}
               onChange={event => dispatch(updateFax({ fax: event?.target.value }))}
               placeholder={'FAX'}
+              autoComplete='off'
               sx={{ flex: 0.45 }} />
           </ContentStack>
 
@@ -342,7 +360,7 @@ export default function FloatingButton({ successModify }: propsType) {
             <LogoTitleBox>배너 사진</LogoTitleBox>
             <Stack sx={{ flex: 0.8 }}>
               {/* 기존 배너 사진 */}
-              {banner?.map((item: {
+              {copyBanner?.map((item: {
                 id: number,
                 originalFilename: string,
                 savedPath: string,
@@ -430,7 +448,6 @@ export default function FloatingButton({ successModify }: propsType) {
 
         <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
           <EditButton name='변경' onClick={putUpdateDocumentInfo} />
-          <EditButton name='나가기' onClick={() => dispatch(clickEditGoBack())} />
         </Stack>
       </Drawer >
     </>

@@ -195,7 +195,7 @@ const Title = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold'
 })) as typeof Typography;
 
-const List = styled(Typography)(({ theme }) => ({
+const List = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 13,
   },
@@ -205,7 +205,7 @@ const List = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
   alignItems: 'center',
   fontSize: 15
-})) as typeof Typography;
+})) as typeof Box;
 
 const Icon = styled(ErrorIcon)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {

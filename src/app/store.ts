@@ -28,7 +28,11 @@ export const store = configureStore({
     archiveForm: archiveFormSlice,
     questionForm: questionFormSlice,
     category: categorySlice,
-  }
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

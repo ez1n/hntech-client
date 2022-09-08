@@ -61,6 +61,10 @@ export default function PasswordUpdate({ successModify }: propsType) {
         .catch(error => console.log(error))
   };
 
+  const onPutUpdatePasswordKeyUp = (event: any, updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) => {
+    if (event.key === 'Enter') { putUpdatePassword(updatePassword) };
+  };
+
   return (
     <Dialog
       open={passwordState}
@@ -87,6 +91,7 @@ export default function PasswordUpdate({ successModify }: propsType) {
           <TextField
             type={'password'}
             onChange={event => dispatch(updateNewPasswordCheck({ newPasswordCheck: event?.target.value }))}
+            onKeyUp={event => onPutUpdatePasswordKeyUp(event, updatePassword)}
             placeholder={'새 비밀번호 확인'}
             error={newPasswordCheckErrorMsg ? true : false}
             helperText={newPasswordCheckErrorMsg} />

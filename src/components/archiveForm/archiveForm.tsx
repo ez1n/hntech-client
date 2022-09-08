@@ -131,13 +131,14 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
             type='text'
             required={true}
             autoFocus={true}
+            autoComplete='off'
             placeholder='제목을 입력해 주세요'
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
             inputProps={{
               style: { fontSize: 20 },
-              maxLength: 34
+              maxLength: 30
             }}
             sx={{ width: '100%' }}
           />

@@ -20,7 +20,6 @@ import {
   Typography
 } from '@mui/material';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
-import CancelModal from '../cancelModal';
 
 interface propsType {
   item: {
@@ -40,24 +39,12 @@ export default function Comment({ item, questionId }: propsType) {
   const commentModifyState = useAppSelector(state => state.comment.commentModifyState); // 댓글 수정 state
   const commentModify = useAppSelector(state => state.comment.commentModify); // 수정 댓글
   const currentComment = useAppSelector(state => state.comment.currentComment); // 현재 댓글 정보
-  const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제 state
   const commentMenuOpen = Boolean(commentAnchor); // 댓글 메뉴 open
 
   // 댓글 수정
   const putComment = (questionId: number, commentId: number, comment: {}) => {
     commentApi.putCreateComment(questionId, commentId, comment)
       .then(res => dispatch(updateCommentData({ comments: res.comments })))
-      .catch(error => console.log(error))
-  };
-
-  // 댓글 삭제
-  const deleteComment = (questionId: number, commentId: number) => {
-    commentApi.deleteComment(questionId, commentId)
-      .then(res => {
-        dispatch(updateCommentData({ comments: res.comments }));
-        dispatch(clickCommentRemoveGoBack());
-        dispatch(resetAnchor());
-      })
       .catch(error => console.log(error))
   };
 
@@ -171,15 +158,6 @@ export default function Comment({ item, questionId }: propsType) {
           </Menu>
         </Box>
       }
-
-      {/* 댓글 삭제 Dialog */}
-      <CancelModal
-        openState={commentRemoveState}
-        title={'댓글 삭제'}
-        text1={'삭제된 댓글은 복구할 수 없습니다.'}
-        text2={'삭제하시겠습니까?'}
-        yesAction={() => deleteComment(questionId, currentComment.id !== null ? currentComment.id : 0)}
-        closeAction={() => dispatch(clickCommentRemoveGoBack())} />
     </Stack>
   )
 }

@@ -9,11 +9,17 @@ import EditArchiveCategory from './editArchiveCategory';
 import { archiveApi } from '../../network/archive';
 import { getAllArchives, getNotice } from '../../app/reducers/archiveSlice';
 
-export default function Archives() {
+interface propsType {
+  errorToast: (message: string) => void
+}
+
+export default function Archives({ errorToast }: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
+  const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록 state
 
   useEffect(() => {
     // 자료실 목록 받아오기
@@ -32,7 +38,7 @@ export default function Archives() {
       .then(res => {
         dispatch(getNotice({ notice: res.notices }))
       })
-  }, []);
+  }, [detail, archiveCategory]);
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -56,13 +62,14 @@ export default function Archives() {
       <ArchiveItem />
 
       {/* 카테고리 수정 */}
-      <EditArchiveCategory />
+      <EditArchiveCategory errorToast={errorToast} />
     </Container>
   )
 };
 
 const Spacing = styled(Container)(() => ({
-  height: 50
+  height: 50,
+  marginBottom: 10
 })) as typeof Container;
 
 const TitleTypography = styled(Typography)(({ theme }) => ({

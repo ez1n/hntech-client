@@ -55,8 +55,12 @@ class CategoryApi {
   };
 
   // 자료실 카테고리 추가
-  async createArchiveCategory(categoryName: { categoryName: string }) {
-    const response = await axios.post(`/api/category`, categoryName)
+  async createArchiveCategory(categoryName: FormData) {
+    const response = await axios.post(`/api/category`, categoryName, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response.data;
   };
 

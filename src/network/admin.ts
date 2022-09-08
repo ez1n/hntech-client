@@ -4,13 +4,13 @@ const SUCCESS = 200
 const BAD_REQUEST = 400;
 
 class AdminApi {
-  /* 로그인 */
+  // 로그인
   async postLogin(password: {}) {
     const response = await axios.post(`/api/admin/login`, password);
     return response;
   };
 
-  /* 로그아웃 */
+  // 로그아웃
   async getLogout() {
     const response = await axios.get(`/api/admin/logout`);
     return response;
@@ -34,7 +34,7 @@ class AdminApi {
 
   // 배너 삭제하기
   async deleteBanner(bannerName: string) {
-    const response = await axios.delete(`/api/admin/image/${bannerName}`);
+    const response = await axios.delete(`/api/file/image/${bannerName}`);
     return response.data;
   };
 

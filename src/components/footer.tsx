@@ -56,6 +56,10 @@ export default function Footer() {
       })
   };
 
+  const onLoginEnterKey = (event: any) => {
+    if (event.key === 'Enter') { postLogin() };
+  };
+
   // 로그아웃
   const getLogout = () => {
     adminApi.getLogout()
@@ -147,19 +151,25 @@ export default function Footer() {
           <TextField
             error={loginErrorMsg ? true : false}
             helperText={loginErrorMsg}
+            required
+            autoFocus={true}
+            autoComplete='off'
             type={'password'}
             onChange={event => dispatch(setPassword({ password: event?.target.value }))}
-            inputProps={{ maxLength: 4 }} />
+            onKeyUp={onLoginEnterKey} />
         </DialogContent>
 
         <DialogActions>
           <Button onClick={postLogin}>
             로그인
           </Button>
-          <Button onClick={() => {
-            dispatch(clickManagerLogin());
-            setLoginErrorMsg('');
-          }}>취소</Button>
+          <Button
+            onClick={() => {
+              dispatch(clickManagerLogin());
+              setLoginErrorMsg('');
+            }}>
+            취소
+          </Button>
         </DialogActions>
       </Dialog>
 

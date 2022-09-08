@@ -102,7 +102,7 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             placeholder='제목을 입력해 주세요'
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
-            inputProps={{ style: { fontSize: 20 } }}
+            inputProps={{ style: { fontSize: 20 }, maxLength: 30 }}
             sx={{ width: '100%' }}
           />
         </Box>

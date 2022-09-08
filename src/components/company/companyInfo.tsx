@@ -60,7 +60,7 @@ export default function CompanyInfo({ success }: propsType) {
               이미지 가져오기
               <input
                 type='file'
-                accept='image*'
+                accept='image/*'
                 id='orgChartInput'
                 onChange={updateCompanyInfoImage} />
             </label>

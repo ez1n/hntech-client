@@ -34,7 +34,7 @@ export default function Representation() {
     <Container sx={{ display: 'flex', justifyContent: 'center' }}>
       <Box sx={{
         p: 2,
-        width: '85%',
+        width: '80vw',
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
@@ -50,10 +50,6 @@ export default function Representation() {
           <RepProductionButton
             onClick={() => onClickButton(item.categoryName)}
             key={item.id}
-            style={{
-              width: '33%',
-              height: 200
-            }}
           >
             {/* 카테고리 이미지 */}
             <Container
@@ -122,13 +118,14 @@ const MainTypography = styled(Typography)(({ theme }) => ({
 // 메인 버튼
 const RepProductionButton = styled(ButtonBase)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
-    width: '50% !important',
-    height: 100
+    width: '50% !important'
   },
   [theme.breakpoints.down('sm')]: {
-    width: '80% !important',
-    height: 60
+    width: '80% !important'
   },
+  width: '30%',
+  margin: 5,
+  height: 200,
   '&:hover': {
     '& .MuiImageBackdrop-root': {
       opacity: 0.3

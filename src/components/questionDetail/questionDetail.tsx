@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { questionApi } from '../../network/question';
+import { commentApi } from '../../network/comment';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
-import { clickQuestionDetailGoBack, clickQuestionStatusGoBack } from '../../app/reducers/dialogSlice';
-import { setDetailData } from '../../app/reducers/questionSlice';
+import { clickCommentRemoveGoBack, clickQuestionDetailGoBack, clickQuestionStatusGoBack } from '../../app/reducers/dialogSlice';
+import { setDetailData, updateCommentData } from '../../app/reducers/questionSlice';
 import { setCurrentQuestion } from '../../app/reducers/questionFormSlice';
+import { resetAnchor } from '../../app/reducers/commentSlice';
 import { Box, Button, Container, styled, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import QuestionContent from './questionContent';
@@ -25,6 +27,8 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
   const questionStatusState = useAppSelector(state => state.dialog.questionStatusState); // 게시글 상태 변경 취소 state
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
+  const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제 state
+  const currentComment = useAppSelector(state => state.comment.currentComment); // 현재 댓글 정보
 
   // 수정 데이터 업데이트
   useEffect(() => {
@@ -43,12 +47,24 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
 
   // 게시글 처리 완료 요청
   const putUpdateQuestionStatus = (questionId: number) => {
-    questionApi.putUpdateQuestionStatus(questionId)
+    managerMode &&
+      questionApi.putUpdateQuestionStatus(questionId)
+        .then(res => {
+          successAnswer();
+          dispatch(setDetailData({ detail: res }));
+          dispatch(clickQuestionStatusGoBack());
+        });
+  };
+
+  // 댓글 삭제
+  const deleteComment = (questionId: number, commentId: number) => {
+    commentApi.deleteComment(questionId, commentId)
       .then(res => {
-        successAnswer();
-        dispatch(setDetailData({ detail: res }));
-        dispatch(clickQuestionStatusGoBack());
-      });
+        dispatch(updateCommentData({ comments: res.comments }));
+        dispatch(clickCommentRemoveGoBack());
+        dispatch(resetAnchor());
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -66,18 +82,19 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
 
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          onClick={() => dispatch(clickQuestionStatusGoBack())}
-          disabled={detail.status === '완료' ? true : false}
-          sx={{
-            m: 1,
-            color: '#2E7D32',
-            border: '1px solid rgba(46, 125, 50, 0.5)',
-            borderRadius: 2,
-            backgroundColor: 'rgba(46, 125, 50, 0.1)'
-          }}>
-          답변완료
-        </Button>
+        {managerMode &&
+          <Button
+            onClick={() => dispatch(clickQuestionStatusGoBack())}
+            disabled={detail.status === '완료' ? true : false}
+            sx={{
+              m: 1,
+              color: '#2E7D32',
+              border: '1px solid rgba(46, 125, 50, 0.5)',
+              borderRadius: 2,
+              backgroundColor: 'rgba(46, 125, 50, 0.1)'
+            }}>
+            답변완료
+          </Button>}
         <EditButton name='수정' onClick={() => navigate('/question-modify')} />
         <EditButton name='삭제' onClick={() => dispatch(clickQuestionDetailGoBack())} />
       </Spacing>
@@ -133,6 +150,15 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
         text2={'변경 하시겠습니까?'}
         yesAction={() => putUpdateQuestionStatus(detail.id)}
         closeAction={() => dispatch(clickQuestionStatusGoBack())} />
+
+      {/* 댓글 삭제 Dialog */}
+      <CancelModal
+        openState={commentRemoveState}
+        title={'댓글 삭제'}
+        text1={'삭제된 댓글은 복구할 수 없습니다.'}
+        text2={'삭제하시겠습니까?'}
+        yesAction={() => deleteComment(detail.id, currentComment.id !== null ? currentComment.id : 0)}
+        closeAction={() => dispatch(clickCommentRemoveGoBack())} />
     </Container>
   )
 };
