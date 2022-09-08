@@ -83,7 +83,7 @@ export default function ProductDetail({ successDelete }: propsType) {
       <SelectBox>
         <MenuSelect
           defaultValue={productId}
-          onChange={event => getProduct(event?.target.value)}
+          onChange={(event: any) => getProduct(event?.target.value)}
           size='small'>
           {productList.map((item: {
             id: number,

@@ -243,12 +243,12 @@ export default function ProductModifyForm({ successModify }: propsType) {
             </label>
 
             {/* 보여지는 button */}
-            {EditButton('대표 제품 이미지 추가', () => {
+            <EditButton name='대표 제품 이미지 추가' onClick={() => {
               selectInput(repPhotoInputRef);
               setDeleteProductId([...deleteProductId, { productId: productDetail.id, fileId: productDetail.files.representativeImage.id }]);
-            })}
-            {EditButton('제품 이미지 추가', () => selectInput(photoInputRef))}
-            {EditButton('규격 이미지 추가', () => selectInput(standardInputRef))}
+            }} />
+            <EditButton name='제품 이미지 추가' onClick={() => selectInput(photoInputRef)} />
+            <EditButton name='규격 이미지 추가' onClick={() => selectInput(standardInputRef)} />
           </Box>
 
           {/* 카테고리 */}
@@ -474,8 +474,8 @@ export default function ProductModifyForm({ successModify }: propsType) {
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('수정', () => putProduct(productDetail.id))}
-        {EditButton('취소', () => dispatch(clickProductModifyFormGoBack()))}
+        <EditButton name='수정' onClick={() => putProduct(productDetail.id)} />
+        <EditButton name='취소' onClick={() => dispatch(clickProductModifyFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

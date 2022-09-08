@@ -167,15 +167,15 @@ export default function EditArchiveCategory() {
             inputRef={inputRef}
             size='small'
             autoComplete='off' />
-          {EditButton('추가', addCategory)}
+          <EditButton name='추가' onClick={addCategory} />
         </Box>
       </DialogContent>
 
       <DialogActions sx={{ justifyContent: 'center' }}>
-        {EditButton('나가기', () => {
+        <EditButton name='나가기' onClick={() => {
           dispatch(setSelectedArchiveCategoryId({ id: undefined }));
           dispatch(clickArchivesGoBack());
-        })}
+        }} />
       </DialogActions>
 
       <CancelModal

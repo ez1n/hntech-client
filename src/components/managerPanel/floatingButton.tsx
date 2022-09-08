@@ -201,7 +201,7 @@ export default function FloatingButton({ successModify }: propsType) {
               disabled
               placeholder={'현재 비밀번호'} />
 
-            {EditButton('변경', () => dispatch(clickPasswordStateGoBack()))}
+            <EditButton name='변경' onClick={() => dispatch(clickPasswordStateGoBack())} />
 
             <PasswordUpdate successModify={successModify} />
           </ContentStack>
@@ -314,7 +314,7 @@ export default function FloatingButton({ successModify }: propsType) {
           </ContentStack>
 
           <Stack sx={{ alignItems: 'center', mb: 5 }}>
-            {EditButton('변경', () => putUpdatePanelInfo(newPanelData))}
+            <EditButton name='변경' onClick={() => putUpdatePanelInfo(newPanelData)} />
           </Stack>
 
           <MainTitleTypography variant='h5'>홈페이지 정보</MainTitleTypography>
@@ -387,7 +387,7 @@ export default function FloatingButton({ successModify }: propsType) {
           </List>
 
           <Stack sx={{ alignItems: 'center', mb: 5 }}>
-            {EditButton('변경', putUpdateImageInfo)}
+            <EditButton name='변경' onClick={putUpdateImageInfo} />
           </Stack>
 
           <MainTitleTypography variant='h5'>카다록 / 자재승인서</MainTitleTypography>
@@ -429,8 +429,8 @@ export default function FloatingButton({ successModify }: propsType) {
         </Stack>
 
         <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
-          {EditButton('변경', putUpdateDocumentInfo)}
-          {EditButton('나가기', () => dispatch(clickEditGoBack()))}
+          <EditButton name='변경' onClick={putUpdateDocumentInfo} />
+          <EditButton name='나가기' onClick={() => dispatch(clickEditGoBack())} />
         </Stack>
       </Drawer >
     </>
