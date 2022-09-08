@@ -60,7 +60,7 @@ export default function App() {
 
     // 카다록, 자재승인서
     adminApi.getDocument()
-      .then(res => { dispatch(setDocument({ document: res })) })
+      .then(res => dispatch(setDocument({ document: res })))
 
     // 회사 소개 정보
     adminApi.getCompany()
@@ -121,7 +121,9 @@ export default function App() {
               }></Route>
 
               <Route path='/product-modify' element={
-                <ProductModifyForm successModify={successModify} />
+                <ProductModifyForm
+                  successModify={successModify}
+                  errorToast={errorToast} />
               }></Route>
 
               <Route path='/productCategory-form' element={
@@ -163,7 +165,7 @@ export default function App() {
               }></Route>
 
               <Route path='/archive' element={
-                <Archives />
+                <Archives errorToast={errorToast} />
               }></Route>
 
               <Route path='/archive-form' element={

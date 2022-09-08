@@ -57,6 +57,8 @@ export default function Introduce({ success }: propsType) {
         <Container sx={{ textAlign: 'center' }}>
           <TextField
             type='text'
+            autoFocus={true}
+            autoComplete='off'
             multiline
             value={introduce.newIntroduce}
             onChange={event => dispatch(updateIntroduce({ newIntroduce: event?.target.value }))}

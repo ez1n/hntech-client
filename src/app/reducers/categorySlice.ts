@@ -93,7 +93,9 @@ export const CategorySlice = createSlice({
     getArchiveCategory: (
       state,
       action: PayloadAction<{ categories: { id: number, categoryName: string, showInMain: string }[] }>
-    ) => { state.archiveCategory = action.payload.categories },
+    ) => {
+      state.archiveCategory = action.payload.categories;
+    },
     setSelectedArchiveCategoryId: (
       state,
       action: PayloadAction<{ id: number | undefined }>

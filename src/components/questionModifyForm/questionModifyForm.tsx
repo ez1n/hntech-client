@@ -99,7 +99,8 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
             helperText={titleErrorMsg}
             placeholder='제목을 입력해 주세요'
             inputProps={{
-              style: { fontSize: 20 }
+              style: { fontSize: 20 },
+              maxLength: 30
             }}
             sx={{ width: '100%' }}
           />

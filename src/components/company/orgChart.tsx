@@ -63,7 +63,7 @@ export default function OrgChart({ success }: propsType) {
               이미지 가져오기
               <input
                 type='file'
-                accept='image*'
+                accept='image/*'
                 id='orgChartInput' />
             </label>
             <EditButton name='수정' onClick={postOrgChart} />
