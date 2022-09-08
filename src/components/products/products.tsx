@@ -76,9 +76,9 @@ export default function Products({ successDelete }: propsType) {
           <SelectBox>
             <MenuSelect
               defaultValue={currentProductCategoryName}
-              onChange={event => {
+              onChange={(event: any) => {
                 dispatch(selectProductCategoryTrue());
-                dispatch(setCurrentProductCategoryName({ category: event.target.value }));
+                dispatch(setCurrentProductCategoryName({ category: event?.target.value }));
               }}
               size='small'>
               {productCategories.map((item: {

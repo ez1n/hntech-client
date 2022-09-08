@@ -161,8 +161,8 @@ export default function ProductCategoryModifyForm({ successModify, errorToast }:
 
       {/* 버튼 */}
       <Spacing sx={{ textAlign: 'center' }}>
-        {EditButton('변경완료', () => putProductCategory(productCurrentCategory.id))}
-        {EditButton('변경취소', () => dispatch(clickProductCategoryFormGoBack()))}
+        <EditButton name='변경완료' onClick={() => putProductCategory(productCurrentCategory.id)} />
+        <EditButton name='변경취소' onClick={() => dispatch(clickProductCategoryFormGoBack())} />
       </Spacing>
 
       {/* 취소 버튼 Dialog */}

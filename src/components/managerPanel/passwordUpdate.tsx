@@ -93,8 +93,8 @@ export default function PasswordUpdate({ successModify }: propsType) {
         </Stack>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center' }}>
-        {EditButton('변경', () => putUpdatePassword(updatePassword))}
-        {EditButton('취소', () => dispatch(clickPasswordStateGoBack()))}
+        <EditButton name='변경' onClick={() => putUpdatePassword(updatePassword)} />
+        <EditButton name='취소' onClick={() => dispatch(clickPasswordStateGoBack())} />
       </DialogActions>
     </Dialog>
   )

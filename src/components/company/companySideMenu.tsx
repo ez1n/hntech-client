@@ -67,7 +67,7 @@ export default function CompanySideMenu() {
 
       <MenuSelect
         defaultValue={companyMode}
-        onChange={event => dispatch(clickChangeMode({ mode: event?.target.value }))}
+        onChange={(event: any) => dispatch(clickChangeMode({ mode: event?.target.value }))}
         size='small'>
         <MenuList value='INTRODUCE'>인사말</MenuList>
         <MenuList value='HISTORY'>회사연혁</MenuList>
