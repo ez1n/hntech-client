@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { questionApi } from '../../network/question';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -32,6 +32,7 @@ export default function QuestionItem() {
   const currentPage = useAppSelector(state => state.question.currentPage); // 현재 페이지 state
   const faq = useAppSelector(state => state.question.faq); // FAQ 목록 state
   const currentId = useAppSelector(state => state.question.currentId); // 선택한 게시글 id state
+  const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
 
   useEffect(() => {
     // 자주하는 질문 목록 받아오기
@@ -43,6 +44,15 @@ export default function QuestionItem() {
       .then(res => dispatch(getAllQuestions({ questions: res.questions, totalPage: res.totalPage, currentPage: res.currentPage })))
       .catch(error => console.log('error', error))
   }, []);
+
+  const validate = () => {
+    let isValid = true;
+    if (pw.password.length !== 4) {
+      setPasswordErrorMsg('비밀번호를 확인해 주세요.');
+      isValid = false;
+    } else setPasswordErrorMsg('');
+    return isValid;
+  };
 
   // 이름 마스킹
   const masking = (name: string) => {
@@ -58,12 +68,20 @@ export default function QuestionItem() {
 
   // 비밀번호 입력
   const openDetail = (id: number) => {
-    questionApi.postPassword(id, pw)
-      .then(res => {
-        dispatch(inputPassword());
-        dispatch(setDetailData({ detail: res }));
-        navigate('/question-detail');
-      })
+    validate() &&
+      questionApi.postPassword(id, pw)
+        .then(res => {
+          dispatch(inputPassword());
+          dispatch(setDetailData({ detail: res }));
+          navigate('/question-detail');
+        })
+        .catch(error => setPasswordErrorMsg('비밀번호를 확인해 주세요'))
+  };
+
+  const onOpenDetailKeyUp = (event: any, id: number) => {
+    if (event.key === 'Enter') {
+      openDetail(id)
+    };
   };
 
   // 게시글 자세히 보기
@@ -208,12 +226,15 @@ export default function QuestionItem() {
             <TextField
               type={'password'}
               size={'small'}
+              error={passwordErrorMsg ? true : false}
+              helperText={passwordErrorMsg}
               inputProps={{ maxLength: 4 }}
-              onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => dispatch(setPassword({ password: event.target.value }))} />
+              onChange={event => dispatch(setPassword({ password: event.target.value }))}
+              onKeyUp={event => onOpenDetailKeyUp(event, currentId)} />
           </DialogContent>
 
           <DialogActions sx={{ justifyContent: 'center' }}>
-            <Button onClick={() => { openDetail(currentId) }}>
+            <Button onClick={() => openDetail(currentId)}>
               확인
             </Button>
             <Button onClick={() => dispatch(inputPassword())}>취소</Button>

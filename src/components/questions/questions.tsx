@@ -8,8 +8,6 @@ import QuestionItem from './questionItem';
 export default function Questions() {
   const navigate = useNavigate();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
@@ -24,13 +22,7 @@ export default function Questions() {
       </Typography>
 
       {/* 버튼 */}
-      <Box
-        onClick={() => {
-          managerMode ?
-            console.log('manager') :
-            console.log('customer')
-        }}
-        sx={{ textAlign: 'end' }}>
+      <Box sx={{ textAlign: 'end' }}>
         <EditButton name='글쓰기' onClick={() => navigate('/question-form')} />
       </Box>
 

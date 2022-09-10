@@ -24,6 +24,7 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const faqState = useAppSelector(state => state.question.faqState); // FAQ state
   const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
   const questionStatusState = useAppSelector(state => state.dialog.questionStatusState); // 게시글 상태 변경 취소 state
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
@@ -67,6 +68,25 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
       .catch(error => console.log(error))
   };
 
+  const ModifyButtons = (faqState: string) => {
+    if (faqState === 'true') {
+      return (
+        managerMode &&
+        <>
+          <EditButton name='수정' onClick={() => navigate('/question-modify')} />
+          <EditButton name='삭제' onClick={() => dispatch(clickQuestionDetailGoBack())} />
+        </>
+      )
+    } else {
+      return (
+        <>
+          <EditButton name='수정' onClick={() => navigate('/question-modify')} />
+          <EditButton name='삭제' onClick={() => dispatch(clickQuestionDetailGoBack())} />
+        </>
+      )
+    }
+  }
+
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
@@ -82,21 +102,23 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
 
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        {managerMode &&
-          <Button
-            onClick={() => dispatch(clickQuestionStatusGoBack())}
-            disabled={detail.status === '완료' ? true : false}
-            sx={{
-              m: 1,
-              color: '#2E7D32',
-              border: '1px solid rgba(46, 125, 50, 0.5)',
-              borderRadius: 2,
-              backgroundColor: 'rgba(46, 125, 50, 0.1)'
-            }}>
-            답변완료
-          </Button>}
-        <EditButton name='수정' onClick={() => navigate('/question-modify')} />
-        <EditButton name='삭제' onClick={() => dispatch(clickQuestionDetailGoBack())} />
+        <>
+          {managerMode &&
+            <Button
+              onClick={() => dispatch(clickQuestionStatusGoBack())}
+              disabled={detail.status === '완료' ? true : false}
+              sx={{
+                m: 1,
+                color: '#2E7D32',
+                border: '1px solid rgba(46, 125, 50, 0.5)',
+                borderRadius: 2,
+                backgroundColor: 'rgba(46, 125, 50, 0.1)'
+              }}>
+              답변완료
+            </Button>}
+
+          {ModifyButtons(faqState)}
+        </>
       </Spacing>
 
 
@@ -111,7 +133,10 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
           sx={{
             color: 'white',
             backgroundColor: '#2E7D32',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#339933'
+            }
           }}>
           목록
         </Button>

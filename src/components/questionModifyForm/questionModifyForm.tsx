@@ -126,19 +126,22 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
               sx={{ mr: 2, width: '15%' }}
             />
 
-            <FormControlLabel
-              control={<Checkbox
-                defaultChecked={faqState === 'true' ? true : false}
-                onChange={event => dispatch(setFaqState({ faq: event.target.checked }))}
-                sx={{
-                  color: 'darkgrey',
-                  '&.Mui-checked': {
-                    color: 'green',
-                  },
-                }} />}
-              label='FAQ'
-              labelPlacement='start'
-              sx={{ color: 'darkgrey' }} />
+            {managerMode &&
+              <FormControlLabel
+                control={<Checkbox
+                  defaultChecked={faqState === 'true' ? true : false}
+                  onChange={event => dispatch(setFaqState({ faq: event.target.checked }))}
+                  sx={{
+                    color: 'darkgrey',
+                    '&.Mui-checked': {
+                      color: 'green',
+                    },
+                  }} />}
+                label='FAQ'
+                labelPlacement='start'
+                sx={{ color: 'darkgrey' }} />
+            }
+
           </Stack>
 
           <List sx={{ mt: 1 }}>
