@@ -129,15 +129,17 @@ export default function ProductItem({ product, index }: propsType) {
 
   return (
     <TotalBox>
-      <ProductBox ref={dragRef}>
+      {/* <ProductBox ref={dragRef}> */}
+      <ProductBox>
         {/* 제품 */}
         <ProductButton
-          ref={dropRef}
+          // ref={dropRef}
           onClick={() => getProduct(id)}
-          sx={{
-            opacity: isDragging ? 0.5 : 1,
-            '&:focus': { cursor: managerMode ? 'grab' : 'pointer' }
-          }}>
+        // sx={{
+        //   opacity: isDragging ? 0.5 : 1,
+        //   '&:focus': { cursor: managerMode ? 'grab' : 'pointer' }
+        // }}
+        >
           <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' height='100%' alt={image.originalFilename} />
           <Typography
             sx={{
