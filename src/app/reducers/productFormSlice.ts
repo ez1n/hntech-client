@@ -22,7 +22,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * addProductDocUploadButton : 첨부파일 업로드 버튼 추가 (빈 버튼)
  * deleteProductDocUploadButton : 첨부파일 업로드 버튼 삭제
  * resetProductForm : 폼 초기화
- * deleteOriginalProductFile: 기존 제품 이미지 삭
+ * deleteOriginalProductFile: 기존 제품 이미지 삭제
  */
 
 interface productFormInitialState {
@@ -253,7 +253,7 @@ export const ProductFormSlice = createSlice({
           standardImages: []
         }
       }
-    }
+    },
   }
 });
 

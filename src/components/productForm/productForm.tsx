@@ -62,6 +62,7 @@ export default function ProductForm({ success, errorToast }: propsType) {
   const { docFiles, productImages, representativeImage, standardImages } = files; // 첨부파일, 제품이미지, 대표이미지, 규격이미지
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
   const [repImgErrorMsg, setRepImgErrorMsg] = useState('');
+  const [fileErrorMsg, setFileErrorMsg] = useState('');
 
   useEffect(() => {
     dispatch(resetProductForm());
@@ -78,6 +79,12 @@ export default function ProductForm({ success, errorToast }: propsType) {
       setRepImgErrorMsg('대표사진을 등록해 주세요');
       isValid = false;
     } else setRepImgErrorMsg('');
+    docFiles.map(item => {
+      if (item.type === '' || item.file === '') {
+        setFileErrorMsg('파일 정보를 확인해 주세요');
+        isValid = false;
+      } else setFileErrorMsg('');
+    })
     return isValid;
   };
 
@@ -122,13 +129,14 @@ export default function ProductForm({ success, errorToast }: propsType) {
   };
 
   // 파일 이름 추출
-  const putUpdateProductDocFiles = (productData: {
-    id: number,
-    originalFilename: string,
-    savedPath: string,
-    serverFilename: string,
-    type: string
-  },
+  const putUpdateProductDocFiles = (
+    productData: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string,
+      type: string
+    },
     productId: number) => {
     docFiles.map((item: {
       id: number,
@@ -138,7 +146,7 @@ export default function ProductForm({ success, errorToast }: propsType) {
     }, index: number) => {
       if (docFiles.length === 0) {
         success();
-        navigate('/product')
+        navigate('/product');
       } else {
         item.originalFilename === productData.originalFilename &&
           productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
@@ -343,46 +351,49 @@ export default function ProductForm({ success, errorToast }: propsType) {
 
           {/* 파일 업로드 (다운로드 가능한 자료) */}
           <Stack direction='column' spacing={2}>
-            {docFiles.map((item: {
-              id: number,
-              file: string,
-              originalFilename: string,
-              type: string
-            }, index) => (
-              <Stack key={item.id} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
-                <TextField
-                  size='small'
-                  placeholder='파일 이름'
-                  onChange={event => dispatch(addProductDocType({ id: item.id, type: event.target.value }))}
-                  inputProps={{ style: { fontSize: 18 } }} />
-                <Typography sx={{
-                  pl: 2,
-                  width: '100%',
-                  height: 40,
-                  border: '1.8px solid lightgrey',
-                  borderRadius: 1,
-                  color: 'darkgrey',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}>
-                  {item.originalFilename}
-                  {item.originalFilename ?
-                    <ClearRoundedIcon
-                      onClick={() => dispatch(deleteProductDoc({ id: item.id }))}
-                      fontSize='small'
-                      sx={{ ml: 1, cursor: 'pointer' }} /> :
-                    '파일'}
-                </Typography>
-                <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={event => selectProductDoc(item.id, event)}>
-                  업로드
-                  <input className='productInput' type='file' id={`inputFile${item.id}`} />
-                </label>
+            <FormControl error={fileErrorMsg ? true : false}>
+              {docFiles.map((item: {
+                id: number,
+                file: string,
+                originalFilename: string,
+                type: string
+              }, index) => (
+                <Stack key={item.id} direction='row' spacing={1} sx={{ alignItems: 'center' }}>
+                  <TextField
+                    size='small'
+                    placeholder='파일 이름'
+                    onChange={event => dispatch(addProductDocType({ id: item.id, type: event.target.value }))}
+                    inputProps={{ style: { fontSize: 18 } }} />
+                  <Typography sx={{
+                    pl: 2,
+                    height: 40,
+                    width: '100%',
+                    border: '1.8px solid lightgrey',
+                    borderRadius: 1,
+                    color: 'darkgrey',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
+                    {item.originalFilename}
+                    {item.originalFilename ?
+                      <ClearRoundedIcon
+                        onClick={() => dispatch(deleteProductDoc({ id: item.id }))}
+                        fontSize='small'
+                        sx={{ ml: 1, cursor: 'pointer' }} /> :
+                      '파일'}
+                  </Typography>
+                  <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={event => selectProductDoc(item.id, event)}>
+                    업로드
+                    <input className='productInput' type='file' id={`inputFile${item.id}`} />
+                  </label>
 
-                <Button onClick={() => dispatch(deleteProductDocUploadButton({ index: index }))} sx={{ color: 'darkgreen' }}>
-                  <DeleteIcon />
-                </Button>
-              </Stack>
-            ))}
+                  <Button onClick={() => dispatch(deleteProductDocUploadButton({ index: index }))} sx={{ color: 'darkgreen' }}>
+                    <DeleteIcon />
+                  </Button>
+                </Stack>
+              ))}
+              <FormHelperText>{fileErrorMsg}</FormHelperText>
+            </FormControl>
 
             <Button
               onClick={() => dispatch(addProductDocUploadButton())}
