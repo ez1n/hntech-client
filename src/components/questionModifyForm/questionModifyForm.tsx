@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   successModify: () => void,
@@ -67,7 +68,14 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
             dispatch(setDetailData({ detail: res }));
             navigate('/question-detail');
           })
-          .catch(error => errorToast(error.response.data.message))
+          .catch(error => {
+            errorToast(error.response.data.message);
+            if (error.response.status === 401) {
+              localStorage.removeItem("login");
+              const isLogin = localStorage.getItem("login");
+              dispatch(changeMode({ login: isLogin }));
+            };
+          })
     }
   };
 

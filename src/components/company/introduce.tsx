@@ -10,6 +10,7 @@ import {
   Typography
 } from '@mui/material';
 import EditButton from '../editButton';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   success: () => void
@@ -35,7 +36,14 @@ export default function Introduce({ success }: propsType) {
         success();
         dispatch(updateIntroduce({ newIntroduce: res.newIntroduce }));
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   return (
@@ -54,7 +62,7 @@ export default function Introduce({ success }: propsType) {
 
       {/* 내용 */}
       {managerMode ?
-        <Container sx={{ textAlign: 'center' }}>
+        <Container sx={{ textAlign: 'center', mt: 1 }}>
           <TextField
             type='text'
             autoFocus={true}

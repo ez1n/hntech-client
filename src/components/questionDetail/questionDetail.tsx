@@ -13,6 +13,7 @@ import QuestionContent from './questionContent';
 import Comment from './comment';
 import CommentForm from './commentForm';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   successAnswer: () => void,
@@ -65,7 +66,14 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
         dispatch(clickCommentRemoveGoBack());
         dispatch(resetAnchor());
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   const ModifyButtons = (faqState: string) => {
@@ -90,32 +98,20 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography
-        variant='h5'
-        sx={{
-          p: 1,
-          width: 'max-content',
-          borderBottom: '3px solid #2E7D32',
-        }}>
+      <Title variant='h5'>
         문의사항
-      </Typography>
+      </Title>
 
       {/* 버튼 */}
       <Spacing sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <>
           {managerMode &&
-            <Button
+            <AnswerButton
               onClick={() => dispatch(clickQuestionStatusGoBack())}
               disabled={detail.status === '완료' ? true : false}
-              sx={{
-                m: 1,
-                color: '#2E7D32',
-                border: '1px solid rgba(46, 125, 50, 0.5)',
-                borderRadius: 2,
-                backgroundColor: 'rgba(46, 125, 50, 0.1)'
-              }}>
+            >
               답변완료
-            </Button>}
+            </AnswerButton>}
 
           {ModifyButtons(faqState)}
         </>
@@ -191,3 +187,29 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
 const Spacing = styled(Container)(() => ({
   height: 50
 })) as typeof Container;
+
+const AnswerButton = styled(Button)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 12,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 10,
+  },
+  margin: 10,
+  color: '#2E7D32',
+  border: '1px solid rgba(46, 125, 50, 0.5)',
+  borderRadius: 10,
+  backgroundColor: 'rgba(46, 125, 50, 0.1)'
+
+})) as typeof Button;
+
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  fontSize: 20,
+  fontWeight: 'bold'
+})) as typeof Typography;

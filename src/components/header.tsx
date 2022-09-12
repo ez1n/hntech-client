@@ -41,7 +41,6 @@ import {
   Collapse
 } from '@mui/material';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
-import KeyboardArrowRightRoundedIcon from '@mui/icons-material/KeyboardArrowRightRounded';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -54,7 +53,7 @@ export default function Header() {
   const openService = useAppSelector(state => state.menu.service); // 고객지원 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const productCategories = useAppSelector(state => state.category.productCategories); // 제품 카테고리 state
-  const logo = useAppSelector(state => state.manager.logo); // 회사 로고 
+  const logo = useAppSelector(state => state.manager.logo); // 회사 로고
 
   const clickOpenMenu = () => { setOpenMenu(openMenu => !openMenu) };
   const clickCloseMenu = () => {
@@ -215,7 +214,7 @@ export default function Header() {
 
       {/* 900px 이하 */}
       <HeaderToggleButton onClick={clickOpenMenu}>
-        <MenuIcon />
+        <MenuRoundedIcon fontSize='large' />
       </HeaderToggleButton>
 
       <HeaderMenuDrawer
@@ -344,13 +343,6 @@ const HeaderToolbar = styled(Toolbar)(({ theme }) => ({
   paddingTop: 10,
   paddingBottom: 10
 })) as typeof Toolbar;
-
-const MenuIcon = styled(MenuRoundedIcon)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    fontSize: 'medium'
-  },
-  fontsize: 'large'
-}));
 
 const CompanyName = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {

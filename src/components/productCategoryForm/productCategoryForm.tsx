@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { categoryApi } from '../../network/category';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
+import { clickProductCategoryFormGoBack, onLoading } from '../../app/reducers/dialogSlice';
 import { updateProductCategoryImage, updateProductCategoryShowInMain } from '../../app/reducers/categorySlice';
 import { addProductCategoryImage, updateProductCategoryName } from '../../app/reducers/categorySlice';
 import {
@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
+import Loading from '../loading';
 
 interface propsType {
   success: () => void,
@@ -71,20 +73,31 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
     productCategoryForm.append('showInMain', productCategoryShowInMain);
     productCategoryForm.append('type', 'product');
 
-    validate() &&
+    if (validate()) {
+      dispatch(onLoading());
       categoryApi.postCreateCategory(productCategoryForm)
         .then(res => {
           success();
           dispatch(addProductCategoryImage({ image: undefined }));
+          dispatch(onLoading());
           navigate('/product');
         })
-        .catch(error => errorToast(error.response.data.message))
+        .catch(error => {
+          dispatch(onLoading());
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({ login: isLogin }));
+          };
+        })
+    }
   };
 
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>카테고리 등록</Typography>
+      <Title variant='h5'>카테고리 등록</Title>
 
       <Spacing />
 
@@ -108,7 +121,7 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateProductCategoryName({ categoryName: event?.target.value }))}
-            inputProps={{ style: { fontSize: 20 } }}
+            inputProps={{ style: { fontSize: 18 } }}
             sx={{
               width: '100%'
             }}
@@ -172,6 +185,8 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
         <EditButton name='취소' onClick={() => dispatch(clickProductCategoryFormGoBack())} />
       </Spacing>
 
+      <Loading />
+
       {/* 취소 버튼 Dialog */}
       <CancelModal
         openState={productCategoryFormState}
@@ -190,3 +205,14 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
 const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
+
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  fontSize: 20,
+  fontWeight: 'bold'
+})) as typeof Typography;

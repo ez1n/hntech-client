@@ -32,6 +32,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ArchiveCategorySelect from '../archiveCategorySelect';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   successModify: () => void,
@@ -105,7 +106,14 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
           dispatch(getDetailData({ detail: res }));
           navigate(-1);
         })
-        .catch(error => errorToast(error.response.data.message))
+        .catch(error => {
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({ login: isLogin }));
+          };
+        })
   };
 
   // 기존 파일 삭제
@@ -117,7 +125,7 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>자료실</Typography>
+      <Title variant='h5'>자료실</Title>
 
       <Spacing />
 
@@ -142,9 +150,7 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
             onChange={event => { dispatch(modifyArchiveTitle({ title: event?.target.value })) }}
             placeholder='제목을 입력해 주세요'
             inputProps={{
-              style: {
-                fontSize: 20
-              },
+              style: { fontSize: 18 },
               maxLength: 30
             }}
             sx={{
@@ -154,11 +160,12 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
         </Box>
 
         {/* 정보 */}
-        {/* 공지사항 */}
         <Box sx={{
           display: 'flex',
+          alignItems: 'center',
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
-          pl: 1
+          p: 1,
+          pl: 2
         }}>
           <ArchiveCategorySelect defaultCategory={archiveModifyContent.categoryName} categoryErrorMsg={undefined} />
           <FormControlLabel
@@ -205,13 +212,13 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
             <Stack>
               {/* 파일이 없는 경우 */}
               {(fileName.length === 0 && archiveModifyContent.files.length === 0) &&
-                <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>
+                <UploadFileTypography>업로드할 파일</UploadFileTypography>
               }
 
               {/* 기존 파일 */}
               {archiveModifyContent.files.map((item, index) => (
                 <Stack direction='row' key={item.id}>
-                  <Typography>{item.originalFilename}</Typography>
+                  <UploadFileTypography>{item.originalFilename}</UploadFileTypography>
                   <ClearRoundedIcon
                     onClick={() => deleteOriginalFile(index, archiveId, item.id)}
                     fontSize='small'
@@ -222,7 +229,7 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
               {/* 새로 추가되는 파일 */}
               {fileName.map((item, index) => (
                 <Stack direction='row' key={index}>
-                  <Typography>{item}</Typography>
+                  <UploadFileTypography>{item}</UploadFileTypography>
                   <ClearRoundedIcon
                     onClick={() => deleteFile(index)}
                     fontSize='small'
@@ -268,3 +275,22 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
 const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
+
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  fontSize: 20,
+  fontWeight: 'bold'
+})) as typeof Typography;
+
+const UploadFileTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14,
+  },
+  color: 'lightgrey',
+  fontSize: 18
+})) as typeof Typography;

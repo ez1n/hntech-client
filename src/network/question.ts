@@ -11,7 +11,6 @@ class QuestionApi {
       console.error(response.data);
       return;
     }
-    console.log(response.data);
   };
 
   // 문의사항 목록 받아오기

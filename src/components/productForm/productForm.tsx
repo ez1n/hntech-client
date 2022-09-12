@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickProductFormGoBack } from '../../app/reducers/dialogSlice';
+import { clickProductFormGoBack, onLoading } from '../../app/reducers/dialogSlice';
 import {
   addProductCategory,
   addProductDescription,
@@ -38,6 +38,8 @@ import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
 import { productApi } from '../../network/product';
 import { getProductList } from '../../app/reducers/productSlice';
+import { changeMode } from '../../app/reducers/managerModeSlice';
+import Loading from '../loading';
 
 interface propsType {
   success: () => void,
@@ -144,18 +146,14 @@ export default function ProductForm({ success, errorToast }: propsType) {
       originalFilename: string,
       type: string
     }, index: number) => {
-      if (docFiles.length === 0) {
-        success();
-        navigate('/product');
-      } else {
-        item.originalFilename === productData.originalFilename &&
-          productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
-            .then(res => {
-              navigate('/product');
-              index === docFiles.length - 1 && success();
-            })
-            .catch(error => errorToast(error.response.data.message))
-      }
+      item.originalFilename === productData.originalFilename &&
+        productApi.putUpdateProductDocFiles(productId, productData.id, { filename: item.type })
+          .then(res => {
+            navigate('/product');
+            dispatch(onLoading());
+            if (index === docFiles.length - 1) success();
+          })
+          .catch(error => errorToast(error.response.data.message))
     })
   };
 
@@ -169,24 +167,41 @@ export default function ProductForm({ success, errorToast }: propsType) {
     productForm.append('representativeImage', representativeImage.file[0]);
     standardImages.map(item => productForm.append('standardImages', item.file));
 
-    validate() &&
+    if (validate()) {
+      dispatch(onLoading());
       productApi.postCreateProduct(productForm)
         .then(res => {
-          res.files.docFiles.map((item: {
-            id: number,
-            originalFilename: string,
-            savedPath: string,
-            serverFilename: string,
-            type: string
-          }) => putUpdateProductDocFiles(item, res.id))
+          if (docFiles.length === 0) {
+            success();
+            dispatch(onLoading());
+            navigate('/product');
+          } else {
+            res.files.docFiles.map((item: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string,
+              type: string
+            }) => putUpdateProductDocFiles(item, res.id))
+          }
         })
-        .catch(error => errorToast(error.response.data.message))
+        .catch(error => {
+          console.log(error);
+          dispatch(onLoading());
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({ login: isLogin }));
+          };
+        })
+    }
   };
 
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>제품등록</Typography>
+      <Title variant='h5'>제품등록</Title>
 
       <Spacing />
 
@@ -210,7 +225,7 @@ export default function ProductForm({ success, errorToast }: propsType) {
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
             onChange={event => dispatch(addProductName({ productName: event?.target.value }))}
-            inputProps={{ style: { fontSize: 20 } }}
+            inputProps={{ style: { fontSize: 18 } }}
             sx={{ width: '100%' }}
           />
         </Box>
@@ -223,7 +238,7 @@ export default function ProductForm({ success, errorToast }: propsType) {
           pr: 1,
           pl: 1
         }}>
-          <Box>
+          <ButtonBox>
             {/* 숨김 input */}
             <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={selectRepProductImage}>
               <input className='productInput' type='file' id='inputRepPhoto' accept='image/*' />
@@ -241,7 +256,7 @@ export default function ProductForm({ success, errorToast }: propsType) {
             <EditButton name='대표 제품 이미지 추가' onClick={() => selectInput(repPhotoInputRef)} />
             <EditButton name='제품 이미지 추가' onClick={() => selectInput(photoInputRef)} />
             <EditButton name='규격 이미지 추가' onClick={() => selectInput(gradeInputRef)} />
-          </Box>
+          </ButtonBox>
 
           {/* 카테고리 */}
           <ProductCategorySelect defaultCategory={currentProductCategoryName} />
@@ -349,9 +364,9 @@ export default function ProductForm({ success, errorToast }: propsType) {
             ))}
           </Container>
 
-          {/* 파일 업로드 (다운로드 가능한 자료) */}
-          <Stack direction='column' spacing={2}>
-            <FormControl error={fileErrorMsg ? true : false}>
+          <FormControl error={fileErrorMsg ? true : false} sx={{ width: '100%' }}>
+            {/* 파일 업로드 (다운로드 가능한 자료) */}
+            <Stack direction='column' spacing={2}>
               {docFiles.map((item: {
                 id: number,
                 file: string,
@@ -363,7 +378,7 @@ export default function ProductForm({ success, errorToast }: propsType) {
                     size='small'
                     placeholder='파일 이름'
                     onChange={event => dispatch(addProductDocType({ id: item.id, type: event.target.value }))}
-                    inputProps={{ style: { fontSize: 18 } }} />
+                    inputProps={{ style: { fontSize: 16 } }} />
                   <Typography sx={{
                     pl: 2,
                     height: 40,
@@ -393,17 +408,17 @@ export default function ProductForm({ success, errorToast }: propsType) {
                 </Stack>
               ))}
               <FormHelperText>{fileErrorMsg}</FormHelperText>
-            </FormControl>
 
-            <Button
-              onClick={() => dispatch(addProductDocUploadButton())}
-              sx={{
-                color: 'rgba(46, 125, 50, 0.5)',
-                '&: hover': { backgroundColor: 'rgba(46, 125, 50, 0.1)' }
-              }}>
-              파일 추가
-            </Button>
-          </Stack>
+              <Button
+                onClick={() => dispatch(addProductDocUploadButton())}
+                sx={{
+                  color: 'rgba(46, 125, 50, 0.5)',
+                  '&: hover': { backgroundColor: 'rgba(46, 125, 50, 0.1)' }
+                }}>
+                파일 추가
+              </Button>
+            </Stack>
+          </FormControl>
         </Box>
       </Box>
 
@@ -414,6 +429,8 @@ export default function ProductForm({ success, errorToast }: propsType) {
         <EditButton name='작성완료' onClick={postProduct} />
         <EditButton name='취소' onClick={() => dispatch(clickProductFormGoBack())} />
       </Spacing>
+
+      <Loading />
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
@@ -433,3 +450,21 @@ export default function ProductForm({ success, errorToast }: propsType) {
 const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
+
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  fontSize: 20,
+  fontWeight: 'bold'
+})) as typeof Typography;
+
+const ButtonBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+})) as typeof Box;

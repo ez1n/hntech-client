@@ -5,12 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
+import { getProductContent } from '../../app/reducers/productFormSlice';
 import { getCurrentProductData, getProductDetail, getProductList, setTargetProductId } from '../../app/reducers/productSlice';
 import { Box, Button, styled, Typography } from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import 'react-toastify/dist/ReactToastify.css';
-import { getProductContent } from '../../app/reducers/productFormSlice';
 
 interface propsType {
   product: {

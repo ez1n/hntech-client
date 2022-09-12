@@ -1,71 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './style.css';
 import { adminApi } from '../network/admin';
+import { api } from '../network/network';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import {
-  clickChangeMode,
-  copyManagerData,
-  setManagerData,
-  setPassword
-} from '../app/reducers/managerModeSlice';
+import { changeMode } from '../app/reducers/managerModeSlice';
 import { clickLogoutGoBack, clickManagerLogin } from '../app/reducers/dialogSlice';
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Stack,
   styled,
-  TextField,
   Typography
 } from '@mui/material';
 import CancelModal from './cancelModal';
-import { api } from '../network/network';
+import Login from './login';
 
 export default function Footer() {
   const dispatch = useAppDispatch();
 
-  const loginState = useAppSelector(state => state.dialog.loginState); // 로그인 dialog state
   const logoutState = useAppSelector(state => state.dialog.logoutState); // 로그아웃 state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
-  const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
   const logo = useAppSelector(state => state.manager.logo); // 회사 로고
-  const [loginErrorMsg, setLoginErrorMsg] = useState('');
-
-  // 로그인
-  const postLogin = () => {
-    adminApi.postLogin(password)
-      .then(res => {
-        setLoginErrorMsg('');
-        dispatch(clickChangeMode());
-        dispatch(clickManagerLogin());
-
-        // 관리자 패널 정보 받아오기
-        adminApi.getPanelInfo()
-          .then(res => {
-            dispatch(setManagerData({ panelData: res }));
-            dispatch(copyManagerData({ panelData: res }));
-          })
-      })
-      .catch(error => {
-        setLoginErrorMsg(error.response.data.message);
-      })
-  };
-
-  const onLoginEnterKey = (event: any) => {
-    if (event.key === 'Enter') { postLogin() };
-  };
 
   // 로그아웃
   const getLogout = () => {
     adminApi.getLogout()
       .then(res => {
+        localStorage.removeItem("login");
         dispatch(clickLogoutGoBack());
-        dispatch(clickChangeMode());
+        const isLogin = localStorage.getItem("login");
+        dispatch(changeMode({ login: isLogin }));
       })
   };
 
@@ -135,43 +100,7 @@ export default function Footer() {
         </Button>
       </Box>
 
-      {/* 관리자 모드 로그인 dialog */}
-      <Dialog
-        open={loginState}
-        onClose={() => {
-          dispatch(clickManagerLogin());
-          setLoginErrorMsg('');
-        }}>
-        <DialogTitle>
-          관리자 모드 로그인
-        </DialogTitle>
-
-        <DialogContent>
-          <DialogContentText>비밀번호</DialogContentText>
-          <TextField
-            error={loginErrorMsg ? true : false}
-            helperText={loginErrorMsg}
-            required
-            autoFocus={true}
-            autoComplete='off'
-            type={'password'}
-            onChange={event => dispatch(setPassword({ password: event?.target.value }))}
-            onKeyUp={onLoginEnterKey} />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={postLogin}>
-            로그인
-          </Button>
-          <Button
-            onClick={() => {
-              dispatch(clickManagerLogin());
-              setLoginErrorMsg('');
-            }}>
-            취소
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Login />
 
       {/* 로그아웃 dialog */}
       <CancelModal

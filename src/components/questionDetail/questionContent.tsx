@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAppSelector } from '../../app/hooks';
-import { Box, Stack, Typography } from '@mui/material';
-import { questionApi } from '../../network/question';
+import { Box, Stack, Typography, styled } from '@mui/material';
 
 export default function QuestionContent() {
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
@@ -12,15 +11,11 @@ export default function QuestionContent() {
       borderBottom: '3px solid #2E7D32',
     }}>
       {/* 제목 */}
-      <Box sx={{ borderBottom: '1px solid #3B6C46', p: 2 }}>
-        <Typography sx={{
-          fontSize: 20,
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}>
+      <DetailTitleBox>
+        <DetailTitleTypography>
           {detail.title}
-        </Typography>
-      </Box>
+        </DetailTitleTypography>
+      </DetailTitleBox>
 
       {/* 작성자, 작성일 */}
       <Stack
@@ -32,9 +27,9 @@ export default function QuestionContent() {
           justifyContent: 'flex-end',
           borderBottom: '1px solid #3B6C46'
         }}>
-        <Typography sx={{ fontSize: 18 }}>작성자 {detail.writer}</Typography>
-        <Typography sx={{ fontSize: 18 }}>|</Typography>
-        <Typography sx={{ fontSize: 18 }}>작성일 {detail.createTime}</Typography>
+        <ContentTypography>작성자 {detail.writer}</ContentTypography>
+        <ContentTypography>|</ContentTypography>
+        <ContentTypography>작성일 {detail.createTime}</ContentTypography>
       </Stack>
 
       {/* 문의 내용 */}
@@ -47,4 +42,28 @@ export default function QuestionContent() {
       </Box>
     </Box>
   )
-}
+};
+
+const DetailTitleBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    padding: 10
+  },
+  borderBottom: '1px solid #3B6C46',
+  padding: 15
+})) as typeof Box;
+
+const DetailTitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 18
+  },
+  fontSize: 20,
+  fontWeight: 'bold',
+  textAlign: 'center'
+})) as typeof Typography;
+
+const ContentTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 15
+  },
+  fontSize: 18
+})) as typeof Typography;

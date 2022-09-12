@@ -1,7 +1,6 @@
 import React from 'react';
-import { useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Typography, styled } from '@mui/material';
 import EditButton from '../editButton';
 import QuestionItem from './questionItem';
 
@@ -11,15 +10,9 @@ export default function Questions() {
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography
-        variant='h5'
-        sx={{
-          p: 1,
-          width: 'max-content',
-          borderBottom: '3px solid #2E7D32',
-        }}>
+      <TitleTypography variant='h5'>
         문의사항
-      </Typography>
+      </TitleTypography>
 
       {/* 버튼 */}
       <Box sx={{ textAlign: 'end' }}>
@@ -31,3 +24,15 @@ export default function Questions() {
     </Container>
   )
 };
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  padding: 1,
+  width: 'max-content',
+  borderBottom: '3px solid #2E7D32'
+})) as typeof Typography;

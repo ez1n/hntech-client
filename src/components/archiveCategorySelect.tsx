@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { updateArchiveCategory } from '../app/reducers/archiveFormSlice';
-import { MenuItem, Select, FormControl, FormHelperText } from '@mui/material';
+import { MenuItem, Select, FormControl, FormHelperText, styled } from '@mui/material';
 
 interface propsType {
   defaultCategory: string | null,
@@ -14,18 +14,30 @@ export default function ArchiveCategorySelect({ defaultCategory, categoryErrorMs
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
 
   return (
-    <FormControl error={categoryErrorMsg ? true : false} sx={{ width: '20%', }}>
+    <ArchiveCategoryFormControl error={categoryErrorMsg ? true : false}>
       <Select
         size={'small'}
         defaultValue={defaultCategory ? defaultCategory : undefined}
-        onChange={event => dispatch(updateArchiveCategory({ categoryName: event.target.value }))}
-        sx={{ m: 1, textAlign: 'center' }}>
+        onChange={event => dispatch(updateArchiveCategory({ categoryName: event?.target.value }))}
+        sx={{ textAlign: 'center' }}
+        MenuProps={{ style: { maxHeight: 300 } }}
+      >
         {defaultCategory === '전체' && <MenuItem value={'전체'}>전체</MenuItem>}
         {archiveCategory.map((item: { id: number, categoryName: string }) => (
-          <MenuItem key={item.id} value={item.categoryName}>{item.categoryName}</MenuItem>
+          <MenuItem key={item.id} value={item.categoryName} sx={{ justifyContent: 'center' }}>
+            {item.categoryName}
+          </MenuItem>
         ))}
       </Select>
       <FormHelperText>{categoryErrorMsg}</FormHelperText>
-    </FormControl>
+    </ArchiveCategoryFormControl>
   )
-} 
+};
+
+const ArchiveCategoryFormControl = styled(FormControl)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    display: 'flex',
+    width: '50%'
+  },
+  width: '20%'
+})) as typeof FormControl;

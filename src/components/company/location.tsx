@@ -18,7 +18,7 @@ export default function Location() {
 
       {/* 수정 버튼 */}
       <Spacing sx={{ textAlign: 'end' }}>
-        <EditButton name='수정' onClick={() => console.log('#')} />
+        {managerMode && <EditButton name='수정' onClick={() => console.log('#')} />}
       </Spacing>
 
       {/* 지도 */}
