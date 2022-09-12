@@ -12,13 +12,15 @@ import {
   DialogTitle,
   Stack,
   TextField,
-  Typography
+  Typography,
+  styled
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   errorToast: (message: string) => void
@@ -61,7 +63,14 @@ export default function EditArchiveCategory({ errorToast }: propsType) {
             dispatch(getArchiveCategory({ categories: res.categories }));
           })
       })
-      .catch(error => errorToast(error.response.data.message))
+      .catch(error => {
+        errorToast(error.response.data.message);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   const onAddCategoryKeyUp = (event: any) => {
@@ -78,7 +87,14 @@ export default function EditArchiveCategory({ errorToast }: propsType) {
             dispatch(setSelectedArchiveCategoryId({ id: undefined }));
           })
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        errorToast(error.response.data.message);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   // 카테고리 이름 수정
@@ -93,7 +109,14 @@ export default function EditArchiveCategory({ errorToast }: propsType) {
         categoryApi.getAllCategories()
           .then(res => dispatch(getArchiveCategory({ categories: res.categories })))
       })
-      .catch(error => errorToast(error.response.data.message))
+      .catch(error => {
+        errorToast(error.response.data.message);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   return (
@@ -103,19 +126,14 @@ export default function EditArchiveCategory({ errorToast }: propsType) {
         dispatch(clickArchivesGoBack());
         dispatch(setSelectedArchiveCategoryId({ id: undefined }))
       }}>
-      <DialogTitle fontSize={30} sx={{ textAlign: 'center', mr: 10, ml: 10 }}>
+      <Title>
         카테고리 수정
-      </DialogTitle>
+      </Title>
 
       <DialogContent>
-        <DialogContentText sx={{
-          pb: 2,
-          mb: 3,
-          fontSize: 22,
-          borderBottom: '2px solid rgba(46, 125, 50, 0.5)'
-        }}>
+        <ContentText>
           카테고리 목록
-        </DialogContentText>
+        </ContentText>
 
         {/* 카테고리 목록 */}
         <Stack
@@ -207,4 +225,30 @@ export default function EditArchiveCategory({ errorToast }: propsType) {
       />
     </Dialog >
   )
-}
+};
+
+const Title = styled(DialogTitle)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 25,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 20,
+  },
+  fontSize: 30,
+  textAlign: 'center',
+  marginRight: 10,
+  marginLeft: 10
+})) as typeof DialogTitle;
+
+const ContentText = styled(DialogContentText)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 19,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  paddingBottom: 15,
+  marginBottom: 25,
+  fontSize: 22,
+  borderBottom: '2px solid rgba(46, 125, 50, 0.5)'
+}))

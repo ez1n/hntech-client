@@ -6,6 +6,7 @@ import { styled } from '@mui/system';
 import { Box, Container, Typography } from '@mui/material';
 import EditButton from '../editButton';
 import { api } from '../../network/network';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   success: () => void
@@ -40,7 +41,14 @@ export default function OrgChart({ success }: propsType) {
         success();
         dispatch(getOrgChartImage({ orgChartImage: res }));
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   return (
@@ -71,7 +79,7 @@ export default function OrgChart({ success }: propsType) {
       </Spacing>
 
       {/* 조직도 */}
-      <Box sx={{ textAlign: 'center' }}>
+      <Box sx={{ textAlign: 'center', mt: 1 }}>
         {managerMode ?
           <Container
             sx={{

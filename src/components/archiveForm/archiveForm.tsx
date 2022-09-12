@@ -5,7 +5,7 @@ import { archiveApi } from '../../network/archive';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { archiveFormGoBack } from '../../app/reducers/dialogSlice';
+import { archiveFormGoBack, onLoading } from '../../app/reducers/dialogSlice';
 import {
   addArchiveFile,
   deleteArchiveFile,
@@ -32,6 +32,8 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ArchiveCategorySelect from '../archiveCategorySelect';
+import { changeMode } from '../../app/reducers/managerModeSlice';
+import Loading from '../loading';
 
 interface propsType {
   success: () => void,
@@ -98,20 +100,31 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
     archiveData.append('title', archiveContent.title)
 
     // 게시글 내용 보내기
-    validate() &&
+    if (validate()) {
+      dispatch(onLoading());
       archiveApi.postCreateArchive(archiveData)
         .then(res => {
           success();
           dispatch(resetArchiveState());
+          dispatch(onLoading());
           navigate('/archive');
         })
-        .catch(error => errorToast(error.response.data.message))
+        .catch(error => {
+          dispatch(onLoading());
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({ login: isLogin }));
+          };
+        })
+    }
   };
 
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>자료실</Typography>
+      <Title variant='h5'>자료실</Title>
 
       <Spacing />
 
@@ -137,7 +150,7 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
             inputProps={{
-              style: { fontSize: 20 },
+              style: { fontSize: 18 },
               maxLength: 30
             }}
             sx={{ width: '100%' }}
@@ -147,8 +160,10 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
         {/* 정보 */}
         <Box sx={{
           display: 'flex',
+          alignItems: 'center',
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
-          pl: 1
+          p: 1,
+          pl: 2
         }}>
 
           {/* 카테고리 선택 */}
@@ -195,10 +210,14 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
             alignItems: 'center'
           }}>
             <Stack>
-              {fileName.length === 0 && <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>업로드할 파일</Typography>}
+              {fileName.length === 0 &&
+                <UploadFileTypography>
+                  업로드할 파일
+                </UploadFileTypography>
+              }
               {fileName.map((item, index) => (
                 <Stack direction='row' key={index}>
-                  <Typography>{item}</Typography>
+                  <UploadFileTypography>{item}</UploadFileTypography>
                   <ClearRoundedIcon
                     onClick={() => deleteFile(index)}
                     fontSize='small'
@@ -222,6 +241,8 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
         <EditButton name='취소' onClick={() => dispatch(archiveFormGoBack())} />
       </Spacing>
 
+      <Loading />
+
       {/* 취소 버튼 Dialog */}
       <CancelModal
         openState={archiveFormState}
@@ -240,3 +261,22 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
 const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
+
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  fontSize: 20,
+  fontWeight: 'bold'
+})) as typeof Typography;
+
+const UploadFileTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14,
+  },
+  color: 'lightgrey',
+  fontSize: 18
+})) as typeof Typography;

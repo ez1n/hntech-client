@@ -4,7 +4,7 @@ import { adminApi } from './network/admin';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { setAllProductCategories, setMainCategories } from './app/reducers/categorySlice';
-import { setBanner, setDocument, setFooter, setLogo } from './app/reducers/managerModeSlice';
+import { changeMode, setBanner, setDocument, setFooter, setLogo } from './app/reducers/managerModeSlice';
 import { getCompanyImage } from './app/reducers/companyModifySlice';
 import { Box, Typography, Divider } from '@mui/material';
 import ReportProblemRoundedIcon from '@mui/icons-material/ReportProblemRounded';
@@ -31,10 +31,11 @@ import QuestionModifyForm from './components/questionModifyForm/questionModifyFo
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
 import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
 import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
+import NotFound from './components/notFound/notFound';
+import { api } from './network/network';
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const managerMode = useAppSelector(state => state.manager.managerMode);
 
   // data
   useEffect(() => {
@@ -65,6 +66,14 @@ export default function App() {
     // 회사 소개 정보
     adminApi.getCompany()
       .then(res => dispatch(getCompanyImage({ data: res })))
+  }, []);
+
+  useEffect(() => {
+    api.getCheckLogin()
+      .then(res => {
+        dispatch(changeMode({ login: res }));
+        if (!res) localStorage.removeItem("login");
+      })
   }, []);
 
   // toast
@@ -184,6 +193,10 @@ export default function App() {
 
               <Route path='/archive-detail' element={
                 <ArchiveDetail successDelete={successDelete} />
+              }></Route>
+
+              <Route path='*' element={
+                <NotFound />
               }></Route>
             </Routes>
 

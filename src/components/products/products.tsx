@@ -13,6 +13,7 @@ import { resetProductForm } from '../../app/reducers/productFormSlice';
 import { selectProductCategoryTrue, setCurrentProductCategoryName } from '../../app/reducers/categorySlice';
 import CancelModal from '../cancelModal';
 import { clickProductItemGoBack } from '../../app/reducers/dialogSlice';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   successDelete: () => void
@@ -35,7 +36,6 @@ export default function Products({ successDelete }: propsType) {
     dispatch(resetProductForm());
     productApi.getAllProducts(currentProductCategoryName)
       .then(res => dispatch(getProductList({ productList: res })))
-      .catch(error => console.log(error))
   }, [currentProductCategoryName]);
 
   // 제품 삭제
@@ -50,7 +50,13 @@ export default function Products({ successDelete }: propsType) {
           .catch(error => console.log(error))
         dispatch(clickProductItemGoBack());
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   return (

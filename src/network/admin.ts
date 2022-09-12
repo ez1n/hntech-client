@@ -7,7 +7,7 @@ class AdminApi {
   // 로그인
   async postLogin(password: {}) {
     const response = await axios.post(`/api/admin/login`, password);
-    return response;
+    return response.data;
   };
 
   // 로그아웃

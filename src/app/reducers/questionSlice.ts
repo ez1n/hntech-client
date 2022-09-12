@@ -26,6 +26,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface questionInitialState {
   pw: { password: string },
   passwordState: boolean,
+  totalElements: number,
   totalPage: number,
   currentPage: number,
   currentId: number,
@@ -66,6 +67,7 @@ const QuestionInitialState: questionInitialState = {
   pw: { password: '' },
   passwordState: false,
   totalPage: 0,
+  totalElements: 0,
   currentPage: 0,
   currentId: 0,
   questions: [],
@@ -97,11 +99,12 @@ export const QuestionSlice = createSlice({
     ) => { state.currentId = action.payload.id },
     getAllQuestions: (
       state,
-      action: PayloadAction<{ questions: [], totalPage: number, currentPage: number }>
+      action: PayloadAction<{ questions: [], totalPage: number, currentPage: number, totalElements: number }>
     ) => {
       state.questions = action.payload.questions;
       state.totalPage = action.payload.totalPage;
       state.currentPage = action.payload.currentPage;
+      state.totalElements = action.payload.totalElements;
     },
     getFaq: (
       state,

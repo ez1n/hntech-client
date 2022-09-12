@@ -25,8 +25,8 @@ export default function ArchiveItem() {
 
   const [searchContent, setSearchContent] = useState<string>('');
 
-  const TotalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
-  const TotalElements = useAppSelector(state => state.archive.totalElements); // 전체 페이지
+  const totalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
+  const totalElements = useAppSelector(state => state.archive.totalElements); // 전체 페이지
   const currentPage = useAppSelector(state => state.archive.currentPage); // 현재 페이지
   const archives = useAppSelector(state => state.archive.archives); // 자료실 글 목록
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
@@ -59,7 +59,12 @@ export default function ArchiveItem() {
   // 자료 검색
   const getSearchArchive = () => {
     archiveApi.getSearchArchive(categoryName === '전체' ? null : categoryName, searchContent, 0)
-      .then(res => dispatch(getAllArchives({ archives: res.archives, totalPage: res.totalPages, currentPage: res.currentPage, totalElements: res.totalElements })))
+      .then(res => dispatch(getAllArchives({
+        archives: res.archives,
+        totalPage: res.totalPages,
+        currentPage: res.currentPage,
+        totalElements: res.totalElements
+      })))
       .catch(error => console.log(error))
   };
 
@@ -123,7 +128,7 @@ export default function ArchiveItem() {
               p: 1.5,
               borderBottom: '1px solid #3B6C46'
             }}>
-            <List sx={{ flex: 0.1 }}>{TotalElements - index}</List>
+            <List sx={{ flex: 0.1 }}>{totalElements - index}</List>
             <List sx={{ flex: 0.2 }}>{item.categoryName}</List>
             <List
               onClick={() => openDetail(item.id)}
@@ -151,28 +156,28 @@ export default function ArchiveItem() {
       <Spacing />
 
       {/* 자료 검색 */}
-      <Stack direction='row' spacing={1} sx={{ justifyContent: 'center', alignItems: 'center' }}>
+      <SearchTotalStack direction='row' spacing={1}>
         {/* 카테고리 */}
         <ArchiveCategorySelect defaultCategory={'전체'} categoryErrorMsg={undefined} />
 
-        <TextField
-          placeholder='검색어를 입력하세요.'
-          size='small'
-          autoComplete='off'
-          onChange={event => setSearchContent(event?.target.value)}
-          onKeyUp={onEnterKey}
-          sx={{ width: '50%' }} />
-        <SearchRoundedIcon
-          onClick={getSearchArchive}
-          sx={{ color: 'darkgreen', fontSize: 35, cursor: 'pointer' }} />
-      </Stack>
+        <SearchStack direction='row' spacing={1}>
+          <TextField
+            placeholder='검색어를 입력하세요.'
+            size='small'
+            autoComplete='off'
+            onChange={event => setSearchContent(event?.target.value)}
+            onKeyUp={onEnterKey}
+            sx={{ width: '100%' }} />
+          <SearchIcon onClick={getSearchArchive} />
+        </SearchStack>
+      </SearchTotalStack>
 
       <Spacing />
 
       <Stack>
         <Pagination
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
-          count={TotalPage}
+          count={totalPage}
           sx={{ m: '0 auto' }} />
       </Stack>
     </>
@@ -229,3 +234,29 @@ const New = styled(Typography)(({ theme }) => ({
   display: 'flex',
   color: 'lightseagreen'
 })) as typeof Typography;
+
+const SearchTotalStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column'
+  },
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%'
+})) as typeof Stack;
+
+const SearchStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    width: '80%'
+  },
+  width: '50%',
+  alignItems: 'center'
+})) as typeof Stack;
+
+const SearchIcon = styled(SearchRoundedIcon)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 28,
+  },
+  color: 'darkgreen',
+  fontSize: 35,
+  cursor: 'pointer'
+}));

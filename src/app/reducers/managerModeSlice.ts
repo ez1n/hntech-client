@@ -155,7 +155,10 @@ export const ManagerSlice = createSlice({
   name: 'manager',
   initialState: ManagerInitialState,
   reducers: {
-    clickChangeMode: (state) => { state.managerMode = !(state.managerMode) },
+    changeMode: (
+      state,
+      action: PayloadAction<{ login: string | null }>
+    ) => { state.managerMode = Boolean(action.payload.login) },
     setPassword: (
       state,
       action: PayloadAction<{ password: string }>
@@ -346,7 +349,7 @@ export const ManagerSlice = createSlice({
 });
 
 export const {
-  clickChangeMode,
+  changeMode,
   setPassword,
   setManagerData,
   copyManagerData,

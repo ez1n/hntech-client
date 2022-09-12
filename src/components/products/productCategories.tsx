@@ -11,6 +11,7 @@ import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   successDelete: () => void
@@ -45,6 +46,13 @@ export default function ProductCategories({ successDelete }: propsType) {
         dispatch(clickProductCategoryGoBack());
         categoryApi.getAllProductCategories()
           .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
+      })
+      .catch(error => {
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
       })
   };
 

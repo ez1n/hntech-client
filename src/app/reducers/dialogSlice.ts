@@ -22,7 +22,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * archiveModifyFormState : 자료실 글 수정
  * editState : 관리자 정보 수정 (drawer)
  * questionStatusState : 문의사항 처리 상태
- * backdrop : 글쓰기 처리중
+ * loading : 글쓰기 처리중
  */
 
 /**
@@ -70,7 +70,7 @@ interface dialogInitialState {
   editArchiveCategoryState: boolean,
   editState: boolean,
   questionStatusState: boolean,
-  backdrop: boolean
+  loading: boolean
 };
 
 const DialogInitialState: dialogInitialState = {
@@ -96,7 +96,7 @@ const DialogInitialState: dialogInitialState = {
   editArchiveCategoryState: false,
   editState: false,
   questionStatusState: false,
-  backdrop: false
+  loading: false
 };
 
 export const DialogSlice = createSlice({
@@ -125,7 +125,7 @@ export const DialogSlice = createSlice({
     clickArchiveCategoryGoBack: state => { state.editArchiveCategoryState = !state.editArchiveCategoryState },
     clickEditGoBack: state => { state.editState = !state.editState },
     clickQuestionStatusGoBack: state => { state.questionStatusState = !state.questionStatusState },
-    proceedBackdrop: state => { state.backdrop = !state.backdrop }
+    onLoading: state => { state.loading = !state.loading }
   }
 });
 
@@ -152,5 +152,5 @@ export const {
   clickArchiveCategoryGoBack,
   clickEditGoBack,
   clickQuestionStatusGoBack,
-  proceedBackdrop } = DialogSlice.actions;
+  onLoading } = DialogSlice.actions;
 export default DialogSlice.reducer;

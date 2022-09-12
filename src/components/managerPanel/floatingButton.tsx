@@ -22,13 +22,13 @@ import {
   addLogoFile,
   addApproval,
   addCatalog,
-  updateDocument,
   resetBannerFile,
   setFooter,
   updateCurPassword,
   updateNewPassword,
   updateNewPasswordCheck,
-  setDocument
+  setDocument,
+  changeMode
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -43,6 +43,7 @@ import {
   ListItem
 } from '@mui/material';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
+import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import PasswordUpdate from './passwordUpdate';
@@ -60,7 +61,6 @@ export default function FloatingButton({ successModify }: propsType) {
   const logoForm = new FormData();
   const documentForm = new FormData();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
   const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
   const panelData = useAppSelector(state => state.manager.panelData); // 관리자 정보 state
   const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
@@ -70,6 +70,8 @@ export default function FloatingButton({ successModify }: propsType) {
   const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너 state
   const documentName = useAppSelector(state => state.manager.document); // 기존 카다록, 자재승인서 이름 state
   const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서 state
+
+  const isLogin = localStorage.getItem("login");
 
   useEffect(() => {
     dispatch(updateCurPassword({ curPassword: '' }));
@@ -111,7 +113,14 @@ export default function FloatingButton({ successModify }: propsType) {
         dispatch(copyManagerData({ panelData: res }));
         dispatch(setFooter({ footer: res.footer }));
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   // 로고, 배너 변경 요청
@@ -140,7 +149,14 @@ export default function FloatingButton({ successModify }: propsType) {
           adminApi.getBanner()
             .then(res => dispatch(setBanner({ banner: res })));
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          console.log(error);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({ login: isLogin }));
+          };
+        })
     ));
 
     // 배너 정보 변경 요청
@@ -150,7 +166,14 @@ export default function FloatingButton({ successModify }: propsType) {
         dispatch(setBanner({ banner: res }));
         dispatch(resetBannerFile());
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   // 카다록, 자재승인서 변경 요청
@@ -166,24 +189,27 @@ export default function FloatingButton({ successModify }: propsType) {
             successModify();
           })
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        };
+      })
   };
 
   return (
     <>
       {/*  정보변경 버튼 */}
-      {managerMode &&
-        <Fab
+      {isLogin &&
+        <AdminFab
           variant='extended'
           onClick={() => dispatch(clickEditGoBack())}
-          sx={{
-            position: 'fixed',
-            right: 50,
-            bottom: 50
-          }}>
-          <ManageAccountsRoundedIcon fontSize='large' sx={{ mr: 1 }} />
-          정보 수정
-        </Fab>
+        >
+          <ManageAccountsRoundedIcon fontSize='large' />
+          <AdminTypography>정보 수정</AdminTypography>
+        </AdminFab>
       }
 
       {/* 슬라이딩 패널 */}
@@ -210,7 +236,8 @@ export default function FloatingButton({ successModify }: propsType) {
               value={panelData.adminPassword}
               disabled
               autoComplete='off'
-              placeholder={'현재 비밀번호'} />
+              placeholder={'현재 비밀번호'}
+            />
 
             <EditButton name='변경' onClick={() => dispatch(clickPasswordStateGoBack())} />
 
@@ -446,15 +473,42 @@ export default function FloatingButton({ successModify }: propsType) {
           </ContentStack>
         </Stack>
 
-        <Stack direction='row' sx={{ justifyContent: 'center', mb: 5 }}>
+        <Stack direction='row' sx={{ justifyContent: 'center', mb: 3 }}>
           <EditButton name='변경' onClick={putUpdateDocumentInfo} />
         </Stack>
+
+        <ExitStack direction='row'>
+          <ExitToAppRoundedIcon onClick={() => dispatch(clickEditGoBack())} sx={{ fontSize: 30, color: 'darkgreen' }} />
+        </ExitStack>
       </Drawer >
     </>
   )
 };
 
-const MainTitleTypography = styled(Typography)(() => ({
+const AdminFab = styled(Fab)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    right: 30,
+    bottom: 30
+  },
+  position: 'fixed',
+  right: 50,
+  bottom: 50
+})) as typeof Fab;
+
+const AdminTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    display: 'none'
+  },
+  marginLeft: 8
+})) as typeof Typography;
+
+const MainTitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    width: '100% !important'
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 20,
+  },
   paddingTop: 15,
   paddingBottom: 15,
   textAlign: 'center',
@@ -466,7 +520,10 @@ const ContentStack = styled(Stack)(() => ({
   justifyContent: 'center'
 })) as typeof Stack;
 
-const LogoTitleBox = styled(Typography)(() => ({
+const LogoTitleBox = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 15,
+  },
   fontSize: 20,
   marginRight: 30,
   textAlign: 'center'
@@ -475,3 +532,15 @@ const LogoTitleBox = styled(Typography)(() => ({
 const MenuList = styled(MenuItem)(() => ({
   justifyContent: 'center'
 })) as typeof MenuItem;
+
+const ExitStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    display: 'flex',
+    position: 'fixed'
+  },
+  display: 'none',
+  justifyContent: 'flex-end',
+  bottom: 20,
+  right: 20
+})) as typeof Stack;
+

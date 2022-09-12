@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   success: () => void,
@@ -67,7 +68,14 @@ export default function QuestionForm({ success, errorToast }: propsType) {
           success();
           navigate('/question');
         })
-        .catch(error => errorToast(error.response.data.message))
+        .catch(error => {
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({ login: isLogin }));
+          };
+        })
   };
 
   // 비밀번호 숫자 제한
@@ -78,7 +86,7 @@ export default function QuestionForm({ success, errorToast }: propsType) {
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>문의하기</Typography>
+      <Title variant='h5'>문의하기</Title>
 
       <Spacing />
 
@@ -102,7 +110,7 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             placeholder='제목을 입력해 주세요'
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
-            inputProps={{ style: { fontSize: 20 }, maxLength: 30 }}
+            inputProps={{ style: { fontSize: 18 }, maxLength: 30 }}
             sx={{ width: '100%' }}
           />
         </Box>
@@ -113,7 +121,7 @@ export default function QuestionForm({ success, errorToast }: propsType) {
           p: 2,
           pb: 0
         }}>
-          <TextField
+          <DataTextField
             type='text'
             required={true}
             placeholder='이름'
@@ -122,11 +130,11 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             error={nameErrorMsg ? true : false}
             helperText={nameErrorMsg}
             inputProps={{
-              style: { fontSize: 20 }
+              style: { fontSize: 15 }
             }}
-            sx={{ mr: 2, width: '15%' }}
+            sx={{ mr: 2 }}
           />
-          <TextField
+          <DataTextField
             type='password'
             required={true}
             placeholder='비밀번호'
@@ -136,17 +144,13 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             onChange={event => dispatch(updateQuestionPassword({ password: event.target.value }))}
             size='small'
             inputProps={{
-              style: {
-                fontSize: 20
-              },
+              style: { fontSize: 15 },
               maxLength: 4
-            }}
-            sx={{ width: '15%' }}
-          />
+            }} />
 
           <List sx={{ mt: 1 }}>
-            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 이름은 꼭 실명으로 기재해 주세요.</ListItem>
-            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 확인용 비밀번호는 숫자 4자리를 입력해 주세요. 답변을 확인할 때 사용됩니다.</ListItem>
+            <Precautions>※ 이름은 꼭 실명으로 기재해 주세요.</Precautions>
+            <Precautions>※ 확인용 비밀번호는 숫자 4자리를 입력해 주세요. 답변을 확인할 때 사용됩니다.</Precautions>
           </List>
         </Box>
 
@@ -159,7 +163,7 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             required={true}
             onChange={event => dispatch(updateQuestionContent({ content: event.target.value }))}
             placeholder='문의사항을 작성해 주세요'
-            inputProps={{ style: { fontSize: 20 } }}
+            inputProps={{ style: { fontSize: 18 } }}
             sx={{ width: '100%' }}
           />
         </Box>
@@ -191,3 +195,33 @@ export default function QuestionForm({ success, errorToast }: propsType) {
 const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
+
+
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  fontSize: 20,
+  fontWeight: 'bold'
+})) as typeof Typography;
+
+const DataTextField = styled(TextField)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    width: '25%'
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '40%'
+  },
+  width: '15%'
+})) as typeof TextField;
+
+const Precautions = styled(ListItem)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 12
+  },
+  userSelect: 'none',
+  color: 'darkgrey'
+}));

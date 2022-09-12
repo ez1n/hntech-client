@@ -145,9 +145,15 @@
     width: 10%
   }
 
-  .imageUploadButton {
+  .imageUploadButton,
+  .fileUploadButton,
+  .categoryUploadButton {
     font-size: 13px;
     padding: 8px;
+  }
+
+  .uploadButton {
+    font-size: 13px;
   }
 }
 
@@ -164,6 +170,16 @@
     font-size: 11px;
     padding: 7px;
     width: 100px;
+  }
 
+  .fileUploadButton,
+  .categoryUploadButton {
+    font-size: 11px;
+    padding: 7px;
+  }
+
+  .uploadButton {
+    font-size: 11px;
+    width: 60px;
   }
 }

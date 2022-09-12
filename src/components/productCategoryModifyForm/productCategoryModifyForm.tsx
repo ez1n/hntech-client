@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   successModify: () => void,
@@ -71,13 +72,20 @@ export default function ProductCategoryModifyForm({ successModify, errorToast }:
           dispatch(updateProductCategoryImage({ categoryImage: '' }));
           navigate('/product');
         })
-        .catch(error => errorToast(error.response.data.message))
+        .catch(error => {
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({ login: isLogin }));
+          };
+        })
   };
 
   return (
     <Container sx={{ mt: 5 }}>
       {/* 소제목 */}
-      <Typography variant='h5' p={1}>카테고리 변경</Typography>
+      <Title variant='h5'>카테고리 변경</Title>
 
       <Spacing />
 
@@ -101,7 +109,7 @@ export default function ProductCategoryModifyForm({ successModify, errorToast }:
             helperText={titleErrorMsg}
             placeholder='카테고리명'
             onChange={event => dispatch(updateCurrentProductCategoryName({ categoryName: event?.target.value }))}
-            inputProps={{ style: { fontSize: 20 } }}
+            inputProps={{ style: { fontSize: 18 } }}
             sx={{ width: '100%' }}
           />
         </Box>
@@ -183,3 +191,14 @@ export default function ProductCategoryModifyForm({ successModify, errorToast }:
 const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
+
+const Title = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 16,
+  },
+  fontSize: 20,
+  fontWeight: 'bold'
+})) as typeof Typography;
