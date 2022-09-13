@@ -105,6 +105,7 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
       archiveApi.postCreateArchive(archiveData)
         .then(res => {
           success();
+          console.log(res)
           dispatch(resetArchiveState());
           dispatch(onLoading());
           navigate('/archive');

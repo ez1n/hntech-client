@@ -61,6 +61,7 @@ export default function FloatingButton({ successModify }: propsType) {
   const logoForm = new FormData();
   const documentForm = new FormData();
 
+  const managerMode = useAppSelector(state => state.manager.managerMode);
   const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
   const panelData = useAppSelector(state => state.manager.panelData); // 관리자 정보 state
   const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
@@ -70,8 +71,6 @@ export default function FloatingButton({ successModify }: propsType) {
   const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너 state
   const documentName = useAppSelector(state => state.manager.document); // 기존 카다록, 자재승인서 이름 state
   const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서 state
-
-  const isLogin = localStorage.getItem("login");
 
   useEffect(() => {
     dispatch(updateCurPassword({ curPassword: '' }));
@@ -202,7 +201,7 @@ export default function FloatingButton({ successModify }: propsType) {
   return (
     <>
       {/*  정보변경 버튼 */}
-      {isLogin &&
+      {managerMode &&
         <AdminFab
           variant='extended'
           onClick={() => dispatch(clickEditGoBack())}

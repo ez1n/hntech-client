@@ -140,15 +140,12 @@ export default function ProductItem({ product, index }: propsType) {
         //   '&:focus': { cursor: managerMode ? 'grab' : 'pointer' }
         // }}
         >
-          <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' height='100%' alt={image.originalFilename} />
-          <Typography
-            sx={{
-              width: '100%',
-              borderRadius: 1,
-              backgroundColor: 'rgba(57, 150, 82, 0.2)'
-            }}>
+          <Box sx={{ height: 150 }}>
+            <img className='productImage' src={`${api.baseUrl()}/files/product/${image.serverFilename}`} width='100%' height='100%' alt={image.originalFilename} />
+          </Box>
+          <ProductNameTypography>
             {productName}
-          </Typography>
+          </ProductNameTypography>
         </ProductButton>
 
         {/* 수정 버튼 */}
@@ -225,3 +222,17 @@ const ProductButton = styled(Button)(({ theme }) => ({
     fontWeight: 'bold'
   }
 })) as typeof Button;
+
+const ProductNameTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 15
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 13
+  },
+  width: '100%',
+  paddingTop: 4,
+  paddingBottom: 4,
+  borderRadius: 1,
+  backgroundColor: 'rgba(57, 150, 82, 0.2)'
+})) as typeof Typography;
