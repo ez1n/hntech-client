@@ -8,7 +8,7 @@ axios.defaults.withCredentials = true;
 class Api {
   // url
   baseUrl() {
-    return 'http://13.125.250.39'
+    return 'http://13.124.84.147'
   };
 
   // 로그인 확인

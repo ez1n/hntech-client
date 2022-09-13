@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { setAllProductCategories, setMainCategories } from './app/reducers/categorySlice';
 import { changeMode, setBanner, setDocument, setFooter, setLogo } from './app/reducers/managerModeSlice';
 import { getCompanyImage } from './app/reducers/companyModifySlice';
-import { Box, Typography, Divider } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ReportProblemRoundedIcon from '@mui/icons-material/ReportProblemRounded';
 import { toast, ToastContainer } from 'react-toastify';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -68,11 +68,18 @@ export default function App() {
       .then(res => dispatch(getCompanyImage({ data: res })))
   }, []);
 
+  // 로그인 여부 확인
   useEffect(() => {
     api.getCheckLogin()
       .then(res => {
-        dispatch(changeMode({ login: res }));
-        if (!res) localStorage.removeItem("login");
+        if (res) {
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        } else {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({ login: isLogin }));
+        }
       })
   }, []);
 
