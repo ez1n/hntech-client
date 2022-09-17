@@ -72,14 +72,9 @@ export default function App() {
   useEffect(() => {
     api.getCheckLogin()
       .then(res => {
-        if (res) {
-          const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({ login: isLogin }));
-        } else {
-          localStorage.removeItem("login");
-          const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({ login: isLogin }));
-        }
+        if (!res) localStorage.removeItem("login");
+        const isLogin = localStorage.getItem("login");
+        dispatch(changeMode({ login: isLogin }));
       })
   }, []);
 

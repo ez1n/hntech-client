@@ -51,15 +51,15 @@ export default function Footer() {
 
           <ContentBox>
             <ContentTypography>
-              A/S : {footer.afterService}
-            </ContentTypography>
-
-            <ContentTypography>
               TEL : {footer.phone}
             </ContentTypography>
 
             <ContentTypography>
               FAX : {footer.fax}
+            </ContentTypography>
+
+            <ContentTypography>
+              A/S : {footer.afterService}
             </ContentTypography>
           </ContentBox>
 

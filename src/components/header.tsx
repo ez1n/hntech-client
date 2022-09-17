@@ -67,11 +67,11 @@ export default function Header() {
   return (
     <HeaderToolbar sx={{ backgroundColor: `${managerMode ? '#B5C3B3' : '#FCFCFC'}` }}>
       {/* 로고 */}
-      <Button sx={{ pr: 5 }} onClick={() => navigate('/')}>
+      <Button onClick={() => navigate('/')}>
         <Stack direction='column'>
           <Stack direction='row' sx={{ alignItems: 'center' }}>
             <img className='logoImage' src={`${api.baseUrl()}/files/admin/${logo.serverFilename}`} alt='HNTECH logo' />
-            <CompanyName>HNTECH</CompanyName>
+            <CompanyName>(주)에이치앤테크</CompanyName>
           </Stack>
           {/* 관리자 모드 */}
           {managerMode && <AdminMode>관리자 모드</AdminMode>}
@@ -210,6 +210,16 @@ export default function Header() {
             </Paper>
           }
         </Box>
+
+        <Box>
+          <a>
+            <img src='/images/kakaotalkIcon.png' alt='kakao talk' width={40} />
+          </a>
+
+          <a>
+            <img src='/images/youtubeIcon.png' alt='youtube' width={50} />
+          </a>
+        </Box>
       </HeaderStack>
 
       {/* 900px 이하 */}
@@ -337,6 +347,7 @@ const HeaderToolbar = styled(Toolbar)(({ theme }) => ({
     paddingTop: 0,
     paddingBottom: 0
   },
+  justifyContent: 'space-around',
   position: 'sticky',
   top: 0,
   zIndex: 1000,
@@ -354,7 +365,7 @@ const CompanyName = styled(Typography)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   marginLeft: 20,
-  fontSize: '2.5em',
+  fontSize: '1.5em',
   fontWeight: 'bold',
   color: '#0F0F0F'
 })) as typeof Typography;
@@ -379,7 +390,7 @@ const HeaderStack = styled(Stack)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none'
   },
-  width: '100%',
+  width: '70%',
   justifyContent: 'space-around'
 })) as typeof Stack;
 
