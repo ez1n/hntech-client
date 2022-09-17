@@ -13,19 +13,13 @@
 
 ## Installation
 
-```
-npm create vite@latest 
-or
-yarn create vite
-```
-
-```
+```shell
 npm install
 ```
 
 ## Start
 
-```
+```shell
 npm start
 ```
 

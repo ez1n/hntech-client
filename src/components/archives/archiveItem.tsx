@@ -1,36 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { archiveApi } from '../../network/archive';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import {
-  getAllArchives,
-  getDetailData
-} from '../../app/reducers/archiveSlice';
+import { getAllArchives, getDetailData } from '../../app/reducers/archiveSlice';
 import {
   Box,
   Container,
   Pagination,
   Stack,
   styled,
-  TextField,
   Typography
 } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import ArchiveCategorySelect from '../archiveCategorySelect';
 
 export default function ArchiveItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const [searchContent, setSearchContent] = useState<string>('');
 
   const totalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
   const totalElements = useAppSelector(state => state.archive.totalElements); // 전체 페이지
   const currentPage = useAppSelector(state => state.archive.currentPage); // 현재 페이지
   const archives = useAppSelector(state => state.archive.archives); // 자료실 글 목록
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
-  const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName); // 선택한 카테고리
 
   // 게시글 보기 (정보 받아오기)
   const openDetail = (archiveId: number) => {
@@ -54,22 +45,6 @@ export default function ArchiveItem() {
         }))
       })
       .catch(error => console.log(error))
-  };
-
-  // 자료 검색
-  const getSearchArchive = () => {
-    archiveApi.getSearchArchive(categoryName === '전체' ? null : categoryName, searchContent, 0)
-      .then(res => dispatch(getAllArchives({
-        archives: res.archives,
-        totalPage: res.totalPages,
-        currentPage: res.currentPage,
-        totalElements: res.totalElements
-      })))
-      .catch(error => console.log(error))
-  };
-
-  const onEnterKey = (event: any) => {
-    if (event.key === 'Enter') { getSearchArchive() };
   };
 
   return (
@@ -155,25 +130,6 @@ export default function ArchiveItem() {
 
       <Spacing />
 
-      {/* 자료 검색 */}
-      <SearchTotalStack direction='row' spacing={1}>
-        {/* 카테고리 */}
-        <ArchiveCategorySelect defaultCategory={'전체'} categoryErrorMsg={undefined} />
-
-        <SearchStack direction='row' spacing={1}>
-          <TextField
-            placeholder='검색어를 입력하세요.'
-            size='small'
-            autoComplete='off'
-            onChange={event => setSearchContent(event?.target.value)}
-            onKeyUp={onEnterKey}
-            sx={{ width: '100%' }} />
-          <SearchIcon onClick={getSearchArchive} />
-        </SearchStack>
-      </SearchTotalStack>
-
-      <Spacing />
-
       <Stack>
         <Pagination
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
@@ -235,28 +191,3 @@ const New = styled(Typography)(({ theme }) => ({
   color: 'lightseagreen'
 })) as typeof Typography;
 
-const SearchTotalStack = styled(Stack)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column'
-  },
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '100%'
-})) as typeof Stack;
-
-const SearchStack = styled(Stack)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    width: '80%'
-  },
-  width: '50%',
-  alignItems: 'center'
-})) as typeof Stack;
-
-const SearchIcon = styled(SearchRoundedIcon)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    fontSize: 28,
-  },
-  color: 'darkgreen',
-  fontSize: 35,
-  cursor: 'pointer'
-}));

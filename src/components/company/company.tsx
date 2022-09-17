@@ -29,7 +29,7 @@ export default function Company({ success }: propsType) {
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
           <img className='CIImage' src='/images/logo-letter.png' alt='회사 이념' />
           <Box sx={{ ml: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <CompanyTypography>화재안전 보국을 가치로 사람과 기술을 소중히하여</CompanyTypography>
+            <CompanyTypography>화재안전 보국을 기치로 사람과 기술을 소중히하여</CompanyTypography>
             <CompanyTypography>안심과 안전을 담보로 사회에 공헌하겠습니다.</CompanyTypography>
           </Box>
         </Container>

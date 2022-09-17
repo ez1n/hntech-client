@@ -1,16 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { styled } from '@mui/system';
-import { Button, Tooltip, Typography } from '@mui/material';
+import { useAppSelector } from '../app/hooks';
+import { Button, Tooltip, Typography, styled } from '@mui/material';
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
-import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
+import ArchiveRoundedIcon from '@mui/icons-material/ArchiveRounded';
 import DescriptionIcon from '@mui/icons-material/Description';
 
 export default function SideMenu() {
   const navigate = useNavigate();
 
-  //임시데이터
-  const data = { as: '000-000-0000' }
+  const afterService = useAppSelector(state => state.manager.footer.afterService); // footer 정보 state
 
   return (
     <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 100, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
@@ -20,13 +19,20 @@ export default function SideMenu() {
         <Typography sx={{ fontSize: 13 }}>자재승인서</Typography>
       </SideButton>
 
-      <SideButton onClick={() => navigate('/question')}>
-        <SmsRoundedIcon sx={{ fontSize: 30, mb: 1 }} />
-        <Typography sx={{ fontSize: 13 }}>문의사항</Typography>
+      <SideButton onClick={() => navigate('/archive')}>
+        <ArchiveRoundedIcon sx={{ fontSize: 30, mb: 1 }} />
+        <Typography sx={{ fontSize: 13 }}>자료실</Typography>
       </SideButton>
 
-      <Tooltip title={data.as} arrow placement='right'>
-        <SideButton>
+      <Tooltip
+        title={
+          <React.Fragment>
+            <Typography>{afterService}</Typography>
+          </React.Fragment>
+        }
+        arrow
+        placement='right'>
+        <SideButton onClick={() => navigate('/question')}>
           <BuildRoundedIcon sx={{ fontSize: 30, mb: 1, color: '#FCFCFC' }} />
           <Typography sx={{ fontSize: 13, color: '#FCFCFC' }}>A/S</Typography>
         </SideButton>
@@ -37,7 +43,6 @@ export default function SideMenu() {
 
 // Media Query
 const SideButtonContainer = styled('div')(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 960px ~, lg: 1280px ~, xl: 1920px ~
   [theme.breakpoints.down('md')]: {
     display: 'none',
   },
