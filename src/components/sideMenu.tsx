@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 import { Button, Tooltip, Typography, styled } from '@mui/material';
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
-import ArchiveRoundedIcon from '@mui/icons-material/ArchiveRounded';
 import DescriptionIcon from '@mui/icons-material/Description';
+import FolderIcon from '@mui/icons-material/Folder';
 
 export default function SideMenu() {
   const navigate = useNavigate();
@@ -14,13 +14,13 @@ export default function SideMenu() {
   return (
     <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 100, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
       <SideButton onClick={() => navigate('/data')}>
-        <DescriptionIcon sx={{ fontSize: 30, mb: 1 }} />
+        <FolderIcon sx={{ fontSize: 30, mb: 1 }} />
         <Typography sx={{ fontSize: 13 }}>카다록</Typography>
         <Typography sx={{ fontSize: 13 }}>자재승인서</Typography>
       </SideButton>
 
       <SideButton onClick={() => navigate('/archive')}>
-        <ArchiveRoundedIcon sx={{ fontSize: 30, mb: 1 }} />
+        <DescriptionIcon sx={{ fontSize: 30, mb: 1 }} />
         <Typography sx={{ fontSize: 13 }}>자료실</Typography>
       </SideButton>
 

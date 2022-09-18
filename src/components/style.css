@@ -127,7 +127,8 @@
 #headerLogoInput,
 #footerLogoInput,
 #catalogInput,
-#approvalInput {
+#approvalInput,
+#taxInput{
   display: none;
 }
 
