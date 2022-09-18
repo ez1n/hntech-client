@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { Box, Button, Container, Stack, styled, Typography } from '@mui/material';
+import { Box, Button, Container, Stack, styled, Typography, Grid } from '@mui/material';
 import { fileApi } from '../network/file';
 import { useAppSelector } from '../app/hooks';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 export default function MainData() {
-  const [catalogPDF, setCatalogPDF] = useState<string>();
-  const [approvalPDF, setApprovalPDF] = useState<string>();
+  const [catalogPDF, setCatalogPDF] = useState<string>('');
+  const [approvalPDF, setApprovalPDF] = useState<string>('');
+  const [taxPDF, setTaxPDF] = useState<string>('');
   const documentFile = useAppSelector(state => state.manager.document); // 카다록, 자재승인서 정보
 
   useEffect(() => {
@@ -19,7 +20,11 @@ export default function MainData() {
     fileApi.downloadFile(documentFile.materialServerFilename)
       .then(res => setApprovalPDF(URL.createObjectURL(res)))
       .catch(error => console.log(error))
-  }, [documentFile.catalogOriginalFilename, documentFile.materialOriginalFilename])
+
+    fileApi.downloadFile(documentFile.taxServerFilename)
+      .then(res => setTaxPDF(URL.createObjectURL(res)))
+      .catch(error => console.log(error))
+  }, [documentFile]);
 
   // 파일 다운로드
   const downloadFile = (serverFilename: string, originalFilename: string) => {
@@ -43,7 +48,7 @@ export default function MainData() {
   };
 
   return (
-    <Stack spacing={10} sx={{ pt: 10, alignItems: 'center' }}>
+    <Stack spacing={5} sx={{ pt: 10, alignItems: 'center' }}>
       <Container sx={{
         display: 'flex',
         justifyContent: 'center'
@@ -60,8 +65,8 @@ export default function MainData() {
         </Typography>
       </Container>
 
-      <ContentBox>
-        <ContentContainer>
+      <ContentContainer container columns={7}>
+        <Grid item xs={2} wrap={'wrap'} sx={{minWidth: '300px',textAlign: 'center'}}>
           <FileBox>
             <Document file={catalogPDF}>
               <Page pageNumber={1} height={450} />
@@ -71,9 +76,9 @@ export default function MainData() {
           <FileButton onClick={() => downloadFile(documentFile.catalogServerFilename, documentFile.catalogOriginalFilename)}>
             카다록 다운로드
           </FileButton>
-        </ContentContainer>
+        </Grid>
 
-        <ContentContainer>
+        <Grid item xs={2} sx={{minWidth: '300px',textAlign: 'center'}}>
           <FileBox>
             <Document file={approvalPDF}>
               <Page pageNumber={1} height={450} />
@@ -83,44 +88,38 @@ export default function MainData() {
           <FileButton onClick={() => downloadFile(documentFile.materialServerFilename, documentFile.materialOriginalFilename)}>
             자재 승인서 다운로드
           </FileButton>
-        </ContentContainer>
-      </ContentBox>
+        </Grid>
+
+        <Grid item xs={2} sx={{minWidth: '300px',textAlign: 'center'}}>
+          <FileBox>
+            <Document file={taxPDF}>
+              <Page pageNumber={1} height={450} />
+            </Document>
+          </FileBox>
+
+          <FileButton onClick={() => downloadFile(documentFile.taxServerFilename, documentFile.taxOriginalFilename)}>
+            시국세 다운로드
+          </FileButton>
+        </Grid>
+      </ContentContainer>
     </Stack>
   )
 };
 
-const ContentBox = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down('lg')]: {
-    width: '80% !important'
-  },
-  [theme.breakpoints.down('md')]: {
-    width: '90% !important',
-    flexDirection: 'column'
-  },
-  display: 'flex',
-  width: '70%'
-})) as typeof Box;
-
-const ContentContainer = styled(Container)(({ theme }) => ({
-  [theme.breakpoints.down('md')]: {
-    marginBottom: 30
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: '100% !important',
-  },
-  textAlign: 'center',
-})) as typeof Container;
+const ContentContainer = styled(Grid)(({ theme }) => ({
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  alignItems: 'center'
+})) as typeof Grid;
 
 // 미리보기 스타일
 const FileBox = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
-    width: '70%',
-    margin: '0 auto'
   },
   [theme.breakpoints.down('sm')]: {
-    width: '90%',
     height: 350,
   },
+  margin: 10,
   height: 400,
   display: 'flex',
   flexDirection: 'column',

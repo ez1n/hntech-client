@@ -102,6 +102,7 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
     // 게시글 내용 보내기
     if (validate()) {
       dispatch(onLoading());
+      console.log(archiveData.get("content"))
       archiveApi.postCreateArchive(archiveData)
         .then(res => {
           success();

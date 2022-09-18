@@ -52,9 +52,11 @@ export default function Company({ success }: propsType) {
 
 const CompanyBox = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
-    flexDirection: 'column'
+    flexDirection: 'column',
+    margin: 0
   },
-  display: 'flex'
+  display: 'flex',
+  marginTop: 50
 })) as typeof Box;
 
 const SideMenuBox = styled(Box)(({ theme }) => ({

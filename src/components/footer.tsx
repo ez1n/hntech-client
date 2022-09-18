@@ -22,6 +22,7 @@ export default function Footer() {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
   const logo = useAppSelector(state => state.manager.logo); // 회사 로고
+  const sites = useAppSelector(state => state.manager.footer.sites); // FAMILY SITE
 
   // 로그아웃
   const getLogout = () => {
@@ -58,7 +59,7 @@ export default function Footer() {
               FAX : {footer.fax}
             </ContentTypography>
 
-            <ContentTypography>
+            <ContentTypography sx={{color: '#ccffcc', fontWeight: 'bold' }}>
               A/S : {footer.afterService}
             </ContentTypography>
           </ContentBox>
@@ -74,13 +75,13 @@ export default function Footer() {
             FAMILY SITE
           </ContentTypography>
 
-          <ContentTypography>
-            한국소방산업기술원
-          </ContentTypography>
-
-          <ContentTypography>
-            한국소방안전협회
-          </ContentTypography>
+          {sites.map((item: {buttonName: string, link: string}, index) => (
+            <a href={item.link} target='_blank' key={index}>
+            <ContentTypography sx={{'&: hover': {color: '#ccff66'}}}>
+              {item.buttonName}
+            </ContentTypography>
+            </a>
+          ))}
         </SiteBox>
       </FooterStack>
 

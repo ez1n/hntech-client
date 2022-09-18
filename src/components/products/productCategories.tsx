@@ -1,17 +1,30 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { categoryApi } from '../../network/category';
 import { api } from '../../network/network';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { addProductCategoryImage, selectProductCategoryTrue, setCurrentProductCategoryName, updateProductCategoryImage } from '../../app/reducers/categorySlice';
-import { clickProductCategoryGoBack } from '../../app/reducers/dialogSlice';
+import {clickManagerLogin, clickProductCategoryGoBack} from '../../app/reducers/dialogSlice';
 import { setAllProductCategories, setCurrentProductCategory } from '../../app/reducers/categorySlice';
-import { Box, Button, Container, styled, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  styled,
+  TextField,
+  Typography
+} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CancelModal from '../cancelModal';
-import { changeMode } from '../../app/reducers/managerModeSlice';
+import {changeMode, setPassword} from '../../app/reducers/managerModeSlice';
+import {adminApi} from "../../network/admin";
 
 interface propsType {
   successDelete: () => void
@@ -26,6 +39,9 @@ export default function ProductCategories({ successDelete }: propsType) {
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록 state
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보 state
   const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
+  const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
+  const [checkPassword, setCheckPassword] = useState(false);
+  const [loginErrorMsg, setLoginErrorMsg] = useState('');
 
   useEffect(() => {
     // 카테고리 이미지 초기화
@@ -37,6 +53,23 @@ export default function ProductCategories({ successDelete }: propsType) {
       .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
       .catch(error => console.log(error))
   }, []);
+
+  // 비밀번호 확인
+  const postLogin = () => {
+    adminApi.postLogin(password)
+      .then(res => {
+        setLoginErrorMsg('');
+        setCheckPassword(false);
+        dispatch(clickProductCategoryGoBack());
+      })
+      .catch(error => {
+        setLoginErrorMsg(error.response.data.message);
+      })
+  };
+
+  const onLoginEnterKey = (event: any) => {
+    if (event.key === 'Enter') { postLogin() };
+  };
 
   // 카테고리 삭제
   const deleteProductCategory = (categoryId: number) => {
@@ -99,7 +132,7 @@ export default function ProductCategories({ successDelete }: propsType) {
                     <Button
                       onClick={() => {
                         dispatch(setCurrentProductCategory({ category: value }));
-                        dispatch(clickProductCategoryGoBack());
+                        setCheckPassword(checkPassword => !checkPassword);
                       }}
                       sx={{ color: 'red' }}>
                       <RemoveCircleRoundedIcon sx={{ fontSize: 30 }} />
@@ -166,6 +199,41 @@ export default function ProductCategories({ successDelete }: propsType) {
           </Box >
         </>
       }
+
+      {/* 카테고리 삭제 비밀번호 확인 Dialog */}
+      < Dialog
+        open={checkPassword}
+        onClose={() => setCheckPassword(false)}>
+        <DialogTitle>
+          비밀번호 확인
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>비밀번호</DialogContentText>
+          <TextField
+            error={loginErrorMsg ? true : false}
+            helperText={loginErrorMsg}
+            required
+            autoFocus={true}
+            autoComplete='off'
+            type={'password'}
+            onChange={event => dispatch(setPassword({ password: event?.target.value }))}
+            onKeyUp={onLoginEnterKey} />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={postLogin}>
+            확인
+          </Button>
+          <Button
+            onClick={() => {
+              setCheckPassword(false);
+              setLoginErrorMsg('');
+            }}>
+            취소
+          </Button>
+        </DialogActions>
+      </Dialog >
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal

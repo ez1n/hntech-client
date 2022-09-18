@@ -190,9 +190,11 @@ const CategoryBox = styled(Box)(({ theme }) => ({
 
 const TotalBox = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
-    flexDirection: 'column'
+    flexDirection: 'column',
+    margin: 'auto',
   },
   display: 'flex',
   width: '80vw',
-  margin: 'auto'
+  margin: 'auto',
+  marginTop: 50
 })) as typeof Box

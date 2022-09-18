@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import HTMLReactParser from 'html-react-parser';
 import { useAppSelector } from '../../app/hooks';
 import { Box, Stack, Typography, styled } from '@mui/material';
 
@@ -36,7 +37,7 @@ export default function QuestionContent() {
       <Box sx={{ p: 3, minHeight: 300 }}>
         {detail.content.split('\n').map((value, index) => (
           <Typography key={index} sx={{ fontSize: 18 }}>
-            {value}
+            {HTMLReactParser(value)}
           </Typography>
         ))}
       </Box>
