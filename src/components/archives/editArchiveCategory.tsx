@@ -126,14 +126,10 @@ export default function EditArchiveCategory({ errorToast }: propsType) {
         dispatch(clickArchivesGoBack());
         dispatch(setSelectedArchiveCategoryId({ id: undefined }))
       }}>
-      <Title>
-        카테고리 수정
-      </Title>
+      <Title>카테고리 수정</Title>
 
       <DialogContent>
-        <ContentText>
-          카테고리 목록
-        </ContentText>
+        <ContentText>카테고리 목록</ContentText>
 
         {/* 카테고리 목록 */}
         <Stack
@@ -251,4 +247,4 @@ const ContentText = styled(DialogContentText)(({ theme }) => ({
   marginBottom: 25,
   fontSize: 22,
   borderBottom: '2px solid rgba(46, 125, 50, 0.5)'
-}))
+})) as typeof DialogContentText;

@@ -22,7 +22,7 @@ export default function ArchiveCategorySelect({ defaultCategory, categoryErrorMs
         sx={{ textAlign: 'center' }}
         MenuProps={{ style: { maxHeight: 300 } }}
       >
-        {defaultCategory === '전체' && <MenuItem value={'전체'}>전체</MenuItem>}
+        {defaultCategory === '전체' && <MenuItem value={'전체'} sx={{ justifyContent: 'center' }}>전체</MenuItem>}
         {archiveCategory.map((item: { id: number, categoryName: string }) => (
           <MenuItem key={item.id} value={item.categoryName} sx={{ justifyContent: 'center' }}>
             {item.categoryName}

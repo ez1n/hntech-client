@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import '../style.css';
-import { useNavigate } from 'react-router-dom';
-import { archiveApi } from '../../network/archive';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { archiveFormGoBack, onLoading } from '../../app/reducers/dialogSlice';
+import {useNavigate} from 'react-router-dom';
+import {archiveApi} from '../../network/archive';
+import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {archiveFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
 import {
   addArchiveFile,
   deleteArchiveFile,
@@ -32,7 +30,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ArchiveCategorySelect from '../archiveCategorySelect';
-import { changeMode } from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/managerModeSlice';
 import Loading from '../loading';
 
 interface propsType {
@@ -40,7 +38,7 @@ interface propsType {
   errorToast: (message: string) => void
 }
 
-export default function ArchiveForm({ success, errorToast }: propsType) {
+export default function ArchiveForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -55,8 +53,8 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
 
   useEffect(() => {
     dispatch(resetArchiveFile());
-    dispatch(updateArchiveCategory({ categoryName: '' }));
-    dispatch(updateArchiveNoticeChecked({ isNotice: false }));
+    dispatch(updateArchiveCategory({categoryName: ''}));
+    dispatch(updateArchiveNoticeChecked({isNotice: false}));
   }, []);
 
   const validate = () => {
@@ -76,19 +74,21 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
   const selectFile = (event: any) => {
     // 파일 이름 미리보기
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addArchiveFile({ item: event.target.files[i].name }))
-    };
+      dispatch(addArchiveFile({item: event.target.files[i].name}))
+    }
+    ;
 
     // 전송할 파일 데이터
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(updateArchiveFileData({ file: event.target.files[i] }))
-    };
+      dispatch(updateArchiveFileData({file: event.target.files[i]}))
+    }
+    ;
   };
 
   // 파일 선택 취소
   const deleteFile = (index: number) => {
-    dispatch(deleteArchiveFile({ num: index }));
-    dispatch(deleteArchiveFileData({ num: index }));
+    dispatch(deleteArchiveFile({num: index}));
+    dispatch(deleteArchiveFileData({num: index}));
   };
 
   // 자료실 글쓰기
@@ -117,18 +117,19 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
           if (error.response.status === 401) {
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
-            dispatch(changeMode({ login: isLogin }));
-          };
+            dispatch(changeMode({login: isLogin}));
+          }
+          ;
         })
     }
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{mt: 5}}>
       {/* 소제목 */}
       <Title variant='h5'>자료실</Title>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 자료실 글쓰기 폼 */}
       <Box sx={{
@@ -150,12 +151,12 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
             placeholder='제목을 입력해 주세요'
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
-            onChange={event => dispatch(updateArchiveTitle({ title: event.target.value }))}
+            onChange={event => dispatch(updateArchiveTitle({title: event.target.value}))}
             inputProps={{
-              style: { fontSize: 18 },
+              style: {fontSize: 18},
               maxLength: 30
             }}
-            sx={{ width: '100%' }}
+            sx={{width: '100%'}}
           />
         </Box>
 
@@ -169,39 +170,35 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
         }}>
 
           {/* 카테고리 선택 */}
-          <ArchiveCategorySelect defaultCategory={null} categoryErrorMsg={categoryErrorMsg} />
+          <ArchiveCategorySelect defaultCategory={null} categoryErrorMsg={categoryErrorMsg}/>
 
           {/* 공지사항 표시 */}
           <FormControlLabel
             control={<Checkbox
-              onChange={event => dispatch(updateArchiveNoticeChecked({ isNotice: event.target.checked }))}
+              onChange={event => dispatch(updateArchiveNoticeChecked({isNotice: event.target.checked}))}
               sx={{
                 color: 'darkgrey',
                 '&.Mui-checked': {
                   color: 'green',
                 },
-              }} />}
+              }}/>}
             label='공지사항'
             labelPlacement='start'
-            sx={{ color: 'darkgrey' }} />
+            sx={{color: 'darkgrey'}}/>
         </Box>
 
         {/* 문의 내용 */}
-        <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)', }}>
-          <CKEditor
-            editor={ClassicEditor}
-            config={{
-              placeholder: '내용을 입력하세요'
-            }}
-            onChange={(event: any, editor: { getData: () => any; }) => {
-              const data = editor.getData();
-              dispatch(updateArchiveContent({ content: data }));
-            }}
-          />
+        <Box sx={{p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)'}}>
+          <TextField
+            placeholder='내용을 입력하세요'
+            multiline
+            minRows={15}
+            onChange={event => dispatch(updateArchiveContent({content: event.target.value}))}
+            sx={{width: '100%',  overflow: 'auto'}}/>
         </Box>
 
         {/* 첨부파일 */}
-        <Stack direction='row' spacing={2} sx={{ p: 2 }}>
+        <Stack direction='row' spacing={2} sx={{p: 2}}>
           <Box sx={{
             pl: 2,
             width: '100%',
@@ -213,9 +210,9 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
           }}>
             <Stack>
               {fileName.length === 0 &&
-                <UploadFileTypography>
-                  업로드할 파일
-                </UploadFileTypography>
+                  <UploadFileTypography>
+                      업로드할 파일
+                  </UploadFileTypography>
               }
               {fileName.map((item, index) => (
                 <Stack direction='row' key={index}>
@@ -223,27 +220,27 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
                   <ClearRoundedIcon
                     onClick={() => deleteFile(index)}
                     fontSize='small'
-                    sx={{ color: 'lightgrey', cursor: 'pointer', ml: 1 }} />
+                    sx={{color: 'lightgrey', cursor: 'pointer', ml: 1}}/>
                 </Stack>
               ))}
             </Stack>
           </Box>
           <label className='fileUploadButton' htmlFor='archiveFile' onChange={event => selectFile(event)}>
             업로드
-            <input type='file' id='archiveFile' multiple style={{ display: 'none' }} />
+            <input type='file' id='archiveFile' multiple style={{display: 'none'}}/>
           </label>
         </Stack>
       </Box>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 버튼 */}
-      <Spacing sx={{ textAlign: 'center' }}>
-        <EditButton name='작성완료' onClick={postArchiveForm} />
-        <EditButton name='취소' onClick={() => dispatch(archiveFormGoBack())} />
+      <Spacing sx={{textAlign: 'center'}}>
+        <EditButton name='작성완료' onClick={postArchiveForm}/>
+        <EditButton name='취소' onClick={() => dispatch(archiveFormGoBack())}/>
       </Spacing>
 
-      <Loading />
+      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
@@ -255,8 +252,8 @@ export default function ArchiveForm({ success, errorToast }: propsType) {
           navigate('/archive');
           dispatch(archiveFormGoBack());
         }}
-        closeAction={() => dispatch(archiveFormGoBack())} />
-    </Container >
+        closeAction={() => dispatch(archiveFormGoBack())}/>
+    </Container>
   )
 };
 
@@ -264,7 +261,7 @@ const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
 
-const Title = styled(Typography)(({ theme }) => ({
+const Title = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18,
   },
@@ -275,7 +272,7 @@ const Title = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold'
 })) as typeof Typography;
 
-const UploadFileTypography = styled(Typography)(({ theme }) => ({
+const UploadFileTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 14,
   },

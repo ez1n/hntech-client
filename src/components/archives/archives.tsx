@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { archiveApi } from '../../network/archive';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
 import { getAllArchives, getNotice } from '../../app/reducers/archiveSlice';
@@ -8,7 +9,6 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
 import EditArchiveCategory from './editArchiveCategory';
-import { archiveApi } from '../../network/archive';
 import ArchiveCategorySelect from '../archiveCategorySelect';
 
 interface propsType {
@@ -68,7 +68,7 @@ export default function Archives({ errorToast }: propsType) {
       </TitleTypography>
 
       {/* 버튼 */}
-      <Spacing>
+      <Spacing sx={{height: managerMode ? 100 : 50}}>
         {/* 자료 검색 */}
         <SearchTotalStack direction='row' spacing={1}>
           {/* 카테고리 */}
@@ -105,7 +105,6 @@ export default function Archives({ errorToast }: propsType) {
 };
 
 const Spacing = styled(Container)(() => ({
-  height: 100,
   marginBottom: 10
 })) as typeof Container;
 
@@ -117,6 +116,7 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
     fontSize: 14
   },
   padding: 1,
+  marginBottom: 10,
   width: 'max-content',
   borderBottom: '3px solid #2E7D32'
 })) as typeof Typography;

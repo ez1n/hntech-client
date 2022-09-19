@@ -1,11 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import { categoryApi } from '../../network/category';
-import { api } from '../../network/network';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { addProductCategoryImage, selectProductCategoryTrue, setCurrentProductCategoryName, updateProductCategoryImage } from '../../app/reducers/categorySlice';
-import {clickManagerLogin, clickProductCategoryGoBack} from '../../app/reducers/dialogSlice';
-import { setAllProductCategories, setCurrentProductCategory } from '../../app/reducers/categorySlice';
+import {categoryApi} from '../../network/category';
+import {api} from '../../network/network';
+import {useNavigate} from 'react-router-dom';
+import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {
+  addProductCategoryImage,
+  selectProductCategoryTrue,
+  setCurrentProductCategoryName,
+  updateProductCategoryImage
+} from '../../app/reducers/categorySlice';
+import {
+  clickManagerLogin,
+  clickProductCategoryGoBack,
+  clickProductCategoryListGoBack
+} from '../../app/reducers/dialogSlice';
+import {setAllProductCategories, setCurrentProductCategory} from '../../app/reducers/categorySlice';
 import {
   Box,
   Button,
@@ -25,12 +34,14 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CancelModal from '../cancelModal';
 import {changeMode, setPassword} from '../../app/reducers/managerModeSlice';
 import {adminApi} from "../../network/admin";
+import EditButton from "../editButton";
+import ProductCategoryList from "./productCategoryList";
 
 interface propsType {
   successDelete: () => void
 }
 
-export default function ProductCategories({ successDelete }: propsType) {
+export default function ProductCategories({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -45,12 +56,12 @@ export default function ProductCategories({ successDelete }: propsType) {
 
   useEffect(() => {
     // 카테고리 이미지 초기화
-    dispatch(addProductCategoryImage({ image: undefined }));
-    dispatch(updateProductCategoryImage({ categoryImage: '' }));
+    dispatch(addProductCategoryImage({image: undefined}));
+    dispatch(updateProductCategoryImage({categoryImage: ''}));
 
     // 카테고리 목록 받아오기
     categoryApi.getAllProductCategories()
-      .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
+      .then(res => dispatch(setAllProductCategories({categories: res.categories})))
       .catch(error => console.log(error))
   }, []);
 
@@ -68,7 +79,10 @@ export default function ProductCategories({ successDelete }: propsType) {
   };
 
   const onLoginEnterKey = (event: any) => {
-    if (event.key === 'Enter') { postLogin() };
+    if (event.key === 'Enter') {
+      postLogin()
+    }
+    ;
   };
 
   // 카테고리 삭제
@@ -78,126 +92,139 @@ export default function ProductCategories({ successDelete }: propsType) {
         successDelete();
         dispatch(clickProductCategoryGoBack());
         categoryApi.getAllProductCategories()
-          .then(res => dispatch(setAllProductCategories({ categories: res.categories })))
+          .then(res => dispatch(setAllProductCategories({categories: res.categories})))
       })
       .catch(error => {
         if (error.response.status === 401) {
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({ login: isLogin }));
-        };
+          dispatch(changeMode({login: isLogin}));
+        }
+        ;
       })
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{width: '100%'}}>
       {/* default */}
       {!productCategorySelected &&
-        <>
-          <Container sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            mb: 5
-          }}>
-            <TitleTypography variant='h5'>
-              제품 소개
-            </TitleTypography>
-          </Container>
+          <>
+              <Container sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                mb: 5
+              }}>
+                  <TitleTypography variant='h5'>
+                      제품 소개
+                  </TitleTypography>
+              </Container>
+            {managerMode &&
+                <Spacing sx={{textAlign: 'end'}}>
+                    <EditButton name={'카테고리 목록'} onClick={() => dispatch(clickProductCategoryListGoBack())}/>
 
-          <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-            {productCategories?.map((value: {
-              categoryName: string;
-              id: number;
-              imageServerFilename: string;
-              imageOriginalFilename: string;
-              showInMain: string;
-            }) => (
-              <CategoryBox key={value.id} sx={{ m: 1 }}>
-                <CategoryButton onClick={() => {
-                  dispatch(selectProductCategoryTrue());
-                  dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
-                }}>
-                  {/* 카테고리 목록 */}
-                  <Box sx={{ height: 150 }}>
-                    <img className='categoryImage' src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`} alt={value.imageOriginalFilename} width='100%' height='100%' />
-                  </Box>
-                  <CategoryNameTypography>
-                    {value.categoryName}
-                  </CategoryNameTypography>
-                </CategoryButton>
+                    <ProductCategoryList/>
+                </Spacing>
+            }
 
-                {/* 수정 버튼 */}
-                {managerMode &&
-                  <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <Button
-                      onClick={() => {
-                        dispatch(setCurrentProductCategory({ category: value }));
-                        setCheckPassword(checkPassword => !checkPassword);
-                      }}
-                      sx={{ color: 'red' }}>
-                      <RemoveCircleRoundedIcon sx={{ fontSize: 30 }} />
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        dispatch(setCurrentProductCategory({ category: value }));
-                        navigate('/productCategory-modify');
-                      }}
-                      sx={{ color: 'darkgreen' }}>
-                      <CreateRoundedIcon sx={{ fontSize: 30 }} />
-                    </Button>
-                  </Box>
-                }
-              </CategoryBox>
-            ))}
-          </Box>
+              <Box sx={{display: 'flex', flexWrap: 'wrap'}}>
+                {productCategories?.map((value: {
+                  categoryName: string;
+                  id: number;
+                  imageServerFilename: string;
+                  imageOriginalFilename: string;
+                  showInMain: string;
+                }) => (
+                  <CategoryBox key={value.id} sx={{m: 1}}>
+                    <CategoryButton onClick={() => {
+                      dispatch(selectProductCategoryTrue());
+                      dispatch(setCurrentProductCategoryName({category: value.categoryName}));
+                    }}>
+                      {/* 카테고리 목록 */}
+                      <Box sx={{height: 150}}>
+                        <img
+                          className='categoryImage'
+                          src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`}
+                          alt={value.imageOriginalFilename}
+                          width='100%'
+                          height='100%'/>
+                      </Box>
+                      <CategoryNameTypography>
+                        {value.categoryName}
+                      </CategoryNameTypography>
+                    </CategoryButton>
 
-          {/* 추가 버튼 */}
-          {managerMode &&
-            <AddButton onClick={() => navigate('/productCategory-form')}>
-              <AddRoundedIcon sx={{ color: '#042709', fontSize: 100, opacity: 0.6 }} />
-            </AddButton>
-          }
-        </>
+                    {/* 수정 버튼 */}
+                    {managerMode &&
+                        <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+                            <Button
+                                onClick={() => {
+                                  dispatch(setCurrentProductCategory({category: value}));
+                                  setCheckPassword(checkPassword => !checkPassword);
+                                }}
+                                sx={{color: 'red'}}>
+                                <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                  dispatch(setCurrentProductCategory({category: value}));
+                                  navigate('/productCategory-modify');
+                                }}
+                                sx={{color: 'darkgreen'}}>
+                                <CreateRoundedIcon sx={{fontSize: 30}}/>
+                            </Button>
+                        </Box>
+                    }
+                  </CategoryBox>
+                ))}
+              </Box>
+
+            {/* 추가 버튼 */}
+            {managerMode &&
+                <AddButton onClick={() => navigate('/productCategory-form')}>
+                    <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
+                </AddButton>
+            }
+          </>
       }
 
       {/* category selected */}
       {productCategorySelected &&
-        <>
-          <Container sx={{ display: 'flex' }}>
-            <Typography
-              variant='h5'
-              sx={{
-                p: 1,
-                userSelect: 'none'
+          <>
+              <Container sx={{display: 'flex'}}>
+                  <Typography
+                      variant='h5'
+                      sx={{
+                        p: 1,
+                        userSelect: 'none'
+                      }}>
+                      제품 소개
+                  </Typography>
+              </Container>
+              <Box sx={{
+                pt: 1,
+                pb: 1,
+                pl: 2,
+                display: 'flex',
+                flexDirection: 'column'
               }}>
-              제품 소개
-            </Typography>
-          </Container>
-          <Box sx={{
-            pt: 1,
-            pb: 1,
-            pl: 2,
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            {productCategories.map((value: {
-              categoryName: string;
-              id: number;
-              imageServerFilename: string;
-              imageOriginalFilename: string;
-              showInMain: string;
-            }) => (
-              <MenuButton
-                key={value.id}
-                onClick={() => {
-                  dispatch(selectProductCategoryTrue());
-                  dispatch(setCurrentProductCategoryName({ category: value.categoryName }));
-                }}>
-                <Typography sx={{ m: 1, textAlign: 'center' }}>{value.categoryName}</Typography>
-              </MenuButton>
-            ))}
-          </Box >
-        </>
+                {productCategories.map((value: {
+                  categoryName: string;
+                  id: number;
+                  imageServerFilename: string;
+                  imageOriginalFilename: string;
+                  showInMain: string;
+                }) => (
+                  <MenuButton
+                    key={value.id}
+                    onClick={() => {
+                      dispatch(selectProductCategoryTrue());
+                      dispatch(setCurrentProductCategoryName({category: value.categoryName}));
+                    }}>
+                    <Typography sx={{m: 1, textAlign: 'center'}}>{value.categoryName}</Typography>
+                  </MenuButton>
+                ))}
+              </Box>
+          </>
       }
 
       {/* 카테고리 삭제 비밀번호 확인 Dialog */}
@@ -217,8 +244,8 @@ export default function ProductCategories({ successDelete }: propsType) {
             autoFocus={true}
             autoComplete='off'
             type={'password'}
-            onChange={event => dispatch(setPassword({ password: event?.target.value }))}
-            onKeyUp={onLoginEnterKey} />
+            onChange={event => dispatch(setPassword({password: event?.target.value}))}
+            onKeyUp={onLoginEnterKey}/>
         </DialogContent>
 
         <DialogActions>
@@ -233,7 +260,7 @@ export default function ProductCategories({ successDelete }: propsType) {
             취소
           </Button>
         </DialogActions>
-      </Dialog >
+      </Dialog>
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
@@ -242,12 +269,16 @@ export default function ProductCategories({ successDelete }: propsType) {
         text1='해당 카테고리가 삭제됩니다.'
         text2='삭제하시겠습니까?'
         yesAction={() => deleteProductCategory(productCurrentCategory.id)}
-        closeAction={() => dispatch(clickProductCategoryGoBack())} />
+        closeAction={() => dispatch(clickProductCategoryGoBack())}/>
     </Box>
   )
 };
 
-const CategoryBox = styled(Box)(({ theme }) => ({
+const Spacing = styled(Container)(({theme}) => ({
+  height: 50
+})) as typeof Container;
+
+const CategoryBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {
     width: '31% !important'
   },
@@ -261,7 +292,7 @@ const CategoryBox = styled(Box)(({ theme }) => ({
   margin: 1,
 })) as typeof Box;
 
-const TitleTypography = styled(Typography)(({ theme }) => ({
+const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18
   },
@@ -274,7 +305,7 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
   borderBottom: '3px solid #2E7D32',
 })) as typeof Typography;
 
-const CategoryNameTypography = styled(Typography)(({ theme }) => ({
+const CategoryNameTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 15
   },
@@ -305,7 +336,7 @@ const CategoryButton = styled(Button)(() => ({
 })) as typeof Button;
 
 // 추가 버튼
-const AddButton = styled(Button)(({ theme }) => ({
+const AddButton = styled(Button)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {
     width: '30% !important'
   },

@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import '../style.css';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { archiveApi } from '../../network/archive';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -16,7 +14,7 @@ import {
   modifyArchiveTitle,
   modifyArchiveContent,
   modifyArchiveNoticeChecked,
-  deleteArchiveOriginFile
+  deleteArchiveOriginFile, updateArchiveContent, updateArchiveCategory
 } from '../../app/reducers/archiveFormSlice';
 import {
   Container,
@@ -53,6 +51,10 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
   const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
   const [deleteArchiveId, setDeleteArchiveId] = useState<{ archiveId: number, fileId: number }[]>([]);
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
+
+  useEffect(() => {
+    dispatch(updateArchiveCategory({ categoryName: archiveModifyContent.categoryName }))
+  }, []);
 
   const validate = () => {
     let isValid = true;
@@ -185,17 +187,13 @@ export default function ArchiveModifyForm({ successModify, errorToast }: propsTy
 
         {/* 문의 내용 */}
         <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)' }}>
-          <CKEditor
-            editor={ClassicEditor}
-            data={archiveModifyContent.content}
-            config={{
-              placeholder: '내용을 입력하세요',
-            }}
-            onChange={(event: any, editor: { getData: () => any }) => {
-              const data = editor.getData();
-              dispatch(modifyArchiveContent({ content: data }));
-            }}
-          />
+          <TextField
+            defaultValue={archiveModifyContent.content}
+            placeholder='내용을 입력하세요'
+            multiline
+            minRows={15}
+            onChange={event => dispatch(modifyArchiveContent({ content: event.target.value }))}
+            sx={{width: '100%',  overflow: 'auto'}}/>
         </Box>
 
         {/* 첨부파일 */}

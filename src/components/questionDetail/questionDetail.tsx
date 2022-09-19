@@ -152,7 +152,7 @@ export default function QuestionDetail({ successAnswer, successDelete }: propsTy
       <Spacing />
 
       {/* 댓글 폼 */}
-      <CommentForm id={detail.id} />
+      {detail.status !== '완료' && <CommentForm id={detail.id} />}
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal

@@ -101,12 +101,6 @@
   background-color: rgba(239, 245, 241, 0.5);
 }
 
-/* archiveForm, noticeForm */
-
-.ck-editor__editable {
-  min-height: 400px;
-}
-
 /* admin panel*/
 
 .uploadButton {

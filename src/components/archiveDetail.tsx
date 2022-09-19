@@ -108,9 +108,13 @@ export default function ArchiveDetail({ successDelete }: propsType) {
           <ContentTypography sx={{ color: 'darkgrey' }}>작성일 {detail.createTime}</ContentTypography>
         </CategoryBox>
 
-        {/* 자료 부가 설명 */}
+        {/* content */}
         <Box sx={{ p: 3, minHeight: 300, borderBottom: '1px solid #3B6C46' }}>
-          {HTMLReactParser(detail.content)}
+          {detail.content.split('\n').map((value, index) => (
+            <Typography key={index}>
+              {HTMLReactParser(value)}
+            </Typography>
+          ))}
         </Box>
 
         {/* 첨부파일 */}
