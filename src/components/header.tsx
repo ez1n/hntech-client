@@ -89,7 +89,7 @@ export default function Header() {
                 <Box
                     onMouseOver={() => dispatch(mouseOverCompany())}
                     onMouseLeave={() => dispatch(mouseLeaveCompany())}
-                    sx={{width: '180px', height: '50px', lineHeight: '50px'}}
+                    sx={{width: '180px', height: '50px', lineHeight: '67px'}}
                 >
                     <MainMenu
                         onClick={() => {
@@ -142,7 +142,7 @@ export default function Header() {
                 <Box
                     onMouseOver={() => dispatch(mouseOverProduct())}
                     onMouseLeave={() => dispatch(mouseLeaveProduct())}
-                    sx={{width: '180px', height: '50px', lineHeight: '50px'}}
+                    sx={{width: '180px', height: '50px', lineHeight: '67px'}}
                 >
                     <MainMenu
                         onClick={() => {
@@ -171,7 +171,7 @@ export default function Header() {
                 <Box
                     onMouseLeave={() => dispatch(mouseLeaveArchive())}
                     onMouseOver={() => dispatch(mouseOverArchive())}
-                    sx={{width: '180px', height: '50px', lineHeight: '50px'}}
+                    sx={{width: '180px', height: '50px', lineHeight: '67px'}}
                 >
                     <MainMenu onClick={() => navigate('/archive')}>
                         자료실
@@ -186,7 +186,7 @@ export default function Header() {
                 <Box
                     onMouseLeave={() => dispatch(mouseLeaveService())}
                     onMouseOver={() => dispatch(mouseOverService())}
-                    sx={{width: '180px', height: '50px', lineHeight: '50px'}}>
+                    sx={{width: '180px', height: '50px', lineHeight: '67px'}}>
                     <MainMenu onClick={() => navigate('/question')}>
                         고객지원
                     </MainMenu>
@@ -418,11 +418,10 @@ const DropdownMenuListItem = styled(ListItemText)(() => ({
 const ListBox = styled(List)(() => ({
     display: 'flex',
     flexDirection: 'column',
-    transition: 'height ease-out 0.5s 0s',
+    transition: 'height ease-out 0.3s 0s',
     overflow: 'hidden',
-    backgroundColor: '#FCFCFC',
-    padding: 0,
-    borderRadius: '10px'
+    backgroundColor: 'rgb(126,162,126)',
+    padding: 0
 })) as typeof List;
 
 // 상위 메뉴 버튼
@@ -443,10 +442,11 @@ const MainMenu = styled(Button)(() => ({
 const DropdownMenu = styled(ListItem)(() => ({
     justifyContent: 'center',
     fontSize: 15,
-    color: '#0F0F0F',
+    color: '#FCFCFC',
     height: '40px',
     cursor: 'pointer',
     '&:hover': {
-        backgroundColor: 'rgba(57, 150, 82, 0.1)',
+        backgroundColor: 'rgba(0,0,0,0.11)',
+        color: '0F0F0F'
     }
 }));

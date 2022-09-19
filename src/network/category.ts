@@ -46,6 +46,12 @@ class CategoryApi {
     return response.data;
   };
 
+  // 제품 카테고리 순서 변경
+  async putUpdateCategorySequence(categorySequence: {currentCategoryId: number, targetCategoryId: number}) {
+    const response = await axios.put(`/api/category/sequence`, categorySequence);
+    return response.data.categories;
+  }
+
   /* 자료실 카테고리 */
 
   // 자료실 카테고리 목록 받아오기

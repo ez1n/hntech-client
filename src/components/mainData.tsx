@@ -53,16 +53,9 @@ export default function MainData() {
         display: 'flex',
         justifyContent: 'center'
       }}>
-        <Typography
-          variant='h5'
-          sx={{
-            p: 1,
-            width: 'max-content',
-            borderBottom: '3px solid #2E7D32',
-            userSelect: 'none'
-          }}>
+        <TitleTypography variant='h5'>
           카다록 및 자재 승인서
-        </Typography>
+        </TitleTypography>
       </Container>
 
       <ContentContainer container columns={7}>
@@ -111,6 +104,19 @@ const ContentContainer = styled(Grid)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center'
 })) as typeof Grid;
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 18
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  },
+  userSelect: 'none',
+  padding: 1,
+  width: 'max-content',
+  borderBottom: '3px solid #2E7D32',
+})) as typeof Typography;
 
 // 미리보기 스타일
 const FileBox = styled(Box)(({ theme }) => ({

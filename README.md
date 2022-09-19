@@ -34,6 +34,8 @@ library
 
 language
 * TypeScript
+* HTML
+* CSS
   
 build tool
 * vite
