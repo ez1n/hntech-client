@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {categoryApi} from '../../network/category';
 import {api} from '../../network/network';
 import {useNavigate} from 'react-router-dom';
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {
   addProductCategoryImage,
@@ -10,7 +12,6 @@ import {
   updateProductCategoryImage
 } from '../../app/reducers/categorySlice';
 import {
-  clickManagerLogin,
   clickProductCategoryGoBack,
   clickProductCategoryListGoBack
 } from '../../app/reducers/dialogSlice';
@@ -122,7 +123,9 @@ export default function ProductCategories({successDelete}: propsType) {
                 <Spacing sx={{textAlign: 'end'}}>
                     <EditButton name={'카테고리 목록'} onClick={() => dispatch(clickProductCategoryListGoBack())}/>
 
-                    <ProductCategoryList/>
+                    <DndProvider backend={HTML5Backend}>
+                        <ProductCategoryList/>
+                    </DndProvider>
                 </Spacing>
             }
 

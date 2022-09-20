@@ -11,7 +11,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
  */
 
 /**
- * clickChangeMode : 관리자모드 state (boolean)
+ * ChangeMode : 관리자모드 state (boolean)
  * setPassword : 비밀번호 입력(관리자 로그인)
  * setManagerData : 관리자 정보 받아오기
  * copyManagerData : 관리자 정보 copy (변경용)
@@ -173,7 +173,7 @@ export const ManagerSlice = createSlice({
       state,
       action: PayloadAction<{ login: string | null }>
     ) => {
-      state.managerMode = Boolean(action.payload.login)
+      state.managerMode = Boolean(action.payload.login);
     },
     setPassword: (
       state,
@@ -392,18 +392,6 @@ export const ManagerSlice = createSlice({
     ) => {
       state.document = action.payload.document
     },
-    updateDocument: (
-      state,
-      action: PayloadAction<{
-        catalogOriginalFilename: string,
-        materialOriginalFilename: string
-        taxOriginalFilename: string
-      }>
-    ) => {
-      state.document.catalogOriginalFilename = action.payload.catalogOriginalFilename;
-      state.document.materialOriginalFilename = action.payload.materialOriginalFilename;
-      state.document.taxOriginalFilename = action.payload.taxOriginalFilename;
-    },
     addCatalog: (
       state,
       action: PayloadAction<{ catalog: { file: string, name: string } }>
@@ -486,7 +474,6 @@ export const {
   deleteOriginBanner,
   deleteBanner,
   setDocument,
-  updateDocument,
   addCatalog,
   addApproval,
   addTax,

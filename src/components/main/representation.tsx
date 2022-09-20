@@ -41,8 +41,8 @@ export default function Representation() {
         alignItems: 'center'
       }}>
         <MainTypographyContainer>
-          <MainTypography>우리는</MainTypography>
-          <MainTypography>이런 제품을 제작합니다.</MainTypography>
+          <MainTypography>인간존중의 기업</MainTypography>
+          <MainTypography>(주)에이치엔테크</MainTypography>
         </MainTypographyContainer>
 
         {/* 메인 카테고리 */}
@@ -101,7 +101,7 @@ const MainTypographyContainer = styled(Container)(({ theme }) => ({
   },
   width: '33%',
   margin: 0,
-  textAlign: 'start',
+  textAlign: 'end',
   userSelect: 'none'
 })) as typeof Container;
 
@@ -112,7 +112,9 @@ const MainTypography = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 15
   },
-  fontSize: 25
+  fontSize: 25,
+  fontWeight: 'bold',
+  color: 'darkgreen'
 })) as typeof Typography;
 
 // 메인 버튼

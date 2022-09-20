@@ -53,12 +53,6 @@ import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import PasswordUpdate from './passwordUpdate';
-import {
-  addProductDocType,
-  addProductDocUploadButton,
-  deleteProductDoc,
-  deleteProductDocUploadButton
-} from "../../app/reducers/productFormSlice";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface propsType {
@@ -76,8 +70,9 @@ export default function FloatingButton({successModify}: propsType) {
 
   const managerMode = useAppSelector(state => state.manager.managerMode);
   const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
-  const panelData = useAppSelector(state => state.manager.panelData); // 관리자 정보 state
+  const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보 state
   const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
+  const sites = useAppSelector(state => state.manager.newPanelData.sites);
   const logo = useAppSelector(state => state.manager.logo); // 기존 로고 state
   const logoFile = useAppSelector(state => state.manager.logoFile); // 추가한 로고 state
   const copyBanner = useAppSelector(state => state.manager.copyBanner); // 기존 배너 state
@@ -118,7 +113,8 @@ export default function FloatingButton({successModify}: propsType) {
     phone: string,
     receiveEmailAccount: string,
     sendEmailAccount: string,
-    sendEmailPassword: string
+    sendEmailPassword: string,
+    sites: { buttonName: string, link: string }[]
   }) => {
     adminApi.putUpdatePanelInfo(panelData)
       .then(res => {
@@ -134,7 +130,6 @@ export default function FloatingButton({successModify}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -171,7 +166,6 @@ export default function FloatingButton({successModify}: propsType) {
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
-          ;
         })
     ));
 
@@ -189,7 +183,6 @@ export default function FloatingButton({successModify}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -214,7 +207,6 @@ export default function FloatingButton({successModify}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -222,10 +214,7 @@ export default function FloatingButton({successModify}: propsType) {
     <>
       {/*  정보변경 버튼 */}
       {managerMode &&
-          <AdminFab
-              variant='extended'
-              onClick={() => dispatch(clickEditGoBack())}
-          >
+          <AdminFab variant={'extended'} onClick={() => dispatch(clickEditGoBack())}>
               <ManageAccountsRoundedIcon fontSize='large'/>
               <AdminTypography>정보 수정</AdminTypography>
           </AdminFab>
@@ -252,7 +241,7 @@ export default function FloatingButton({successModify}: propsType) {
             <TextField
               type={'password'}
               label={'관리자 비밀번호'}
-              value={panelData.adminPassword}
+              value={adminPassword}
               disabled
               autoComplete='off'
               placeholder={'현재 비밀번호'}
@@ -370,8 +359,8 @@ export default function FloatingButton({successModify}: propsType) {
 
           {/* FAMILY SITE */}
           <ContentStack spacing={2} sx={{borderBottom: '2px solid rgba(46, 125, 50, 0.5)', pb: 2}}>
-            {newPanelData.sites.map((item: { buttonName: string, link: string }, index: number) => (
-              <ContentStack key={index} direction='row' spacing={2}>
+            {newPanelData.sites.map((item: { buttonName: string, link: string }, index) => (
+              <ContentStack direction='row' spacing={2}>
                 <TextField
                   size='small'
                   label='SITE Name'
@@ -396,8 +385,7 @@ export default function FloatingButton({successModify}: propsType) {
                   <DeleteIcon/>
                 </Button>
               </ContentStack>
-            ))
-            }
+            ))}
 
             <Button
               onClick={() => dispatch(addSitesUploadButton())}
@@ -413,12 +401,16 @@ export default function FloatingButton({successModify}: propsType) {
             <EditButton name='변경' onClick={() => putUpdatePanelInfo(newPanelData)}/>
           </Stack>
 
+          {/* 홈페이지 정보 */}
           <MainTitleTypography variant='h5' sx={{paddingBottom: 0}}>홈페이지 정보</MainTitleTypography>
 
           <List>
-            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 배너 사진은 가로 세로 5:2 비율의 사진을 첨부해
-              주세요.</ListItem>
-            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 배너 사진은 최소 한 장 이상 필요합니다.</ListItem>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
+              ※ 배너 사진은 가로 세로 5:2 비율의 사진을 첨부해 주세요.
+            </ListItem>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
+              ※ 배너 사진은 최소 한 장 이상 필요합니다.
+            </ListItem>
           </List>
 
           <ContentStack
@@ -492,8 +484,13 @@ export default function FloatingButton({successModify}: propsType) {
             <EditButton name='변경' onClick={putUpdateImageInfo}/>
           </Stack>
 
-          <MainTitleTypography variant='h5'>카다록 / 자재승인서</MainTitleTypography>
+          <MainTitleTypography variant='h5' sx={{paddingBottom: 0}}>카다록 / 자재승인서</MainTitleTypography>
 
+          <List>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
+              ※ 미리보기는 pdf 파일만 지원됩니다.
+            </ListItem>
+          </List>
           {/* 카다록, 자재 승인서, 시국세 */}
           <ContentStack
             direction='row'
@@ -577,7 +574,6 @@ export default function FloatingButton({successModify}: propsType) {
 const AdminFab = styled(Fab)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     right: 30,
-    bottom: 30
   },
   position: 'fixed',
   right: 50,

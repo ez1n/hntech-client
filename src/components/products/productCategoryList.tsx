@@ -26,8 +26,13 @@ export default function ProductCategoryList() {
     setCategoryList(categoryId);
   }, [productCategories]);
 
-  const changeCategoryList = (categoryId: { categoryName: string, id: number }[]) => {
-    setCategoryList(categoryId);
+  // 제품 순서 변경 보여주기
+  const moveCategoryItem = (id: number, targetIndex: number) => {
+    const index = categoryList.findIndex(category => category.id === id);
+    let newIdList = [...categoryList];
+    const moveItem = newIdList.splice(index, 1)[0];
+    newIdList.splice(targetIndex, 0, moveItem);
+    setCategoryList(newIdList);
   };
 
   return (
@@ -43,12 +48,12 @@ export default function ProductCategoryList() {
           direction='column'
           spacing={1}
           sx={{
-            overflow: 'auto',
+            height: 350,
+            overflow: 'auto'
           }}>
           {categoryList.map((item: { categoryName: string, id: number }, index: number) => (
             <ProductCategoryListItem
-              categoryList={categoryList}
-              changeCategoryList={changeCategoryList}
+              moveCategoryItem={moveCategoryItem}
               category={item}
               id={item.id}
               index={index}/>
