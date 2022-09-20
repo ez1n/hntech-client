@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {categoryApi} from './network/category';
 import {adminApi} from './network/admin';
+import {api} from './network/network';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from './app/hooks';
 import {setAllProductCategories, setMainCategories} from './app/reducers/categorySlice';
@@ -40,7 +41,6 @@ import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm'
 import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
 import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
 import NotFound from './components/notFound/notFound';
-import {api} from './network/network';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -49,8 +49,8 @@ export default function App() {
   const getPanelInfo = () => {
     adminApi.getPanelInfo()
       .then(res => {
-        dispatch(setManagerData({ panelData: res }));
-        dispatch(copyManagerData({ panelData: res }));
+        dispatch(setManagerData({panelData: res}));
+        dispatch(copyManagerData({panelData: res}));
       })
   };
 
@@ -68,7 +68,7 @@ export default function App() {
     adminApi.getFooter()
       .then(res => dispatch(setFooter({footer: res})))
 
-    // Banner 
+    // Banner
     adminApi.getBanner()
       .then(res => dispatch(setBanner({banner: res})))
 
@@ -89,10 +89,13 @@ export default function App() {
   useEffect(() => {
     api.getCheckLogin()
       .then(res => {
-        !res && localStorage.removeItem("login");
-        const isLogin = localStorage.getItem("login");
-        dispatch(changeMode({login: isLogin}));
-        res && getPanelInfo();
+        if (!res) {
+          localStorage.removeItem("login");
+          dispatch(changeMode({login: localStorage.getItem("login")}));
+        } else {
+          dispatch(changeMode({login: localStorage.getItem("login")}));
+          getPanelInfo();
+        }
       })
   }, []);
 

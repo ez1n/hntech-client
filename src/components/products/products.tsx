@@ -1,6 +1,4 @@
 import React, {useEffect} from 'react';
-import {DndProvider} from 'react-dnd';
-import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {Box, Button, styled, Select, MenuItem} from '@mui/material';
 import ProductCategories from './productCategories';
@@ -63,9 +61,7 @@ export default function Products({successDelete}: propsType) {
     <Box>
       {!productCategorySelected &&
           <Box sx={{p: 5, margin: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-              <DndProvider backend={HTML5Backend}>
                   <ProductCategories successDelete={successDelete}/>
-              </DndProvider>
           </Box>
       }
 

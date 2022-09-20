@@ -1,20 +1,21 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {categoryApi} from "../../network/category";
-import {useDrag, useDrop} from 'react-dnd';
+import {ConnectableElement, useDrag, useDrop} from 'react-dnd';
 import {useAppDispatch} from "../../app/hooks";
 import {setAllProductCategories} from "../../app/reducers/categorySlice";
 import {Box, Stack, Typography} from "@mui/material";
 
 interface propsType {
-  categoryList: { categoryName: string, id: number }[],
-  changeCategoryList: (categoryId: { categoryName: string, id: number }[]) => void,
+  moveCategoryItem: (id: number, targetIndex: number) => void,
   category: { categoryName: string, id: number },
   id: number,
   index: number
 }
 
-export default function ProductCategoryListItem({categoryList, changeCategoryList, category, id, index}: propsType) {
+export default function ProductCategoryListItem({moveCategoryItem, category, id, index}: propsType) {
   const dispatch = useAppDispatch();
+
+  // const [targetCategoryId, setTargetCategoryId] = useState<number>(0);
 
   // 순서변경
   const putUpdateCategorySequence = (draggedId: number, targetId: number) => {
@@ -29,50 +30,54 @@ export default function ProductCategoryListItem({categoryList, changeCategoryLis
 
   /* 드래그 앤 드롭 */
 
-  // 제품 순서 변경 보여주기
-  const moveCategoryItem = (moveItem: { categoryName: string, id: number }, targetIndex: number) => {
-    const index = categoryList.indexOf(moveItem);
-    let newIdList = [...categoryList];
-    newIdList.splice(index, 1);
-    newIdList.splice(targetIndex, 0, moveItem);
-    changeCategoryList(newIdList);
-  };
-
   // drag
-  const [{isDragging}, dragRef] = useDrag(() => ({
+  const [{isDragging}, dragRef, previewRef] = useDrag(() => ({
       type: 'productCategory',
-      item: {category, index},
+      item: {id, index},
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
       end: (item, monitor) => {
-        const {category: originCategory, index: originIndex} = item;
+        const {id: originId, index: originIndex} = item;
         const didDrop = monitor.didDrop();
         if (!didDrop) {
-          moveCategoryItem(originCategory, originIndex);
+          moveCategoryItem(originId, originIndex);
         }
-        putUpdateCategorySequence(originCategory.id, category.id);
       },
     }),
-    [category, index, moveCategoryItem]
+    [id, index, moveCategoryItem]
   );
 
   // drop
-  const [, dropRef] = useDrop(() => ({
+  const [{isOver}, dropRef] = useDrop(() => ({
       accept: 'productCategory',
-      hover: (item: { category: { categoryName: string, id: number }, index: number }) => {
-        const {category: draggedCategory, index: originIndex} = item;
-        if (draggedCategory.id !== category.id) {
-          moveCategoryItem(draggedCategory, index);
+      collect: monitor => ({
+        isOver: monitor.isOver(),
+      }),
+      hover: (item: { id: number, index: number }) => {
+        const {id: draggedId, index: originIndex} = item;
+        if (draggedId !== id) {
+          moveCategoryItem(draggedId, index);
+          console.log('hover',draggedId, id)
+        }
+      },
+      drop: (item: { id: number, index: number }) => {
+        const {id: draggedId, index: originIndex} = item;
+        if (draggedId !== id) {
+          putUpdateCategorySequence(draggedId, id);
+          moveCategoryItem(draggedId, index);
+          console.log('drop',draggedId, id)
         }
       }
     })
   );
 
   return (
-    <Box>
+    <Box
+      ref={(node: ConnectableElement) => dropRef(previewRef(node))}
+      sx={{opacity: isDragging || isOver ? 0.3 : 1}}>
       <Stack
-        ref={dropRef}
+        ref={(node: ConnectableElement) => dragRef(node)}
         direction='row'
         spacing={2}
         sx={{
@@ -82,7 +87,6 @@ export default function ProductCategoryListItem({categoryList, changeCategoryLis
           borderRadius: '10px'
         }}>
         <Typography
-          ref={dragRef}
           sx={{
             pl: 2,
             width: '100%',

@@ -407,14 +407,16 @@ export default function ProductForm({success, errorToast}: propsType) {
                         sx={{ml: 1, cursor: 'pointer'}}/> :
                       '파일'}
                   </Typography>
-                  <label className='fileUploadButton' htmlFor={`inputFile${item.id}`}
-                         onChange={event => selectProductDoc(item.id, event)}>
+                  <label
+                    className='fileUploadButton' htmlFor={`inputFile${item.id}`}
+                    onChange={event => selectProductDoc(item.id, event)}>
                     업로드
                     <input className='productInput' type='file' id={`inputFile${item.id}`}/>
                   </label>
 
-                  <Button onClick={() => dispatch(deleteProductDocUploadButton({index: index}))}
-                          sx={{color: 'darkgreen'}}>
+                  <Button
+                    onClick={() => dispatch(deleteProductDocUploadButton({index: index}))}
+                    sx={{color: 'darkgreen'}}>
                     <DeleteIcon/>
                   </Button>
                 </Stack>
