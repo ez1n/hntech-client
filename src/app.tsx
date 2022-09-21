@@ -3,7 +3,7 @@ import {categoryApi} from './network/category';
 import {adminApi} from './network/admin';
 import {api} from './network/network';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import {useAppDispatch, useAppSelector} from './app/hooks';
+import {useAppDispatch} from './app/hooks';
 import {setAllProductCategories, setMainCategories} from './app/reducers/categorySlice';
 import {
   changeMode,
@@ -224,10 +224,7 @@ export default function App() {
                 <ArchiveDetail successDelete={successDelete}/>
               }></Route>
 
-              <Route path='*' element={
-                <NotFound/>
-              }></Route>
-            </Routes>
+              <Route path='*' element={<NotFound/>}></Route></Routes>
 
             <FloatingButton successModify={successModify}/>
           </Box>

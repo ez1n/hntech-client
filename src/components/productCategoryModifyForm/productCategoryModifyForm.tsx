@@ -9,7 +9,7 @@ import {
   updateProductCategoryImage
 } from '../../app/reducers/categorySlice';
 import { addProductCategoryImage } from '../../app/reducers/categorySlice';
-import { clickProductCategoryFormGoBack } from '../../app/reducers/dialogSlice';
+import {clickProductCategoryFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
 import {
   Container,
   styled,
@@ -61,6 +61,7 @@ export default function ProductCategoryModifyForm({ successModify, errorToast }:
 
   // 카테고리 수정
   const putProductCategory = (categoryId: number) => {
+    dispatch(onLoading());
     productCategoryImage === '' ? [].map(item => productCategoryForm.append('image', item)) : productCategoryForm.append('image', productCategoryImage);
     productCategoryForm.append('categoryName', productCurrentCategory.categoryName);
     productCategoryForm.append('showInMain', productCurrentCategory.showInMain);
@@ -68,11 +69,13 @@ export default function ProductCategoryModifyForm({ successModify, errorToast }:
     validate() &&
       categoryApi.putUpdateProductCategory(categoryId, productCategoryForm)
         .then(res => {
+          dispatch(onLoading());
           successModify();
           dispatch(updateProductCategoryImage({ categoryImage: '' }));
           navigate('/product');
         })
         .catch(error => {
+          dispatch(onLoading());
           errorToast(error.response.data.message);
           if (error.response.status === 401) {
             localStorage.removeItem("login");

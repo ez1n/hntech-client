@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { adminApi } from '../../network/admin';
+import { api } from '../../network/network';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getCompanyInfoImage, updateCompanyInfo } from '../../app/reducers/companyModifySlice';
-import { styled } from '@mui/system';
-import { Box, Container, Typography } from '@mui/material';
-import EditButton from '../editButton';
-import { api } from '../../network/network';
 import { changeMode } from '../../app/reducers/managerModeSlice';
+import {onLoading} from "../../app/reducers/dialogSlice";
+import { Box, Container, Typography, styled } from '@mui/material';
+import EditButton from '../editButton';
 
 interface propsType {
   success: () => void
@@ -34,14 +34,18 @@ export default function CompanyInfo({ success }: propsType) {
 
   // CI 변경 요청
   const postCompanyInfo = () => {
+    dispatch(onLoading());
     ciForm.append('file', companyInfo.file);
     ciForm.append('where', 'ci');
+
     adminApi.postCompanyInfo(ciForm)
       .then(res => {
+        dispatch(onLoading());
         success();
         dispatch(getCompanyInfoImage({ companyInfoImage: res }));
       })
       .catch(error => {
+        dispatch(onLoading());
         console.log(error);
         if (error.response.status === 401) {
           localStorage.removeItem("login");

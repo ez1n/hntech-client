@@ -22,7 +22,10 @@ export default function ProductCategoryList() {
 
   useEffect(() => {
     let categoryId: { categoryName: string, id: number }[] = [];
-    productCategories.map((item: { categoryName: string, id: number }) => categoryId.push({categoryName: item.categoryName, id: item.id}));
+    productCategories.map((item: { categoryName: string, id: number }) => categoryId.push({
+      categoryName: item.categoryName,
+      id: item.id
+    }));
     setCategoryList(categoryId);
   }, [productCategories]);
 
@@ -31,7 +34,7 @@ export default function ProductCategoryList() {
     const index = categoryList.findIndex(category => category.id === id);
     let newIdList = [...categoryList];
     const moveItem = newIdList.splice(index, 1)[0];
-    newIdList.splice(targetIndex, 0, moveItem);
+    newIdList.splice(targetIndex === 0 ? 0 : targetIndex - 1, 0, moveItem);
     setCategoryList(newIdList);
   };
 

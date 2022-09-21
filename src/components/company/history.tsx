@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { adminApi } from '../../network/admin';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getHistoryImage, updateHistory } from '../../app/reducers/companyModifySlice';
-import { styled } from '@mui/system';
-import { Box, Container, Typography } from '@mui/material';
-import EditButton from '../editButton';
 import { api } from '../../network/network';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { changeMode } from '../../app/reducers/managerModeSlice';
+import {onLoading} from "../../app/reducers/dialogSlice";
+import { getHistoryImage, updateHistory} from '../../app/reducers/companyModifySlice';
+import { Box, Container, Typography, styled } from '@mui/material';
+import EditButton from '../editButton';
 
 interface propsType {
   success: () => void
@@ -34,14 +34,17 @@ export default function History({ success }: propsType) {
 
   // 회사연혁 변경 요청
   const postHistory = () => {
+    dispatch(onLoading());
     historyForm.append('file', history.file);
     historyForm.append('where', 'companyHistory');
     adminApi.postHistory(historyForm)
       .then(res => {
+        dispatch(onLoading());
         success();
         dispatch(getHistoryImage({ historyImage: res }))
       })
       .catch(error => {
+        dispatch(onLoading());
         console.log(error);
         if (error.response.status === 401) {
           localStorage.removeItem("login");
