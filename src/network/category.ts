@@ -10,19 +10,19 @@ class CategoryApi {
 
   // 메인 카테고리 조회
   async getMainCategories() {
-    const response = await axios.get(`/api/category/main`);
+    const response = await axios.get(`/category/main`);
     return response.data.categories;
   };
 
   // 제품 카테고리 목록 받아오기
   async getAllProductCategories() {
-    const response = await axios.get(`/api/category/product`);
+    const response = await axios.get(`/category/product`);
     return response.data;
   };
 
   // 제품 카테고리 등록
   async postCreateCategory(category: FormData) {
-    const response = await axios.post(`/api/category`, category, {
+    const response = await axios.post(`/category`, category, {
       headers: {
         'Category-Type': 'multipart/form-data'
       }
@@ -32,7 +32,7 @@ class CategoryApi {
 
   // 제품 카테고리 수정
   async putUpdateProductCategory(categoryId: number, categoryData: FormData) {
-    const response = await axios.put(`/api/category/${categoryId}`, categoryData, {
+    const response = await axios.put(`/category/${categoryId}`, categoryData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -42,13 +42,13 @@ class CategoryApi {
 
   // 제품 카테고리 삭제
   async deleteProductCategory(categoryId: number) {
-    const response = await axios.delete(`/api/category/${categoryId}`);
+    const response = await axios.delete(`/category/${categoryId}`);
     return response.data;
   };
 
   // 제품 카테고리 순서 변경
   async putUpdateCategorySequence(categorySequence: {currentCategoryId: number, targetCategoryId: number}) {
-    const response = await axios.put(`/api/category/sequence`, categorySequence);
+    const response = await axios.put(`/category/sequence`, categorySequence);
     return response.data.categories;
   }
 
@@ -56,13 +56,13 @@ class CategoryApi {
 
   // 자료실 카테고리 목록 받아오기
   async getAllCategories() {
-    const response = await axios.get(`/api/category`);
+    const response = await axios.get(`/category`);
     return response.data;
   };
 
   // 자료실 카테고리 추가
   async createArchiveCategory(categoryName: FormData) {
-    const response = await axios.post(`/api/category`, categoryName, {
+    const response = await axios.post(`/category`, categoryName, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -72,13 +72,13 @@ class CategoryApi {
 
   // 자료실 카테고리 삭제
   async deleteArchiveCategory(categoryId: number) {
-    const response = await axios.delete(`/api/category/${categoryId}`)
+    const response = await axios.delete(`/category/${categoryId}`)
     return response.data;
   };
 
   // 자료실 카테고리 수정
   async putUpdateArchiveCategory(categoryId: number, categoryData: FormData) {
-    const response = await axios.put(`/api/category/${categoryId}`, categoryData, {
+    const response = await axios.put(`/category/${categoryId}`, categoryData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
