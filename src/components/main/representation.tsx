@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react';
-import { api } from '../../network/network';
-import { categoryApi } from '../../network/category';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectProductCategoryTrue, setCurrentProductCategoryName, setMainCategories } from '../../app/reducers/categorySlice';
+import React, {useEffect} from 'react';
+import {api} from '../../network/network';
+import {categoryApi} from '../../network/category';
+import {useNavigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {
+  selectProductCategoryTrue,
+  setCurrentProductCategoryName,
+  setMainCategories
+} from '../../app/reducers/categorySlice';
 import {
   Box,
   ButtonBase,
@@ -20,18 +24,18 @@ export default function Representation() {
 
   useEffect(() => {
     categoryApi.getMainCategories()
-      .then(res => dispatch(setMainCategories({ categories: res })))
+      .then(res => dispatch(setMainCategories({categories: res})))
   }, []);
 
   // 제품 버튼 클릭 이벤트 (페이지 이동)
   const onClickButton = (categoryName: string) => {
     dispatch(selectProductCategoryTrue());
-    dispatch(setCurrentProductCategoryName({ category: categoryName }));
+    dispatch(setCurrentProductCategoryName({category: categoryName}));
     navigate('/product'); // 페이지 이동
   };
 
   return (
-    <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+    <Container sx={{display: 'flex', justifyContent: 'center'}}>
       <Box sx={{
         p: 2,
         width: '80vw',
@@ -49,11 +53,10 @@ export default function Representation() {
         {productMainCategories?.map((item: { categoryName: string, id: number, imageServerFilename: string }) => (
           <RepProductionButton
             onClick={() => onClickButton(item.categoryName)}
-            key={item.id}
-          >
+            key={item.id}>
             {/* 카테고리 이미지 */}
             <Container
-              style={{ backgroundImage: `url(${api.baseUrl()}/files/category/${item.imageServerFilename})` }}
+              style={{backgroundImage: `url(${api.baseUrl()}/files/category/${item.imageServerFilename})`}}
               sx={{
                 position: 'absolute',
                 left: 0,
@@ -62,8 +65,8 @@ export default function Representation() {
                 bottom: 0,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
-              }} />
-            <ImageBackdrop className='MuiImageBackdrop-root' />
+              }}/>
+            <ImageBackdrop className='MuiImageBackdrop-root'/>
 
             {/* 카테고리 이름 */}
             <Container sx={{
@@ -72,25 +75,24 @@ export default function Representation() {
               justifyContent: 'center',
               color: '#FCFCFC'
             }}>
-              <Typography
-                sx={{
-                  p: 2,
-                  position: 'relative',
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  display: 'none'
-                }}>
+              <Typography sx={{
+                p: 2,
+                position: 'relative',
+                fontSize: 18,
+                fontWeight: 'bold',
+                display: 'none'
+              }}>
                 {item.categoryName}
               </Typography>
             </Container>
           </RepProductionButton>
         ))}
       </Box>
-    </Container >
+    </Container>
   )
 };
 
-const MainTypographyContainer = styled(Container)(({ theme }) => ({
+const MainTypographyContainer = styled(Container)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     width: '100% !important',
     display: 'flex',
@@ -99,28 +101,30 @@ const MainTypographyContainer = styled(Container)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     margin: 10
   },
-  width: '33%',
-  margin: 0,
-  textAlign: 'end',
+  width: '30%',
+  textAlign: 'center',
   userSelect: 'none'
 })) as typeof Container;
 
-const MainTypography = styled(Typography)(({ theme }) => ({
+const MainTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
-    fontSize: 22
+    fontSize: 22,
+    margin: 0,
+    marginRight: 10
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: 15
   },
   fontSize: 25,
+  margin: 5,
   fontWeight: 'bold',
   color: 'darkgreen'
 })) as typeof Typography;
 
 // 메인 버튼
-const RepProductionButton = styled(ButtonBase)(({ theme }) => ({
+const RepProductionButton = styled(ButtonBase)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
-    width: '50% !important'
+    width: '45% !important'
   },
   [theme.breakpoints.down('sm')]: {
     width: '80% !important'
@@ -141,7 +145,7 @@ const RepProductionButton = styled(ButtonBase)(({ theme }) => ({
 })) as typeof ButtonBase;
 
 // 이미지 커버(배경)
-const ImageBackdrop = styled(Container)(({ theme }) => ({
+const ImageBackdrop = styled(Container)(({theme}) => ({
   position: 'absolute',
   left: 0,
   right: 0,

@@ -6,7 +6,7 @@ const BAD_REQUEST = 400;
 class FileApi {
   // 파일 다운로드
   async downloadFile(filename: string) {
-    const response = await axios.get(`/api/file/download/${filename}`, {
+    const response = await axios.get(`/file/download/${filename}`, {
       responseType: 'blob',
     });
     return response.data;

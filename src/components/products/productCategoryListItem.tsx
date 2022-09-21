@@ -15,14 +15,15 @@ interface propsType {
 export default function ProductCategoryListItem({moveCategoryItem, category, id, index}: propsType) {
   const dispatch = useAppDispatch();
 
-  // const [targetCategoryId, setTargetCategoryId] = useState<number>(0);
-
   // 순서변경
   const putUpdateCategorySequence = (draggedId: number, targetId: number) => {
     categoryApi.putUpdateCategorySequence({currentCategoryId: draggedId, targetCategoryId: targetId})
       .then(res => {
         categoryApi.getAllProductCategories()
-          .then(res => dispatch(setAllProductCategories({categories: res.categories})))
+          .then(res => {
+            dispatch(setAllProductCategories({categories: res.categories}))
+            console.log(res)
+          })
           .catch(error => console.log(error))
       })
       .catch(error => console.log(error))
@@ -45,7 +46,7 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
         }
       },
     }),
-    [id, index, moveCategoryItem]
+    [id, index]
   );
 
   // drop
@@ -58,7 +59,6 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
         const {id: draggedId, index: originIndex} = item;
         if (draggedId !== id) {
           moveCategoryItem(draggedId, index);
-          console.log('hover',draggedId, id)
         }
       },
       drop: (item: { id: number, index: number }) => {
@@ -66,7 +66,7 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
         if (draggedId !== id) {
           putUpdateCategorySequence(draggedId, id);
           moveCategoryItem(draggedId, index);
-          console.log('drop',draggedId, id)
+          console.log('drop', draggedId, id)
         }
       }
     })

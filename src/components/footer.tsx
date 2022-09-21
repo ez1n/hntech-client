@@ -59,7 +59,7 @@ export default function Footer() {
               FAX : {footer.fax}
             </ContentTypography>
 
-            <ContentTypography sx={{color: '#ccffcc', fontWeight: 'bold' }}>
+            <ContentTypography sx={{color: '#e5ff3f', fontSize: 'large', fontWeight: 'bold' }}>
               A/S : {footer.afterService}
             </ContentTypography>
           </ContentBox>
@@ -148,7 +148,8 @@ const ContentBox = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     flexWrap: 'wrap'
   },
-  display: 'flex'
+  display: 'flex',
+  alignItems: 'center'
 })) as typeof Box;
 
 const ContentTypography = styled(Typography)(({ theme }) => ({

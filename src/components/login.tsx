@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { adminApi } from '../network/admin';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { clickManagerLogin } from '../app/reducers/dialogSlice';
-import { changeMode, copyManagerData, setManagerData, setPassword } from '../app/reducers/managerModeSlice';
+import React, {useState} from 'react';
+import {adminApi} from '../network/admin';
+import {useAppDispatch, useAppSelector} from '../app/hooks';
+import {clickManagerLogin} from '../app/reducers/dialogSlice';
+import {changeMode, copyManagerData, setManagerData, setPassword} from '../app/reducers/managerModeSlice';
 import {
   Button,
   Dialog,
@@ -24,8 +24,8 @@ export default function Login() {
   const getPanelInfo = () => {
     adminApi.getPanelInfo()
       .then(res => {
-        dispatch(setManagerData({ panelData: res }));
-        dispatch(copyManagerData({ panelData: res }));
+        dispatch(setManagerData({panelData: res}));
+        dispatch(copyManagerData({panelData: res}));
       })
   };
 
@@ -37,7 +37,7 @@ export default function Login() {
         dispatch(clickManagerLogin());
         localStorage.setItem("login", res.result);
         const isLogin = localStorage.getItem("login");
-        dispatch(changeMode({ login: isLogin }));
+        dispatch(changeMode({login: isLogin}));
 
         getPanelInfo();
       })
@@ -47,7 +47,10 @@ export default function Login() {
   };
 
   const onLoginEnterKey = (event: any) => {
-    if (event.key === 'Enter') { postLogin() };
+    if (event.key === 'Enter') {
+      postLogin()
+    }
+    ;
   };
 
   return (
@@ -71,8 +74,8 @@ export default function Login() {
           autoFocus={true}
           autoComplete='off'
           type={'password'}
-          onChange={event => dispatch(setPassword({ password: event?.target.value }))}
-          onKeyUp={onLoginEnterKey} />
+          onChange={event => dispatch(setPassword({password: event?.target.value}))}
+          onKeyUp={onLoginEnterKey}/>
       </DialogContent>
 
       <DialogActions>
@@ -87,7 +90,7 @@ export default function Login() {
           취소
         </Button>
       </DialogActions>
-    </Dialog >
+    </Dialog>
   )
 };
 

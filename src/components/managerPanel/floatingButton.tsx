@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import '../style.css'
 import {adminApi} from '../../network/admin';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {clickEditGoBack, clickPasswordStateGoBack} from '../../app/reducers/dialogSlice';
+import {clickEditGoBack, clickPasswordStateGoBack, onLoading} from '../../app/reducers/dialogSlice';
 import {
   updateManagerSentMail,
   updateManagerReceivedMail,
@@ -54,6 +54,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import PasswordUpdate from './passwordUpdate';
 import DeleteIcon from "@mui/icons-material/Delete";
+import Loading from "../loading";
 
 interface propsType {
   successModify: () => void
@@ -188,6 +189,8 @@ export default function FloatingButton({successModify}: propsType) {
 
   // 카다록, 자재승인서 변경 요청
   const putUpdateDocumentInfo = () => {
+    dispatch(onLoading());
+
     documentForm.append('catalogFile', documentFile.catalog.file);
     documentForm.append('materialFile', documentFile.approval.file);
     documentForm.append('taxFile', documentFile.tax.file);
@@ -196,12 +199,14 @@ export default function FloatingButton({successModify}: propsType) {
       .then(res => {
         adminApi.getDocument()
           .then(res => {
+            dispatch(onLoading());
             dispatch(setDocument({document: res}));
             successModify();
           })
       })
       .catch(error => {
         console.log(error);
+        dispatch(onLoading());
         if (error.response.status === 401) {
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
@@ -567,6 +572,8 @@ export default function FloatingButton({successModify}: propsType) {
             sx={{fontSize: 30, color: 'darkgreen'}}/>
         </ExitStack>
       </Drawer>
+
+      <Loading/>
     </>
   )
 };
