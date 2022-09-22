@@ -22,7 +22,6 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
         categoryApi.getAllProductCategories()
           .then(res => {
             dispatch(setAllProductCategories({categories: res.categories}))
-            console.log(res)
           })
           .catch(error => console.log(error))
       })
@@ -66,7 +65,6 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
         if (draggedId !== id) {
           putUpdateCategorySequence(draggedId, id);
           moveCategoryItem(draggedId, index);
-          console.log('drop', draggedId, id)
         }
       }
     })

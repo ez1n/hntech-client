@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {questionApi} from '../../network/question';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {clickQuestionFormGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {
   updateQuestionTitle,
@@ -32,9 +31,11 @@ export default function QuestionForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const questionFormState = useAppSelector(state => state.dialog.questionFormState); // 글쓰기 취소 state
-  const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보 state
-  const createQuestionForm = useAppSelector(state => state.questionForm.questionContent); // 문의사항 글 state
+  // state
+  const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보
+  const [deleteQuestionForm, setDeleteQuestionForm] = useState(false); // 글쓰기 취소
+
+  // error message
   const [nameErrorMsg, setNameErrorMsg] = useState('');
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
@@ -60,13 +61,23 @@ export default function QuestionForm({success, errorToast}: propsType) {
     return isValid;
   };
 
+  // 문의사항 작성 취소 - open
+  const openDeleteQuestionForm = () => {
+    setDeleteQuestionForm(deleteQuestionForm => !deleteQuestionForm);
+  };
+
+  // 문의사항 작성 취소 - close
+  const closeDeleteQuestionForm = () => {
+    setDeleteQuestionForm(false);
+  };
+
   // 문의사항 작성하기
   const postCreateQuestion = () => {
     validate() &&
     questionApi.postCreateQuestion(questionContent)
       .then(res => {
         success();
-        navigate('/coient-question');
+        navigate('/client-question');
       })
       .catch(error => {
         errorToast(error.response.data.message);
@@ -75,7 +86,6 @@ export default function QuestionForm({success, errorToast}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -84,7 +94,6 @@ export default function QuestionForm({success, errorToast}: propsType) {
     if (!/^[0-9]+$/.test(event.key) && event.key.length === 1) {
       event.preventDefault()
     }
-    ;
   };
 
   return (
@@ -112,7 +121,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
             autoFocus={true}
             onChange={event => dispatch(updateQuestionTitle({title: event?.target.value}))}
             placeholder='제목을 입력해 주세요'
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             inputProps={{style: {fontSize: 18}, maxLength: 30}}
             sx={{width: '100%'}}
@@ -131,7 +140,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
             placeholder='이름'
             onChange={event => dispatch(updateQuestionName({writer: event.target.value}))}
             size='small'
-            error={nameErrorMsg ? true : false}
+            error={!!nameErrorMsg}
             helperText={nameErrorMsg}
             inputProps={{
               style: {fontSize: 15}
@@ -142,7 +151,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
             type='password'
             required={true}
             placeholder='비밀번호'
-            error={passwordErrorMsg ? true : false}
+            error={!!passwordErrorMsg}
             helperText={passwordErrorMsg}
             onKeyDown={inputNumber}
             onChange={event => dispatch(updateQuestionPassword({password: event.target.value}))}
@@ -178,20 +187,20 @@ export default function QuestionForm({success, errorToast}: propsType) {
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='작성완료' onClick={postCreateQuestion}/>
-        <EditButton name='취소' onClick={() => dispatch(clickQuestionFormGoBack())}/>
+        <EditButton name='취소' onClick={openDeleteQuestionForm}/>
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={questionFormState}
+        openState={deleteQuestionForm}
         title='작성 취소'
         text1='작성중인 내용이 사라집니다.'
         text2='취소하시겠습니까?'
         yesAction={() => {
           navigate(-1);
-          dispatch(clickQuestionFormGoBack());
+          closeDeleteQuestionForm();
         }}
-        closeAction={() => dispatch(clickQuestionFormGoBack())}/>
+        closeAction={closeDeleteQuestionForm}/>
     </Container>
   )
 };

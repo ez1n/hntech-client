@@ -1,9 +1,8 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../network/archive';
 import {fileApi} from '../network/file';
 import {useAppSelector, useAppDispatch} from '../app/hooks';
-import {archiveDetailGoBack} from '../app/reducers/dialogSlice';
 import {changeMode} from '../app/reducers/managerModeSlice';
 import {copyArchiveDetailData, resetArchiveFile} from '../app/reducers/archiveFormSlice';
 import {
@@ -26,9 +25,10 @@ export default function ArchiveDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const archiveDetailState = useAppSelector(state => state.dialog.archiveDetailState); // 게시글 삭제 취소 state
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
+  const [deleteArchiveDetail, setDeleteArchiveDetail] = useState(false); // 게시글 삭제
 
   // 수정 정보 만들기
   useEffect(() => {
@@ -36,12 +36,22 @@ export default function ArchiveDetail({successDelete}: propsType) {
     dispatch(resetArchiveFile());
   }, []);
 
+  // 게시글 삭제 modal - open
+  const openDeleteArchiveDetail = () => {
+    setDeleteArchiveDetail(deleteArchiveDetail => !deleteArchiveDetail);
+  };
+
+  // 게시글 삭제 modal - close
+  const closeDeleteArchiveDetail = () => {
+    setDeleteArchiveDetail(false);
+  };
+
   // 게시글 삭제
   const deleteArchive = (archiveId: number) => {
     archiveApi.deleteArchive(archiveId)
       .then(res => {
         successDelete();
-        dispatch(archiveDetailGoBack());
+        closeDeleteArchiveDetail();
         navigate('/client-archive');
       })
       .catch(error => {
@@ -51,7 +61,6 @@ export default function ArchiveDetail({successDelete}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -87,7 +96,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
         {managerMode &&
             <Box sx={{textAlign: 'end'}}>
                 <EditButton name='수정' onClick={() => navigate('/archive-modify')}/>
-                <EditButton name='삭제' onClick={() => dispatch(archiveDetailGoBack())}/>
+                <EditButton name='삭제' onClick={openDeleteArchiveDetail}/>
             </Box>
         }
       </Spacing>
@@ -159,12 +168,12 @@ export default function ArchiveDetail({successDelete}: propsType) {
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
-        openState={archiveDetailState}
+        openState={deleteArchiveDetail}
         title={'게시글 삭제'}
         text1={'삭제된 게시글은 복구할 수 없습니다'}
         text2={'삭제하시겠습니까?'}
         yesAction={() => deleteArchive(detail.id)}
-        closeAction={() => dispatch(archiveDetailGoBack())}/>
+        closeAction={closeDeleteArchiveDetail}/>
     </Container>
   )
 };

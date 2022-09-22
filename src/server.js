@@ -11,6 +11,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
-app.listen('8001', () => {
+app.listen(8001, () => {
     console.log('Server started');
 });

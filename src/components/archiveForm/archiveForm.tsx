@@ -3,7 +3,7 @@ import '../style.css';
 import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {archiveFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
+import {onLoading} from '../../app/reducers/dialogSlice';
 import {
   addArchiveFile,
   deleteArchiveFile,
@@ -44,12 +44,15 @@ export default function ArchiveForm({success, errorToast}: propsType) {
 
   const archiveData = new FormData(); // 자료실 첨부파일
 
-  const archiveFormState = useAppSelector(state => state.dialog.archiveFormState); // 글쓰기 취소 state
-  const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용 state
-  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록 state
-  const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
-  const [titleErrorMsg, setTitleErrorMsg] = useState('');
-  const [categoryErrorMsg, setCategoryErrorMsg] = useState('');
+  // state
+  const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용
+  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록
+  const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록
+  const [cancelArchive, setCancelArchive] = useState(false); // 자료실 글쓰기 취소
+
+  // error message
+  const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
+  const [categoryErrorMsg, setCategoryErrorMsg] = useState(''); // 카테고리
 
   useEffect(() => {
     dispatch(resetArchiveFile());
@@ -70,19 +73,27 @@ export default function ArchiveForm({success, errorToast}: propsType) {
     return isValid;
   };
 
+  // 자료실 글쓰기 취소 - open
+  const openCancelArchive = () => {
+    setCancelArchive(cancelArchive => !cancelArchive);
+  };
+
+  // 자료실 글쓰기 취소 - close
+  const closeCancelArchive = () => {
+    setCancelArchive(false);
+  };
+
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
     // 파일 이름 미리보기
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addArchiveFile({item: event.target.files[i].name}))
     }
-    ;
 
     // 전송할 파일 데이터
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(updateArchiveFileData({file: event.target.files[i]}))
     }
-    ;
   };
 
   // 파일 선택 취소
@@ -119,7 +130,6 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
-          ;
         })
     }
   };
@@ -149,7 +159,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             autoFocus={true}
             autoComplete='off'
             placeholder='제목을 입력해 주세요'
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateArchiveTitle({title: event.target.value}))}
             inputProps={{
@@ -237,22 +247,22 @@ export default function ArchiveForm({success, errorToast}: propsType) {
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='작성완료' onClick={postArchiveForm}/>
-        <EditButton name='취소' onClick={() => dispatch(archiveFormGoBack())}/>
+        <EditButton name='취소' onClick={openCancelArchive}/>
       </Spacing>
 
       <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={archiveFormState}
+        openState={cancelArchive}
         title={'작성취소'}
         text1={'작성중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
           navigate('/client-archive');
-          dispatch(archiveFormGoBack());
+          closeCancelArchive()
         }}
-        closeAction={() => dispatch(archiveFormGoBack())}/>
+        closeAction={closeCancelArchive}/>
     </Container>
   )
 };

@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {questionApi} from '../../network/question';
 import {useNavigate} from 'react-router-dom';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {clickQuestionModifyFormGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {modifyQuestionTitle, modifyQuestionContent} from '../../app/reducers/questionFormSlice';
 import {
@@ -33,12 +32,15 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode)
-  const questionModifyFormState = useAppSelector(state => state.dialog.questionModifyFormState); // 글쓰기 취소 state
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
   const currentQuestion = useAppSelector(state => state.questionForm.currentQuestion); // 현재 문의사항 정보 (수정용)
-  const faqState = useAppSelector(state => state.question.faqState); // FAQ state
-  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const faqState = useAppSelector(state => state.question.faqState); // FAQ
+  const [cancelQuestionModify, setCancelQuestionModify] = useState(false); // 문의사항 변경 취소
+
+  // error message
+  const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
 
   const validate = () => {
     let isValid = true;
@@ -47,6 +49,16 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
       isValid = false;
     } else setTitleErrorMsg('');
     return isValid;
+  };
+
+  // 문의사항 변경 취소 - open
+  const openCancelQuestionModify = () => {
+    setCancelQuestionModify(cancelQuestionModify => !cancelQuestionModify);
+  };
+
+  // 문의사항 변경 취소 - close
+  const closeCancelQuestionModify = () => {
+    setCancelQuestionModify(false);
   };
 
   // 문의사항 변경하기
@@ -108,7 +120,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
             value={currentQuestion.title}
             required={true}
             onChange={event => dispatch(modifyQuestionTitle({title: event?.target.value}))}
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             placeholder='제목을 입력해 주세요'
             inputProps={{
@@ -142,7 +154,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
             {managerMode &&
                 <FormControlLabel
                     control={<Checkbox
-                      defaultChecked={faqState === 'true' ? true : false}
+                      defaultChecked={!!faqState}
                       onChange={event => dispatch(setFaqState({faq: event.target.checked}))}
                       sx={{
                         color: 'darkgrey',
@@ -189,20 +201,20 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='변경완료' onClick={() => putQuestion(detail.id, currentQuestion)}/>
-        <EditButton name='변경취소' onClick={() => dispatch(clickQuestionModifyFormGoBack())}/>
+        <EditButton name='변경취소' onClick={openCancelQuestionModify}/>
       </Spacing>
 
       {/* 변경취소 Dialog */}
       <CancelModal
-        openState={questionModifyFormState}
+        openState={cancelQuestionModify}
         title={'변경 취소'}
         text1={'변경중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
           navigate('/question-detail');
-          dispatch(clickQuestionModifyFormGoBack());
+          closeCancelQuestionModify();
         }}
-        closeAction={() => dispatch(clickQuestionModifyFormGoBack())}/>
+        closeAction={closeCancelQuestionModify}/>
     </Container>
   )
 };

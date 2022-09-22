@@ -1,7 +1,7 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {categoryApi} from '../../network/category';
-import {clickArchiveCategoryGoBack, clickArchivesGoBack} from '../../app/reducers/dialogSlice';
+import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
 import {getArchiveCategory, setSelectedArchiveCategoryId} from '../../app/reducers/categorySlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {
@@ -34,10 +34,11 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   const inputRef: any = useRef(); // 카테고리 input ref
   const categoryNameRef: any = useRef(); // 카테고리 이름 ref
 
-  const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog state
-  const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록 state
+  // state
+  const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog
+  const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
   const selectedArchiveCategoryId = useAppSelector(state => state.category.selectedArchiveCategoryId); // 선택한 카테고리 id
-  const editArchiveCategoryState = useAppSelector(state => state.dialog.editArchiveCategoryState); // 자료실 카테고리 삭제 state
+  const [deleteCategory, setDeleteCategory] = useState(false); // 자료실 카테고리 삭제
 
   // 카테고리 목록 받아오기
   useEffect(() => {
@@ -45,12 +46,21 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       .then(res => dispatch(getArchiveCategory({categories: res.categories})))
   }, []);
 
+  // 자료실 카테고리 삭제 modal - open
+  const openDeleteArchiveCategory = () => {
+    setDeleteCategory(deleteArchiveCategory => !deleteArchiveCategory);
+  };
+
+  // 자료실 카테고리 삭제 modal - close
+  const closeDeleteArchiveCategory = () => {
+    setDeleteCategory(false);
+  };
+
   // 카테고리 목록에 추가
   const addCategory = () => {
     if (inputRef.current.value === '') {
       return;
     }
-    ;
 
     categoryForm.append('categoryName', inputRef.current.value);
     [].map(item => categoryForm.append('image', item));
@@ -79,7 +89,6 @@ export default function EditArchiveCategory({errorToast}: propsType) {
     if (event.key === 'Enter') {
       addCategory()
     }
-    ;
   };
 
   // 카테고리 삭제
@@ -99,7 +108,6 @@ export default function EditArchiveCategory({errorToast}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -122,7 +130,6 @@ export default function EditArchiveCategory({errorToast}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -182,7 +189,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
                 fontSize='small'
                 onClick={() => {
                   dispatch(setSelectedArchiveCategoryId({id: item.id}));
-                  dispatch(clickArchiveCategoryGoBack());
+                  openDeleteArchiveCategory();
                 }}
                 sx={{color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15}}/>
             </Stack>
@@ -216,18 +223,15 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       </DialogActions>
 
       <CancelModal
-        openState={editArchiveCategoryState}
+        openState={deleteCategory}
         title='카테고리 삭제'
         text1='해당 카테고리의 제품 및 게시글이 모두 삭제됩니다.'
         text2='삭제하시겠습니까?'
         yesAction={() => {
-          {
-            selectedArchiveCategoryId && deleteArchiveCategory(selectedArchiveCategoryId)
-          }
-          ;
-          dispatch(clickArchiveCategoryGoBack());
+          selectedArchiveCategoryId && deleteArchiveCategory(selectedArchiveCategoryId)
+          closeDeleteArchiveCategory();
         }}
-        closeAction={() => dispatch(clickArchiveCategoryGoBack())}
+        closeAction={closeDeleteArchiveCategory}
       />
     </Dialog>
   )

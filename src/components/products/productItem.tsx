@@ -56,7 +56,7 @@ export default function ProductItem({product}: propsType) {
       <ProductBox>
         {/* 제품 */}
         <ProductButton onClick={() => getProduct(id)}>
-          <Box sx={{height: 150}}>
+          <Box sx={{height: 150, overflow: 'hidden'}}>
             <img
               className='productImage'
               src={`${api.baseUrl()}/files/product/${image.serverFilename}`}

@@ -1,13 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {questionApi} from '../../network/question';
 import {commentApi} from '../../network/comment';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {
-  clickCommentRemoveGoBack,
-  clickQuestionDetailGoBack,
-  clickQuestionStatusGoBack
-} from '../../app/reducers/dialogSlice';
+import {clickCommentRemoveGoBack} from '../../app/reducers/dialogSlice';
 import {setDetailData, updateCommentData} from '../../app/reducers/questionSlice';
 import {setCurrentQuestion} from '../../app/reducers/questionFormSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
@@ -28,25 +24,46 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const faqState = useAppSelector(state => state.question.faqState); // FAQ state
-  const questionDetailState = useAppSelector(state => state.dialog.questionDetailState); // 게시글 삭제 취소 state
-  const questionStatusState = useAppSelector(state => state.dialog.questionStatusState); // 게시글 상태 변경 취소 state
-  const detail = useAppSelector(state => state.question.detail); // 게시글 정보 state
-  const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제 state
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
+  const faqState = useAppSelector(state => state.question.faqState); // FAQ
+  const detail = useAppSelector(state => state.question.detail); // 게시글 정보
+  const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제
   const currentComment = useAppSelector(state => state.comment.currentComment); // 현재 댓글 정보
+  const [deleteQuestionDetail, setDeleteQuestionDetail] = useState(false); // 게시글 삭제 취소
+  const [onCompleteAnswer, setOnCompleteAnswer] = useState(false); // 게시글 답변 상태 변경
 
   // 수정 데이터 업데이트
   useEffect(() => {
     dispatch(setCurrentQuestion({content: detail.content, title: detail.title}));
   }, []);
 
+  // 게시글 삭제 modal - open
+  const openDeleteQuestionDetail = () => {
+    setDeleteQuestionDetail(deleteQuestionDetail => !deleteQuestionDetail);
+  };
+
+  // 게시글 삭제 modal - close
+  const closeDeleteQuestionDetail = () => {
+    setDeleteQuestionDetail(false);
+  };
+
+  // 답변 상태 변경 modal - open
+  const openCompleteAnswer = () => {
+    setOnCompleteAnswer(openCompleteAnswer => !openCompleteAnswer);
+  };
+
+  // 답변 상태 변경 modal - close
+  const closeCompleteAnswer = () => {
+    setOnCompleteAnswer(false);
+  };
+
   // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
     questionApi.deleteQuestion(id)
       .then(res => {
         successDelete();
-        dispatch(clickQuestionDetailGoBack());
+        closeDeleteQuestionDetail();
         navigate('/client-question');
       });
   };
@@ -58,7 +75,7 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
       .then(res => {
         successAnswer();
         dispatch(setDetailData({detail: res}));
-        dispatch(clickQuestionStatusGoBack());
+        closeCompleteAnswer();
       });
   };
 
@@ -77,7 +94,6 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -87,14 +103,14 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
         managerMode &&
         <>
             <EditButton name='수정' onClick={() => navigate('/question-modify')}/>
-            <EditButton name='삭제' onClick={() => dispatch(clickQuestionDetailGoBack())}/>
+            <EditButton name='삭제' onClick={openDeleteQuestionDetail}/>
         </>
       )
     } else {
       return (
         <>
           <EditButton name='수정' onClick={() => navigate('/question-modify')}/>
-          <EditButton name='삭제' onClick={() => dispatch(clickQuestionDetailGoBack())}/>
+          <EditButton name='삭제' onClick={openDeleteQuestionDetail}/>
         </>
       )
     }
@@ -111,10 +127,7 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
       <Spacing sx={{display: 'flex', justifyContent: 'flex-end'}}>
         <>
           {managerMode &&
-              <AnswerButton
-                  onClick={() => dispatch(clickQuestionStatusGoBack())}
-                  disabled={detail.status === '완료' ? true : false}
-              >
+              <AnswerButton onClick={openCompleteAnswer} disabled={detail.status === '완료'}>
                   답변완료
               </AnswerButton>}
 
@@ -161,21 +174,21 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
-        openState={questionDetailState}
+        openState={deleteQuestionDetail}
         title={'게시글 삭제'}
         text1={'삭제된 게시글은 복구할 수 없습니다'}
         text2={'삭제하시겠습니까?'}
         yesAction={() => deleteQuestion(detail.id)}
-        closeAction={() => dispatch(clickQuestionDetailGoBack())}/>
+        closeAction={closeDeleteQuestionDetail}/>
 
       {/* 답변완료 Dialog */}
       <CancelModal
-        openState={questionStatusState}
+        openState={onCompleteAnswer}
         title={'문의사항 처리상태 변경'}
         text1={'답변 완료된 게시글은 되돌릴 수 없습니다.'}
         text2={'변경 하시겠습니까?'}
         yesAction={() => putUpdateQuestionStatus(detail.id)}
-        closeAction={() => dispatch(clickQuestionStatusGoBack())}/>
+        closeAction={closeCompleteAnswer}/>
 
       {/* 댓글 삭제 Dialog */}
       <CancelModal

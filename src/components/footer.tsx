@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './style.css';
 import {adminApi} from '../network/admin';
 import {api} from '../network/network';
 import {useAppDispatch, useAppSelector} from '../app/hooks';
 import {changeMode} from '../app/reducers/managerModeSlice';
-import {clickLogoutGoBack, clickManagerLogin} from '../app/reducers/dialogSlice';
+import {clickManagerLogin} from '../app/reducers/dialogSlice';
 import {
   Box,
   Button,
@@ -18,18 +18,28 @@ import Login from './login';
 export default function Footer() {
   const dispatch = useAppDispatch();
 
-  const logoutState = useAppSelector(state => state.dialog.logoutState); // 로그아웃 state
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const footer = useAppSelector(state => state.manager.footer); // footer 정보 state
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
+  const footer = useAppSelector(state => state.manager.footer); // footer 정보
   const logo = useAppSelector(state => state.manager.logo); // 회사 로고
   const sites = useAppSelector(state => state.manager.footer.sites); // FAMILY SITE
+  const [onLogout, setOnLogout] = useState(false); // 로그아웃
+
+  // 로그아웃 modal
+  const openLogout = () => {
+    setOnLogout(onLogout => !onLogout);
+  };
+
+  const closeLogout = () => {
+    setOnLogout(false);
+  };
 
   // 로그아웃
   const getLogout = () => {
     adminApi.getLogout()
       .then(res => {
         localStorage.removeItem("login");
-        dispatch(clickLogoutGoBack());
+        closeLogout();
         const isLogin = localStorage.getItem("login");
         dispatch(changeMode({login: isLogin}));
       })
@@ -92,7 +102,7 @@ export default function Footer() {
           justifyContent: 'flex-end'
         }}>
         <Button
-          onClick={managerMode ? () => dispatch(clickLogoutGoBack()) : () => dispatch(clickManagerLogin())}
+          onClick={managerMode ? openLogout : () => dispatch(clickManagerLogin())}
           sx={{
             color: '#FCFCFC',
             opacity: 0.6
@@ -105,12 +115,12 @@ export default function Footer() {
 
       {/* 로그아웃 dialog */}
       <CancelModal
-        openState={logoutState}
+        openState={onLogout}
         title={'관리자 로그아웃'}
         text1={'로그아웃 하시겠습니까?'}
         text2={''}
-        yesAction={() => getLogout()}
-        closeAction={() => dispatch(clickLogoutGoBack())}
+        yesAction={getLogout}
+        closeAction={closeLogout}
       />
     </Box>
   )

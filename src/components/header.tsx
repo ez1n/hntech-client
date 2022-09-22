@@ -292,6 +292,7 @@ export default function Header() {
                   key={item.id}
                   onClick={() => {
                     navigate('/client-product');
+                    dispatch(selectProductCategoryTrue());
                     dispatch(setCurrentProductCategoryName({category: item.categoryName}));
                     clickCloseMenu();
                   }}>

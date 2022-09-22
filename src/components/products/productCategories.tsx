@@ -13,7 +13,6 @@ import {
   updateProductCategoryImage
 } from '../../app/reducers/categorySlice';
 import {
-  clickProductCategoryGoBack,
   clickProductCategoryListGoBack
 } from '../../app/reducers/dialogSlice';
 import {setAllProductCategories, setCurrentProductCategory} from '../../app/reducers/categorySlice';
@@ -46,12 +45,13 @@ export default function ProductCategories({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
-  const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록 state
-  const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보 state
-  const productCategoryState = useAppSelector(state => state.dialog.productCategoryState); // 카테고리 삭제 dialog
-  const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
+  const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호
+  const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택
+  const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
+  const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보
+  const [onDeleteCategory, setOnDeleteCategory] = useState(false);
   const [checkPassword, setCheckPassword] = useState(false);
   const [loginErrorMsg, setLoginErrorMsg] = useState('');
 
@@ -66,13 +66,23 @@ export default function ProductCategories({successDelete}: propsType) {
       .catch(error => console.log(error))
   }, []);
 
+  // 카테고리 삭제 modal - open
+  const openDeleteCategory = () => {
+    setOnDeleteCategory(onDeleteCategory => !onDeleteCategory);
+  };
+
+  // 카테고리 삭제 modal - close
+  const closeDeleteCategory = () => {
+    setOnDeleteCategory(false);
+  };
+
   // 비밀번호 확인
   const postLogin = () => {
     adminApi.postLogin(password)
       .then(res => {
         setLoginErrorMsg('');
         setCheckPassword(false);
-        dispatch(clickProductCategoryGoBack());
+        openDeleteCategory();
       })
       .catch(error => {
         setLoginErrorMsg(error.response.data.message);
@@ -81,9 +91,8 @@ export default function ProductCategories({successDelete}: propsType) {
 
   const onLoginEnterKey = (event: any) => {
     if (event.key === 'Enter') {
-      postLogin()
+      postLogin();
     }
-    ;
   };
 
   // 카테고리 삭제
@@ -91,7 +100,7 @@ export default function ProductCategories({successDelete}: propsType) {
     categoryApi.deleteProductCategory(categoryId)
       .then(res => {
         successDelete();
-        dispatch(clickProductCategoryGoBack());
+        closeDeleteCategory();
         categoryApi.getAllProductCategories()
           .then(res => dispatch(setAllProductCategories({categories: res.categories})))
       })
@@ -101,7 +110,6 @@ export default function ProductCategories({successDelete}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -241,7 +249,7 @@ export default function ProductCategories({successDelete}: propsType) {
         <DialogContent>
           <DialogContentText>비밀번호</DialogContentText>
           <TextField
-            error={loginErrorMsg ? true : false}
+            error={!!loginErrorMsg}
             helperText={loginErrorMsg}
             required
             autoFocus={true}
@@ -267,17 +275,17 @@ export default function ProductCategories({successDelete}: propsType) {
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
-        openState={productCategoryState}
+        openState={onDeleteCategory}
         title='카테고리 삭제'
         text1='해당 카테고리가 삭제됩니다.'
         text2='삭제하시겠습니까?'
         yesAction={() => deleteProductCategory(productCurrentCategory.id)}
-        closeAction={() => dispatch(clickProductCategoryGoBack())}/>
+        closeAction={closeDeleteCategory}/>
     </Box>
   )
 };
 
-const Spacing = styled(Container)(({theme}) => ({
+const Spacing = styled(Container)(() => ({
   height: 50
 })) as typeof Container;
 

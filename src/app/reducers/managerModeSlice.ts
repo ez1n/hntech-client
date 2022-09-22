@@ -413,7 +413,7 @@ export const ManagerSlice = createSlice({
     addSitesUploadButton: state => {
       const siteLen = state.newPanelData.sites['length'];
       if (siteLen === 0) {
-        const newSites = [...state.newPanelData.sites, {buttonName: '', link: '', id: 0}];
+        const newSites = [{buttonName: '', link: '', id: 0}];
         state.newPanelData.sites = newSites;
       } else {
         const newSites = [...state.newPanelData.sites, {

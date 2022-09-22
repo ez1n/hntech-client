@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import '../style.css'
 import {adminApi} from '../../network/admin';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {clickEditGoBack, clickPasswordStateGoBack, onLoading} from '../../app/reducers/dialogSlice';
+import {clickPasswordStateGoBack, onLoading} from '../../app/reducers/dialogSlice';
 import {
   updateManagerSentMail,
   updateManagerReceivedMail,
@@ -69,16 +69,17 @@ export default function FloatingButton({successModify}: propsType) {
   const logoForm = new FormData();
   const documentForm = new FormData();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode);
-  const editState = useAppSelector(state => state.dialog.editState); // 관리자 정보 수정(drawer) open state
-  const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보 state
-  const logo = useAppSelector(state => state.manager.logo); // 기존 로고 state
-  const logoFile = useAppSelector(state => state.manager.logoFile); // 추가한 로고 state
-  const copyBanner = useAppSelector(state => state.manager.copyBanner); // 기존 배너 state
-  const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너 state
-  const documentName = useAppSelector(state => state.manager.document); // 기존 카다록, 자재승인서 이름 state
-  const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서 state
-  const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경 state
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
+  const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보
+  const logo = useAppSelector(state => state.manager.logo); // 기존 로고
+  const logoFile = useAppSelector(state => state.manager.logoFile); // 추가한 로고
+  const copyBanner = useAppSelector(state => state.manager.copyBanner); // 기존 배너
+  const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너
+  const documentName = useAppSelector(state => state.manager.document); // 기존 카다록, 자재승인서 이름
+  const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서
+  const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경
+  const [onEdit, setOnEdit] = useState(false); // 관리자 정보 수정(drawer) open
   const {
     emailSendingTime,
     address,
@@ -96,6 +97,16 @@ export default function FloatingButton({successModify}: propsType) {
     dispatch(updateNewPassword({newPassword: ''}));
     dispatch(updateNewPasswordCheck({newPasswordCheck: ''}));
   }, []);
+
+  // 관리자 패널 - open
+  const openOnEdit = () => {
+    setOnEdit(onEdit => !onEdit);
+  };
+
+  // 관리자 패널 - close
+  const closeOnEdit = () => {
+    setOnEdit(false);
+  };
 
   // 배너 사진 추가
   const addBannerImage = (event: any) => {
@@ -115,6 +126,15 @@ export default function FloatingButton({successModify}: propsType) {
     dispatch(deleteOriginBanner({num: index}));
   };
 
+  // 관리자 패널 정보
+  const getPanelInfo = () => {
+    adminApi.getPanelInfo()
+      .then(res => {
+        dispatch(setManagerData({panelData: res}));
+        dispatch(copyManagerData({panelData: res}));
+      })
+  };
+
   // 관리자, 회사 정보 변경 요청
   const putUpdatePanelInfo = (panelData: {
     emailSendingTime: string,
@@ -125,27 +145,27 @@ export default function FloatingButton({successModify}: propsType) {
     receiveEmailAccount: string,
     sendEmailAccount: string,
     sendEmailPassword: string,
-    sites: { buttonName: string, link: string }[]
+    sites: { buttonName: string, link: string, id: number }[]
   }) => {
     adminApi.putUpdatePanelInfo({
-        emailSendingTime: emailSendingTime,
-        address: address,
-        afterService: afterService,
-        fax: fax,
-        phone: phone,
-        receiveEmailAccount: receiveEmailAccount,
-        sendEmailAccount: sendEmailAccount,
-        sendEmailPassword: sendEmailPassword,
-        sites: sites.map((item: { buttonName: string, link: string, id: number }) => (
+        emailSendingTime: panelData.emailSendingTime,
+        address: panelData.address,
+        afterService: panelData.afterService,
+        fax: panelData.fax,
+        phone: panelData.phone,
+        receiveEmailAccount: panelData.receiveEmailAccount,
+        sendEmailAccount: panelData.sendEmailAccount,
+        sendEmailPassword: panelData.sendEmailPassword,
+        sites: panelData.sites.map((item: { buttonName: string, link: string, id: number }) => (
           {buttonName: item.buttonName, link: item.link})
         )
       }
     )
       .then(res => {
         successModify();
-        dispatch(setManagerData({panelData: res}));
-        dispatch(copyManagerData({panelData: res}));
+        // dispatch(copyManagerData({panelData: res}));
         dispatch(setFooter({footer: res.footer}));
+        getPanelInfo()
       })
       .catch(error => {
         console.log(error);
@@ -242,7 +262,7 @@ export default function FloatingButton({successModify}: propsType) {
     <>
       {/*  정보변경 버튼 */}
       {managerMode &&
-          <AdminFab variant={'extended'} onClick={() => dispatch(clickEditGoBack())}>
+          <AdminFab variant={'extended'} onClick={openOnEdit}>
               <ManageAccountsRoundedIcon fontSize='large'/>
               <AdminTypography>정보 수정</AdminTypography>
           </AdminFab>
@@ -251,8 +271,8 @@ export default function FloatingButton({successModify}: propsType) {
       {/* 슬라이딩 패널 */}
       <Drawer
         anchor='right'
-        open={editState}
-        onClose={() => dispatch(clickEditGoBack())}>
+        open={onEdit}
+        onClose={closeOnEdit}>
         <Stack spacing={2} sx={{m: 5}}>
           <MainTitleTypography variant='h5'>관리자 비밀번호</MainTitleTypography>
 
@@ -287,7 +307,7 @@ export default function FloatingButton({successModify}: propsType) {
             <TextField
               type={'email'}
               label={'수신 메일'}
-              value={newPanelData.receiveEmailAccount}
+              value={receiveEmailAccount}
               onChange={event => dispatch(updateManagerReceivedMail({receiveEmailAccount: event?.target.value}))}
               placeholder={'메일 주소'}
               autoComplete='off'
@@ -349,7 +369,7 @@ export default function FloatingButton({successModify}: propsType) {
               type={'text'}
               label={'본사 주소'}
               multiline
-              value={newPanelData.address}
+              value={address}
               onChange={event => dispatch(updateAddress({address: event?.target.value}))}
               placeholder={'본사 주소'}
               autoComplete='off'
@@ -357,7 +377,7 @@ export default function FloatingButton({successModify}: propsType) {
             <TextField
               type={'text'}
               label={'A/S'}
-              value={newPanelData.afterService}
+              value={afterService}
               onChange={event => dispatch(updateAfterService({afterService: event?.target.value}))}
               placeholder={'A/S'}
               autoComplete='off'
@@ -369,7 +389,7 @@ export default function FloatingButton({successModify}: propsType) {
             <TextField
               type={'text'}
               label={'TEL'}
-              value={newPanelData.phone}
+              value={phone}
               onChange={event => dispatch(updatePhone({phone: event?.target.value}))}
               placeholder={'TEL'}
               autoComplete='off'
@@ -378,7 +398,7 @@ export default function FloatingButton({successModify}: propsType) {
             <TextField
               type={'text'}
               label={'FAX'}
-              value={newPanelData.fax}
+              value={fax}
               onChange={event => dispatch(updateFax({fax: event?.target.value}))}
               placeholder={'FAX'}
               autoComplete='off'
@@ -387,11 +407,11 @@ export default function FloatingButton({successModify}: propsType) {
 
           {/* FAMILY SITE */}
           <ContentStack spacing={2} sx={{borderBottom: '2px solid rgba(46, 125, 50, 0.5)', pb: 2}}>
-            {newPanelData.sites.map((item: { buttonName: string, link: string, id: number }, index) => (
+            {sites.map((item: { buttonName: string, link: string, id: number }, index) => (
               <ContentStack key={item.id} direction='row' spacing={2}>
                 <TextField
                   size='small'
-                  label='SITE Name'
+                  label='NAME'
                   defaultValue={item.buttonName}
                   placeholder='SITE Name'
                   autoComplete='off'
@@ -591,7 +611,7 @@ export default function FloatingButton({successModify}: propsType) {
 
         <ExitStack direction='row'>
           <ExitToAppRoundedIcon
-            onClick={() => dispatch(clickEditGoBack())}
+            onClick={closeOnEdit}
             sx={{fontSize: 30, color: 'darkgreen'}}/>
         </ExitStack>
       </Drawer>

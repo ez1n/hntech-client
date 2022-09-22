@@ -3,7 +3,6 @@ import '../style.css';
 import {archiveApi} from '../../network/archive';
 import {useNavigate} from 'react-router-dom';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {clickArchiveModifyFormGoBack} from '../../app/reducers/dialogSlice';
 import {getDetailData} from '../../app/reducers/archiveSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {
@@ -15,7 +14,7 @@ import {
   modifyArchiveTitle,
   modifyArchiveContent,
   modifyArchiveNoticeChecked,
-  deleteArchiveOriginFile, updateArchiveContent, updateArchiveCategory
+  deleteArchiveOriginFile, updateArchiveCategory
 } from '../../app/reducers/archiveFormSlice';
 import {
   Container,
@@ -43,14 +42,17 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
 
   const archiveData = new FormData(); // 자료실 첨부파일
 
-  const archiveModifyFormState = useAppSelector(state => state.dialog.archiveModifyFormState); // 글쓰기 취소 state
-  const archiveModifyContent = useAppSelector(state => state.archiveForm.archiveModifyContent); // 자료실 글쓰기 수정 내용 state
+  // state
+  const archiveModifyContent = useAppSelector(state => state.archiveForm.archiveModifyContent); // 자료실 글쓰기 수정 내용
   const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName);
   const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
-  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 목록 state
-  const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록 state
-  const [deleteArchiveId, setDeleteArchiveId] = useState<{ archiveId: number, fileId: number }[]>([]);
-  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 목록
+  const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록
+  const [cancelArchiveModfiy, setCancelArchiveModify] = useState(false); // 자료실 글 수정
+  const [deleteArchiveId, setDeleteArchiveId] = useState<{ archiveId: number, fileId: number }[]>([]); // 삭제할 첨부파일
+
+  // error message
+  const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
 
   useEffect(() => {
     dispatch(updateArchiveCategory({categoryName: archiveModifyContent.categoryName}))
@@ -65,19 +67,27 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
     return isValid;
   };
 
+  // 자료실 글 수정 modal - open
+  const openCancelArchiveModify = () => {
+    setCancelArchiveModify(cancelArchiveModfiy => !cancelArchiveModfiy);
+  };
+
+  // 자료실 글 수정 modal - close
+  const closeCancelArchiveModify = () => {
+    setCancelArchiveModify(false);
+  };
+
   // 파일 선택 이벤트
   const selectFile = (event: any) => {
     // 파일 이름 미리보기
     for (let i = 0; i < event?.target.files.length; i++) {
       dispatch(addArchiveFile({item: event?.target.files[i].name}));
     }
-    ;
 
     // 전송할 파일 데이터
     for (let i = 0; i < event?.target.files.length; i++) {
       dispatch(updateArchiveFileData({file: event?.target.files[i]}));
     }
-    ;
   };
 
   // 파일 선택 취소
@@ -117,7 +127,6 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -150,7 +159,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
             type='text'
             value={archiveModifyContent.title}
             required={true}
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             onChange={event => {
               dispatch(modifyArchiveTitle({title: event?.target.value}))
@@ -177,7 +186,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           <ArchiveCategorySelect defaultCategory={archiveModifyContent.categoryName} categoryErrorMsg={undefined}/>
           <FormControlLabel
             control={<Checkbox
-              defaultChecked={archiveModifyContent.notice === 'true' ? true : false}
+              defaultChecked={archiveModifyContent.notice === 'true'}
               onChange={event => dispatch(modifyArchiveNoticeChecked({isNotice: event?.target.checked}))}
               sx={{
                 color: 'darkgrey',
@@ -256,21 +265,21 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='변경완료' onClick={() => putArchiveForm(archiveId)}/>
-        <EditButton name='취소' onClick={() => dispatch(clickArchiveModifyFormGoBack())}/>
+        <EditButton name='취소' onClick={openCancelArchiveModify}/>
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={archiveModifyFormState}
+        openState={cancelArchiveModfiy}
         title={'변경 취소'}
         text1={'변경중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
           dispatch(resetArchiveState());
-          dispatch(clickArchiveModifyFormGoBack());
+          closeCancelArchiveModify()
           navigate(-1);
         }}
-        closeAction={() => dispatch(clickArchiveModifyFormGoBack())}/>
+        closeAction={closeCancelArchiveModify}/>
     </Container>
   )
 };

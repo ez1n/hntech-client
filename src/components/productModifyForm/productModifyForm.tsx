@@ -1,9 +1,9 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {api} from '../../network/network';
 import {productApi} from '../../network/product';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {clickProductModifyFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
+import {onLoading} from '../../app/reducers/dialogSlice';
 import {
   deleteOriginalDocFileButton,
   deleteOriginalProductFile,
@@ -62,12 +62,15 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
 
   const productForm = new FormData();
 
-  const productModifyFormState = useAppSelector(state => state.dialog.productModifyFormState); // 글쓰기 취소 state
+  // state
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const {category, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
   const {docFiles, productImages, representativeImage, standardImages} = files;
-  const [titleErrorMsg, setTitleErrorMsg] = useState('');
-  const [fileErrorMsg, setFileErrorMsg] = useState('');
+  const [cancelProductModify, setCancelProductModify] = useState(false); // 제품 수정 취소
+
+  // error message
+  const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
+  const [fileErrorMsg, setFileErrorMsg] = useState(''); // 다운로드 파일 버튼
 
   const validate = () => {
     let isValid = true;
@@ -82,6 +85,16 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
       } else setFileErrorMsg('');
     })
     return isValid;
+  };
+
+  // 제품 수정 취소 modal - open
+  const openCancelProductModify = () => {
+    setCancelProductModify(cancelProductModify => !cancelProductModify);
+  };
+
+  // 제품 수정 취소 modal - close
+  const closeCancelProductModify = () => {
+    setCancelProductModify(false);
   };
 
   // input - button 연결(input 숨기기)
@@ -106,7 +119,6 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
         product: {file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])}
       }));
     }
-    ;
   };
 
   // 규격 이미지 추가
@@ -119,7 +131,6 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
         }
       }));
     }
-    ;
   };
 
   // 첨부파일 추가
@@ -224,7 +235,6 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
-          ;
         })
     }
   };
@@ -252,7 +262,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             type='text'
             value={productName}
             onChange={event => dispatch(addProductName({productName: event?.target.value}))}
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             required={true}
             placeholder='제품명'
@@ -424,7 +434,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             ))}
           </Container>
 
-          <FormControl error={fileErrorMsg ? true : false} sx={{width: '100%'}}>
+          <FormControl error={!!fileErrorMsg} sx={{width: '100%'}}>
             {/* 파일 업로드 (다운로드 가능한 자료) */}
             <Stack direction='column' spacing={2}>
               {/* 기존 파일 */}
@@ -537,22 +547,22 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='수정' onClick={() => putProduct(productDetail.id)}/>
-        <EditButton name='취소' onClick={() => dispatch(clickProductModifyFormGoBack())}/>
+        <EditButton name='취소' onClick={openCancelProductModify}/>
       </Spacing>
 
       <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={productModifyFormState}
+        openState={cancelProductModify}
         title='수정 취소'
         text1='수정중인 내용이 사라집니다.'
         text2='취소하시겠습니까?'
         yesAction={() => {
-          dispatch(clickProductModifyFormGoBack());
+          closeCancelProductModify();
           navigate(-1);
         }}
-        closeAction={() => dispatch(clickProductModifyFormGoBack())}/>
+        closeAction={closeCancelProductModify}/>
     </Container>
   )
 };
