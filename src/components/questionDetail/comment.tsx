@@ -1,8 +1,8 @@
 import React from 'react';
-import { commentApi } from '../../network/comment';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clickCommentRemoveGoBack } from '../../app/reducers/dialogSlice';
-import { updateCommentData } from '../../app/reducers/questionSlice';
+import {commentApi} from '../../network/comment';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {clickCommentRemoveGoBack} from '../../app/reducers/dialogSlice';
+import {updateCommentData} from '../../app/reducers/questionSlice';
 import {
   resetAnchor,
   setAnchor,
@@ -31,7 +31,7 @@ interface propsType {
   questionId: number
 }
 
-export default function Comment({ item, questionId }: propsType) {
+export default function Comment({item, questionId}: propsType) {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
@@ -44,7 +44,7 @@ export default function Comment({ item, questionId }: propsType) {
   // 댓글 수정
   const putComment = (questionId: number, commentId: number, comment: {}) => {
     commentApi.putCreateComment(questionId, commentId, comment)
-      .then(res => dispatch(updateCommentData({ comments: res.comments })))
+      .then(res => dispatch(updateCommentData({comments: res.comments})))
       .catch(error => console.log(error))
   };
 
@@ -58,25 +58,25 @@ export default function Comment({ item, questionId }: propsType) {
       }}>
       {/*  댓글 내용 */}
       {commentModifyState === item.id ?
-        <Stack sx={{ width: '100%' }}>
-          <Typography sx={{ fontSize: 20 }}>{item.writer}</Typography>
+        <Stack sx={{width: '100%'}}>
+          <Typography sx={{fontSize: 20}}>{item.writer}</Typography>
           <TextField
             defaultValue={currentComment.content}
-            onChange={event => dispatch(updateComment({ content: event?.target.value }))}
-            inputProps={{ maxLength: 50 }}
+            onChange={event => dispatch(updateComment({content: event?.target.value}))}
+            inputProps={{maxLength: 50}}
           />
-          <Stack direction='row' sx={{ width: '100%', justifyContent: 'flex-end' }}>
+          <Stack direction='row' sx={{width: '100%', justifyContent: 'flex-end'}}>
             <Button
               onClick={() => {
                 putComment(questionId, item.id, commentModify);
-                dispatch(updateCommentState({ id: null }));
+                dispatch(updateCommentState({id: null}));
               }}
-              sx={{ fontSize: 16, color: 'green' }}>
+              sx={{fontSize: 16, color: 'green'}}>
               수정
             </Button>
             <Button
-              onClick={() => dispatch(updateCommentState({ id: null }))}
-              sx={{ fontSize: 16, color: 'green' }}>
+              onClick={() => dispatch(updateCommentState({id: null}))}
+              sx={{fontSize: 16, color: 'green'}}>
               취소
             </Button>
           </Stack>
@@ -89,7 +89,7 @@ export default function Comment({ item, questionId }: propsType) {
             p: 2,
             width: '100%',
           }}>
-          <Typography sx={{ fontSize: 20 }}>{item.writer}</Typography>
+          <Typography sx={{fontSize: 20}}>{item.writer}</Typography>
           <Typography>{item.content}</Typography>
         </Stack>
       }
@@ -97,14 +97,14 @@ export default function Comment({ item, questionId }: propsType) {
       {/* 수정, 삭제 버튼 */}
       {managerMode ?
         // 관리자 댓글
-        < Box sx={{ display: 'flex', alignItems: 'center' }}>
+        < Box sx={{display: 'flex', alignItems: 'center'}}>
           <Button
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-              dispatch(setAnchor({ anchor: event.currentTarget }));
-              dispatch(setCurrentComment({ content: item.content, id: item.id }));
+              dispatch(setAnchor({anchor: event.currentTarget}));
+              dispatch(setCurrentComment({content: item.content, id: item.id}));
             }}
-            sx={{ color: '#0F0F0F' }}>
-            <MoreVertTwoToneIcon sx={{ fontSize: 30 }} />
+            sx={{color: '#0F0F0F'}}>
+            <MoreVertTwoToneIcon sx={{fontSize: 30}}/>
           </Button>
 
           <Menu
@@ -113,7 +113,7 @@ export default function Comment({ item, questionId }: propsType) {
             onClose={() => dispatch(resetAnchor())}
           >
             <MenuItem onClick={() => {
-              dispatch(updateCommentState({ id: currentComment.id }));
+              dispatch(updateCommentState({id: currentComment.id}));
               dispatch(resetAnchor());
             }}>
               수정
@@ -128,14 +128,14 @@ export default function Comment({ item, questionId }: propsType) {
         </Box> :
 
         // 문의 댓글
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Button
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-              dispatch(setAnchor({ anchor: event.currentTarget }));
-              dispatch(setCurrentComment({ content: item.content, id: item.id }));
+              dispatch(setAnchor({anchor: event.currentTarget}));
+              dispatch(setCurrentComment({content: item.content, id: item.id}));
             }}
-            sx={{ color: '#0F0F0F', display: `${item.writer === '관리자' && 'none'}` }}>
-            <MoreVertTwoToneIcon sx={{ fontSize: 30 }} />
+            sx={{color: '#0F0F0F', display: `${item.writer === '관리자' && 'none'}`}}>
+            <MoreVertTwoToneIcon sx={{fontSize: 30}}/>
           </Button>
 
           <Menu
@@ -144,7 +144,7 @@ export default function Comment({ item, questionId }: propsType) {
             onClose={() => dispatch(resetAnchor())}
           >
             <MenuItem onClick={() => {
-              dispatch(updateCommentState({ id: currentComment.id }));
+              dispatch(updateCommentState({id: currentComment.id}));
               dispatch(resetAnchor());
             }}>
               수정

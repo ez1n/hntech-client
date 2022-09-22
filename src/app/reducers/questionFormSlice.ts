@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 문의게시판 글 등록
 
@@ -23,31 +23,41 @@ interface initialState {
 };
 
 const InitialState: initialState = {
-  questionContent: { title: '', writer: '', password: '', content: '' },
-  currentQuestion: { title: '', content: '' }
+  questionContent: {title: '', writer: '', password: '', content: ''},
+  currentQuestion: {title: '', content: ''}
 };
 
 export const QuestionFormSlice = createSlice({
   name: 'questionForm',
   initialState: InitialState,
   reducers: {
-    resetQuestionContent: state => { state.questionContent = { title: '', writer: '', password: '', content: '' } },
+    resetQuestionContent: state => {
+      state.questionContent = {title: '', writer: '', password: '', content: ''}
+    },
     updateQuestionTitle: (
       state,
       action: PayloadAction<{ title: string }>
-    ) => { state.questionContent.title = action.payload.title },
+    ) => {
+      state.questionContent.title = action.payload.title
+    },
     updateQuestionName: (
       state,
       action: PayloadAction<{ writer: string }>
-    ) => { state.questionContent.writer = action.payload.writer },
+    ) => {
+      state.questionContent.writer = action.payload.writer
+    },
     updateQuestionPassword: (
       state,
       action: PayloadAction<{ password: string }>
-    ) => { state.questionContent.password = action.payload.password },
+    ) => {
+      state.questionContent.password = action.payload.password
+    },
     updateQuestionContent: (
       state,
       action: PayloadAction<{ content: string }>
-    ) => { state.questionContent.content = action.payload.content },
+    ) => {
+      state.questionContent.content = action.payload.content
+    },
     setCurrentQuestion: (
       state,
       action: PayloadAction<{ content: string, title: string }>
@@ -58,11 +68,15 @@ export const QuestionFormSlice = createSlice({
     modifyQuestionTitle: (
       state,
       action: PayloadAction<{ title: string }>
-    ) => { state.currentQuestion.title = action.payload.title },
+    ) => {
+      state.currentQuestion.title = action.payload.title
+    },
     modifyQuestionContent: (
       state,
       action: PayloadAction<{ content: string }>
-    ) => { state.currentQuestion.content = action.payload.content }
+    ) => {
+      state.currentQuestion.content = action.payload.content
+    }
   }
 });
 
@@ -74,5 +88,6 @@ export const {
   updateQuestionContent,
   setCurrentQuestion,
   modifyQuestionTitle,
-  modifyQuestionContent } = QuestionFormSlice.actions;
+  modifyQuestionContent
+} = QuestionFormSlice.actions;
 export default QuestionFormSlice.reducer;

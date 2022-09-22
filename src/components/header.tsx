@@ -30,7 +30,6 @@ import {
   Typography,
   Button, Stack,
   Box,
-  Paper,
   styled,
   IconButton,
   Drawer,
@@ -144,7 +143,7 @@ export default function Header() {
           onMouseLeave={() => dispatch(mouseLeaveProduct())}
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}>
           <MainMenu onClick={() => {
-            navigate('/product');
+            navigate('/client-product');
             dispatch(selectProductCategoryFalse());
           }}>
             제품소개
@@ -160,7 +159,7 @@ export default function Header() {
               <DropdownMenu
                 key={item.id}
                 onClick={() => {
-                  navigate('/product');
+                  navigate('/client-product');
                   dispatch(selectProductCategoryTrue());
                   dispatch(setCurrentProductCategoryName({category: item.categoryName}));
                 }}>
@@ -176,12 +175,12 @@ export default function Header() {
           onMouseOver={() => dispatch(mouseOverArchive())}
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}
         >
-          <MainMenu onClick={() => navigate('/archive')}>
+          <MainMenu onClick={() => navigate('/client-archive')}>
             자료실
           </MainMenu>
           <ListBox sx={{height: openArchive ? '80px' : '0px'}}>
-            <DropdownMenu onClick={() => navigate('/archive')}>고객 자료실</DropdownMenu>
-            <DropdownMenu onClick={() => navigate('/data')}>카다록 및 자재승인서</DropdownMenu>
+            <DropdownMenu onClick={() => navigate('/client-archive')}>고객 자료실</DropdownMenu>
+            <DropdownMenu onClick={() => navigate('/document')}>카다록 및 자재승인서</DropdownMenu>
           </ListBox>
         </Box>
 
@@ -190,11 +189,11 @@ export default function Header() {
           onMouseLeave={() => dispatch(mouseLeaveService())}
           onMouseOver={() => dispatch(mouseOverService())}
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}>
-          <MainMenu onClick={() => navigate('/question')}>
+          <MainMenu onClick={() => navigate('/client-question')}>
             고객지원
           </MainMenu>
           <ListBox sx={{height: openService ? '40px' : '0px'}}>
-            <DropdownMenu onClick={() => navigate('/question')}>고객문의</DropdownMenu>
+            <DropdownMenu onClick={() => navigate('/client-question')}>고객문의</DropdownMenu>
           </ListBox>
         </Box>
 
@@ -281,21 +280,26 @@ export default function Header() {
             <ListItemText primary='제품소개'/>
           </ListItemButton>
           <Collapse in={openProduct} timeout='auto' unmountOnExit>
-            <ListItemButton>
-              <List component='div' disablePadding>
-                {productCategories.map((item) => (
-                  <ListItemButton
-                    key={item.id}
-                    onClick={() => {
-                      navigate('/product');
-                      dispatch(setCurrentProductCategoryName({category: item.categoryName}));
-                      clickCloseMenu();
-                    }}>
-                    <DropdownMenuListItem primary={item.categoryName}/>
-                  </ListItemButton>
-                ))}
-              </List>
-            </ListItemButton>
+            <List component='div' disablePadding>
+              {productCategories.map((item: {
+                categoryName: string,
+                id: number,
+                imageServerFilename: string,
+                imageOriginalFilename: string,
+                showInMain: string
+              }) => (
+                <ListItemButton
+                  key={item.id}
+                  onClick={() => {
+                    navigate('/client-product');
+                    dispatch(selectProductCategoryTrue());
+                    dispatch(setCurrentProductCategoryName({category: item.categoryName}));
+                    clickCloseMenu();
+                  }}>
+                  <DropdownMenuListItem primary={item.categoryName}/>
+                </ListItemButton>
+              ))}
+            </List>
           </Collapse>
 
           <Divider/>
@@ -307,13 +311,13 @@ export default function Header() {
           <Collapse in={openArchive} timeout='auto' unmountOnExit>
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
-                navigate('/archive');
+                navigate('/client-archive');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='고객 자료실'/>
               </ListItemButton>
               <ListItemButton onClick={() => {
-                navigate('/data');
+                navigate('/document');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='카다록 및 자재승인서'/>
@@ -331,7 +335,7 @@ export default function Header() {
           <Collapse in={openService} timeout='auto' unmountOnExit>
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
-                navigate('/question');
+                navigate('/client-question');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='고객 문의'/>

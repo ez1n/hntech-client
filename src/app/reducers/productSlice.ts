@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 제품 상세보기
 
@@ -13,7 +13,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /**
  * setProductItems : 제품 순서 바꾸기
- * setSomeDraggingTrue : 이동 공간 활성화 
+ * setSomeDraggingTrue : 이동 공간 활성화
  * setSomeDraggingFalse : 이동 공간 비활성화 (제품 버튼 클릭 가능하도록)
  * getProductList : 제품 목록 받아오기
  * getCurrentProductData : 선택한 제품 정보 받아오기
@@ -126,143 +126,121 @@ const ProductInitialState: productInitialState = {
 };
 
 export const ProductSlice = createSlice({
-  name: 'product',
-  initialState: ProductInitialState,
-  reducers: {
-    setProductItems: (
-      state,
-      action: PayloadAction<{
-        newProductItems: {
-          id: number,
-          image: {
+    name: 'product',
+    initialState: ProductInitialState,
+    reducers: {
+      getProductList: (
+        state,
+        action: PayloadAction<{
+          productList: {
             id: number,
-            originalFilename: string,
-            savedPath: string,
-            serverFilename: string
-          },
-          productName: string
-        }[]
-      }>
-    ) => {
-      const newItems = action.payload.newProductItems.map(item => item.id);
-      state.productItems = newItems;
-    },
-    updateProductItems: (
-      state,
-      action: PayloadAction<{ item: number[] }>
-    ) => { state.productItems = action.payload.item },
-    setSomeDraggingTrue: (state) => { state.someDragging = true },
-    setSomeDraggingFalse: (state) => { state.someDragging = false },
-    getProductList: (
-      state,
-      action: PayloadAction<{
-        productList: {
-          id: number,
-          image: {
-            id: number,
-            originalFilename: string,
-            savedPath: string,
-            serverFilename: string
-          },
-          productName: string
-        }[]
-      }>
-    ) => { state.productList = action.payload.productList },
-    getCurrentProductData: (
-      state,
-      action: PayloadAction<{
-        productData: {
-          id: number,
-          image: {
-            id: number,
-            originalFilename: string,
-            savedPath: string,
-            serverFilename: string
-          },
-          productName: string
-        }
-      }>
-    ) => { state.currentProductData = action.payload.productData },
-    getProductDetail: (
-      state,
-      action: PayloadAction<{
-        detail: {
-          category: string,
-          description: string,
-          files: {
-            docFiles: [
-              {
-                id: number,
-                originalFilename: string,
-                savedPath: string,
-                serverFilename: string,
-                type: string
-              }
-            ],
-            productImages: [
-              {
-                id: number,
-                originalFilename: string,
-                savedPath: string,
-                serverFilename: string
-              }
-            ],
-            representativeImage: {
+            image: {
               id: number,
               originalFilename: string,
               savedPath: string,
               serverFilename: string
             },
-            standardImages: [
-              {
+            productName: string
+          }[]
+        }>
+      ) => {
+        state.productList = action.payload.productList
+      },
+      getCurrentProductData: (
+        state,
+        action: PayloadAction<{
+          productData: {
+            id: number,
+            image: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            },
+            productName: string
+          }
+        }>
+      ) => {
+        state.currentProductData = action.payload.productData
+      },
+      getProductDetail: (
+        state,
+        action: PayloadAction<{
+          detail: {
+            category: string,
+            description: string,
+            files: {
+              docFiles: [
+                {
+                  id: number,
+                  originalFilename: string,
+                  savedPath: string,
+                  serverFilename: string,
+                  type: string
+                }
+              ],
+              productImages: [
+                {
+                  id: number,
+                  originalFilename: string,
+                  savedPath: string,
+                  serverFilename: string
+                }
+              ],
+              representativeImage: {
                 id: number,
                 originalFilename: string,
                 savedPath: string,
                 serverFilename: string
-              }
-            ]
-          },
-          id: number,
-          productName: string
-        }
-      }>
-    ) => { state.productDetail = action.payload.detail },
-    nextImage: (state) => { state.activeStep = state.activeStep + 1 },
-    prevImage: (state) => { state.activeStep = state.activeStep - 1 },
-    deleteOriginalProductFile: (
-      state,
-      action: PayloadAction<{ index: number }>
-    ) => {
-      const newFiles = state.productDetail.files.productImages.filter((value, index) => index !== action.payload.index);
-      state.productDetail.files.productImages = newFiles;
-    },
-    deleteOriginalStandardFile: (
-      state,
-      action: PayloadAction<{ index: number }>
-    ) => {
-      const newFiles = state.productDetail.files.standardImages.filter((value, index) => index !== action.payload.index);
-      state.productDetail.files.standardImages = newFiles;
-    },
-    deleteOriginalDocFileButton: (
-      state,
-      action: PayloadAction<{ index: number }>
-    ) => {
-      const newFiles = state.productDetail.files.docFiles.filter((value, index) => index !== action.payload.index);
-      state.productDetail.files.docFiles = newFiles;
-    },
-    setTargetProductId: (
-      state,
-      action: PayloadAction<{ id: number }>
-    ) => { state.targetProductId = action.payload.id }
+              },
+              standardImages: [
+                {
+                  id: number,
+                  originalFilename: string,
+                  savedPath: string,
+                  serverFilename: string
+                }
+              ]
+            },
+            id: number,
+            productName: string
+          }
+        }>
+      ) => {
+        state.productDetail = action.payload.detail
+      },
+      nextImage: (state) => {
+        state.activeStep = state.activeStep + 1
+      },
+      prevImage: (state) => {
+        state.activeStep = state.activeStep - 1
+      },
+      deleteOriginalProductFile: (
+        state,
+        action: PayloadAction<{ index: number }>
+      ) => {
+        const newFiles = state.productDetail.files.productImages.filter((value, index) => index !== action.payload.index);
+        state.productDetail.files.productImages = newFiles;
+      },
+      deleteOriginalStandardFile: (
+        state,
+        action: PayloadAction<{ index: number }>
+      ) => {
+        const newFiles = state.productDetail.files.standardImages.filter((value, index) => index !== action.payload.index);
+        state.productDetail.files.standardImages = newFiles;
+      },
+      deleteOriginalDocFileButton: (
+        state,
+        action: PayloadAction<{ index: number }>
+      ) => {
+        const newFiles = state.productDetail.files.docFiles.filter((value, index) => index !== action.payload.index);
+        state.productDetail.files.docFiles = newFiles;
+      }
+    }
   }
-}
 );
 
 export const {
-  setProductItems,
-  updateProductItems,
-  setSomeDraggingTrue,
-  setSomeDraggingFalse,
   getProductList,
   getCurrentProductData,
   getProductDetail,
@@ -270,6 +248,6 @@ export const {
   prevImage,
   deleteOriginalProductFile,
   deleteOriginalStandardFile,
-  deleteOriginalDocFileButton,
-  setTargetProductId } = ProductSlice.actions;
+  deleteOriginalDocFileButton
+} = ProductSlice.actions;
 export default ProductSlice.reducer;

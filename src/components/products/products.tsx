@@ -1,17 +1,17 @@
 import React, {useEffect} from 'react';
-import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {Box, Button, styled, Select, MenuItem} from '@mui/material';
-import ProductCategories from './productCategories';
-import ProductItem from './productItem';
-import {productApi} from '../../network/product';
-import {getProductList} from '../../app/reducers/productSlice';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import {useNavigate} from 'react-router-dom';
+import {productApi} from '../../network/product';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {getProductList} from '../../app/reducers/productSlice';
 import {resetProductForm} from '../../app/reducers/productFormSlice';
-import {selectProductCategoryTrue, setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
-import CancelModal from '../cancelModal';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
+import {selectProductCategoryTrue, setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
+import {Box, Button, styled, Select, MenuItem, Typography} from '@mui/material';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import ProductCategories from './productCategories';
+import CancelModal from '../cancelModal';
+import ProductItem from './productItem';
 
 interface propsType {
   successDelete: () => void
@@ -61,7 +61,7 @@ export default function Products({successDelete}: propsType) {
     <Box>
       {!productCategorySelected &&
           <Box sx={{p: 5, margin: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-                  <ProductCategories successDelete={successDelete}/>
+              <ProductCategories successDelete={successDelete}/>
           </Box>
       }
 
@@ -99,18 +99,22 @@ export default function Products({successDelete}: propsType) {
             {/* 제품 목록 */}
               <Box sx={{flex: 0.8, pt: 5}}>
                   <Box sx={{p: 1, display: 'flex', flexWrap: 'wrap'}}>
-                    {productList.map((item: {
-                      id: number,
-                      image: {
+                    {productList.length !== 0 ? // 제품 존재하는 경우
+                      productList.map((item: {
                         id: number,
-                        originalFilename: string,
-                        savedPath: string,
-                        serverFilename: string
-                      },
-                      productName: string
-                    }) => (
-                      <ProductItem key={item.id} product={item}/>
-                    ))}
+                        image: {
+                          id: number,
+                          originalFilename: string,
+                          savedPath: string,
+                          serverFilename: string
+                        },
+                        productName: string
+                      }) => (
+                        <ProductItem key={item.id} product={item}/>
+                      )) : // 제품 존재하지 않는 경우
+                      <Typography>
+                        해당 카테고리에 제품이 존재하지 않습니다.
+                      </Typography>}
                   </Box>
                 {managerMode &&
                     <AddButton onClick={() => navigate('/product-form')}>

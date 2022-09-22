@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { getProductDetail, getProductList, nextImage, prevImage } from '../../app/reducers/productSlice';
-import { clickProductInfoGoBack } from '../../app/reducers/dialogSlice';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {productApi} from '../../network/product';
+import {api} from '../../network/network';
+import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {getProductList, nextImage, prevImage} from '../../app/reducers/productSlice';
+import {getProductContent} from '../../app/reducers/productFormSlice';
 import {
   Box,
   Button,
@@ -15,24 +17,31 @@ import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@mui/icons-material/NavigateBeforeRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
-import { productApi } from '../../network/product';
-import { api } from '../../network/network';
-import { getProductContent } from '../../app/reducers/productFormSlice';
 
 interface propsType {
   successDelete: () => void
 }
 
-export default function ProductInfo({ successDelete }: propsType) {
+export default function ProductInfo({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const productInfoState = useAppSelector(state => state.dialog.productInfoState); // 제품 삭제 dialog state
-  const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step state
-  const { category, description, files, id, productName } = useAppSelector(state => state.product.productDetail); // 제품 정보
-  const { docFiles, productImages, representativeImage, standardImages } = files; // 파일
-  const maxSteps = productImages.length; // 이미지 개수
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
+  const activeStep = useAppSelector(state => state.product.activeStep); // 제품 이미지 step
+  const {category, description, files, id, productName} = useAppSelector(state => state.product.productDetail); // 제품 정보
+  const [deleteProductItem, setDeleteProductItem] = useState(false); // 제품 삭제
+  const maxSteps = files.productImages.length; // 이미지 개수
+
+  // 제품 삭제 modal - open
+  const openDeleteProductItem = () => {
+    setDeleteProductItem(deleteProductItem => !deleteProductItem);
+  };
+
+  // 제품 삭제 modal - close
+  const closeDeleteProductItem = () => {
+    setDeleteProductItem(false);
+  };
 
   // 제품 삭제
   const deleteProduct = (productId: number) => {
@@ -41,8 +50,8 @@ export default function ProductInfo({ successDelete }: propsType) {
         productApi.getAllProducts(category)
           .then(res => {
             successDelete();
-            dispatch(getProductList({ productList: res }));
-            dispatch(clickProductInfoGoBack());
+            dispatch(getProductList({productList: res}));
+            closeDeleteProductItem();
             navigate('/product');
           })
           .catch(error => console.log(error))
@@ -54,7 +63,7 @@ export default function ProductInfo({ successDelete }: propsType) {
   const modifyProduct = () => {
     productApi.getProduct(id)
       .then(res => {
-        dispatch(getProductContent({ detail: res }));
+        dispatch(getProductContent({detail: res}));
         navigate('/product-modify');
       })
   };
@@ -70,12 +79,12 @@ export default function ProductInfo({ successDelete }: propsType) {
         {productName}
       </TitleTypography>
 
-      <Spacing sx={{ textAlign: 'end' }}>
+      <Spacing sx={{textAlign: 'end'}}>
         {managerMode &&
-          <>
-            <EditButton name='수정' onClick={modifyProduct} />
-            <EditButton name='삭제' onClick={() => dispatch(clickProductInfoGoBack())} />
-          </>
+            <>
+                <EditButton name='수정' onClick={modifyProduct}/>
+                <EditButton name='삭제' onClick={openDeleteProductItem}/>
+            </>
         }
       </Spacing>
 
@@ -89,11 +98,11 @@ export default function ProductInfo({ successDelete }: propsType) {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-          {productImages.length !== 0 &&
-            <img
-              src={`${api.baseUrl()}/files/product/${productImages[activeStep].serverFilename}`}
-              alt={productImages[activeStep].originalFilename}
-              width={300} />
+          {files.productImages.length !== 0 &&
+              <img
+                  src={`${api.baseUrl()}/files/product/${files.productImages[activeStep].serverFilename}`}
+                  alt={files.productImages[activeStep].originalFilename}
+                  width={300}/>
           }
         </Box>
         <MobileStepper
@@ -104,22 +113,22 @@ export default function ProductInfo({ successDelete }: propsType) {
             <Button
               onClick={() => dispatch(nextImage())}
               disabled={activeStep === maxSteps - 1}>
-              <NavigateNextRoundedIcon />
+              <NavigateNextRoundedIcon/>
             </Button>
           }
           backButton={
             <Button
               onClick={() => dispatch(prevImage())}
               disabled={activeStep === 0}>
-              <NavigateBeforeRoundedIcon />
+              <NavigateBeforeRoundedIcon/>
             </Button>
-          } />
+          }/>
       </Box>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 부가 설명 */}
-      <Container sx={{ textAlign: 'center' }}>
+      <Container sx={{textAlign: 'center'}}>
         {description.split('\n').map((value, index) => (
           <DescriptionTypography key={index}>
             {value}
@@ -129,21 +138,21 @@ export default function ProductInfo({ successDelete }: propsType) {
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
-        openState={productInfoState}
+        openState={deleteProductItem}
         title='제품 삭제'
         text1='해당 제품이 삭제됩니다.'
         text2='삭제하시겠습니까?'
         yesAction={() => deleteProduct(id)}
-        closeAction={() => dispatch(clickProductInfoGoBack())} />
+        closeAction={closeDeleteProductItem}/>
     </Container>
   )
 };
 
-const Spacing = styled(Container)(({ theme }) => ({
+const Spacing = styled(Container)(() => ({
   height: 50
 })) as typeof Container;
 
-const TitleTypography = styled(Typography)(({ theme }) => ({
+const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18
   },
@@ -156,7 +165,7 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
   borderBottom: '3px solid #2E7D32',
 })) as typeof Typography;
 
-const DescriptionTypography = styled(Typography)(({ theme }) => ({
+const DescriptionTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18
   },

@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { archiveApi } from '../network/archive';
-import { fileApi } from '../network/file';
-import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { archiveDetailGoBack } from '../app/reducers/dialogSlice';
-import { copyArchiveDetailData, resetArchiveFile } from '../app/reducers/archiveFormSlice';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {archiveApi} from '../network/archive';
+import {fileApi} from '../network/file';
+import {useAppSelector, useAppDispatch} from '../app/hooks';
+import {changeMode} from '../app/reducers/managerModeSlice';
+import {copyArchiveDetailData, resetArchiveFile} from '../app/reducers/archiveFormSlice';
 import {
   Box,
   Button,
@@ -16,41 +16,51 @@ import {
 import HTMLReactParser from 'html-react-parser';
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
-import { changeMode } from '../app/reducers/managerModeSlice';
 
 interface propsType {
   successDelete: () => void
 }
 
-export default function ArchiveDetail({ successDelete }: propsType) {
+export default function ArchiveDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const archiveDetailState = useAppSelector(state => state.dialog.archiveDetailState); // 게시글 삭제 취소 state
+  // state
+  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
+  const [deleteArchiveDetail, setDeleteArchiveDetail] = useState(false); // 게시글 삭제
 
   // 수정 정보 만들기
   useEffect(() => {
-    dispatch(copyArchiveDetailData({ detail: detail }));
+    dispatch(copyArchiveDetailData({detail: detail}));
     dispatch(resetArchiveFile());
   }, []);
+
+  // 게시글 삭제 modal - open
+  const openDeleteArchiveDetail = () => {
+    setDeleteArchiveDetail(deleteArchiveDetail => !deleteArchiveDetail);
+  };
+
+  // 게시글 삭제 modal - close
+  const closeDeleteArchiveDetail = () => {
+    setDeleteArchiveDetail(false);
+  };
 
   // 게시글 삭제
   const deleteArchive = (archiveId: number) => {
     archiveApi.deleteArchive(archiveId)
       .then(res => {
         successDelete();
-        dispatch(archiveDetailGoBack());
-        navigate('/archive');
+        closeDeleteArchiveDetail();
+        navigate('/client-archive');
       })
       .catch(error => {
         console.log(error);
         if (error.response.status === 401) {
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({ login: isLogin }));
-        };
+          dispatch(changeMode({login: isLogin}));
+        }
       })
   };
 
@@ -76,7 +86,7 @@ export default function ArchiveDetail({ successDelete }: propsType) {
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{mt: 5}}>
       {/* 소제목 */}
       <TitleTypography variant='h5'>
         자료실
@@ -84,10 +94,10 @@ export default function ArchiveDetail({ successDelete }: propsType) {
 
       <Spacing>
         {managerMode &&
-          <Box sx={{ textAlign: 'end' }}>
-            <EditButton name='수정' onClick={() => navigate('/archive-modify')} />
-            <EditButton name='삭제' onClick={() => dispatch(archiveDetailGoBack())} />
-          </Box>
+            <Box sx={{textAlign: 'end'}}>
+                <EditButton name='수정' onClick={() => navigate('/archive-modify')}/>
+                <EditButton name='삭제' onClick={openDeleteArchiveDetail}/>
+            </Box>
         }
       </Spacing>
 
@@ -105,11 +115,11 @@ export default function ArchiveDetail({ successDelete }: propsType) {
         {/* 카테고리, 작성일 */}
         <CategoryBox>
           <ContentTypography>{detail.categoryName}</ContentTypography>
-          <ContentTypography sx={{ color: 'darkgrey' }}>작성일 {detail.createTime}</ContentTypography>
+          <ContentTypography sx={{color: 'darkgrey'}}>작성일 {detail.createTime}</ContentTypography>
         </CategoryBox>
 
         {/* content */}
-        <Box sx={{ p: 3, minHeight: 300, borderBottom: '1px solid #3B6C46' }}>
+        <Box sx={{p: 3, minHeight: 300, borderBottom: '1px solid #3B6C46'}}>
           {detail.content.split('\n').map((value, index) => (
             <Typography key={index}>
               {HTMLReactParser(value)}
@@ -118,7 +128,7 @@ export default function ArchiveDetail({ successDelete }: propsType) {
         </Box>
 
         {/* 첨부파일 */}
-        <Stack direction='row' spacing={1} sx={{ p: 2, color: 'darkgrey' }}>
+        <Stack direction='row' spacing={1} sx={{p: 2, color: 'darkgrey'}}>
           <ContentTypography>첨부파일</ContentTypography>
           <ContentTypography>|</ContentTypography>
           <Box>
@@ -130,7 +140,7 @@ export default function ArchiveDetail({ successDelete }: propsType) {
             }) => (
               <ContentTypography
                 onClick={() => downloadFile(item.serverFilename, item.originalFilename)}
-                sx={{ cursor: 'pointer', '&:hover': { color: 'darkgreen' } }}
+                sx={{cursor: 'pointer', '&:hover': {color: 'darkgreen'}}}
               >
                 {item.originalFilename}
               </ContentTypography>
@@ -140,10 +150,10 @@ export default function ArchiveDetail({ successDelete }: propsType) {
       </Box>
 
       {/* 목록 버튼 */}
-      <Box sx={{ mt: 1, display: 'flex', justifyContent: 'flex-end' }}>
+      <Box sx={{mt: 1, display: 'flex', justifyContent: 'flex-end'}}>
         <Button
           size='small'
-          onClick={() => navigate('/archive')}
+          onClick={() => navigate('/client-archive')}
           sx={{
             color: 'white',
             backgroundColor: '#2E7D32',
@@ -158,12 +168,12 @@ export default function ArchiveDetail({ successDelete }: propsType) {
 
       {/* 삭제 버튼 Dialog */}
       <CancelModal
-        openState={archiveDetailState}
+        openState={deleteArchiveDetail}
         title={'게시글 삭제'}
         text1={'삭제된 게시글은 복구할 수 없습니다'}
         text2={'삭제하시겠습니까?'}
         yesAction={() => deleteArchive(detail.id)}
-        closeAction={() => dispatch(archiveDetailGoBack())} />
+        closeAction={closeDeleteArchiveDetail}/>
     </Container>
   )
 };
@@ -173,7 +183,7 @@ const Spacing = styled(Container)(() => ({
   marginBottom: 10
 })) as typeof Container;
 
-const TitleTypography = styled(Typography)(({ theme }) => ({
+const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18
   },
@@ -185,7 +195,7 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
   borderBottom: '3px solid #2E7D32'
 })) as typeof Typography;
 
-const DetailTitleBox = styled(Box)(({ theme }) => ({
+const DetailTitleBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     padding: 10
   },
@@ -193,7 +203,7 @@ const DetailTitleBox = styled(Box)(({ theme }) => ({
   padding: 15
 })) as typeof Box;
 
-const DetailTitleTypography = styled(Typography)(({ theme }) => ({
+const DetailTitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 18
   },
@@ -202,7 +212,7 @@ const DetailTitleTypography = styled(Typography)(({ theme }) => ({
   textAlign: 'center'
 })) as typeof Typography;
 
-const CategoryBox = styled(Box)(({ theme }) => ({
+const CategoryBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     padding: 10
   },
@@ -212,7 +222,7 @@ const CategoryBox = styled(Box)(({ theme }) => ({
   borderBottom: '1px solid #3B6C46'
 })) as typeof Box;
 
-const ContentTypography = styled(Typography)(({ theme }) => ({
+const ContentTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 15
   },

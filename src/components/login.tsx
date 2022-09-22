@@ -24,6 +24,7 @@ export default function Login() {
   const getPanelInfo = () => {
     adminApi.getPanelInfo()
       .then(res => {
+        console.log(res)
         dispatch(setManagerData({panelData: res}));
         dispatch(copyManagerData({panelData: res}));
       })

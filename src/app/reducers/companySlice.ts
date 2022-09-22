@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 회사소개
 
@@ -27,14 +27,26 @@ export const ModeSlice = createSlice({
   name: 'mode',
   initialState: ModeInitialState,
   reducers: {
-    clickChangeIntroduce: state => { state.mode = 'INTRODUCE' },
-    clickChangeHistory: state => { state.mode = 'HISTORY' },
-    clickChangeOrgChart: state => { state.mode = 'CHART' },
-    clickChangeInfo: state => { state.mode = 'INFORMATION' },
-    clickChangeLocation: state => { state.mode = 'LOCATION' },
+    clickChangeIntroduce: state => {
+      state.mode = 'INTRODUCE'
+    },
+    clickChangeHistory: state => {
+      state.mode = 'HISTORY'
+    },
+    clickChangeOrgChart: state => {
+      state.mode = 'CHART'
+    },
+    clickChangeInfo: state => {
+      state.mode = 'INFORMATION'
+    },
+    clickChangeLocation: state => {
+      state.mode = 'LOCATION'
+    },
     clickChangeMode: (
       state,
-      action: PayloadAction<{ mode: string }>) => { state.mode = action.payload.mode }
+      action: PayloadAction<{ mode: string }>) => {
+      state.mode = action.payload.mode
+    }
   }
 });
 
@@ -44,5 +56,6 @@ export const {
   clickChangeOrgChart,
   clickChangeInfo,
   clickChangeLocation,
-  clickChangeMode } = ModeSlice.actions;
+  clickChangeMode
+} = ModeSlice.actions;
 export default ModeSlice.reducer;

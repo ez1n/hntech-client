@@ -90,8 +90,8 @@ export default function OrgChart({success}: propsType) {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              minHeight: 300,
-              overflow: 'scroll'
+              height: 350,
+              overflow: 'auto'
             }}>
             <img src={orgChart.path === '' ? `${api.baseUrl()}/files/admin/${orgChart.serverFilename}` : orgChart.path}
                  alt='조직도' width={'80%'}/>

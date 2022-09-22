@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 제품 등록
 
@@ -123,20 +123,26 @@ export const ProductFormSlice = createSlice({
     addProductName: (
       state,
       action: PayloadAction<{ productName: string }>
-    ) => { state.productContent.productName = action.payload.productName },
+    ) => {
+      state.productContent.productName = action.payload.productName
+    },
     addProductDescription: (
       state,
       action: PayloadAction<{ description: string }>
-    ) => { state.productContent.description = action.payload.description },
+    ) => {
+      state.productContent.description = action.payload.description
+    },
     addProductCategory: (
       state,
       action: PayloadAction<{ category: string }>
-    ) => { state.productContent.category = action.payload.category },
+    ) => {
+      state.productContent.category = action.payload.category
+    },
     addRepProductImage: (
       state,
       action: PayloadAction<{ repProduct: { file: string, path: string } }>
     ) => {
-      const newFile = { file: [action.payload.repProduct.file], path: action.payload.repProduct.path };
+      const newFile = {file: [action.payload.repProduct.file], path: action.payload.repProduct.path};
       state.productContent.files.representativeImage = newFile;
     },
     addProductImage: (
@@ -173,7 +179,7 @@ export const ProductFormSlice = createSlice({
     ) => {
       const newFile = state.productContent.files.docFiles.map(item => {
         if (item.id === action.payload.id) {
-          return { ...item, type: action.payload.type }
+          return {...item, type: action.payload.type}
         }
         return item;
       })
@@ -191,7 +197,11 @@ export const ProductFormSlice = createSlice({
     ) => {
       const newFile = state.productContent.files.docFiles.map(item => {
         if (item.id === action.payload.id) {
-          return { ...item, file: action.payload.productDoc.file, originalFilename: action.payload.productDoc.originalFilename }
+          return {
+            ...item,
+            file: action.payload.productDoc.file,
+            originalFilename: action.payload.productDoc.originalFilename
+          }
         }
         return item;
       })
@@ -204,7 +214,7 @@ export const ProductFormSlice = createSlice({
     ) => {
       const newFile = state.productContent.files.docFiles.map(item => {
         if (item.id === action.payload.id) {
-          return { ...item, originalFilename: '', file: '' }
+          return {...item, originalFilename: '', file: ''}
         }
         return item;
       })
@@ -226,8 +236,7 @@ export const ProductFormSlice = createSlice({
           file: '',
           originalFilename: '',
           type: ''
-        }
-        ];
+        }];
         state.productContent.files.docFiles = newFile;
       }
     },
@@ -272,5 +281,6 @@ export const {
   deleteProductDoc,
   addProductDocUploadButton,
   deleteProductDocUploadButton,
-  resetProductForm } = ProductFormSlice.actions;
+  resetProductForm
+} = ProductFormSlice.actions;
 export default ProductFormSlice.reducer;

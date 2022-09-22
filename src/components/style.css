@@ -11,6 +11,10 @@
   height: 2.3rem;
 }
 
+.familySite {
+text-decoration: none;
+}
+
 /* orgChart, history */
 
 .CIImage {

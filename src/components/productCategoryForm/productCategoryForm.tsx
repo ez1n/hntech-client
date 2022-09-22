@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { categoryApi } from '../../network/category';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clickProductCategoryFormGoBack, onLoading } from '../../app/reducers/dialogSlice';
-import { updateProductCategoryImage, updateProductCategoryShowInMain } from '../../app/reducers/categorySlice';
-import { addProductCategoryImage, updateProductCategoryName } from '../../app/reducers/categorySlice';
+import React, {useEffect, useState} from 'react';
+import {categoryApi} from '../../network/category';
+import {useNavigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {clickProductCategoryFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
+import {updateProductCategoryImage, updateProductCategoryShowInMain} from '../../app/reducers/categorySlice';
+import {addProductCategoryImage, updateProductCategoryName} from '../../app/reducers/categorySlice';
 import {
   Container,
   styled,
@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
-import { changeMode } from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/managerModeSlice';
 import Loading from '../loading';
 
 interface propsType {
@@ -27,7 +27,7 @@ interface propsType {
   errorToast: (message: string) => void
 }
 
-export default function ProductCategoryForm({ success, errorToast }: propsType) {
+export default function ProductCategoryForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -42,9 +42,9 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
   const [imageErrorMsg, setImageErrorMsg] = useState('');
 
   useEffect(() => {
-    dispatch(updateProductCategoryName({ categoryName: '' }));
-    dispatch(updateProductCategoryImage({ categoryImage: '' }));
-    dispatch(updateProductCategoryShowInMain({ showInMain: false }));
+    dispatch(updateProductCategoryName({categoryName: ''}));
+    dispatch(updateProductCategoryImage({categoryImage: ''}));
+    dispatch(updateProductCategoryShowInMain({showInMain: false}));
   }, []);
 
   const validate = () => {
@@ -62,8 +62,8 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
 
   // 제품 사진
   const selectCategoryImage = (event: any) => {
-    dispatch(addProductCategoryImage({ image: URL.createObjectURL(event.target.files[0]) }));
-    dispatch(updateProductCategoryImage({ categoryImage: event.target.files[0] }));
+    dispatch(addProductCategoryImage({image: URL.createObjectURL(event.target.files[0])}));
+    dispatch(updateProductCategoryImage({categoryImage: event.target.files[0]}));
   };
 
   // 카테고리 등록
@@ -78,9 +78,9 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
       categoryApi.postCreateCategory(productCategoryForm)
         .then(res => {
           success();
-          dispatch(addProductCategoryImage({ image: undefined }));
+          dispatch(addProductCategoryImage({image: undefined}));
           dispatch(onLoading());
-          navigate('/product');
+          navigate('/client-product');
         })
         .catch(error => {
           dispatch(onLoading());
@@ -88,18 +88,19 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
           if (error.response.status === 401) {
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
-            dispatch(changeMode({ login: isLogin }));
-          };
+            dispatch(changeMode({login: isLogin}));
+          }
+          ;
         })
     }
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{mt: 5}}>
       {/* 소제목 */}
       <Title variant='h5'>카테고리 등록</Title>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 제품 등록 폼 */}
       <Box sx={{
@@ -120,40 +121,40 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
             placeholder='카테고리명'
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
-            onChange={event => dispatch(updateProductCategoryName({ categoryName: event?.target.value }))}
-            inputProps={{ style: { fontSize: 18 } }}
+            onChange={event => dispatch(updateProductCategoryName({categoryName: event?.target.value}))}
+            inputProps={{style: {fontSize: 18}}}
             sx={{
               width: '100%'
             }}
           />
         </Box>
 
-        <Stack direction='row' sx={{ mt: 2, alignItems: 'center' }}>
+        <Stack direction='row' sx={{mt: 2, alignItems: 'center'}}>
           {/* 사진 추가 */}
-          <Box sx={{ pl: 1 }}>
+          <Box sx={{pl: 1}}>
             <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage}>
               사진 추가
-              <input type='file' id='productCategoryInput' accept='image/*' />
+              <input type='file' id='productCategoryInput' accept='image/*'/>
             </label>
           </Box>
 
           <FormControlLabel
             control={<Checkbox
-              onChange={event => dispatch(updateProductCategoryShowInMain({ showInMain: event?.target.checked }))}
+              onChange={event => dispatch(updateProductCategoryShowInMain({showInMain: event?.target.checked}))}
               sx={{
                 color: 'darkgrey',
                 '&.Mui-checked': {
                   color: 'green',
                 },
-              }} />}
+              }}/>}
             label='메인 카테고리'
             labelPlacement='start'
-            sx={{ color: 'darkgrey' }} />
+            sx={{color: 'darkgrey'}}/>
         </Stack>
 
         {/* 제품 사진 미리보기 */}
-        <FormControl error={imageErrorMsg ? true : false} sx={{ width: '100%' }}>
-          <Box sx={{ p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)' }}>
+        <FormControl error={imageErrorMsg ? true : false} sx={{width: '100%'}}>
+          <Box sx={{p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)'}}>
             <FormHelperText>{imageErrorMsg}</FormHelperText>
             <Container
               sx={{
@@ -167,9 +168,9 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
                 alignItems: 'center'
               }}>
               {!productCategoryImagePath ?
-                <Typography sx={{ color: 'lightgrey', fontSize: 18 }}>제품 사진 미리보기</Typography> :
-                <Box sx={{ width: '23%', m: 1 }}>
-                  <img src={productCategoryImagePath} alt='제품 사진' width='100%' />
+                <Typography sx={{color: 'lightgrey', fontSize: 18}}>제품 사진 미리보기</Typography> :
+                <Box sx={{width: '23%', m: 1}}>
+                  <img src={productCategoryImagePath} alt='제품 사진' width='100%'/>
                 </Box>
               }
             </Container>
@@ -177,15 +178,15 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
         </FormControl>
       </Box>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 버튼 */}
-      <Spacing sx={{ textAlign: 'center' }}>
-        <EditButton name='등록완료' onClick={postProductCategory} />
-        <EditButton name='취소' onClick={() => dispatch(clickProductCategoryFormGoBack())} />
+      <Spacing sx={{textAlign: 'center'}}>
+        <EditButton name='등록완료' onClick={postProductCategory}/>
+        <EditButton name='취소' onClick={() => dispatch(clickProductCategoryFormGoBack())}/>
       </Spacing>
 
-      <Loading />
+      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
@@ -195,10 +196,10 @@ export default function ProductCategoryForm({ success, errorToast }: propsType) 
         text2='취소하시겠습니까?'
         yesAction={() => {
           dispatch(clickProductCategoryFormGoBack());
-          navigate('/product');
+          navigate('/client-product');
         }}
-        closeAction={() => dispatch(clickProductCategoryFormGoBack())} />
-    </Container >
+        closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
+    </Container>
   )
 };
 
@@ -206,7 +207,7 @@ const Spacing = styled(Container)(() => ({
   height: 30
 })) as typeof Container;
 
-const Title = styled(Typography)(({ theme }) => ({
+const Title = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18,
   },

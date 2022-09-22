@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { archiveApi } from '../../network/archive';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clickArchivesGoBack } from '../../app/reducers/dialogSlice';
-import { getAllArchives, getNotice } from '../../app/reducers/archiveSlice';
-import { Box, Container, Stack, styled, Typography, TextField } from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {archiveApi} from '../../network/archive';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
+import {getAllArchives, getNotice} from '../../app/reducers/archiveSlice';
+import {Box, Container, Stack, styled, Typography, TextField} from '@mui/material';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import ArchiveItem from './archiveItem';
 import EditButton from '../editButton';
@@ -15,7 +15,7 @@ interface propsType {
   errorToast: (message: string) => void
 }
 
-export default function Archives({ errorToast }: propsType) {
+export default function Archives({errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -40,7 +40,7 @@ export default function Archives({ errorToast }: propsType) {
     // 공지 목록 받아오기
     archiveApi.getArchivesNotice()
       .then(res => {
-        dispatch(getNotice({ notice: res.notices }))
+        dispatch(getNotice({notice: res.notices}))
       })
   }, [detail, archiveCategory]);
 
@@ -57,22 +57,25 @@ export default function Archives({ errorToast }: propsType) {
   };
 
   const onEnterKey = (event: any) => {
-    if (event.key === 'Enter') { getSearchArchive() };
+    if (event.key === 'Enter') {
+      getSearchArchive()
+    }
+    ;
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{mt: 5}}>
       {/* 소제목 */}
       <TitleTypography variant='h5'>
         고객 자료실
       </TitleTypography>
 
       {/* 버튼 */}
-      <Spacing sx={{height: managerMode ? 100 : 50}}>
+      <Spacing sx={{height: 'max-content'}}>
         {/* 자료 검색 */}
         <SearchTotalStack direction='row' spacing={1}>
           {/* 카테고리 */}
-          <ArchiveCategorySelect defaultCategory={'전체'} categoryErrorMsg={undefined} />
+          <ArchiveCategorySelect defaultCategory={'전체'} categoryErrorMsg={undefined}/>
 
           <SearchStack direction='row' spacing={1}>
             <TextField
@@ -81,25 +84,25 @@ export default function Archives({ errorToast }: propsType) {
               autoComplete='off'
               onChange={event => setSearchContent(event?.target.value)}
               onKeyUp={onEnterKey}
-              sx={{ width: '100%' }} />
-            <SearchIcon onClick={getSearchArchive} />
+              sx={{width: '100%'}}/>
+            <SearchIcon onClick={getSearchArchive}/>
           </SearchStack>
         </SearchTotalStack>
 
         {managerMode &&
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <EditButton name='카테고리 수정' onClick={() => dispatch(clickArchivesGoBack())} />
-            <EditButton name='글쓰기' onClick={() => navigate('/archive-form')} />
-          </Box>
+            <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                <EditButton name='카테고리 수정' onClick={() => dispatch(clickArchivesGoBack())}/>
+                <EditButton name='글쓰기' onClick={() => navigate('/archive-form')}/>
+            </Box>
         }
 
       </Spacing>
 
       {/* 자료 목록 */}
-      <ArchiveItem />
+      <ArchiveItem/>
 
       {/* 카테고리 수정 */}
-      <EditArchiveCategory errorToast={errorToast} />
+      <EditArchiveCategory errorToast={errorToast}/>
     </Container>
   )
 };
@@ -108,7 +111,7 @@ const Spacing = styled(Container)(() => ({
   marginBottom: 10
 })) as typeof Container;
 
-const TitleTypography = styled(Typography)(({ theme }) => ({
+const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18
   },
@@ -121,7 +124,7 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
   borderBottom: '3px solid #2E7D32'
 })) as typeof Typography;
 
-const SearchTotalStack = styled(Stack)(({ theme }) => ({
+const SearchTotalStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column'
   },
@@ -130,7 +133,7 @@ const SearchTotalStack = styled(Stack)(({ theme }) => ({
   width: '100%'
 })) as typeof Stack;
 
-const SearchStack = styled(Stack)(({ theme }) => ({
+const SearchStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     width: '80%'
   },
@@ -138,7 +141,7 @@ const SearchStack = styled(Stack)(({ theme }) => ({
   alignItems: 'center'
 })) as typeof Stack;
 
-const SearchIcon = styled(SearchRoundedIcon)(({ theme }) => ({
+const SearchIcon = styled(SearchRoundedIcon)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 28,
   },

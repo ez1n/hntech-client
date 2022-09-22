@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 댓글 (문의사항 상세보기)
 
@@ -29,9 +29,9 @@ interface commentInitialState {
 
 const CommentInitialState: commentInitialState = {
   commentAnchor: null,
-  comment: { content: '', writer: '' },
-  currentComment: { content: '', id: null },
-  commentModify: { content: '' },
+  comment: {content: '', writer: ''},
+  currentComment: {content: '', id: null},
+  commentModify: {content: ''},
   commentModifyState: null
 };
 
@@ -42,8 +42,12 @@ export const CommentSlice = createSlice({
     setAnchor: (
       state,
       action: PayloadAction<{ anchor: any }>
-    ) => { state.commentAnchor = action.payload.anchor },
-    resetAnchor: (state) => { state.commentAnchor = null },
+    ) => {
+      state.commentAnchor = action.payload.anchor
+    },
+    resetAnchor: (state) => {
+      state.commentAnchor = null
+    },
     setComment: (
       state,
       action: PayloadAction<{ comment: string, writer: string }>
@@ -54,15 +58,21 @@ export const CommentSlice = createSlice({
     setCurrentComment: (
       state,
       action: PayloadAction<{ content: string, id: number }>
-    ) => { state.currentComment = { content: action.payload.content, id: action.payload.id } },
+    ) => {
+      state.currentComment = {content: action.payload.content, id: action.payload.id}
+    },
     updateComment: (
       state,
       action: PayloadAction<{ content: string }>
-    ) => { state.commentModify.content = action.payload.content },
+    ) => {
+      state.commentModify.content = action.payload.content
+    },
     updateCommentState: (
       state,
       action: PayloadAction<{ id: number | null }>
-    ) => { state.commentModifyState = action.payload.id }
+    ) => {
+      state.commentModifyState = action.payload.id
+    }
   }
 });
 
@@ -72,5 +82,6 @@ export const {
   setComment,
   setCurrentComment,
   updateComment,
-  updateCommentState } = CommentSlice.actions;
+  updateCommentState
+} = CommentSlice.actions;
 export default CommentSlice.reducer;

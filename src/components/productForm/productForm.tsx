@@ -1,7 +1,9 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {productApi} from '../../network/product';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {clickProductFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
+import {changeMode} from '../../app/reducers/managerModeSlice';
+import {onLoading} from "../../app/reducers/dialogSlice";
 import {
   addProductCategory,
   addProductDescription,
@@ -36,9 +38,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
-import {productApi} from '../../network/product';
-import {getProductList} from '../../app/reducers/productSlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
 import Loading from '../loading';
 
 interface propsType {
@@ -58,13 +57,16 @@ export default function ProductForm({success, errorToast}: propsType) {
   // 폼데이터
   const productForm = new FormData();
 
-  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
-  const productFormState = useAppSelector(state => state.dialog.productFormState); // 글쓰기 취소 state
+  // state
+  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
   const {category, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 제품 등록 내용
   const {docFiles, productImages, representativeImage, standardImages} = files; // 첨부파일, 제품이미지, 대표이미지, 규격이미지
-  const [titleErrorMsg, setTitleErrorMsg] = useState('');
-  const [repImgErrorMsg, setRepImgErrorMsg] = useState('');
-  const [fileErrorMsg, setFileErrorMsg] = useState('');
+  const [cancelProductForm, setCancelProductForm] = useState(false); // 제품 등록 취소
+
+  // error message state
+  const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
+  const [repImgErrorMsg, setRepImgErrorMsg] = useState(''); // 대표제품 이미지
+  const [fileErrorMsg, setFileErrorMsg] = useState(''); // 다운로드 파일 버튼
 
   useEffect(() => {
     dispatch(resetProductForm());
@@ -90,9 +92,19 @@ export default function ProductForm({success, errorToast}: propsType) {
     return isValid;
   };
 
+  // 제품 등록 취소 modal - open
+  const openCancelProductForm = () => {
+   setCancelProductForm(cancelProductForm => ! cancelProductForm);
+  };
+
+  // 제품 등록 취소 modal - close
+  const closeCancelProductForm = () => {
+    setCancelProductForm(false);
+  };
+
   // input - button 연결(input 숨기기)
   const selectInput = (item: any) => {
-    item.current?.click()
+    item.current?.click();
   };
 
   // 대표 제품 이미지 추가
@@ -112,7 +124,6 @@ export default function ProductForm({success, errorToast}: propsType) {
         product: {file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])}
       }));
     }
-    ;
   };
 
   // 규격 이미지 추가
@@ -123,9 +134,8 @@ export default function ProductForm({success, errorToast}: propsType) {
           file: event.target.files[i],
           path: URL.createObjectURL(event.target.files[i])
         }
-      }));
+      }))
     }
-    ;
   };
 
   // 첨부파일 추가
@@ -158,7 +168,7 @@ export default function ProductForm({success, errorToast}: propsType) {
       item.originalFilename === productData.originalFilename &&
       productApi.putUpdateProductDocFiles(productId, productData.id, {filename: item.type})
         .then(res => {
-          navigate('/product');
+          navigate('/client-product');
           dispatch(onLoading());
           if (index === docFiles.length - 1) success();
         })
@@ -183,7 +193,7 @@ export default function ProductForm({success, errorToast}: propsType) {
           if (docFiles.length === 0) {
             success();
             dispatch(onLoading());
-            navigate('/product');
+            navigate('/client-product');
           } else {
             res.files.docFiles.map((item: {
               id: number,
@@ -203,7 +213,6 @@ export default function ProductForm({success, errorToast}: propsType) {
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
-          ;
         })
     }
   };
@@ -232,7 +241,7 @@ export default function ProductForm({success, errorToast}: propsType) {
             required={true}
             autoFocus={true}
             placeholder='제품명'
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             onChange={event => dispatch(addProductName({productName: event?.target.value}))}
             inputProps={{style: {fontSize: 18}}}
@@ -292,7 +301,7 @@ export default function ProductForm({success, errorToast}: propsType) {
           />
 
           {/* 대표 제품 이미지 미리보기 */}
-          <FormControl error={repImgErrorMsg ? true : false} sx={{width: '100%'}}>
+          <FormControl error={!!repImgErrorMsg} sx={{width: '100%'}}>
             <FormHelperText>{repImgErrorMsg}</FormHelperText>
             <Container
               sx={{
@@ -374,7 +383,7 @@ export default function ProductForm({success, errorToast}: propsType) {
             ))}
           </Container>
 
-          <FormControl error={fileErrorMsg ? true : false} sx={{width: '100%'}}>
+          <FormControl error={!!fileErrorMsg} sx={{width: '100%'}}>
             {/* 파일 업로드 (다운로드 가능한 자료) */}
             <Stack direction='column' spacing={2}>
               {docFiles.map((item: {
@@ -441,22 +450,22 @@ export default function ProductForm({success, errorToast}: propsType) {
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='작성완료' onClick={postProduct}/>
-        <EditButton name='취소' onClick={() => dispatch(clickProductFormGoBack())}/>
+        <EditButton name='취소' onClick={openCancelProductForm}/>
       </Spacing>
 
       <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={productFormState}
+        openState={cancelProductForm}
         title='작성 취소'
         text1='작성중인 내용이 사라집니다.'
         text2='취소하시겠습니까?'
         yesAction={() => {
-          dispatch(clickProductFormGoBack());
+          closeCancelProductForm();
           navigate(-1);
         }}
-        closeAction={() => dispatch(clickProductFormGoBack())}/>
+        closeAction={closeCancelProductForm}/>
     </Container>
   )
 };

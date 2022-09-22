@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { questionApi } from '../../network/question';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickQuestionFormGoBack } from '../../app/reducers/dialogSlice';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {questionApi} from '../../network/question';
+import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {changeMode} from '../../app/reducers/managerModeSlice';
 import {
   updateQuestionTitle,
   updateQuestionName,
@@ -21,20 +21,21 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
-import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   success: () => void,
   errorToast: (message: string) => void
 }
 
-export default function QuestionForm({ success, errorToast }: propsType) {
+export default function QuestionForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const questionFormState = useAppSelector(state => state.dialog.questionFormState); // 글쓰기 취소 state
-  const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보 state
-  const createQuestionForm = useAppSelector(state => state.questionForm.questionContent); // 문의사항 글 state
+  // state
+  const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보
+  const [deleteQuestionForm, setDeleteQuestionForm] = useState(false); // 글쓰기 취소
+
+  // error message
   const [nameErrorMsg, setNameErrorMsg] = useState('');
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
@@ -60,35 +61,47 @@ export default function QuestionForm({ success, errorToast }: propsType) {
     return isValid;
   };
 
+  // 문의사항 작성 취소 - open
+  const openDeleteQuestionForm = () => {
+    setDeleteQuestionForm(deleteQuestionForm => !deleteQuestionForm);
+  };
+
+  // 문의사항 작성 취소 - close
+  const closeDeleteQuestionForm = () => {
+    setDeleteQuestionForm(false);
+  };
+
   // 문의사항 작성하기
   const postCreateQuestion = () => {
     validate() &&
-      questionApi.postCreateQuestion(questionContent)
-        .then(res => {
-          success();
-          navigate('/question');
-        })
-        .catch(error => {
-          errorToast(error.response.data.message);
-          if (error.response.status === 401) {
-            localStorage.removeItem("login");
-            const isLogin = localStorage.getItem("login");
-            dispatch(changeMode({ login: isLogin }));
-          };
-        })
+    questionApi.postCreateQuestion(questionContent)
+      .then(res => {
+        success();
+        navigate('/client-question');
+      })
+      .catch(error => {
+        errorToast(error.response.data.message);
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({login: isLogin}));
+        }
+      })
   };
 
   // 비밀번호 숫자 제한
   const inputNumber = (event: any) => {
-    if (!/^[0-9]+$/.test(event.key) && event.key.length === 1) { event.preventDefault() };
+    if (!/^[0-9]+$/.test(event.key) && event.key.length === 1) {
+      event.preventDefault()
+    }
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{mt: 5}}>
       {/* 소제목 */}
       <Title variant='h5'>문의하기</Title>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 문의 글쓰기 폼 */}
       <Box sx={{
@@ -106,12 +119,12 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             type='text'
             required={true}
             autoFocus={true}
-            onChange={event => dispatch(updateQuestionTitle({ title: event?.target.value }))}
+            onChange={event => dispatch(updateQuestionTitle({title: event?.target.value}))}
             placeholder='제목을 입력해 주세요'
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
-            inputProps={{ style: { fontSize: 18 }, maxLength: 30 }}
-            sx={{ width: '100%' }}
+            inputProps={{style: {fontSize: 18}, maxLength: 30}}
+            sx={{width: '100%'}}
           />
         </Box>
 
@@ -125,30 +138,30 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             type='text'
             required={true}
             placeholder='이름'
-            onChange={event => dispatch(updateQuestionName({ writer: event.target.value }))}
+            onChange={event => dispatch(updateQuestionName({writer: event.target.value}))}
             size='small'
-            error={nameErrorMsg ? true : false}
+            error={!!nameErrorMsg}
             helperText={nameErrorMsg}
             inputProps={{
-              style: { fontSize: 15 }
+              style: {fontSize: 15}
             }}
-            sx={{ mr: 2 }}
+            sx={{mr: 2}}
           />
           <DataTextField
             type='password'
             required={true}
             placeholder='비밀번호'
-            error={passwordErrorMsg ? true : false}
+            error={!!passwordErrorMsg}
             helperText={passwordErrorMsg}
             onKeyDown={inputNumber}
-            onChange={event => dispatch(updateQuestionPassword({ password: event.target.value }))}
+            onChange={event => dispatch(updateQuestionPassword({password: event.target.value}))}
             size='small'
             inputProps={{
-              style: { fontSize: 15 },
+              style: {fontSize: 15},
               maxLength: 4
-            }} />
+            }}/>
 
-          <List sx={{ mt: 1 }}>
+          <List sx={{mt: 1}}>
             <Precautions>※ 이름은 꼭 실명으로 기재해 주세요.</Precautions>
             <Precautions>※ 확인용 비밀번호는 숫자 4자리를 입력해 주세요. 답변을 확인할 때 사용됩니다.</Precautions>
           </List>
@@ -161,34 +174,34 @@ export default function QuestionForm({ success, errorToast }: propsType) {
             multiline
             minRows={15}
             required={true}
-            onChange={event => dispatch(updateQuestionContent({ content: event.target.value }))}
+            onChange={event => dispatch(updateQuestionContent({content: event.target.value}))}
             placeholder='문의사항을 작성해 주세요'
-            inputProps={{ style: { fontSize: 18 } }}
-            sx={{ width: '100%' }}
+            inputProps={{style: {fontSize: 18}}}
+            sx={{width: '100%'}}
           />
         </Box>
       </Box>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 버튼 */}
-      <Spacing sx={{ textAlign: 'center' }}>
-        <EditButton name='작성완료' onClick={postCreateQuestion} />
-        <EditButton name='취소' onClick={() => dispatch(clickQuestionFormGoBack())} />
+      <Spacing sx={{textAlign: 'center'}}>
+        <EditButton name='작성완료' onClick={postCreateQuestion}/>
+        <EditButton name='취소' onClick={openDeleteQuestionForm}/>
       </Spacing>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={questionFormState}
+        openState={deleteQuestionForm}
         title='작성 취소'
         text1='작성중인 내용이 사라집니다.'
         text2='취소하시겠습니까?'
         yesAction={() => {
           navigate(-1);
-          dispatch(clickQuestionFormGoBack());
+          closeDeleteQuestionForm();
         }}
-        closeAction={() => dispatch(clickQuestionFormGoBack())} />
-    </Container >
+        closeAction={closeDeleteQuestionForm}/>
+    </Container>
   )
 };
 
@@ -197,7 +210,7 @@ const Spacing = styled(Container)(() => ({
 })) as typeof Container;
 
 
-const Title = styled(Typography)(({ theme }) => ({
+const Title = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18,
   },
@@ -208,7 +221,7 @@ const Title = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold'
 })) as typeof Typography;
 
-const DataTextField = styled(TextField)(({ theme }) => ({
+const DataTextField = styled(TextField)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     width: '25%'
   },
@@ -218,7 +231,7 @@ const DataTextField = styled(TextField)(({ theme }) => ({
   width: '15%'
 })) as typeof TextField;
 
-const Precautions = styled(ListItem)(({ theme }) => ({
+const Precautions = styled(ListItem)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 12
   },

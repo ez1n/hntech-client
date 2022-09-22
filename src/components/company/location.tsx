@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
-import { styled } from '@mui/system';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Typography, styled } from '@mui/material';
 import EditButton from '../editButton';
 
 export default function Location() {

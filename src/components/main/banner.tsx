@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { api } from '../../network/network';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper';
+import React from 'react';
+import {api} from '../../network/network';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import SwiperCore, {Navigation, Pagination, Autoplay} from 'swiper';
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Box, styled, Typography } from '@mui/material';
-import { useAppSelector } from '../../app/hooks';
+import {Box, styled, Typography} from '@mui/material';
+import {useAppSelector} from '../../app/hooks';
 
 SwiperCore.use([Navigation, Pagination, Autoplay])
 
@@ -19,8 +19,8 @@ export default function Banner() {
         spaceBetween={50}
         slidesPerView={1}
         navigation
-        pagination={{ clickable: true }}
-        autoplay={{ delay: 3000 }}>
+        pagination={{clickable: true}}
+        autoplay={{delay: 3000}}>
         {banner?.map((item: {
           id: number,
           originalFilename: string,
@@ -28,8 +28,8 @@ export default function Banner() {
           serverFilename: string
         }, index: number) => (
           <SwiperSlide key={index}>
-            <BannerBox sx={{ width: '100%', height: '80vh ' }}>
-              <img src={`${api.baseUrl()}/files/admin/${item.serverFilename}`} width={'100%'} height={'100%'} />
+            <BannerBox sx={{width: '100%', height: '80vh '}}>
+              <img src={`${api.baseUrl()}/files/admin/${item.serverFilename}`} width={'100%'} height={'100%'}/>
             </BannerBox>
           </SwiperSlide>
         ))}
@@ -37,8 +37,7 @@ export default function Banner() {
     </TotalBox>
   )
 };
-const TotalBox = styled(Box)(({ theme }) => ({
-  // screen width - xs: 0px ~, sm: 600px ~, md: 900px ~, lg: 1200px ~, xl: 1920px ~
+const TotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {
     width: '100% !important',
     height: '50% !important'
@@ -54,7 +53,7 @@ const TotalBox = styled(Box)(({ theme }) => ({
   height: '50%'
 })) as typeof Box;
 
-const BannerBox = styled(Box)(({ theme }) => ({
+const BannerBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('xl')]: {
     height: '80% !important'
   },
