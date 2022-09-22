@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { adminApi } from '../../network/admin';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clickPasswordStateGoBack } from '../../app/reducers/dialogSlice';
+import React, {useState} from 'react';
+import {adminApi} from '../../network/admin';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {clickPasswordStateGoBack} from '../../app/reducers/dialogSlice';
 import {
   updateCurPassword,
   updateManagerPassword,
@@ -22,7 +22,7 @@ interface propsType {
   successModify: () => void
 }
 
-export default function PasswordUpdate({ successModify }: propsType) {
+export default function PasswordUpdate({successModify}: propsType) {
   const dispatch = useAppDispatch();
 
   const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보 state
@@ -52,54 +52,57 @@ export default function PasswordUpdate({ successModify }: propsType) {
   // 관리자 비밀번호 변경
   const putUpdatePassword = (updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) => {
     validate() &&
-      adminApi.putUpdatePassword(updatePassword)
-        .then(res => {
-          successModify();
-          dispatch(clickPasswordStateGoBack());
-          dispatch(updateManagerPassword({ adminPassword: res.newPassword }));
-        })
-        .catch(error => console.log(error))
+    adminApi.putUpdatePassword(updatePassword)
+      .then(res => {
+        successModify();
+        dispatch(clickPasswordStateGoBack());
+        dispatch(updateManagerPassword({adminPassword: res.newPassword}));
+      })
+      .catch(error => console.log(error))
   };
 
   const onPutUpdatePasswordKeyUp = (event: any, updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) => {
-    if (event.key === 'Enter') { putUpdatePassword(updatePassword) };
+    if (event.key === 'Enter') {
+      putUpdatePassword(updatePassword)
+    }
+    ;
   };
 
   return (
     <Dialog
       open={passwordState}
       onClose={() => dispatch(clickPasswordStateGoBack())}>
-      <DialogTitle sx={{ textAlign: 'center' }}>
+      <DialogTitle sx={{textAlign: 'center'}}>
         비밀번호 변경
       </DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
           <TextField
             type={'password'}
-            onChange={event => dispatch(updateCurPassword({ curPassword: event?.target.value }))}
+            onChange={event => dispatch(updateCurPassword({curPassword: event?.target.value}))}
             placeholder={'현재 비밀번호'}
             error={curPasswordErrorMsg ? true : false}
-            helperText={curPasswordErrorMsg} />
+            helperText={curPasswordErrorMsg}/>
 
           <TextField
             type={'password'}
-            onChange={event => dispatch(updateNewPassword({ newPassword: event?.target.value }))}
+            onChange={event => dispatch(updateNewPassword({newPassword: event?.target.value}))}
             placeholder={'새 비밀번호'}
             error={newPasswordErrorMsg ? true : false}
-            helperText={newPasswordErrorMsg} />
+            helperText={newPasswordErrorMsg}/>
 
           <TextField
             type={'password'}
-            onChange={event => dispatch(updateNewPasswordCheck({ newPasswordCheck: event?.target.value }))}
+            onChange={event => dispatch(updateNewPasswordCheck({newPasswordCheck: event?.target.value}))}
             onKeyUp={event => onPutUpdatePasswordKeyUp(event, updatePassword)}
             placeholder={'새 비밀번호 확인'}
             error={newPasswordCheckErrorMsg ? true : false}
-            helperText={newPasswordCheckErrorMsg} />
+            helperText={newPasswordCheckErrorMsg}/>
         </Stack>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center' }}>
-        <EditButton name='변경' onClick={() => putUpdatePassword(updatePassword)} />
-        <EditButton name='취소' onClick={() => dispatch(clickPasswordStateGoBack())} />
+      <DialogActions sx={{justifyContent: 'center'}}>
+        <EditButton name='변경' onClick={() => putUpdatePassword(updatePassword)}/>
+        <EditButton name='취소' onClick={() => dispatch(clickPasswordStateGoBack())}/>
       </DialogActions>
     </Dialog>
   )

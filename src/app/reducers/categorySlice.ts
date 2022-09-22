@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 카테고리 ( 자료실 카테고리, 제품 카테고리)
 
@@ -28,7 +28,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
  * setAllProductCategories : 제품 카테고리 목록 받아오기
  * setCurrentProductCategory : 선택된 제품 카테고리 정보
  * updateCurrentProductCategoryName : 제품 카테고리 수정시 선택된 카테고리 이름
- * updateCurrentProductCategoryImage : 전송할 제품 카테고리 이미지
  * selectProductCategoryTrue : 제품 카테고리 선택 true
  * selectProductCategoryFalse : 제품 카테고리 선택 false
  * setCurrentProductCategoryName : 선택한 카테고리 이름 업데이트
@@ -66,7 +65,7 @@ interface categoryInitialState {
 };
 
 const CategoryInitialState: categoryInitialState = {
-  archiveCategory: [{ id: 0, categoryName: '', showInMain: '' },],
+  archiveCategory: [{id: 0, categoryName: '', showInMain: ''},],
   selectedArchiveCategoryId: undefined,
   productCategoryImagePath: undefined,
   productCategoryName: '',
@@ -99,23 +98,33 @@ export const CategorySlice = createSlice({
     setSelectedArchiveCategoryId: (
       state,
       action: PayloadAction<{ id: number | undefined }>
-    ) => { state.selectedArchiveCategoryId = action.payload.id },
+    ) => {
+      state.selectedArchiveCategoryId = action.payload.id
+    },
     addProductCategoryImage: (
       state,
       action: PayloadAction<{ image: string | undefined }>
-    ) => { state.productCategoryImagePath = action.payload.image },
+    ) => {
+      state.productCategoryImagePath = action.payload.image
+    },
     updateProductCategoryName: (
       state,
       action: PayloadAction<{ categoryName: string }>
-    ) => { state.productCategoryName = action.payload.categoryName },
+    ) => {
+      state.productCategoryName = action.payload.categoryName
+    },
     updateProductCategoryImage: (
       state,
       action: PayloadAction<{ categoryImage: string }>
-    ) => { state.productCategoryImage = action.payload.categoryImage },
+    ) => {
+      state.productCategoryImage = action.payload.categoryImage
+    },
     updateProductCategoryShowInMain: (
       state,
       action: PayloadAction<{ showInMain: boolean }>
-    ) => { state.productCategoryShowInMain = String(action.payload.showInMain) },
+    ) => {
+      state.productCategoryShowInMain = String(action.payload.showInMain)
+    },
     setMainCategories: (
       state,
       action: PayloadAction<{
@@ -125,7 +134,9 @@ export const CategorySlice = createSlice({
           imageServerFilename: string
         }[]
       }>
-    ) => { state.productMainCategories = action.payload.categories },
+    ) => {
+      state.productMainCategories = action.payload.categories
+    },
     setAllProductCategories: (
       state,
       action: PayloadAction<{
@@ -137,7 +148,9 @@ export const CategorySlice = createSlice({
           showInMain: string
         }[]
       }>
-    ) => { state.productCategories = action.payload.categories },
+    ) => {
+      state.productCategories = action.payload.categories
+    },
     setCurrentProductCategory: (
       state,
       action: PayloadAction<{
@@ -149,26 +162,33 @@ export const CategorySlice = createSlice({
           showInMain: string
         }
       }>
-    ) => { state.productCurrentCategory = action.payload.category },
+    ) => {
+      state.productCurrentCategory = action.payload.category
+    },
     updateCurrentProductCategoryName: (
       state,
       action: PayloadAction<{ categoryName: string }>
-    ) => { state.productCurrentCategory.categoryName = action.payload.categoryName },
-    updateCurrentProductCategoryImage: (
-      state,
-      action: PayloadAction<{ image: string }>
-    ) => { state.productCurrentCategory.imageServerFilename = action.payload.image },
+    ) => {
+      state.productCurrentCategory.categoryName = action.payload.categoryName
+    },
     updateCurrentProductCategoryShowInMain: (
       state,
       action: PayloadAction<{ showInMain: boolean }>
-    ) => { state.productCurrentCategory.showInMain = String(action.payload.showInMain) },
-    changeCategoryImage: (state) => { state.updateCategoryImageState = !state.updateCategoryImageState },
-    selectProductCategoryTrue: (state) => { state.productCategorySelected = true },
-    selectProductCategoryFalse: (state) => { state.productCategorySelected = false },
+    ) => {
+      state.productCurrentCategory.showInMain = String(action.payload.showInMain)
+    },
+    selectProductCategoryTrue: (state) => {
+      state.productCategorySelected = true
+    },
+    selectProductCategoryFalse: (state) => {
+      state.productCategorySelected = false
+    },
     setCurrentProductCategoryName: (
       state,
       action: PayloadAction<{ category: string }>
-    ) => { state.currentProductCategoryName = action.payload.category }
+    ) => {
+      state.currentProductCategoryName = action.payload.category
+    }
   }
 });
 
@@ -183,10 +203,9 @@ export const {
   setAllProductCategories,
   setCurrentProductCategory,
   updateCurrentProductCategoryName,
-  updateCurrentProductCategoryImage,
   updateCurrentProductCategoryShowInMain,
-  changeCategoryImage,
   selectProductCategoryTrue,
   selectProductCategoryFalse,
-  setCurrentProductCategoryName } = CategorySlice.actions;
+  setCurrentProductCategoryName
+} = CategorySlice.actions;
 export default CategorySlice.reducer;

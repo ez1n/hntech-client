@@ -71,7 +71,7 @@ export default function ProductItem({product}: propsType) {
 
         {/* 수정 버튼 */}
         {managerMode &&
-            <Box sx={{width: '100%',display: 'flex', justifyContent: 'space-around'}}>
+            <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-around'}}>
                 <Button
                     onClick={() => {
                       dispatch(getCurrentProductData({productData: product}))

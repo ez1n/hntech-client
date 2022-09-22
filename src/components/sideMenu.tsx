@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../app/hooks';
-import { Button, Tooltip, Typography, styled } from '@mui/material';
+import {useNavigate} from 'react-router-dom';
+import {useAppSelector} from '../app/hooks';
+import {Button, Tooltip, Typography, styled} from '@mui/material';
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
 import DescriptionIcon from '@mui/icons-material/Description';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -12,16 +12,23 @@ export default function SideMenu() {
   const afterService = useAppSelector(state => state.manager.footer.afterService); // footer 정보 state
 
   return (
-    <SideButtonContainer style={{ padding: 0 }} sx={{ zIndex: 100, display: 'flex', flexDirection: 'column', position: 'fixed', top: '35%', left: 5 }}>
-      <SideButton onClick={() => navigate('/data')}>
-        <FolderIcon sx={{ fontSize: 30, mb: 1 }} />
-        <Typography sx={{ fontSize: 13 }}>카다록</Typography>
-        <Typography sx={{ fontSize: 13 }}>자재승인서</Typography>
+    <SideButtonContainer style={{padding: 0}} sx={{
+      zIndex: 100,
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'fixed',
+      top: '35%',
+      left: 5
+    }}>
+      <SideButton onClick={() => navigate('/document')}>
+        <FolderIcon sx={{fontSize: 30, mb: 1}}/>
+        <Typography sx={{fontSize: 13}}>카다록</Typography>
+        <Typography sx={{fontSize: 13}}>자재승인서</Typography>
       </SideButton>
 
-      <SideButton onClick={() => navigate('/archive')}>
-        <DescriptionIcon sx={{ fontSize: 30, mb: 1 }} />
-        <Typography sx={{ fontSize: 13 }}>자료실</Typography>
+      <SideButton onClick={() => navigate('/client-archive')}>
+        <DescriptionIcon sx={{fontSize: 30, mb: 1}}/>
+        <Typography sx={{fontSize: 13}}>자료실</Typography>
       </SideButton>
 
       <Tooltip
@@ -32,9 +39,9 @@ export default function SideMenu() {
         }
         arrow
         placement='right'>
-        <SideButton onClick={() => navigate('/question')}>
-          <BuildRoundedIcon sx={{ fontSize: 30, mb: 1, color: '#FCFCFC' }} />
-          <Typography sx={{ fontSize: 13, color: '#FCFCFC' }}>A/S</Typography>
+        <SideButton onClick={() => navigate('/client-question')}>
+          <BuildRoundedIcon sx={{fontSize: 30, mb: 1, color: '#FCFCFC'}}/>
+          <Typography sx={{fontSize: 13, color: '#FCFCFC'}}>A/S</Typography>
         </SideButton>
       </Tooltip>
     </SideButtonContainer>
@@ -42,7 +49,7 @@ export default function SideMenu() {
 }
 
 // Media Query
-const SideButtonContainer = styled('div')(({ theme }) => ({
+const SideButtonContainer = styled('div')(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none',
   },

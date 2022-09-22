@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 문의사항 정보
 
@@ -64,7 +64,7 @@ interface questionInitialState {
 };
 
 const QuestionInitialState: questionInitialState = {
-  pw: { password: '' },
+  pw: {password: ''},
   passwordState: false,
   totalPage: 0,
   totalElements: 0,
@@ -88,15 +88,21 @@ export const QuestionSlice = createSlice({
   name: 'question',
   initialState: QuestionInitialState,
   reducers: {
-    inputPassword: (state) => { state.passwordState = !(state.passwordState) },
+    inputPassword: (state) => {
+      state.passwordState = !(state.passwordState)
+    },
     setPassword: (
       state,
       action: PayloadAction<{ password: string }>
-    ) => { state.pw.password = action.payload.password },
+    ) => {
+      state.pw.password = action.payload.password
+    },
     setCurrentId: (
       state,
       action: PayloadAction<{ id: number }>
-    ) => { state.currentId = action.payload.id },
+    ) => {
+      state.currentId = action.payload.id
+    },
     getAllQuestions: (
       state,
       action: PayloadAction<{ questions: [], totalPage: number, currentPage: number, totalElements: number }>
@@ -131,7 +137,9 @@ export const QuestionSlice = createSlice({
           writer: string
         }
       }>
-    ) => { state.detail = action.payload.detail },
+    ) => {
+      state.detail = action.payload.detail
+    },
     updateCommentData: (
       state,
       action: PayloadAction<{ comments: [] }>
@@ -149,5 +157,6 @@ export const {
   getFaq,
   setFaqState,
   updateCommentData,
-  setDetailData } = QuestionSlice.actions;
+  setDetailData
+} = QuestionSlice.actions;
 export default QuestionSlice.reducer;

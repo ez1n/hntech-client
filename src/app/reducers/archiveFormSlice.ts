@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 자료실 글 등록
 
@@ -58,8 +58,8 @@ const ArchiveFormInitialState: archiveFormInitialState = {
     name: [],
     data: []
   },
-  archiveModifyContent: { categoryName: '', content: '', files: [], notice: '', title: '', },
-  archiveContent: { categoryName: '전체', content: '', notice: 'false', title: '' }
+  archiveModifyContent: {categoryName: '', content: '', files: [], notice: '', title: '',},
+  archiveContent: {categoryName: '전체', content: '', notice: 'false', title: ''}
 };
 
 export const ArchiveFormSlice = createSlice({
@@ -94,7 +94,9 @@ export const ArchiveFormSlice = createSlice({
       const newFile = state.archiveFile.data.filter((value, index) => index !== action.payload.num);
       state.archiveFile.data = newFile;
     },
-    resetArchiveFile: (state) => { state.archiveFile = { name: [], data: [] } },
+    resetArchiveFile: (state) => {
+      state.archiveFile = {name: [], data: []}
+    },
     copyArchiveDetailData: (
       state,
       action: PayloadAction<{
@@ -123,38 +125,48 @@ export const ArchiveFormSlice = createSlice({
     updateArchiveTitle: (
       state,
       action: PayloadAction<{ title: string }>
-    ) => { state.archiveContent.title = action.payload.title },
+    ) => {
+      state.archiveContent.title = action.payload.title
+    },
     updateArchiveContent: (
       state,
       action: PayloadAction<{ content: string }>
-    ) => { state.archiveContent.content = action.payload.content },
+    ) => {
+      state.archiveContent.content = action.payload.content
+    },
     updateArchiveNoticeChecked: (
       state,
       action: PayloadAction<{ isNotice: boolean }>
-    ) => { state.archiveContent.notice = String(action.payload.isNotice) },
+    ) => {
+      state.archiveContent.notice = String(action.payload.isNotice)
+    },
     updateArchiveCategory: (
       state,
       action: PayloadAction<{ categoryName: string }>
-    ) => { state.archiveContent.categoryName = action.payload.categoryName },
+    ) => {
+      state.archiveContent.categoryName = action.payload.categoryName
+    },
     resetArchiveState: (state) => {
-      state.archiveContent = { categoryName: '', content: '', notice: 'false', title: '' };
+      state.archiveContent = {categoryName: '', content: '', notice: 'false', title: ''};
     },
     modifyArchiveTitle: (
       state,
       action: PayloadAction<{ title: string }>
-    ) => { state.archiveModifyContent.title = action.payload.title },
+    ) => {
+      state.archiveModifyContent.title = action.payload.title
+    },
     modifyArchiveContent: (
       state,
       action: PayloadAction<{ content: string }>
-    ) => { state.archiveModifyContent.content = action.payload.content },
+    ) => {
+      state.archiveModifyContent.content = action.payload.content
+    },
     modifyArchiveNoticeChecked: (
       state,
       action: PayloadAction<{ isNotice: boolean }>
-    ) => { state.archiveModifyContent.notice = String(action.payload.isNotice) },
-    modifyArchiveCategory: (
-      state,
-      action: PayloadAction<{ categoryName: string }>
-    ) => { state.archiveModifyContent.categoryName = action.payload.categoryName },
+    ) => {
+      state.archiveModifyContent.notice = String(action.payload.isNotice)
+    },
     deleteArchiveOriginFile: (
       state,
       action: PayloadAction<{ num: number }>
@@ -180,6 +192,6 @@ export const {
   modifyArchiveTitle,
   modifyArchiveContent,
   modifyArchiveNoticeChecked,
-  modifyArchiveCategory,
-  deleteArchiveOriginFile } = ArchiveFormSlice.actions;
+  deleteArchiveOriginFile
+} = ArchiveFormSlice.actions;
 export default ArchiveFormSlice.reducer;

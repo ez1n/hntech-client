@@ -1,10 +1,10 @@
 import React from 'react';
 import './style.css';
-import { adminApi } from '../network/admin';
-import { api } from '../network/network';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { changeMode } from '../app/reducers/managerModeSlice';
-import { clickLogoutGoBack, clickManagerLogin } from '../app/reducers/dialogSlice';
+import {adminApi} from '../network/admin';
+import {api} from '../network/network';
+import {useAppDispatch, useAppSelector} from '../app/hooks';
+import {changeMode} from '../app/reducers/managerModeSlice';
+import {clickLogoutGoBack, clickManagerLogin} from '../app/reducers/dialogSlice';
 import {
   Box,
   Button,
@@ -31,22 +31,22 @@ export default function Footer() {
         localStorage.removeItem("login");
         dispatch(clickLogoutGoBack());
         const isLogin = localStorage.getItem("login");
-        dispatch(changeMode({ login: isLogin }));
+        dispatch(changeMode({login: isLogin}));
       })
   };
 
   return (
-    <Box sx={{ p: 3, pb: 0, mt: 10, backgroundColor: '#042709' }}>
+    <Box sx={{p: 3, pb: 0, mt: 10, backgroundColor: '#042709'}}>
       {/* 로고 */}
       <LogoStack direction='row' spacing={2}>
-        <img className='logoImage' src={`${api.baseUrl()}/files/admin/${logo.serverFilename}`} alt='HNTECH logo' />
-        <img className='logoKor' src='/images/korLogo.png' alt='korean logo' />
+        <img className='logoImage' src={`${api.baseUrl()}/files/admin/${logo.serverFilename}`} alt='HNTECH logo'/>
+        <img className='logoKor' src='/images/korLogo.png' alt='korean logo'/>
       </LogoStack>
 
       {/* 회사 정보 */}
       <FooterStack direction='row'>
         <InfoBox>
-          <ContentTypography sx={{ mb: 1 }}>
+          <ContentTypography sx={{mb: 1}}>
             본사 : {footer.address}
           </ContentTypography>
 
@@ -59,27 +59,27 @@ export default function Footer() {
               FAX : {footer.fax}
             </ContentTypography>
 
-            <ContentTypography sx={{color: '#e5ff3f', fontSize: 'large', fontWeight: 'bold' }}>
+            <ContentTypography sx={{color: '#e5ff3f', fontSize: 'large', fontWeight: 'bold'}}>
               A/S : {footer.afterService}
             </ContentTypography>
           </ContentBox>
 
-          <ContentTypography sx={{ mt: 2 }}>
+          <ContentTypography sx={{mt: 2}}>
             https://www.hntec.co.kr
           </ContentTypography>
         </InfoBox>
 
         {/* FAMILY SITE */}
         <SiteBox>
-          <ContentTypography sx={{ mb: 1 }}>
+          <ContentTypography sx={{mb: 1}}>
             FAMILY SITE
           </ContentTypography>
 
-          {sites.map((item: {buttonName: string, link: string}, index) => (
-            <a href={item.link} target='_blank' key={index}>
-            <ContentTypography sx={{'&: hover': {color: '#ccff66'}}}>
-              {item.buttonName}
-            </ContentTypography>
+          {sites.map((item: { buttonName: string, link: string, id: number }) => (
+            <a className={'familySite'} href={item.link} target='_blank' key={item.id}>
+              <ContentTypography sx={{'&: hover': {color: '#ccff66'}}}>
+                {item.buttonName}
+              </ContentTypography>
             </a>
           ))}
         </SiteBox>
@@ -101,7 +101,7 @@ export default function Footer() {
         </Button>
       </Box>
 
-      <Login />
+      <Login/>
 
       {/* 로그아웃 dialog */}
       <CancelModal
@@ -116,7 +116,7 @@ export default function Footer() {
   )
 };
 
-const LogoStack = styled(Stack)(({ theme }) => ({
+const LogoStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {
     width: '80% !important'
   },
@@ -127,7 +127,7 @@ const LogoStack = styled(Stack)(({ theme }) => ({
   alignItems: 'center'
 })) as typeof Stack;
 
-const FooterStack = styled(Stack)(({ theme }) => ({
+const FooterStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {
     width: '80% !important'
   },
@@ -135,7 +135,7 @@ const FooterStack = styled(Stack)(({ theme }) => ({
   margin: 'auto'
 })) as typeof Stack;
 
-const InfoBox = styled(Box)(({ theme }) => ({
+const InfoBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     flexWrap: 'wrap',
     flex: 0.6,
@@ -144,7 +144,7 @@ const InfoBox = styled(Box)(({ theme }) => ({
   flex: 0.7
 })) as typeof Box;
 
-const ContentBox = styled(Box)(({ theme }) => ({
+const ContentBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     flexWrap: 'wrap'
   },
@@ -152,7 +152,7 @@ const ContentBox = styled(Box)(({ theme }) => ({
   alignItems: 'center'
 })) as typeof Box;
 
-const ContentTypography = styled(Typography)(({ theme }) => ({
+const ContentTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 'small'
   },
@@ -165,7 +165,7 @@ const ContentTypography = styled(Typography)(({ theme }) => ({
   marginRight: 15
 })) as typeof Typography;
 
-const SiteBox = styled(Box)(({ theme }) => ({
+const SiteBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     flex: 0.4
   },

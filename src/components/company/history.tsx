@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { adminApi } from '../../network/admin';
-import { api } from '../../network/network';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { changeMode } from '../../app/reducers/managerModeSlice';
+import React, {useEffect} from 'react';
+import {adminApi} from '../../network/admin';
+import {api} from '../../network/network';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {changeMode} from '../../app/reducers/managerModeSlice';
 import {onLoading} from "../../app/reducers/dialogSlice";
-import { getHistoryImage, updateHistory} from '../../app/reducers/companyModifySlice';
-import { Box, Container, Typography, styled } from '@mui/material';
+import {getHistoryImage, updateHistory} from '../../app/reducers/companyModifySlice';
+import {Box, Container, Typography, styled} from '@mui/material';
 import EditButton from '../editButton';
 
 interface propsType {
   success: () => void
 }
 
-export default function History({ success }: propsType) {
+export default function History({success}: propsType) {
   const dispatch = useAppDispatch();
 
   const historyForm = new FormData(); // 회사 연혁 (전송 데이터)
@@ -23,13 +23,13 @@ export default function History({ success }: propsType) {
   // 회사 연혁 받아오기
   useEffect(() => {
     adminApi.getHistory()
-      .then(res => dispatch(getHistoryImage({ historyImage: res })))
+      .then(res => dispatch(getHistoryImage({historyImage: res})))
       .catch(error => console.log(error))
   }, []);
 
   // 회사 연혁 사진 업로드
   const updateHistoryImage = (event: any) => {
-    dispatch(updateHistory({ file: event.target.files[0], path: URL.createObjectURL(event.target.files[0]) }))
+    dispatch(updateHistory({file: event.target.files[0], path: URL.createObjectURL(event.target.files[0])}))
   };
 
   // 회사연혁 변경 요청
@@ -41,7 +41,7 @@ export default function History({ success }: propsType) {
       .then(res => {
         dispatch(onLoading());
         success();
-        dispatch(getHistoryImage({ historyImage: res }))
+        dispatch(getHistoryImage({historyImage: res}))
       })
       .catch(error => {
         dispatch(onLoading());
@@ -49,15 +49,16 @@ export default function History({ success }: propsType) {
         if (error.response.status === 401) {
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({ login: isLogin }));
-        };
+          dispatch(changeMode({login: isLogin}));
+        }
+        ;
       })
   };
 
   return (
     <TotalBox>
       {/* 소제목 */}
-      <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Container sx={{display: 'flex', justifyContent: 'center'}}>
         <TitleTypography variant='h5'>
           회사 연혁
         </TitleTypography>
@@ -66,44 +67,45 @@ export default function History({ success }: propsType) {
       {/* 수정 버튼 */}
       <Spacing>
         {managerMode &&
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <label className='imageUploadButton' htmlFor='historyInput'>
-              이미지 가져오기
-              <input
-                type='file'
-                accept='image/*'
-                id='historyInput'
-                onChange={updateHistoryImage} />
-            </label>
-            <EditButton name='수정' onClick={postHistory} />
-          </Box>}
+            <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                <label className='imageUploadButton' htmlFor='historyInput'>
+                    이미지 가져오기
+                    <input
+                        type='file'
+                        accept='image/*'
+                        id='historyInput'
+                        onChange={updateHistoryImage}/>
+                </label>
+                <EditButton name='수정' onClick={postHistory}/>
+            </Box>}
       </Spacing>
 
       {/* 회사 연혁 */}
-      <Box sx={{ textAlign: 'center', mt: 1 }}>
+      <Box sx={{textAlign: 'center', mt: 1}}>
         {managerMode ?
           <Container
             sx={{
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              minHeight: 300,
-              overflow: 'scroll'
+              height: 350,
+              overflow: 'auto'
             }}>
-            <img src={history.path === '' ? `${api.baseUrl()}/files/admin/${history.serverFilename}` : history.path} alt='회사 연혁' width={'80%'} />
+            <img src={history.path === '' ? `${api.baseUrl()}/files/admin/${history.serverFilename}` : history.path}
+                 alt='회사 연혁' width={'80%'}/>
           </Container> :
-          <img className='companyImage' src={`${api.baseUrl()}/files/admin/${history.serverFilename}`} alt='회사 연혁' />
+          <img className='companyImage' src={`${api.baseUrl()}/files/admin/${history.serverFilename}`} alt='회사 연혁'/>
         }
       </Box>
     </TotalBox>
   )
 };
 
-const Spacing = styled(Container)(({ theme }) => ({
+const Spacing = styled(Container)(({theme}) => ({
   height: 50
 })) as typeof Container;
 
-const TotalBox = styled(Box)(({ theme }) => ({
+const TotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     padding: 10,
   },
@@ -111,7 +113,7 @@ const TotalBox = styled(Box)(({ theme }) => ({
   paddingBottom: 0
 })) as typeof Box;
 
-const TitleTypography = styled(Typography)(({ theme }) => ({
+const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18
   },

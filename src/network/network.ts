@@ -1,14 +1,11 @@
 import axios from 'axios';
 
-const SUCCESS = 200
-const BAD_REQUEST = 400;
-
 axios.defaults.withCredentials = true;
 
 class Api {
   // url
   baseUrl() {
-    return 'http://13.124.84.147'
+    return 'http://13.124.84.147:8080'
   };
 
   // 로그인 확인

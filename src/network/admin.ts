@@ -1,8 +1,5 @@
 import axios from "axios";
 
-const SUCCESS = 200
-const BAD_REQUEST = 400;
-
 class AdminApi {
   // 로그인
   async postLogin(password: {}) {

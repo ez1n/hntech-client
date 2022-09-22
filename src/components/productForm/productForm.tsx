@@ -1,7 +1,9 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {productApi} from '../../network/product';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {clickProductFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
+import {changeMode} from '../../app/reducers/managerModeSlice';
 import {
   addProductCategory,
   addProductDescription,
@@ -36,9 +38,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
-import {productApi} from '../../network/product';
-import {getProductList} from '../../app/reducers/productSlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
 import Loading from '../loading';
 
 interface propsType {
@@ -158,7 +157,7 @@ export default function ProductForm({success, errorToast}: propsType) {
       item.originalFilename === productData.originalFilename &&
       productApi.putUpdateProductDocFiles(productId, productData.id, {filename: item.type})
         .then(res => {
-          navigate('/product');
+          navigate('/client-product');
           dispatch(onLoading());
           if (index === docFiles.length - 1) success();
         })
@@ -183,7 +182,7 @@ export default function ProductForm({success, errorToast}: propsType) {
           if (docFiles.length === 0) {
             success();
             dispatch(onLoading());
-            navigate('/product');
+            navigate('/client-product');
           } else {
             res.files.docFiles.map((item: {
               id: number,

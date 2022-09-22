@@ -109,7 +109,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           console.log(res)
           dispatch(resetArchiveState());
           dispatch(onLoading());
-          navigate('/archive');
+          navigate('/client-archive');
         })
         .catch(error => {
           dispatch(onLoading());
@@ -194,7 +194,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             multiline
             minRows={15}
             onChange={event => dispatch(updateArchiveContent({content: event.target.value}))}
-            sx={{width: '100%',  overflow: 'auto'}}/>
+            sx={{width: '100%', overflow: 'auto'}}/>
         </Box>
 
         {/* 첨부파일 */}
@@ -249,7 +249,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
         text1={'작성중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
-          navigate('/archive');
+          navigate('/client-archive');
           dispatch(archiveFormGoBack());
         }}
         closeAction={() => dispatch(archiveFormGoBack())}/>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {categoryApi} from "../../network/category";
 import {ConnectableElement, useDrag, useDrop} from 'react-dnd';
 import {useAppDispatch} from "../../app/hooks";

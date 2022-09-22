@@ -41,7 +41,7 @@ interface managerInitialState {
       afterService: string,
       fax: string,
       phone: string,
-      sites: { buttonName: string, link: string } []
+      sites: { buttonName: string, link: string, id: number } []
     },
     receiveEmailAccount: string,
     sendEmailAccount: string,
@@ -57,14 +57,14 @@ interface managerInitialState {
     receiveEmailAccount: string,
     sendEmailAccount: string,
     sendEmailPassword: string,
-    sites: { buttonName: string, link: string }[]
+    sites: { buttonName: string, link: string, id: number }[]
   },
   footer: {
     address: string,
     afterService: string,
     fax: string,
     phone: string,
-    sites: { buttonName: string, link: string }[]
+    sites: { buttonName: string, link: string, id: number }[]
   },
   updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string },
   logo: {
@@ -192,7 +192,7 @@ export const ManagerSlice = createSlice({
             afterService: string,
             fax: string,
             phone: string,
-            sites: { buttonName: string, link: string }[]
+            sites: { buttonName: string, link: string, id: number }[]
           },
           receiveEmailAccount: string,
           sendEmailAccount: string,
@@ -214,7 +214,7 @@ export const ManagerSlice = createSlice({
             afterService: string,
             fax: string,
             phone: string,
-            sites: { buttonName: string, link: string }[]
+            sites: { buttonName: string, link: string, id: number }[]
           },
           receiveEmailAccount: string,
           sendEmailAccount: string,
@@ -411,8 +411,18 @@ export const ManagerSlice = createSlice({
       state.documentFile.tax = action.payload.tax
     },
     addSitesUploadButton: state => {
-      const newSites = [...state.newPanelData.sites, {buttonName: '', link: ''}];
-      state.newPanelData.sites = newSites;
+      const siteLen = state.newPanelData.sites['length'];
+      if (siteLen === 0) {
+        const newSites = [...state.newPanelData.sites, {buttonName: '', link: '', id: 0}];
+        state.newPanelData.sites = newSites;
+      } else {
+        const newSites = [...state.newPanelData.sites, {
+          buttonName: '',
+          link: '',
+          id: state.newPanelData.sites[siteLen - 1].id + 1
+        }];
+        state.newPanelData.sites = newSites;
+      }
     },
     deleteSitesUploadButton: (
       state,

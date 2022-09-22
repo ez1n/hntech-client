@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import HTMLReactParser from 'html-react-parser';
-import { useAppSelector } from '../../app/hooks';
-import { Box, Stack, Typography, styled } from '@mui/material';
+import {useAppSelector} from '../../app/hooks';
+import {Box, Stack, Typography, styled} from '@mui/material';
 
 export default function QuestionContent() {
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
@@ -34,9 +34,9 @@ export default function QuestionContent() {
       </Stack>
 
       {/* 문의 내용 */}
-      <Box sx={{ p: 3, minHeight: 300 }}>
+      <Box sx={{p: 3, minHeight: 300}}>
         {detail.content.split('\n').map((value, index) => (
-          <Typography key={index} sx={{ fontSize: 18 }}>
+          <Typography key={index} sx={{fontSize: 18}}>
             {HTMLReactParser(value)}
           </Typography>
         ))}
@@ -45,7 +45,7 @@ export default function QuestionContent() {
   )
 };
 
-const DetailTitleBox = styled(Box)(({ theme }) => ({
+const DetailTitleBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     padding: 10
   },
@@ -53,7 +53,7 @@ const DetailTitleBox = styled(Box)(({ theme }) => ({
   padding: 15
 })) as typeof Box;
 
-const DetailTitleTypography = styled(Typography)(({ theme }) => ({
+const DetailTitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 18
   },
@@ -62,7 +62,7 @@ const DetailTitleTypography = styled(Typography)(({ theme }) => ({
   textAlign: 'center'
 })) as typeof Typography;
 
-const ContentTypography = styled(Typography)(({ theme }) => ({
+const ContentTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 15
   },

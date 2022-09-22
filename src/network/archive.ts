@@ -1,8 +1,5 @@
 import axios from "axios";
 
-const SUCCESS = 200
-const BAD_REQUEST = 400;
-
 class ArchiveApi {
   // 자료실 목록 받아오기
   async getArchives(pageNumber: number) {

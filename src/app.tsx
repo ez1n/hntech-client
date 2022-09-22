@@ -18,6 +18,7 @@ import {getCompanyImage} from './app/reducers/companyModifySlice';
 import {Box, Typography} from '@mui/material';
 import ReportProblemRoundedIcon from '@mui/icons-material/ReportProblemRounded';
 import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {ErrorBoundary} from 'react-error-boundary';
 import Header from './components/header';
 import SideMenu from './components/sideMenu';
@@ -144,7 +145,7 @@ export default function App() {
                 <Company success={success}/>
               }></Route>
 
-              <Route path='/product' element={
+              <Route path='/client-product' element={
                 <Products successDelete={successDelete}/>
               }></Route>
 
@@ -176,11 +177,11 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/data' element={
+              <Route path='/document' element={
                 <MainData/>
               }></Route>
 
-              <Route path='/question' element={
+              <Route path='/client-question' element={
                 <Questions/>
               }></Route>
 
@@ -202,7 +203,7 @@ export default function App() {
                   successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/archive' element={
+              <Route path='/client-archive' element={
                 <Archives errorToast={errorToast}/>
               }></Route>
 

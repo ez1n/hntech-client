@@ -1,6 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import {useNavigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {
   clickChangeIntroduce,
   clickChangeHistory,
@@ -9,8 +9,7 @@ import {
   clickChangeLocation,
   clickChangeMode
 } from '../../app/reducers/companySlice';
-import { styled } from '@mui/system';
-import { Box, Button, Container, MenuItem, Select, Stack, Typography } from '@mui/material';
+import {Box, Button, Container, MenuItem, Select, Stack, Typography, styled} from '@mui/material';
 
 export default function CompanySideMenu() {
   const navigate = useNavigate();
@@ -23,9 +22,9 @@ export default function CompanySideMenu() {
 
       <TitleStack>
         {/* title (회사소개) */}
-        <Container sx={{ width: 'max-content' }}>
+        <Container sx={{width: 'max-content'}}>
           <Typography
-            variant='h5' sx={{ pl: 1, pb: 2, width: 'max-content' }}>
+            variant='h5' sx={{pl: 1, pb: 2, width: 'max-content'}}>
             회사소개
           </Typography>
         </Container>
@@ -67,19 +66,19 @@ export default function CompanySideMenu() {
 
       <MenuSelect
         defaultValue={companyMode}
-        onChange={(event: any) => dispatch(clickChangeMode({ mode: event?.target.value }))}
+        onChange={(event: any) => dispatch(clickChangeMode({mode: event?.target.value}))}
         size='small'>
         <MenuList value='INTRODUCE'>인사말</MenuList>
         <MenuList value='HISTORY'>회사연혁</MenuList>
-        <MenuList value='CHART'> 조직도</MenuList >
+        <MenuList value='CHART'> 조직도</MenuList>
         <MenuList value='INFORMATION'>CI 소개</MenuList>
         <MenuList value='LOCATION'>찾아오시는 길</MenuList>
       </MenuSelect>
-    </SideMenuBox >
+    </SideMenuBox>
   )
 };
 
-const SideMenuBox = styled(Box)(({ theme }) => ({
+const SideMenuBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     justifyContent: 'center',
   },
@@ -90,7 +89,7 @@ const SideMenuBox = styled(Box)(({ theme }) => ({
   justifyContent: 'flex-end'
 })) as typeof Box;
 
-const TitleStack = styled(Stack)(({ theme }) => ({
+const TitleStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     borderLeft: 'none',
     display: 'none'
@@ -115,7 +114,7 @@ const MenuButton = styled(Button)(() => ({
   }
 })) as typeof Button;
 
-const MenuSelect = styled(Select)(({ theme }) => ({
+const MenuSelect = styled(Select)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'flex',
     width: '80%'

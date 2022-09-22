@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { questionApi } from '../../network/question';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { setCurrentId, setDetailData, setFaqState } from '../../app/reducers/questionSlice';
-import { getAllQuestions, setPassword, inputPassword, getFaq } from '../../app/reducers/questionSlice';
+import React, {useEffect, useState} from 'react';
+import {questionApi} from '../../network/question';
+import {useNavigate} from 'react-router-dom';
+import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {setCurrentId, setDetailData, setFaqState} from '../../app/reducers/questionSlice';
+import {getAllQuestions, setPassword, inputPassword, getFaq} from '../../app/reducers/questionSlice';
 import {
   Box,
   Button,
@@ -38,7 +38,7 @@ export default function QuestionItem() {
   useEffect(() => {
     // 자주하는 질문 목록 받아오기
     questionApi.getFAQ()
-      .then(res => dispatch(getFaq({ faq: res.questions })))
+      .then(res => dispatch(getFaq({faq: res.questions})))
       .catch(error => console.log('faq error', error))
     // 문의 목록 받아오기
     questionApi.getAllQuestions(0)
@@ -66,28 +66,32 @@ export default function QuestionItem() {
       return name;
     }
     switch (name.length) {
-      case 2: return name.replace(name.substring(1,), "*");
-      case 3: return name.replace(name.substring(1,), "**");
-      default: return name.replace(name.substring(1,), "***");
+      case 2:
+        return name.replace(name.substring(1,), "*");
+      case 3:
+        return name.replace(name.substring(1,), "**");
+      default:
+        return name.replace(name.substring(1,), "***");
     }
   };
 
   // 비밀번호 입력
   const openDetail = (id: number) => {
     validate() &&
-      questionApi.postPassword(id, pw)
-        .then(res => {
-          dispatch(inputPassword());
-          dispatch(setDetailData({ detail: res }));
-          navigate('/question-detail');
-        })
-        .catch(error => setPasswordErrorMsg('비밀번호를 확인해 주세요'))
+    questionApi.postPassword(id, pw)
+      .then(res => {
+        dispatch(inputPassword());
+        dispatch(setDetailData({detail: res}));
+        navigate('/question-detail');
+      })
+      .catch(error => setPasswordErrorMsg('비밀번호를 확인해 주세요'))
   };
 
   const onOpenDetailKeyUp = (event: any, id: number) => {
     if (event.key === 'Enter') {
       openDetail(id)
-    };
+    }
+    ;
   };
 
   // 게시글 자세히 보기
@@ -95,13 +99,13 @@ export default function QuestionItem() {
     if (managerMode) {
       questionApi.getQuestionByAdmin(questionId)
         .then(res => {
-          dispatch(setDetailData({ detail: res }));
-          dispatch(setFaqState({ faq: false }));
+          dispatch(setDetailData({detail: res}));
+          dispatch(setFaqState({faq: false}));
           navigate('/question-detail');
         })
     } else {
       dispatch(inputPassword());
-      dispatch(setCurrentId({ id: questionId }));
+      dispatch(setCurrentId({id: questionId}));
     }
   };
 
@@ -109,8 +113,8 @@ export default function QuestionItem() {
   const getFAQDetail = (questionId: number) => {
     questionApi.getFAQDetail(questionId)
       .then(res => {
-        dispatch(setDetailData({ detail: res }));
-        dispatch(setFaqState({ faq: true }));
+        dispatch(setDetailData({detail: res}));
+        dispatch(setFaqState({faq: true}));
         navigate('/question-detail');
       })
       .catch(error => console.log(error))
@@ -130,21 +134,27 @@ export default function QuestionItem() {
 
   return (
     <>
-      <Box sx={{ borderTop: '3px solid #2E7D32', borderBottom: '3px solid #3B6C46' }}>
+      <Box sx={{borderTop: '3px solid #2E7D32', borderBottom: '3px solid #3B6C46'}}>
         {/* 분류 */}
-        <Box sx={{ display: 'flex', flex: 1, p: 2, borderBottom: '3px solid #3B6C46' }}>
-          <Title sx={{ flex: 0.1 }}>번호</Title>
-          <Title sx={{ flex: 0.5 }}>제목</Title>
-          <Title sx={{ flex: 0.1 }}>처리상태</Title>
-          <Title sx={{ flex: 0.1 }}>작성자</Title>
-          <Title sx={{ flex: 0.2 }}>작성일</Title>
+        <Box sx={{display: 'flex', flex: 1, p: 2, borderBottom: '3px solid #3B6C46'}}>
+          <Title sx={{flex: 0.1}}>번호</Title>
+          <Title sx={{flex: 0.5}}>제목</Title>
+          <Title sx={{flex: 0.1}}>처리상태</Title>
+          <Title sx={{flex: 0.1}}>작성자</Title>
+          <Title sx={{flex: 0.2}}>작성일</Title>
         </Box>
 
         {/* FAQ */}
         {faq.map((item) => (
-          <Box key={item.id} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46', backgroundColor: 'rgba(46, 125, 50, 0.1)' }}>
-            <List sx={{ flex: 0.1 }}>
-              <Icon />
+          <Box key={item.id} sx={{
+            display: 'flex',
+            flex: 1,
+            p: 1.5,
+            borderBottom: '1px solid #3B6C46',
+            backgroundColor: 'rgba(46, 125, 50, 0.1)'
+          }}>
+            <List sx={{flex: 0.1}}>
+              <Icon/>
             </List>
             <List
               onClick={() => getFAQDetail(item.id)}
@@ -161,19 +171,19 @@ export default function QuestionItem() {
                 {item.title}
               </List>
               {item.new == 'true' &&
-                <New>[new]</New>
+                  <New>[new]</New>
               }
             </List>
-            <List sx={{ flex: 0.1 }}>{item.status}</List>
-            <List sx={{ flex: 0.1 }}>{masking(item.writer)}</List>
-            <List sx={{ flex: 0.2 }}>{item.createTime}</List>
+            <List sx={{flex: 0.1}}>{item.status}</List>
+            <List sx={{flex: 0.1}}>{masking(item.writer)}</List>
+            <List sx={{flex: 0.2}}>{item.createTime}</List>
           </Box>
         ))}
 
         {/* 목록 */}
         {questions.map((item, index: number) => (
-          <Box key={item.id} sx={{ display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46' }}>
-            <List sx={{ flex: 0.1 }}>{totalElements - index}</List>
+          <Box key={item.id} sx={{display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46'}}>
+            <List sx={{flex: 0.1}}>{totalElements - index}</List>
             <List
               onClick={() => getQuestionByAdmin(item.id)}
               sx={{
@@ -189,50 +199,50 @@ export default function QuestionItem() {
                 {item.title}
               </List>
               {item.new == 'true' &&
-                <New>[new]</New>
+                  <New>[new]</New>
               }
             </List>
-            <List sx={{ flex: 0.1 }}>{item.status}</List>
-            <List sx={{ flex: 0.1 }}>{masking(item.writer)}</List>
-            <List sx={{ flex: 0.2 }}>{item.createTime}</List>
+            <List sx={{flex: 0.1}}>{item.status}</List>
+            <List sx={{flex: 0.1}}>{masking(item.writer)}</List>
+            <List sx={{flex: 0.2}}>{item.createTime}</List>
           </Box>
         ))}
       </Box>
 
-      <Spacing />
+      <Spacing/>
 
       <Stack>
         <Pagination
           count={totalPage}
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
-          sx={{ m: '0 auto' }} />
+          sx={{m: '0 auto'}}/>
       </Stack>
 
       {/* dialog */}
       {!managerMode &&
-        <Dialog
-          open={passwordState}
-          onClose={() => dispatch(inputPassword())}
-          sx={{ textAlign: 'center' }}>
-          <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
-          <DialogContent>
-            <TextField
-              type={'password'}
-              size={'small'}
-              error={passwordErrorMsg ? true : false}
-              helperText={passwordErrorMsg}
-              inputProps={{ maxLength: 4 }}
-              onChange={event => dispatch(setPassword({ password: event.target.value }))}
-              onKeyUp={event => onOpenDetailKeyUp(event, currentId)} />
-          </DialogContent>
+          <Dialog
+              open={passwordState}
+              onClose={() => dispatch(inputPassword())}
+              sx={{textAlign: 'center'}}>
+              <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
+              <DialogContent>
+                  <TextField
+                      type={'password'}
+                      size={'small'}
+                      error={passwordErrorMsg ? true : false}
+                      helperText={passwordErrorMsg}
+                      inputProps={{maxLength: 4}}
+                      onChange={event => dispatch(setPassword({password: event.target.value}))}
+                      onKeyUp={event => onOpenDetailKeyUp(event, currentId)}/>
+              </DialogContent>
 
-          <DialogActions sx={{ justifyContent: 'center' }}>
-            <Button onClick={() => openDetail(currentId)}>
-              확인
-            </Button>
-            <Button onClick={() => dispatch(inputPassword())}>취소</Button>
-          </DialogActions>
-        </Dialog>
+              <DialogActions sx={{justifyContent: 'center'}}>
+                  <Button onClick={() => openDetail(currentId)}>
+                      확인
+                  </Button>
+                  <Button onClick={() => dispatch(inputPassword())}>취소</Button>
+              </DialogActions>
+          </Dialog>
       }
     </>
   )
@@ -242,7 +252,7 @@ const Spacing = styled(Container)(() => ({
   height: 50
 })) as typeof Container;
 
-const Title = styled(Typography)(({ theme }) => ({
+const Title = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 17,
   },
@@ -254,7 +264,7 @@ const Title = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold'
 })) as typeof Typography;
 
-const List = styled(Box)(({ theme }) => ({
+const List = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 13,
   },
@@ -266,7 +276,7 @@ const List = styled(Box)(({ theme }) => ({
   fontSize: 15
 })) as typeof Box;
 
-const New = styled(Typography)(({ theme }) => ({
+const New = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 10,
   },
@@ -279,7 +289,7 @@ const New = styled(Typography)(({ theme }) => ({
   color: 'lightseagreen'
 })) as typeof Typography;
 
-const Icon = styled(ErrorIcon)(({ theme }) => ({
+const Icon = styled(ErrorIcon)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 17,
   },

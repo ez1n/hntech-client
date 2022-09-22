@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { Box, Button, styled } from '@mui/material';
-import { fileApi } from '../../network/file';
+import {useAppSelector} from '../../app/hooks';
+import {fileApi} from '../../network/file';
+import {Box, Button, styled} from '@mui/material';
 
 export default function Files() {
   const docFiles = useAppSelector(state => state.product.productDetail.files.docFiles)
@@ -49,7 +49,7 @@ export default function Files() {
 };
 
 // 버튼 스타일
-const FileButton = styled(Button)(({ theme }) => ({
+const FileButton = styled(Button)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 12,
     paddingTop: 5,

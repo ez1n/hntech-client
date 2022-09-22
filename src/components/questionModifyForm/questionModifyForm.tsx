@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { questionApi } from '../../network/question';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { clickQuestionModifyFormGoBack } from '../../app/reducers/dialogSlice';
-import { modifyQuestionTitle, modifyQuestionContent } from '../../app/reducers/questionFormSlice';
+import React, {useState} from 'react';
+import {questionApi} from '../../network/question';
+import {useNavigate} from 'react-router-dom';
+import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {clickQuestionModifyFormGoBack} from '../../app/reducers/dialogSlice';
+import {changeMode} from '../../app/reducers/managerModeSlice';
+import {modifyQuestionTitle, modifyQuestionContent} from '../../app/reducers/questionFormSlice';
 import {
   setFaqState,
   setDetailData
@@ -22,14 +23,13 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
-import { changeMode } from '../../app/reducers/managerModeSlice';
 
 interface propsType {
   successModify: () => void,
   errorToast: (message: string) => void
 }
 
-export default function QuestionModifyForm({ successModify, errorToast }: propsType) {
+export default function QuestionModifyForm({successModify, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -53,38 +53,43 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
   const putQuestion = (questionId: number, currentQuestion: { title: string, content: string }) => {
     if (managerMode) {
       validate() &&
-        questionApi.putUpdateFAQ(questionId, { title: currentQuestion.title, content: currentQuestion.content, faq: faqState })
-          .then(res => {
-            successModify();
-            dispatch(setDetailData({ detail: res }));
-            navigate('/question-detail');
-          })
-          .catch(error => console.log(error))
+      questionApi.putUpdateFAQ(questionId, {
+        title: currentQuestion.title,
+        content: currentQuestion.content,
+        faq: faqState
+      })
+        .then(res => {
+          successModify();
+          dispatch(setDetailData({detail: res}));
+          navigate('/question-detail');
+        })
+        .catch(error => console.log(error))
     } else {
       validate() &&
-        questionApi.putQuestion(questionId, currentQuestion)
-          .then(res => {
-            successModify();
-            dispatch(setDetailData({ detail: res }));
-            navigate('/question-detail');
-          })
-          .catch(error => {
-            errorToast(error.response.data.message);
-            if (error.response.status === 401) {
-              localStorage.removeItem("login");
-              const isLogin = localStorage.getItem("login");
-              dispatch(changeMode({ login: isLogin }));
-            };
-          })
+      questionApi.putQuestion(questionId, currentQuestion)
+        .then(res => {
+          successModify();
+          dispatch(setDetailData({detail: res}));
+          navigate('/question-detail');
+        })
+        .catch(error => {
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({login: isLogin}));
+          }
+          ;
+        })
     }
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{mt: 5}}>
       {/* 소제목 */}
       <Typography variant='h5' p={1}>문의사항 수정</Typography>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 문의 글쓰기 폼 */}
       <Box sx={{
@@ -102,15 +107,15 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
             type='text'
             value={currentQuestion.title}
             required={true}
-            onChange={event => dispatch(modifyQuestionTitle({ title: event?.target.value }))}
+            onChange={event => dispatch(modifyQuestionTitle({title: event?.target.value}))}
             error={titleErrorMsg ? true : false}
             helperText={titleErrorMsg}
             placeholder='제목을 입력해 주세요'
             inputProps={{
-              style: { fontSize: 20 },
+              style: {fontSize: 20},
               maxLength: 30
             }}
-            sx={{ width: '100%' }}
+            sx={{width: '100%'}}
           />
         </Box>
 
@@ -131,30 +136,31 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
                   fontSize: 20,
                 }
               }}
-              sx={{ mr: 2, width: '15%' }}
+              sx={{mr: 2, width: '15%'}}
             />
 
             {managerMode &&
-              <FormControlLabel
-                control={<Checkbox
-                  defaultChecked={faqState === 'true' ? true : false}
-                  onChange={event => dispatch(setFaqState({ faq: event.target.checked }))}
-                  sx={{
-                    color: 'darkgrey',
-                    '&.Mui-checked': {
-                      color: 'green',
-                    },
-                  }} />}
-                label='FAQ'
-                labelPlacement='start'
-                sx={{ color: 'darkgrey' }} />
+                <FormControlLabel
+                    control={<Checkbox
+                      defaultChecked={faqState === 'true' ? true : false}
+                      onChange={event => dispatch(setFaqState({faq: event.target.checked}))}
+                      sx={{
+                        color: 'darkgrey',
+                        '&.Mui-checked': {
+                          color: 'green',
+                        },
+                      }}/>}
+                    label='FAQ'
+                    labelPlacement='start'
+                    sx={{color: 'darkgrey'}}/>
             }
 
           </Stack>
 
-          <List sx={{ mt: 1 }}>
-            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 이름은 꼭 실명으로 기재해 주세요.</ListItem>
-            <ListItem sx={{ userSelect: 'none', color: 'darkgrey' }}>※ 확인용 비밀번호는 숫자 4자리를 입력해 주세요. 답변을 확인할 때 사용됩니다.</ListItem>
+          <List sx={{mt: 1}}>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 이름은 꼭 실명으로 기재해 주세요.</ListItem>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 확인용 비밀번호는 숫자 4자리를 입력해 주세요. 답변을 확인할 때
+              사용됩니다.</ListItem>
           </List>
         </Box>
 
@@ -166,24 +172,24 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
             multiline
             minRows={15}
             required={true}
-            onChange={event => dispatch(modifyQuestionContent({ content: event?.target.value }))}
+            onChange={event => dispatch(modifyQuestionContent({content: event?.target.value}))}
             placeholder='문의사항을 작성해 주세요'
             inputProps={{
               style: {
                 fontSize: 20,
               }
             }}
-            sx={{ width: '100%' }}
+            sx={{width: '100%'}}
           />
         </Box>
       </Box>
 
-      <Spacing />
+      <Spacing/>
 
       {/* 버튼 */}
-      <Spacing sx={{ textAlign: 'center' }}>
-        <EditButton name='변경완료' onClick={() => putQuestion(detail.id, currentQuestion)} />
-        <EditButton name='변경취소' onClick={() => dispatch(clickQuestionModifyFormGoBack())} />
+      <Spacing sx={{textAlign: 'center'}}>
+        <EditButton name='변경완료' onClick={() => putQuestion(detail.id, currentQuestion)}/>
+        <EditButton name='변경취소' onClick={() => dispatch(clickQuestionModifyFormGoBack())}/>
       </Spacing>
 
       {/* 변경취소 Dialog */}
@@ -196,8 +202,8 @@ export default function QuestionModifyForm({ successModify, errorToast }: propsT
           navigate('/question-detail');
           dispatch(clickQuestionModifyFormGoBack());
         }}
-        closeAction={() => dispatch(clickQuestionModifyFormGoBack())} />
-    </Container >
+        closeAction={() => dispatch(clickQuestionModifyFormGoBack())}/>
+    </Container>
   )
 };
 

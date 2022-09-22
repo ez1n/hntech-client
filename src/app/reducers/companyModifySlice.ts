@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 회사소개 변경
 
@@ -34,11 +34,11 @@ interface modeInitialState {
 };
 
 const CompanyModifyInitialState: modeInitialState = {
-  introduce: { newIntroduce: '' },
+  introduce: {newIntroduce: ''},
   companyImage: {
-    compInfoImage: { file: '', path: '', serverFilename: '' },
-    historyImage: { file: '', path: '', serverFilename: '' },
-    orgChartImage: { file: '', path: '', serverFilename: '' }
+    compInfoImage: {file: '', path: '', serverFilename: ''},
+    historyImage: {file: '', path: '', serverFilename: ''},
+    orgChartImage: {file: '', path: '', serverFilename: ''}
   }
 };
 
@@ -71,9 +71,9 @@ export const ModeSlice = createSlice({
       }>
     ) => {
       const newCompanyImage = {
-        compInfoImage: { file: '', path: '', serverFilename: action.payload.data.compInfoImage },
-        historyImage: { file: '', path: '', serverFilename: action.payload.data.historyImage },
-        orgChartImage: { file: '', path: '', serverFilename: action.payload.data.orgChartImage }
+        compInfoImage: {file: '', path: '', serverFilename: action.payload.data.compInfoImage},
+        historyImage: {file: '', path: '', serverFilename: action.payload.data.historyImage},
+        orgChartImage: {file: '', path: '', serverFilename: action.payload.data.orgChartImage}
       };
       state.companyImage = newCompanyImage;
     },
@@ -81,46 +81,52 @@ export const ModeSlice = createSlice({
       state,
       action: PayloadAction<{ historyImage: string }>
     ) => {
-      const newHistoryImage = { file: '', path: '', serverFilename: action.payload.historyImage };
+      const newHistoryImage = {file: '', path: '', serverFilename: action.payload.historyImage};
       state.companyImage.historyImage = newHistoryImage;
     },
     getCompanyInfoImage: (
       state,
       action: PayloadAction<{ companyInfoImage: string }>
     ) => {
-      const newCompanyInfo = { file: '', path: '', serverFilename: action.payload.companyInfoImage };
+      const newCompanyInfo = {file: '', path: '', serverFilename: action.payload.companyInfoImage};
       state.companyImage.compInfoImage = newCompanyInfo;
     },
     getOrgChartImage: (
       state,
       action: PayloadAction<{ orgChartImage: string }>
     ) => {
-      const newOrgChart = { file: '', path: '', serverFilename: action.payload.orgChartImage };
+      const newOrgChart = {file: '', path: '', serverFilename: action.payload.orgChartImage};
       state.companyImage.orgChartImage = newOrgChart;
     },
     updateIntroduce: (
       state,
       action: PayloadAction<{ newIntroduce: string }>
-    ) => { state.introduce.newIntroduce = action.payload.newIntroduce },
+    ) => {
+      state.introduce.newIntroduce = action.payload.newIntroduce
+    },
     updateHistory: (
       state,
       action: PayloadAction<{ file: string, path: string }>
     ) => {
-      const newHistory = { ...state.companyImage.compInfoImage, file: action.payload.file, path: action.payload.path };
+      const newHistory = {...state.companyImage.compInfoImage, file: action.payload.file, path: action.payload.path};
       state.companyImage.historyImage = newHistory;
     },
     updateOrgChart: (
       state,
       action: PayloadAction<{ file: string, path: string }>
     ) => {
-      const newOrgChart = { ...state.companyImage.historyImage, file: action.payload.file, path: action.payload.path };
+      const newOrgChart = {...state.companyImage.historyImage, file: action.payload.file, path: action.payload.path};
       state.companyImage.orgChartImage = newOrgChart;
     },
     updateCompanyInfo: (
       state,
       action: PayloadAction<{ file: string, path: string }>
     ) => {
-      const newCompanyInfo = { ...state.companyImage.orgChartImage, file: action.payload.file, path: action.payload.path };
+      const newCompanyInfo = {
+        ...state.companyImage.orgChartImage,
+        file: action.payload.file,
+        path: action.payload.path
+      };
       state.companyImage.compInfoImage = newCompanyInfo;
     }
   }
@@ -134,5 +140,6 @@ export const {
   updateIntroduce,
   updateHistory,
   updateOrgChart,
-  updateCompanyInfo } = ModeSlice.actions;
+  updateCompanyInfo
+} = ModeSlice.actions;
 export default ModeSlice.reducer;

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 // 자료실 상세보기, 검색
 
@@ -66,7 +66,7 @@ const ArchiveInitialState: archiveInitialState = {
   totalElements: 0,
   archives: [],
   notice: [],
-  detail: { categoryName: '', content: '', createTime: '', id: 0, files: [], title: '', notice: '' },
+  detail: {categoryName: '', content: '', createTime: '', id: 0, files: [], title: '', notice: ''},
 };
 
 export const ArchiveSlice = createSlice({
@@ -104,7 +104,9 @@ export const ArchiveSlice = createSlice({
           title: string,
         }[]
       }>
-    ) => { state.notice = action.payload.notice },
+    ) => {
+      state.notice = action.payload.notice
+    },
     getDetailData: (
       state,
       action: PayloadAction<{
@@ -123,12 +125,15 @@ export const ArchiveSlice = createSlice({
           notice: string
         }
       }>
-    ) => { state.detail = action.payload.detail },
+    ) => {
+      state.detail = action.payload.detail
+    },
   }
 });
 
 export const {
   getAllArchives,
   getNotice,
-  getDetailData } = ArchiveSlice.actions;
+  getDetailData
+} = ArchiveSlice.actions;
 export default ArchiveSlice.reducer;

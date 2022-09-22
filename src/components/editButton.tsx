@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, styled } from '@mui/material';
+import {Button, styled} from '@mui/material';
 
 interface propsType {
   name: string,
   onClick: () => void
 }
 
-export default function EditButton({ name, onClick }: propsType) {
+export default function EditButton({name, onClick}: propsType) {
   return (
     <ButtonStyle onClick={onClick}>
       {name}
@@ -14,7 +14,7 @@ export default function EditButton({ name, onClick }: propsType) {
   )
 };
 
-const ButtonStyle = styled(Button)(({ theme }) => ({
+const ButtonStyle = styled(Button)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 12
   },

@@ -1,8 +1,5 @@
 import axios from "axios";
 
-const SUCCESS = 200
-const BAD_REQUEST = 400;
-
 axios.defaults.withCredentials = true;
 
 class CategoryApi {
@@ -47,7 +44,7 @@ class CategoryApi {
   };
 
   // 제품 카테고리 순서 변경
-  async putUpdateCategorySequence(categorySequence: {currentCategoryId: number, targetCategoryId: number}) {
+  async putUpdateCategorySequence(categorySequence: { currentCategoryId: number, targetCategoryId: number }) {
     const response = await axios.put(`/category/sequence`, categorySequence);
     return response.data.categories;
   }

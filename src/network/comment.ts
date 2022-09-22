@@ -1,8 +1,5 @@
 import axios from "axios";
 
-const SUCCESS = 200
-const BAD_REQUEST = 400;
-
 class CommentApi {
   // 댓글 등록
   async postCreateComment(questionId: number, comment: {}) {

@@ -31,7 +31,7 @@ export default function Representation() {
   const onClickButton = (categoryName: string) => {
     dispatch(selectProductCategoryTrue());
     dispatch(setCurrentProductCategoryName({category: categoryName}));
-    navigate('/product'); // 페이지 이동
+    navigate('/client-product'); // 페이지 이동
   };
 
   return (

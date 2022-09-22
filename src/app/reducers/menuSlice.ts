@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
 
 // 메뉴
 
@@ -38,14 +38,30 @@ export const MenuSlice = createSlice({
   name: 'menu',
   initialState: MenuInitialState,
   reducers: {
-    mouseOverCompany: (state) => { state.company = true },
-    mouseLeaveCompany: (state) => { state.company = false },
-    mouseOverProduct: (state) => { state.product = true },
-    mouseLeaveProduct: (state) => { state.product = false },
-    mouseOverArchive: (state) => { state.archive = true },
-    mouseLeaveArchive: (state) => { state.archive = false },
-    mouseOverService: (state) => { state.service = true },
-    mouseLeaveService: (state) => { state.service = false }
+    mouseOverCompany: (state) => {
+      state.company = true
+    },
+    mouseLeaveCompany: (state) => {
+      state.company = false
+    },
+    mouseOverProduct: (state) => {
+      state.product = true
+    },
+    mouseLeaveProduct: (state) => {
+      state.product = false
+    },
+    mouseOverArchive: (state) => {
+      state.archive = true
+    },
+    mouseLeaveArchive: (state) => {
+      state.archive = false
+    },
+    mouseOverService: (state) => {
+      state.service = true
+    },
+    mouseLeaveService: (state) => {
+      state.service = false
+    }
   }
 });
 
@@ -57,5 +73,6 @@ export const {
   mouseOverArchive,
   mouseLeaveArchive,
   mouseOverService,
-  mouseLeaveService } = MenuSlice.actions;
+  mouseLeaveService
+} = MenuSlice.actions;
 export default MenuSlice.reducer;

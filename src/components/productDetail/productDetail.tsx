@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectProductCategoryTrue } from '../../app/reducers/categorySlice';
-import { Box, Button, Container, MenuItem, Select, styled, Typography } from '@mui/material';
+import React, {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {productApi} from '../../network/product';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {selectProductCategoryTrue} from '../../app/reducers/categorySlice';
+import {getProductDetail} from '../../app/reducers/productSlice';
+import {getProductContent, resetProductForm} from '../../app/reducers/productFormSlice';
+import {Box, Button, Container, MenuItem, Select, styled, Typography} from '@mui/material';
 import ProductInfo from './productInfo';
 import Files from './files';
 import Specification from './specification';
-import { getProductDetail } from '../../app/reducers/productSlice';
-import { getProductContent, resetProductForm } from '../../app/reducers/productFormSlice';
-import { productApi } from '../../network/product';
-import { useNavigate } from 'react-router-dom';
 
 interface propsType {
   successDelete: () => void
 }
 
-export default function ProductDetail({ successDelete }: propsType) {
+export default function ProductDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -25,8 +25,8 @@ export default function ProductDetail({ successDelete }: propsType) {
   const getProduct = (productId: number) => {
     productApi.getProduct(productId)
       .then(res => {
-        dispatch(getProductDetail({ detail: res }));
-        dispatch(getProductContent({ detail: res }));
+        dispatch(getProductDetail({detail: res}));
+        dispatch(getProductContent({detail: res}));
       })
   };
 
@@ -41,7 +41,7 @@ export default function ProductDetail({ successDelete }: propsType) {
       {/* 제품목록 */}
       <CategoryTotalBox>
         <CategoryBox>
-          <Container sx={{ display: 'flex' }}>
+          <Container sx={{display: 'flex'}}>
             <Typography
               variant='h5'
               sx={{
@@ -72,10 +72,10 @@ export default function ProductDetail({ successDelete }: propsType) {
               <MenuButton
                 key={item.id}
                 onClick={() => getProduct(item.id)}>
-                <Typography sx={{ m: 1, textAlign: 'center' }}>{item.productName}</Typography>
+                <Typography sx={{m: 1, textAlign: 'center'}}>{item.productName}</Typography>
               </MenuButton>
             ))}
-          </Box >
+          </Box>
         </CategoryBox>
       </CategoryTotalBox>
 
@@ -101,24 +101,24 @@ export default function ProductDetail({ successDelete }: propsType) {
       </SelectBox>
 
       {/* 제품 정보 */}
-      <Box sx={{ flex: 0.8, pt: 5, textAlign: 'center' }}>
-        <ProductInfo successDelete={successDelete} />
+      <Box sx={{flex: 0.8, pt: 5, textAlign: 'center'}}>
+        <ProductInfo successDelete={successDelete}/>
 
-        <Spacing />
+        <Spacing/>
 
         {/* 다운로드 자료 */}
-        <Files />
+        <Files/>
 
-        <Spacing />
+        <Spacing/>
 
         {/* 상세 정보 */}
-        <Specification />
+        <Specification/>
       </Box>
     </TotalBox>
   )
 };
 
-const Spacing = styled(Container)(({ theme }) => ({
+const Spacing = styled(Container)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     height: 30
   },
@@ -138,7 +138,7 @@ const MenuButton = styled(Button)(() => ({
   }
 })) as typeof Button;
 
-const CategoryTotalBox = styled(Box)(({ theme }) => ({
+const CategoryTotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none'
   },
@@ -146,7 +146,7 @@ const CategoryTotalBox = styled(Box)(({ theme }) => ({
   paddingTop: 20
 })) as typeof Box;
 
-const CategoryBox = styled(Box)(({ theme }) => ({
+const CategoryBox = styled(Box)(({theme}) => ({
   paddingTop: 10,
   paddingBottom: 10,
   marginTop: 20,
@@ -154,7 +154,7 @@ const CategoryBox = styled(Box)(({ theme }) => ({
   minWidth: '130px'
 })) as typeof Box;
 
-const TotalBox = styled(Box)(({ theme }) => ({
+const TotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column'
   },
@@ -163,7 +163,7 @@ const TotalBox = styled(Box)(({ theme }) => ({
   margin: 'auto'
 })) as typeof Box;
 
-const SelectBox = styled(Box)(({ theme }) => ({
+const SelectBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'block'
   },

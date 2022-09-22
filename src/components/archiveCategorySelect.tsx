@@ -1,14 +1,14 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { updateArchiveCategory } from '../app/reducers/archiveFormSlice';
-import { MenuItem, Select, FormControl, FormHelperText, styled } from '@mui/material';
+import {useAppDispatch, useAppSelector} from '../app/hooks';
+import {updateArchiveCategory} from '../app/reducers/archiveFormSlice';
+import {MenuItem, Select, FormControl, FormHelperText, styled} from '@mui/material';
 
 interface propsType {
   defaultCategory: string | null,
   categoryErrorMsg: string | undefined
 }
 
-export default function ArchiveCategorySelect({ defaultCategory, categoryErrorMsg }: propsType) {
+export default function ArchiveCategorySelect({defaultCategory, categoryErrorMsg}: propsType) {
   const dispatch = useAppDispatch();
 
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
@@ -18,13 +18,13 @@ export default function ArchiveCategorySelect({ defaultCategory, categoryErrorMs
       <Select
         size={'small'}
         defaultValue={defaultCategory ? defaultCategory : undefined}
-        onChange={event => dispatch(updateArchiveCategory({ categoryName: event?.target.value }))}
-        sx={{ textAlign: 'center' }}
-        MenuProps={{ style: { maxHeight: 300 } }}
+        onChange={event => dispatch(updateArchiveCategory({categoryName: event?.target.value}))}
+        sx={{textAlign: 'center'}}
+        MenuProps={{style: {maxHeight: 300}}}
       >
-        {defaultCategory === '전체' && <MenuItem value={'전체'} sx={{ justifyContent: 'center' }}>전체</MenuItem>}
+        {defaultCategory === '전체' && <MenuItem value={'전체'} sx={{justifyContent: 'center'}}>전체</MenuItem>}
         {archiveCategory.map((item: { id: number, categoryName: string }) => (
-          <MenuItem key={item.id} value={item.categoryName} sx={{ justifyContent: 'center' }}>
+          <MenuItem key={item.id} value={item.categoryName} sx={{justifyContent: 'center'}}>
             {item.categoryName}
           </MenuItem>
         ))}
@@ -34,7 +34,7 @@ export default function ArchiveCategorySelect({ defaultCategory, categoryErrorMs
   )
 };
 
-const ArchiveCategoryFormControl = styled(FormControl)(({ theme }) => ({
+const ArchiveCategoryFormControl = styled(FormControl)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     display: 'flex',
     width: '50%'
