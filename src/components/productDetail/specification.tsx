@@ -1,13 +1,31 @@
 import React from 'react';
 import {api} from '../../network/network';
 import {useAppSelector} from '../../app/hooks';
-import {Box, Container} from '@mui/material';
+import {Box, Typography} from '@mui/material';
 
 export default function Specification() {
   const standardImages = useAppSelector(state => state.product.productDetail.files.standardImages); // 제품 정보
 
   return (
-    <Container sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      border: '2px solid rgba(158,183,152,0.25)'
+    }}>
+      <Typography sx={{
+        width: '100%',
+        pt: 1,
+        pb: 1,
+        mb: 3,
+        backgroundColor: '#21381CFF',
+        color: '#FCFCFC',
+        fontSize: 20,
+        fontWeight: 'bold',
+        border: '2px solid #21381CFF'
+      }}>
+        상 세 정 보
+      </Typography>
       <Box>
         {standardImages.map((item: {
           id: number,
@@ -19,6 +37,6 @@ export default function Specification() {
                alt={item.originalFilename}/>
         ))}
       </Box>
-    </Container>
+    </Box>
   )
 };

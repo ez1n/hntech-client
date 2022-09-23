@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from "react-router-dom";
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {selectProductCategoryTrue} from '../../app/reducers/categorySlice';
@@ -42,12 +42,7 @@ export default function ProductDetail({successDelete}: propsType) {
       <CategoryTotalBox>
         <CategoryBox>
           <Container sx={{display: 'flex'}}>
-            <Typography
-              variant='h5'
-              sx={{
-                p: 1,
-                userSelect: 'none'
-              }}>
+            <Typography variant='h5' sx={{p: 1, userSelect: 'none'}}>
               제품 목록
             </Typography>
           </Container>
@@ -56,9 +51,12 @@ export default function ProductDetail({successDelete}: propsType) {
             pb: 1,
             pl: 2,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
           }}>
 
+            <MenuButton onClick={() => navigate('/client-product')}>
+              <Typography sx={{m: 1, textAlign: 'center'}}>전체</Typography>
+            </MenuButton>
             {productList.map((item: {
               id: number,
               image: {
@@ -119,9 +117,6 @@ export default function ProductDetail({successDelete}: propsType) {
 };
 
 const Spacing = styled(Container)(({theme}) => ({
-  [theme.breakpoints.down('md')]: {
-    height: 30
-  },
   height: 50
 })) as typeof Container;
 
@@ -142,8 +137,7 @@ const CategoryTotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none'
   },
-  flex: 0.2,
-  paddingTop: 20
+  flex: 0.2
 })) as typeof Box;
 
 const CategoryBox = styled(Box)(({theme}) => ({
@@ -160,7 +154,8 @@ const TotalBox = styled(Box)(({theme}) => ({
   },
   display: 'flex',
   width: '80vw',
-  margin: 'auto'
+  margin: 'auto',
+  marginTop: 50
 })) as typeof Box;
 
 const SelectBox = styled(Box)(({theme}) => ({

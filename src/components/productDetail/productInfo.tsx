@@ -52,7 +52,7 @@ export default function ProductInfo({successDelete}: propsType) {
             successDelete();
             dispatch(getProductList({productList: res}));
             closeDeleteProductItem();
-            navigate('/product');
+            navigate('/client-product');
           })
           .catch(error => console.log(error))
       })
@@ -89,14 +89,15 @@ export default function ProductInfo({successDelete}: propsType) {
       </Spacing>
 
       {/* 제품 사진 */}
-      <Box>
+      <Box sx={{border: '3px solid rgba(158,183,152,0.25)', borderRadius: '10px', overflow: 'hidden'}}>
         <Box
           sx={{
             width: 300,
             height: 250,
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            borderBottom: '2px solid rgba(158,183,152,0.25)',
           }}>
           {files.productImages.length !== 0 &&
               <img

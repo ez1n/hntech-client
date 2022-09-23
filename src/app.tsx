@@ -77,7 +77,7 @@ export default function App() {
     adminApi.getLogo()
       .then(res => dispatch(setLogo({logo: res})))
 
-    // 카다록, 자재승인서
+    // 카다록, 자재승인서, 시국세
     adminApi.getDocument()
       .then(res => dispatch(setDocument({document: res})))
 

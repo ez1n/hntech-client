@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {api} from '../../network/network';
 import {categoryApi} from '../../network/category';
+import {fileApi} from "../../network/file";
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {
@@ -13,7 +14,9 @@ import {
   ButtonBase,
   Container,
   Typography,
-  styled
+  styled,
+  Button,
+  Stack
 } from '@mui/material';
 
 export default function Representation() {
@@ -21,6 +24,7 @@ export default function Representation() {
   const dispatch = useAppDispatch();
 
   const productMainCategories = useAppSelector(state => state.category.productMainCategories); // 메인 카테고리 목록
+  const documentFile = useAppSelector(state => state.manager.document); // 카다록, 자재승인서, 시국세 정보
 
   useEffect(() => {
     categoryApi.getMainCategories()
@@ -32,6 +36,27 @@ export default function Representation() {
     dispatch(selectProductCategoryTrue());
     dispatch(setCurrentProductCategoryName({category: categoryName}));
     navigate('/client-product'); // 페이지 이동
+  };
+
+  // 파일 다운로드
+  const downloadFile = (serverFilename: string, originalFilename: string) => {
+    fileApi.downloadFile(serverFilename)
+      .then(res => {
+        return res;
+      })
+      .then(file => {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = originalFilename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 60000);
+        a.remove();
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -48,6 +73,18 @@ export default function Representation() {
           <MainTypography>인간존중의 기업</MainTypography>
           <MainTypography>(주)에이치엔테크</MainTypography>
         </MainTypographyContainer>
+
+        <DocumentStack direction={'row'} spacing={2}>
+          <SideButton onClick={() => downloadFile(documentFile.catalogServerFilename, documentFile.catalogOriginalFilename)}>
+            카다록
+          </SideButton>
+          <SideButton onClick={() => downloadFile(documentFile.materialServerFilename, documentFile.materialOriginalFilename)}>
+            자재 승인서
+          </SideButton>
+          <SideButton onClick={() => downloadFile(documentFile.taxServerFilename, documentFile.taxOriginalFilename)}>
+            시국세
+          </SideButton>
+        </DocumentStack>
 
         {/* 메인 카테고리 */}
         {productMainCategories?.map((item: { categoryName: string, id: number, imageServerFilename: string }) => (
@@ -103,6 +140,7 @@ const MainTypographyContainer = styled(Container)(({theme}) => ({
   },
   width: '30%',
   textAlign: 'center',
+  justifyContent: 'center',
   userSelect: 'none'
 })) as typeof Container;
 
@@ -156,3 +194,25 @@ const ImageBackdrop = styled(Container)(({theme}) => ({
   borderRadius: 10,
   transition: theme.transitions.create('opacity')
 })) as typeof Container;
+
+const DocumentStack = styled(Stack)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'block'
+  },
+  display: 'none',
+  marginTop: 15,
+  marginBottom: 15,
+  textAlign: 'center',
+  width: '100%'
+})) as typeof Stack;
+
+// 문서 다운로드 버튼
+const SideButton = styled(Button)(() => ({
+  fontSize: 13,
+  borderRadius: 10,
+  backgroundColor: 'rgb(46, 125, 50)',
+  color: '#FCFCFC',
+  '&: focus': {
+    backgroundColor: 'rgba(50, 150, 70)'
+  }
+})) as typeof Button;

@@ -130,42 +130,34 @@ export default function FloatingButton({successModify}: propsType) {
   const getPanelInfo = () => {
     adminApi.getPanelInfo()
       .then(res => {
-        dispatch(setManagerData({panelData: res}));
         dispatch(copyManagerData({panelData: res}));
       })
   };
 
   // 관리자, 회사 정보 변경 요청
-  const putUpdatePanelInfo = (panelData: {
-    emailSendingTime: string,
-    address: string,
-    afterService: string,
-    fax: string,
-    phone: string,
-    receiveEmailAccount: string,
-    sendEmailAccount: string,
-    sendEmailPassword: string,
-    sites: { buttonName: string, link: string, id: number }[]
-  }) => {
+  const putUpdatePanelInfo = () => {
     adminApi.putUpdatePanelInfo({
-        emailSendingTime: panelData.emailSendingTime,
-        address: panelData.address,
-        afterService: panelData.afterService,
-        fax: panelData.fax,
-        phone: panelData.phone,
-        receiveEmailAccount: panelData.receiveEmailAccount,
-        sendEmailAccount: panelData.sendEmailAccount,
-        sendEmailPassword: panelData.sendEmailPassword,
-        sites: panelData.sites.map((item: { buttonName: string, link: string, id: number }) => (
-          {buttonName: item.buttonName, link: item.link})
+        emailSendingTime: emailSendingTime,
+        address: address,
+        afterService: afterService,
+        fax: fax,
+        phone: phone,
+        receiveEmailAccount: receiveEmailAccount,
+        sendEmailAccount: sendEmailAccount,
+        sendEmailPassword: sendEmailPassword,
+        sites: sites.map((item: { id: number, buttonName: string, link: string }) => (
+            {buttonName: item.buttonName, link: item.link}
+          )
         )
       }
     )
       .then(res => {
         successModify();
-        // dispatch(copyManagerData({panelData: res}));
         dispatch(setFooter({footer: res.footer}));
-        getPanelInfo()
+        dispatch(copyManagerData({panelData: res}));
+        dispatch(setManagerData({panelData: res}));
+        console.log('new', newPanelData);
+        console.log('res', res)
       })
       .catch(error => {
         console.log(error);
@@ -182,6 +174,7 @@ export default function FloatingButton({successModify}: propsType) {
     // 로고 사진
     logoForm.append('file', logoFile.file);
     logoForm.append('where', 'logo');
+
     // 배너 사진
     bannerFile.map((item: { file: string, name: string }) => bannerForm.append('files', item.file))
 
@@ -446,7 +439,7 @@ export default function FloatingButton({successModify}: propsType) {
           </ContentStack>
 
           <Stack sx={{alignItems: 'center', mb: 5}}>
-            <EditButton name='변경' onClick={() => putUpdatePanelInfo(newPanelData)}/>
+            <EditButton name='변경' onClick={putUpdatePanelInfo}/>
           </Stack>
 
           {/* 홈페이지 정보 */}
