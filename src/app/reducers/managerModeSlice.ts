@@ -41,7 +41,7 @@ interface managerInitialState {
       afterService: string,
       fax: string,
       phone: string,
-      sites: { buttonName: string, link: string, id: number } []
+      sites: { id: number, buttonName: string, link: string } []
     },
     receiveEmailAccount: string,
     sendEmailAccount: string,
@@ -57,14 +57,14 @@ interface managerInitialState {
     receiveEmailAccount: string,
     sendEmailAccount: string,
     sendEmailPassword: string,
-    sites: { buttonName: string, link: string, id: number }[]
+    sites: { id: number, buttonName: string, link: string }[]
   },
   footer: {
     address: string,
     afterService: string,
     fax: string,
     phone: string,
-    sites: { buttonName: string, link: string, id: number }[]
+    sites: { id: number, buttonName: string, link: string }[]
   },
   updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string },
   logo: {
@@ -192,7 +192,7 @@ export const ManagerSlice = createSlice({
             afterService: string,
             fax: string,
             phone: string,
-            sites: { buttonName: string, link: string, id: number }[]
+            sites: { id: number, buttonName: string, link: string }[]
           },
           receiveEmailAccount: string,
           sendEmailAccount: string,
@@ -214,7 +214,7 @@ export const ManagerSlice = createSlice({
             afterService: string,
             fax: string,
             phone: string,
-            sites: { buttonName: string, link: string, id: number }[]
+            sites: { id: number, buttonName: string, link: string }[]
           },
           receiveEmailAccount: string,
           sendEmailAccount: string,
@@ -357,8 +357,7 @@ export const ManagerSlice = createSlice({
       state,
       action: PayloadAction<{ banner: { file: string, name: string } }>
     ) => {
-      const newBanner = [...state.bannerFile, action.payload.banner];
-      state.bannerFile = newBanner;
+      state.bannerFile = [...state.bannerFile, action.payload.banner];
     },
     resetBannerFile: (state) => {
       state.bannerFile = []
@@ -367,15 +366,13 @@ export const ManagerSlice = createSlice({
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newBanner = state.copyBanner.filter((item, index) => index !== action.payload.num);
-      state.copyBanner = newBanner;
+      state.copyBanner = state.copyBanner.filter((item, index) => index !== action.payload.num);
     },
     deleteBanner: (
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newBanner = state.bannerFile.filter((item, index) => index !== action.payload.num);
-      state.bannerFile = newBanner;
+      state.bannerFile = state.bannerFile.filter((item, index) => index !== action.payload.num);
     },
     setDocument: (
       state,
@@ -413,47 +410,42 @@ export const ManagerSlice = createSlice({
     addSitesUploadButton: state => {
       const siteLen = state.newPanelData.sites['length'];
       if (siteLen === 0) {
-        const newSites = [{buttonName: '', link: '', id: 0}];
-        state.newPanelData.sites = newSites;
+        state.newPanelData.sites = [{id: 0, buttonName: '', link: ''}];
       } else {
-        const newSites = [...state.newPanelData.sites, {
+        state.newPanelData.sites = [...state.newPanelData.sites, {
+          id: state.newPanelData.sites[siteLen - 1].id + 1,
           buttonName: '',
-          link: '',
-          id: state.newPanelData.sites[siteLen - 1].id + 1
+          link: ''
         }];
-        state.newPanelData.sites = newSites;
       }
     },
     deleteSitesUploadButton: (
       state,
       action: PayloadAction<{ index: number }>
     ) => {
-      const newSites = state.newPanelData.sites.filter((item, index) => index !== action.payload.index);
-      state.newPanelData.sites = newSites;
+      state.newPanelData.sites = state.newPanelData.sites.filter((item, index) => index !== action.payload.index);
     },
     updateSiteButtonName: (
       state,
       action: PayloadAction<{ buttonName: string, index: number }>
     ) => {
-      const newSites = state.newPanelData.sites.map((item, index) => {
+      state.newPanelData.sites = state.newPanelData.sites.map((item, index) => {
         if (index === action.payload.index) {
           return {...item, buttonName: action.payload.buttonName}
         }
         return item;
       })
-      state.newPanelData.sites = newSites
     },
     updateSiteLink: (
       state,
       action: PayloadAction<{ link: string, index: number }>
     ) => {
-      const newSites = state.newPanelData.sites.map((item, index) => {
+      state.newPanelData.sites = state.newPanelData.sites.map((item, index) => {
         if (index === action.payload.index) {
           return {...item, link: action.payload.link}
         }
         return item;
       })
-      state.newPanelData.sites = newSites
     }
   }
 });

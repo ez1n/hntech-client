@@ -89,8 +89,8 @@ export default function CompanyInfo({success}: propsType) {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              minHeight: 300,
-              overflow: 'scroll'
+              height: 350,
+              overflow: 'auto'
             }}>
             <img
               src={companyInfo.path === '' ? `${api.baseUrl()}/files/admin/${companyInfo.serverFilename}` : companyInfo.path}

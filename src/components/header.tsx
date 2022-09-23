@@ -137,6 +137,8 @@ export default function Header() {
           </ListBox>
         </Box>
 
+        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}} />
+
         {/* 제품소개 */}
         <Box
           onMouseOver={() => dispatch(mouseOverProduct())}
@@ -169,6 +171,8 @@ export default function Header() {
           </ListBox>
         </Box>
 
+        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}} />
+
         {/* 자료실 */}
         <Box
           onMouseLeave={() => dispatch(mouseLeaveArchive())}
@@ -184,6 +188,8 @@ export default function Header() {
           </ListBox>
         </Box>
 
+        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}} />
+
         {/* 고객지원 */}
         <Box
           onMouseLeave={() => dispatch(mouseLeaveService())}
@@ -196,19 +202,19 @@ export default function Header() {
             <DropdownMenu onClick={() => navigate('/client-question')}>고객문의</DropdownMenu>
           </ListBox>
         </Box>
-
-        <Stack direction={'row'} spacing={2} sx={{alignItems: 'center'}}>
-          {/*<a href={'https://www.kakaocorp.com/page/service/service/KakaoTalk'} target={'_blank'}>*/}
-          <a>
-            <img src='/images/kakaotalkIcon.png' alt='kakao talk'/>
-          </a>
-
-          {/*<a href={'https://www.youtube.com/'} target={'_blank'}>*/}
-          <a>
-            <img src='/images/youtubeIcon.png' alt='youtube'/>
-          </a>
-        </Stack>
       </HeaderStack>
+
+      <IconStack direction={'row'} spacing={2}>
+        {/*<a href={'https://www.kakaocorp.com/page/service/service/KakaoTalk'} target={'_blank'}>*/}
+        <a>
+          <img src='/images/kakaotalkIcon.png' alt='kakao talk'/>
+        </a>
+
+        {/*<a href={'https://www.youtube.com/'} target={'_blank'}>*/}
+        <a>
+          <img src='/images/youtubeIcon.png' alt='youtube'/>
+        </a>
+      </IconStack>
 
       {/* 900px 이하 */}
       <MobileHeaderStack direction={'row'} spacing={2}>
@@ -292,8 +298,8 @@ export default function Header() {
                   key={item.id}
                   onClick={() => {
                     navigate('/client-product');
-                    dispatch(selectProductCategoryTrue());
                     dispatch(setCurrentProductCategoryName({category: item.categoryName}));
+                    dispatch(selectProductCategoryTrue());
                     clickCloseMenu();
                   }}>
                   <DropdownMenuListItem primary={item.categoryName}/>
@@ -358,11 +364,12 @@ const HeaderToolbar = styled(Toolbar)(({theme}) => ({
     paddingBottom: 0
   },
   justifyContent: 'space-around',
+  flexWrap: 'wrap',
   position: 'sticky',
   top: 0,
   zIndex: 1000,
   paddingTop: 10,
-  paddingBottom: 10
+  paddingBottom: 10,
 })) as typeof Toolbar;
 
 const CompanyName = styled(Typography)(({theme}) => ({
@@ -400,7 +407,7 @@ const HeaderStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none'
   },
-  width: '70%',
+  width: 'max-content',
   justifyContent: 'space-around',
   alignItems: 'center'
 })) as typeof Stack;
@@ -454,11 +461,11 @@ const ListBox = styled(List)(() => ({
 // 상위 메뉴 버튼
 const MainMenu = styled(Button)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {
-    fontSize: '1.1em',
+    fontSize: '1em',
   },
   width: '100%',
   height: '100%',
-  fontSize: '1.3em',
+  fontSize: '1.2em',
   fontWeight: 'bold',
   color: '#21381c',
   transition: '0.5s',
@@ -483,3 +490,10 @@ const DropdownMenu = styled(ListItem)(({theme}) => ({
     color: '0F0F0F'
   }
 }));
+
+const IconStack = styled(Stack)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
+  },
+  alignItems: 'center'
+})) as typeof Stack;

@@ -51,6 +51,7 @@ export default function ProductCategories({successDelete}: propsType) {
   const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보
+  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName)
   const [onDeleteCategory, setOnDeleteCategory] = useState(false);
   const [checkPassword, setCheckPassword] = useState(false);
   const [loginErrorMsg, setLoginErrorMsg] = useState('');
@@ -231,7 +232,16 @@ export default function ProductCategories({successDelete}: propsType) {
                       dispatch(selectProductCategoryTrue());
                       dispatch(setCurrentProductCategoryName({category: value.categoryName}));
                     }}>
-                    <Typography sx={{m: 1, textAlign: 'center'}}>{value.categoryName}</Typography>
+                    <Typography
+                      sx={{
+                        m: 1,
+                        textAlign: 'center',
+                        color: currentProductCategoryName === value.categoryName ? 'darkgreen' : 'black',
+                        fontWeight: currentProductCategoryName === value.categoryName ? 'bold' : 'regular',
+                        fontSize: currentProductCategoryName === value.categoryName ? 'x-large' : 'middle'
+                      }}>
+                      {value.categoryName}
+                    </Typography>
                   </MenuButton>
                 ))}
               </Box>
