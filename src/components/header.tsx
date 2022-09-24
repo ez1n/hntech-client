@@ -137,7 +137,7 @@ export default function Header() {
           </ListBox>
         </Box>
 
-        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}} />
+        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}}/>
 
         {/* 제품소개 */}
         <Box
@@ -171,7 +171,7 @@ export default function Header() {
           </ListBox>
         </Box>
 
-        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}} />
+        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}}/>
 
         {/* 자료실 */}
         <Box
@@ -188,7 +188,7 @@ export default function Header() {
           </ListBox>
         </Box>
 
-        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}} />
+        <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor: 'grey', width: '1px'}}/>
 
         {/* 고객지원 */}
         <Box
@@ -246,32 +246,39 @@ export default function Header() {
           <Collapse in={openCompany} timeout='auto' unmountOnExit>
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
-                navigate('/company');
                 dispatch(clickChangeIntroduce());
+                navigate('/company');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='인사말'/>
               </ListItemButton>
+
               <ListItemButton onClick={() => {
-                navigate('/company');
                 dispatch(clickChangeHistory());
+                navigate('/company');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='회사연혁'/>
               </ListItemButton>
-              <ListItemButton>
+
+              <ListItemButton onClick={() => {
+                dispatch(clickChangeOrgChart());
+                navigate('/company');
+              }}>
                 <DropdownMenuListItem primary='조직도'/>
               </ListItemButton>
+
               <ListItemButton onClick={() => {
+                dispatch(clickChangeInfo());
                 navigate('/company');
-                dispatch(clickChangeOrgChart());
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='CI 소개'/>
               </ListItemButton>
+
               <ListItemButton onClick={() => {
-                navigate('/company');
                 dispatch(clickChangeLocation());
+                navigate('/company');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='찾아오시는 길'/>
