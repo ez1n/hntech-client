@@ -19,7 +19,6 @@ export default function CompanySideMenu() {
 
   return (
     <SideMenuBox>
-
       <TitleStack>
         {/* title (회사소개) */}
         <Container sx={{width: 'max-content'}}>
