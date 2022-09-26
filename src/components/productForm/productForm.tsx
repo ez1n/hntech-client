@@ -244,9 +244,12 @@ export default function ProductForm({success, errorToast}: propsType) {
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             onChange={event => dispatch(addProductName({productName: event?.target.value}))}
-            inputProps={{style: {fontSize: 18}}}
+            inputProps={{style: {fontSize: 18}, maxLength: 20}}
             sx={{width: '100%'}}
           />
+          <List>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 제품명은 최대 20글자까지 가능합니다.</ListItem>
+          </List>
         </Box>
 
         {/* 이미지 추가, 카테고리 선택 */}

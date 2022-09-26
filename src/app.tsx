@@ -129,7 +129,7 @@ export default function App() {
         <Box className={'app'} sx={{display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw'}}>
           <ToastContainer
             position="top-center"
-            autoClose={1500}
+            autoClose={1000}
           />
 
           <Box sx={{flex: 1}}>

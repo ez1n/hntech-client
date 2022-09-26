@@ -70,7 +70,7 @@ export default function ProductDetail({successDelete}: propsType) {
               <MenuButton
                 key={item.id}
                 onClick={() => getProduct(item.id)}>
-                <Typography sx={{m: 1, textAlign: 'center'}}>{item.productName}</Typography>
+                <Typography sx={{m: 1, textAlign: 'start'}}>{item.productName}</Typography>
               </MenuButton>
             ))}
           </Box>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {categoryApi} from '../../network/category';
 import {api} from '../../network/network';
@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   styled,
   TextField,
   Typography
@@ -55,6 +56,13 @@ export default function ProductCategories({successDelete}: propsType) {
   const [onDeleteCategory, setOnDeleteCategory] = useState(false);
   const [checkPassword, setCheckPassword] = useState(false);
   const [loginErrorMsg, setLoginErrorMsg] = useState('');
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+  const handleWindowResize = useCallback(() => {
+    setWindowSize(window.innerWidth);
+  }, []);
+
+  window.addEventListener("resize", handleWindowResize);
 
   useEffect(() => {
     // 카테고리 이미지 초기화
@@ -114,6 +122,68 @@ export default function ProductCategories({successDelete}: propsType) {
       })
   };
 
+  // 카테고리 목록
+  const CategoryGrid = () => {
+    let categoryColumn = 4;
+    if (windowSize < 1200) categoryColumn = 3;
+    if (windowSize < 900) categoryColumn = 2;
+    if (windowSize < 600) categoryColumn = 1;
+
+    return (
+      <Grid container columns={categoryColumn} spacing={3}>
+        {productCategories?.map((value: {
+          categoryName: string,
+          id: number,
+          imageServerFilename: string,
+          imageOriginalFilename: string,
+          showInMain: string
+        }) => (
+          <Grid item xs={1} key={value.id}>
+            <CategoryButton onClick={() => {
+              dispatch(selectProductCategoryTrue());
+              dispatch(setCurrentProductCategoryName({category: value.categoryName}));
+            }}>
+              {/* 카테고리 */}
+              <Box sx={{height: 150}}>
+                <img
+                  className='categoryImage'
+                  src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`}
+                  alt={value.imageOriginalFilename}
+                  width='100%'
+                  height='100%'/>
+              </Box>
+              <CategoryNameTypography>
+                {value.categoryName}
+              </CategoryNameTypography>
+            </CategoryButton>
+
+            {/* 수정 버튼 */}
+            {managerMode &&
+                <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+                    <Button
+                        onClick={() => {
+                          dispatch(setCurrentProductCategory({category: value}));
+                          setCheckPassword(checkPassword => !checkPassword);
+                        }}
+                        sx={{color: 'red'}}>
+                        <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
+                    </Button>
+                    <Button
+                        onClick={() => {
+                          dispatch(setCurrentProductCategory({category: value}));
+                          navigate('/productCategory-modify');
+                        }}
+                        sx={{color: 'darkgreen'}}>
+                        <CreateRoundedIcon sx={{fontSize: 30}}/>
+                    </Button>
+                </Box>
+            }
+          </Grid>
+        ))}
+      </Grid>
+    )
+  }
+
   return (
     <Box sx={{width: '100%'}}>
       {/* default */}
@@ -138,57 +208,8 @@ export default function ProductCategories({successDelete}: propsType) {
                 </Spacing>
             }
 
-              <Box sx={{display: 'flex', flexWrap: 'wrap'}}>
-                {productCategories?.map((value: {
-                  categoryName: string;
-                  id: number;
-                  imageServerFilename: string;
-                  imageOriginalFilename: string;
-                  showInMain: string;
-                }) => (
-                  <CategoryBox key={value.id} sx={{m: 1}}>
-                    <CategoryButton onClick={() => {
-                      dispatch(selectProductCategoryTrue());
-                      dispatch(setCurrentProductCategoryName({category: value.categoryName}));
-                    }}>
-                      {/* 카테고리 목록 */}
-                      <Box sx={{height: 150}}>
-                        <img
-                          className='categoryImage'
-                          src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`}
-                          alt={value.imageOriginalFilename}
-                          width='100%'
-                          height='100%'/>
-                      </Box>
-                      <CategoryNameTypography>
-                        {value.categoryName}
-                      </CategoryNameTypography>
-                    </CategoryButton>
-
-                    {/* 수정 버튼 */}
-                    {managerMode &&
-                        <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
-                            <Button
-                                onClick={() => {
-                                  dispatch(setCurrentProductCategory({category: value}));
-                                  setCheckPassword(checkPassword => !checkPassword);
-                                }}
-                                sx={{color: 'red'}}>
-                                <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                  dispatch(setCurrentProductCategory({category: value}));
-                                  navigate('/productCategory-modify');
-                                }}
-                                sx={{color: 'darkgreen'}}>
-                                <CreateRoundedIcon sx={{fontSize: 30}}/>
-                            </Button>
-                        </Box>
-                    }
-                  </CategoryBox>
-                ))}
-              </Box>
+            {/* 카테고리 목록 */}
+              <CategoryGrid/>
 
             {/* 추가 버튼 */}
             {managerMode &&
@@ -217,7 +238,8 @@ export default function ProductCategories({successDelete}: propsType) {
                 pb: 1,
                 pl: 2,
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                minWidth: 'max-content'
               }}>
                 {productCategories.map((value: {
                   categoryName: string;
@@ -296,22 +318,8 @@ export default function ProductCategories({successDelete}: propsType) {
 };
 
 const Spacing = styled(Container)(() => ({
-  height: 50
+  height: 60
 })) as typeof Container;
-
-const CategoryBox = styled(Box)(({theme}) => ({
-  [theme.breakpoints.down('lg')]: {
-    width: '31% !important'
-  },
-  [theme.breakpoints.down('md')]: {
-    width: '47% !important'
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: '100% !important'
-  },
-  width: '23%',
-  margin: 1,
-})) as typeof Box;
 
 const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {

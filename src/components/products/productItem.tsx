@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {api} from '../../network/network';
 import {productApi} from '../../network/product';
 import {useNavigate} from 'react-router-dom';
@@ -6,7 +6,7 @@ import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {getProductContent} from '../../app/reducers/productFormSlice';
 import {getCurrentProductData, getProductDetail} from '../../app/reducers/productSlice';
-import {Box, Button, styled, Typography} from '@mui/material';
+import {Box, Button, styled, Typography, Grid} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 
@@ -35,6 +35,7 @@ export default function ProductItem({product}: propsType) {
   const getProduct = (productId: number) => {
     productApi.getProduct(productId)
       .then(res => {
+        console.log(res.category.length);
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
         navigate('/product-detail');
@@ -52,7 +53,7 @@ export default function ProductItem({product}: propsType) {
   };
 
   return (
-    <TotalBox>
+    <Grid item xs={1}>
       <ProductBox>
         {/* 제품 */}
         <ProductButton onClick={() => getProduct(id)}>
@@ -86,22 +87,9 @@ export default function ProductItem({product}: propsType) {
             </Box>
         }
       </ProductBox>
-    </TotalBox>
+    </Grid>
   )
 };
-
-const TotalBox = styled(Box)(({theme}) => ({
-  [theme.breakpoints.down('lg')]: {
-    width: '30% !important'
-  },
-  [theme.breakpoints.down('md')]: {
-    width: '50% !important'
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: '100% !important'
-  },
-  width: '25%'
-}))
 
 const ProductBox = styled(Box)(() => ({
   margin: 3,
@@ -133,8 +121,7 @@ const ProductNameTypography = styled(Typography)(({theme}) => ({
     fontSize: 13
   },
   width: '100%',
-  paddingTop: 4,
-  paddingBottom: 4,
+  padding: 4,
   borderRadius: 1,
-  backgroundColor: 'rgba(57, 150, 82, 0.2)'
+  backgroundColor: 'rgba(57, 150, 82, 0.2)',
 })) as typeof Typography;

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
@@ -7,7 +7,7 @@ import {resetProductForm} from '../../app/reducers/productFormSlice';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {selectProductCategoryTrue, setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
-import {Box, Button, styled, Select, MenuItem, Typography} from '@mui/material';
+import {Box, Button, styled, Select, MenuItem, Typography, Grid} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ProductCategories from './productCategories';
 import CancelModal from '../cancelModal';
@@ -28,6 +28,13 @@ export default function Products({successDelete}: propsType) {
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+  const handleWindowResize = useCallback(() => {
+    setWindowSize(window.innerWidth);
+  }, []);
+
+  window.addEventListener("resize", handleWindowResize);
 
   //제품 목록 받아오기
   useEffect(() => {
@@ -56,6 +63,34 @@ export default function Products({successDelete}: propsType) {
         }
       })
   };
+
+  const ProductGrid = () => {
+    let productColumn = 4;
+    if (windowSize < 1200) productColumn = 3;
+    if (windowSize < 900) productColumn = 2;
+    if (windowSize < 600) productColumn = 1;
+
+    return (
+      <Grid container columns={productColumn} spacing={1}>
+        {productList.length !== 0 ? // 제품 존재하는 경우
+          productList.map((item: {
+            id: number,
+            image: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            },
+            productName: string
+          }) => (
+            <ProductItem key={item.id} product={item}/>
+          )) : // 제품 존재하지 않는 경우
+          <Typography>
+            해당 카테고리에 제품이 존재하지 않습니다.
+          </Typography>}
+      </Grid>
+    )
+  }
 
   return (
     <Box>
@@ -99,22 +134,7 @@ export default function Products({successDelete}: propsType) {
             {/* 제품 목록 */}
               <Box sx={{flex: 0.8, pt: 5}}>
                   <Box sx={{p: 1, display: 'flex', flexWrap: 'wrap'}}>
-                    {productList.length !== 0 ? // 제품 존재하는 경우
-                      productList.map((item: {
-                        id: number,
-                        image: {
-                          id: number,
-                          originalFilename: string,
-                          savedPath: string,
-                          serverFilename: string
-                        },
-                        productName: string
-                      }) => (
-                        <ProductItem key={item.id} product={item}/>
-                      )) : // 제품 존재하지 않는 경우
-                      <Typography>
-                        해당 카테고리에 제품이 존재하지 않습니다.
-                      </Typography>}
+                      <ProductGrid/>
                   </Box>
                 {managerMode &&
                     <AddButton onClick={() => navigate('/product-form')}>
