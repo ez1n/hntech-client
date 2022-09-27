@@ -12,6 +12,8 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ProductCategories from './productCategories';
 import CancelModal from '../cancelModal';
 import ProductItem from './productItem';
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 
 interface propsType {
   successDelete: () => void
@@ -39,8 +41,10 @@ export default function Products({successDelete}: propsType) {
   //제품 목록 받아오기
   useEffect(() => {
     dispatch(resetProductForm());
-    productApi.getAllProducts(currentProductCategoryName)
-      .then(res => dispatch(getProductList({productList: res})))
+    if (productCategorySelected) {
+      productApi.getAllProducts(currentProductCategoryName)
+        .then(res => dispatch(getProductList({productList: res})))
+    }
   }, [currentProductCategoryName]);
 
   // 제품 삭제
@@ -64,6 +68,15 @@ export default function Products({successDelete}: propsType) {
       })
   };
 
+  // 제품 순서 변경 보여주기
+  const moveProductItem = (id: number, targetIndex: number) => {
+    const index = productList.findIndex(category => category.id === id);
+    let newIdList = [...productList];
+    const moveItem = newIdList.splice(index, 1)[0];
+    newIdList.splice(targetIndex + 1, 0, moveItem);
+    dispatch(getProductList({productList: newIdList}));
+  };
+
   const ProductGrid = () => {
     let productColumn = 4;
     if (windowSize < 1200) productColumn = 3;
@@ -71,24 +84,26 @@ export default function Products({successDelete}: propsType) {
     if (windowSize < 600) productColumn = 1;
 
     return (
-      <Grid container columns={productColumn} spacing={1}>
-        {productList.length !== 0 ? // 제품 존재하는 경우
-          productList.map((item: {
-            id: number,
-            image: {
+      <DndProvider backend={HTML5Backend}>
+        <Grid container columns={productColumn} spacing={1}>
+          {productList.length !== 0 ? // 제품 존재하는 경우
+            productList.map((item: {
               id: number,
-              originalFilename: string,
-              savedPath: string,
-              serverFilename: string
-            },
-            productName: string
-          }) => (
-            <ProductItem key={item.id} product={item}/>
-          )) : // 제품 존재하지 않는 경우
-          <Typography>
-            해당 카테고리에 제품이 존재하지 않습니다.
-          </Typography>}
-      </Grid>
+              image: {
+                id: number,
+                originalFilename: string,
+                savedPath: string,
+                serverFilename: string
+              },
+              productName: string
+            }, index: number) => (
+              <ProductItem key={item.id} product={item} index={index} moveProductItem={moveProductItem}/>
+            )) : // 제품 존재하지 않는 경우
+            <Typography>
+              해당 카테고리에 제품이 존재하지 않습니다.
+            </Typography>}
+        </Grid>
+      </DndProvider>
     )
   }
 

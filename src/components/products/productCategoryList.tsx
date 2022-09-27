@@ -29,12 +29,12 @@ export default function ProductCategoryList() {
     setCategoryList(categoryId);
   }, [productCategories]);
 
-  // 제품 순서 변경 보여주기
+  // 카테고리 순서 변경 보여주기
   const moveCategoryItem = (id: number, targetIndex: number) => {
     const index = categoryList.findIndex(category => category.id === id);
     let newIdList = [...categoryList];
     const moveItem = newIdList.splice(index, 1)[0];
-    newIdList.splice(targetIndex === 0 ? 0 : targetIndex - 1, 0, moveItem);
+    newIdList.splice(targetIndex + 1, 0, moveItem);
     setCategoryList(newIdList);
   };
 
@@ -56,6 +56,7 @@ export default function ProductCategoryList() {
           }}>
           {categoryList.map((item: { categoryName: string, id: number }, index: number) => (
             <ProductCategoryListItem
+              key={item.id}
               moveCategoryItem={moveCategoryItem}
               category={item}
               id={item.id}

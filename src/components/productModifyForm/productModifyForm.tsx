@@ -265,6 +265,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             required={true}
+            autoComplete={'off'}
             placeholder='제품명'
             inputProps={{style: {fontSize: 18}, maxLength: 20}}
             sx={{width: '100%'}}
@@ -325,6 +326,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             multiline
             minRows={3}
             value={description}
+            autoComplete={'off'}
             onChange={event => dispatch(addProductDescription({description: event.target.value}))}
             inputProps={{
               style: {
@@ -451,6 +453,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                     size='small'
                     defaultValue={item.type}
                     disabled
+                    autoComplete={'off'}
                     placeholder='파일 이름'
                     inputProps={{
                       style: {fontSize: 18}
@@ -492,6 +495,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                   <TextField
                     size='small'
                     defaultValue={item.type}
+                    autoComplete={'off'}
                     onChange={event => dispatch(addProductDocType({id: item.id, type: event.target.value}))}
                     placeholder='파일 이름'
                     inputProps={{

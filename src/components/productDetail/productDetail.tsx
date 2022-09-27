@@ -52,6 +52,7 @@ export default function ProductDetail({successDelete}: propsType) {
             pl: 2,
             display: 'flex',
             flexDirection: 'column',
+            minWidth: 'max-content'
           }}>
 
             <MenuButton onClick={() => navigate('/client-product')}>

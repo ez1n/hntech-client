@@ -239,10 +239,10 @@ export default function Header() {
         onClose={clickCloseMenu}
         sx={{zIndex: 990}}>
         <MenuList>
-          <ListItemButton
-            onClick={openCompany ? () => dispatch(mouseLeaveCompany()) : () => dispatch(mouseOverCompany())}>
+          <ListItemButton onClick={openCompany ? () => dispatch(mouseLeaveCompany()) : () => dispatch(mouseOverCompany())}>
             <ListItemText primary='회사소개'/>
           </ListItemButton>
+
           <Collapse in={openCompany} timeout='auto' unmountOnExit>
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
@@ -264,6 +264,7 @@ export default function Header() {
               <ListItemButton onClick={() => {
                 dispatch(clickChangeOrgChart());
                 navigate('/company');
+                clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='조직도'/>
               </ListItemButton>
@@ -288,8 +289,7 @@ export default function Header() {
 
           <Divider/>
 
-          <ListItemButton
-            onClick={openProduct ? () => dispatch(mouseLeaveProduct()) : () => dispatch(mouseOverProduct())}>
+          <ListItemButton onClick={openProduct ? () => dispatch(mouseLeaveProduct()) : () => dispatch(mouseOverProduct())}>
             <ListItemText primary='제품소개'/>
           </ListItemButton>
           <Collapse in={openProduct} timeout='auto' unmountOnExit>
@@ -317,8 +317,7 @@ export default function Header() {
 
           <Divider/>
 
-          <ListItemButton
-            onClick={openArchive ? () => dispatch(mouseLeaveArchive()) : () => dispatch(mouseOverArchive())}>
+          <ListItemButton onClick={openArchive ? () => dispatch(mouseLeaveArchive()) : () => dispatch(mouseOverArchive())}>
             <ListItemText primary='자료실'/>
           </ListItemButton>
           <Collapse in={openArchive} timeout='auto' unmountOnExit>
@@ -340,9 +339,7 @@ export default function Header() {
 
           <Divider/>
 
-          <ListItemButton
-            onClick={openService ? () => dispatch(mouseLeaveService()) : () => dispatch(mouseOverService())}
-            sx={{pb: 0}}>
+          <ListItemButton onClick={openService ? () => dispatch(mouseLeaveService()) : () => dispatch(mouseOverService())} sx={{pb: 0}}>
             <ListItemText primary='고객지원'/>
           </ListItemButton>
           <Collapse in={openService} timeout='auto' unmountOnExit>

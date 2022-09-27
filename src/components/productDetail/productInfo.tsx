@@ -102,7 +102,9 @@ export default function ProductInfo({successDelete}: propsType) {
           {files.productImages.length !== 0 &&
               <img
                   src={`${api.baseUrl()}/files/product/${files.productImages[activeStep].serverFilename}`}
-                  alt={files.productImages[activeStep].originalFilename}/>
+                  alt={files.productImages[activeStep].originalFilename}
+                  width={'100%'}
+                  height={'100%'}/>
           }
         </Box>
         <MobileStepper
