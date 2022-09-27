@@ -50,7 +50,6 @@ export default function Login() {
     if (event.key === 'Enter') {
       postLogin()
     }
-    ;
   };
 
   return (
@@ -68,7 +67,7 @@ export default function Login() {
       <DialogContent>
         <DialogContentText>비밀번호</DialogContentText>
         <TextField
-          error={loginErrorMsg ? true : false}
+          error={!!loginErrorMsg}
           helperText={loginErrorMsg}
           required
           autoFocus={true}

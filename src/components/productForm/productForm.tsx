@@ -294,6 +294,7 @@ export default function ProductForm({success, errorToast}: propsType) {
             placeholder='제품 설명'
             multiline
             minRows={3}
+            autoComplete={'off'}
             onChange={event => dispatch(addProductDescription({description: event.target.value}))}
             inputProps={{
               style: {
@@ -399,6 +400,7 @@ export default function ProductForm({success, errorToast}: propsType) {
                   <TextField
                     size='small'
                     placeholder='파일 이름'
+                    autoComplete={'off'}
                     onChange={event => dispatch(addProductDocType({id: item.id, type: event.target.value}))}
                     inputProps={{style: {fontSize: 16}}}/>
                   <Typography sx={{

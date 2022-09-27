@@ -1,38 +1,35 @@
 import React from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { Box, Container, Typography, styled } from '@mui/material';
-import EditButton from '../editButton';
+import {Box, Container, Typography, styled} from '@mui/material';
 
 export default function Location() {
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
 
   return (
     <TotalBox>
       {/* 소제목 */}
-      <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Container sx={{display: 'flex', justifyContent: 'center'}}>
         <TitleTypography variant='h5'>
           찾아오시는 길
         </TitleTypography>
       </Container>
 
       {/* 수정 버튼 */}
-      <Spacing sx={{ textAlign: 'end' }}>
-        {managerMode && <EditButton name='수정' onClick={() => console.log('#')} />}
-      </Spacing>
+      <Spacing/>
 
       {/* 지도 */}
       <Container>
-
+        <Typography>
+          주소 : 경기도 용인시 처인구 모현읍 외개일로 20번길 9-14
+        </Typography>
       </Container>
     </TotalBox>
   )
 };
 
-const Spacing = styled(Container)(({ theme }) => ({
+const Spacing = styled(Container)(({theme}) => ({
   height: 50
 })) as typeof Container;
 
-const TotalBox = styled(Box)(({ theme }) => ({
+const TotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     padding: 10,
   },
@@ -40,7 +37,7 @@ const TotalBox = styled(Box)(({ theme }) => ({
   paddingBottom: 0
 })) as typeof Box;
 
-const TitleTypography = styled(Typography)(({ theme }) => ({
+const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     fontSize: 18
   },

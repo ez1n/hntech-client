@@ -1,6 +1,6 @@
 import React from 'react';
 import {categoryApi} from "../../network/category";
-import {ConnectableElement, useDrag, useDrop} from 'react-dnd';
+import {useDrag, useDrop} from 'react-dnd';
 import {useAppDispatch} from "../../app/hooks";
 import {setAllProductCategories} from "../../app/reducers/categorySlice";
 import {Box, Stack, Typography} from "@mui/material";
@@ -20,9 +20,7 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
     categoryApi.putUpdateCategorySequence({currentCategoryId: draggedId, targetCategoryId: targetId})
       .then(res => {
         categoryApi.getAllProductCategories()
-          .then(res => {
-            dispatch(setAllProductCategories({categories: res.categories}))
-          })
+          .then(res => dispatch(setAllProductCategories({categories: res.categories})))
           .catch(error => console.log(error))
       })
       .catch(error => console.log(error))
@@ -31,7 +29,7 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
   /* 드래그 앤 드롭 */
 
   // drag
-  const [{isDragging}, dragRef, previewRef] = useDrag(() => ({
+  const [{isDragging}, dragRef] = useDrag(() => ({
       type: 'productCategory',
       item: {id, index},
       collect: (monitor) => ({
@@ -57,14 +55,13 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
       hover: (item: { id: number, index: number }) => {
         const {id: draggedId, index: originIndex} = item;
         if (draggedId !== id) {
-          moveCategoryItem(draggedId, index);
+         // moveCategoryItem(draggedId, index);
         }
       },
       drop: (item: { id: number, index: number }) => {
         const {id: draggedId, index: originIndex} = item;
         if (draggedId !== id) {
           putUpdateCategorySequence(draggedId, id);
-          moveCategoryItem(draggedId, index);
         }
       }
     })
@@ -72,10 +69,10 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
 
   return (
     <Box
-      ref={(node: ConnectableElement) => dropRef(previewRef(node))}
-      sx={{opacity: isDragging || isOver ? 0.3 : 1}}>
+      ref={dropRef}
+      sx={{backgroundColor: isOver ? 'rgba(46, 125, 50, 0.2)' : 'none'}}>
       <Stack
-        ref={(node: ConnectableElement) => dragRef(node)}
+        ref={dragRef}
         direction='row'
         spacing={2}
         sx={{

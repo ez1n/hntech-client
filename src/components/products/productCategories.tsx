@@ -12,9 +12,8 @@ import {
   setCurrentProductCategoryName,
   updateProductCategoryImage
 } from '../../app/reducers/categorySlice';
-import {
-  clickProductCategoryListGoBack
-} from '../../app/reducers/dialogSlice';
+import {clickProductCategoryListGoBack} from '../../app/reducers/dialogSlice';
+import {changeMode, setPassword} from '../../app/reducers/managerModeSlice';
 import {setAllProductCategories, setCurrentProductCategory} from '../../app/reducers/categorySlice';
 import {
   Box,
@@ -34,7 +33,6 @@ import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CancelModal from '../cancelModal';
-import {changeMode, setPassword} from '../../app/reducers/managerModeSlice';
 import EditButton from "../editButton";
 import ProductCategoryList from "./productCategoryList";
 
