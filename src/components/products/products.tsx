@@ -41,8 +41,10 @@ export default function Products({successDelete}: propsType) {
   //제품 목록 받아오기
   useEffect(() => {
     dispatch(resetProductForm());
-    productApi.getAllProducts(currentProductCategoryName)
-      .then(res => dispatch(getProductList({productList: res})))
+    if (productCategorySelected) {
+      productApi.getAllProducts(currentProductCategoryName)
+        .then(res => dispatch(getProductList({productList: res})))
+    }
   }, [currentProductCategoryName]);
 
   // 제품 삭제
