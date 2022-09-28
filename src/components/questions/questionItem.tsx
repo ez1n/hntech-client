@@ -77,21 +77,22 @@ export default function QuestionItem() {
 
   // 비밀번호 입력
   const openDetail = (id: number) => {
-    validate() &&
-    questionApi.postPassword(id, pw)
-      .then(res => {
-        dispatch(inputPassword());
-        dispatch(setDetailData({detail: res}));
-        navigate('/question-detail');
-      })
-      .catch(error => setPasswordErrorMsg('비밀번호를 확인해 주세요'))
+    if (validate()) {
+      questionApi.postPassword(id, pw)
+        .then(res => {
+          dispatch(inputPassword());
+          dispatch(setDetailData({detail: res}));
+          dispatch(setPassword({password: ''}));
+          navigate('/question-detail');
+        })
+        .catch(error => setPasswordErrorMsg('비밀번호를 확인해 주세요'))
+    }
   };
 
   const onOpenDetailKeyUp = (event: any, id: number) => {
     if (event.key === 'Enter') {
       openDetail(id)
     }
-    ;
   };
 
   // 게시글 자세히 보기
@@ -163,11 +164,16 @@ export default function QuestionItem() {
                 display: 'flex',
                 justifyContent: 'center',
                 cursor: 'pointer',
+                minWidth: '300px',
                 '&: hover': {
                   color: 'blue'
                 }
               }}>
-              <List>
+              <List sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
                 {item.title}
               </List>
               {item.new == 'true' &&
@@ -191,11 +197,16 @@ export default function QuestionItem() {
                 display: 'flex',
                 justifyContent: 'center',
                 cursor: 'pointer',
+                minWidth: '300px',
                 '&: hover': {
                   color: 'blue'
                 }
               }}>
-              <List>
+              <List sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
                 {item.title}
               </List>
               {item.new == 'true' &&
@@ -229,7 +240,7 @@ export default function QuestionItem() {
                   <TextField
                       type={'password'}
                       size={'small'}
-                      error={passwordErrorMsg ? true : false}
+                      error={!!passwordErrorMsg}
                       helperText={passwordErrorMsg}
                       inputProps={{maxLength: 4}}
                       onChange={event => dispatch(setPassword({password: event.target.value}))}

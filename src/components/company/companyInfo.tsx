@@ -89,7 +89,7 @@ export default function CompanyInfo({success}: propsType) {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              height: 350,
+              height: 500,
               overflow: 'auto'
             }}>
             <img

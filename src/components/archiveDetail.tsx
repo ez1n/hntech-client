@@ -13,7 +13,6 @@ import {
   styled,
   Typography
 } from '@mui/material';
-import HTMLReactParser from 'html-react-parser';
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
 
@@ -122,7 +121,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
         <Box sx={{p: 3, minHeight: 300, borderBottom: '1px solid #3B6C46'}}>
           {detail.content.split('\n').map((value, index) => (
             <Typography key={index}>
-              {HTMLReactParser(value)}
+              {value === '\r' ? <br/> : value}
             </Typography>
           ))}
         </Box>
@@ -139,6 +138,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
               serverFilename: string
             }) => (
               <ContentTypography
+                key={item.id}
                 onClick={() => downloadFile(item.serverFilename, item.originalFilename)}
                 sx={{cursor: 'pointer', '&:hover': {color: 'darkgreen'}}}
               >
@@ -224,7 +224,7 @@ const CategoryBox = styled(Box)(({theme}) => ({
 
 const ContentTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
-    fontSize: 15
+    fontSize: 13
   },
-  fontSize: 18
+  fontSize: 15
 })) as typeof Typography;

@@ -20,6 +20,7 @@ export default function ProductDetail({successDelete}: propsType) {
 
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const productId = useAppSelector(state => state.product.productDetail.id);
+  const productName = useAppSelector(state => state.product.productDetail.productName); // 제품 이름
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
@@ -42,7 +43,7 @@ export default function ProductDetail({successDelete}: propsType) {
       <CategoryTotalBox>
         <CategoryBox>
           <Container sx={{display: 'flex'}}>
-            <Typography variant='h5' sx={{p: 1, userSelect: 'none'}}>
+            <Typography variant='h5' sx={{p: 1, userSelect: 'none', fontWeight: 'bold'}}>
               제품 목록
             </Typography>
           </Container>
@@ -56,7 +57,7 @@ export default function ProductDetail({successDelete}: propsType) {
           }}>
 
             <MenuButton onClick={() => navigate('/client-product')}>
-              <Typography sx={{m: 1, textAlign: 'center'}}>전체</Typography>
+              전체
             </MenuButton>
             {productList.map((item: {
               id: number,
@@ -70,8 +71,12 @@ export default function ProductDetail({successDelete}: propsType) {
             }) => (
               <MenuButton
                 key={item.id}
-                onClick={() => getProduct(item.id)}>
-                <Typography sx={{m: 1, textAlign: 'start'}}>{item.productName}</Typography>
+                onClick={() => getProduct(item.id)}
+                sx={{
+                  color: item.productName === productName ? 'darkgreen' : '#0F0F0F',
+                  fontSize: item.productName === productName ? 'x-large' : 'middle'
+                }}>
+                {item.productName}
               </MenuButton>
             ))}
           </Box>
@@ -100,7 +105,7 @@ export default function ProductDetail({successDelete}: propsType) {
       </SelectBox>
 
       {/* 제품 정보 */}
-      <Box sx={{flex: 0.8, pt: 5, textAlign: 'center'}}>
+      <Box sx={{flex: 0.7, pt: 5, textAlign: 'center'}}>
         <ProductInfo successDelete={successDelete}/>
 
         <Spacing/>
@@ -123,6 +128,9 @@ const Spacing = styled(Container)(({theme}) => ({
 
 // 제품 목록 버튼
 const MenuButton = styled(Button)(() => ({
+  margin: 10,
+  textAlign: 'start',
+  fontWeight: 'bold',
   color: '#0F0F0F',
   fontSize: 15,
   marginBottom: 2,
@@ -138,7 +146,7 @@ const CategoryTotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none'
   },
-  flex: 0.2
+  flex: 0.3
 })) as typeof Box;
 
 const CategoryBox = styled(Box)(({theme}) => ({

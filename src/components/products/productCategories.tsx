@@ -90,6 +90,7 @@ export default function ProductCategories({successDelete}: propsType) {
         setLoginErrorMsg('');
         setCheckPassword(false);
         openDeleteCategory();
+        dispatch(setPassword({password: ''}));
       })
       .catch(error => {
         setLoginErrorMsg(error.response.data.message);
@@ -180,7 +181,7 @@ export default function ProductCategories({successDelete}: propsType) {
         ))}
       </Grid>
     )
-  }
+  };
 
   return (
     <Box sx={{width: '100%'}}>
@@ -226,7 +227,8 @@ export default function ProductCategories({successDelete}: propsType) {
                       variant='h5'
                       sx={{
                         p: 1,
-                        userSelect: 'none'
+                        userSelect: 'none',
+                        fontWeight: 'bold'
                       }}>
                       제품 소개
                   </Typography>
@@ -251,17 +253,12 @@ export default function ProductCategories({successDelete}: propsType) {
                     onClick={() => {
                       dispatch(selectProductCategoryTrue());
                       dispatch(setCurrentProductCategoryName({category: value.categoryName}));
+                    }}
+                    sx={{
+                      color: currentProductCategoryName === value.categoryName ? 'darkgreen' : 'black',
+                      fontSize: currentProductCategoryName === value.categoryName ? 'x-large' : 'middle'
                     }}>
-                    <Typography
-                      sx={{
-                        m: 1,
-                        textAlign: 'center',
-                        color: currentProductCategoryName === value.categoryName ? 'darkgreen' : 'black',
-                        fontWeight: currentProductCategoryName === value.categoryName ? 'bold' : 'regular',
-                        fontSize: currentProductCategoryName === value.categoryName ? 'x-large' : 'middle'
-                      }}>
-                      {value.categoryName}
-                    </Typography>
+                    {value.categoryName}
                   </MenuButton>
                 ))}
               </Box>
@@ -326,6 +323,7 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 14
   },
+  fontWeight: 'bold',
   userSelect: 'none',
   padding: 1,
   width: 'max-content',
@@ -339,6 +337,7 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 13
   },
+  fontWeight: 'bold',
   width: '100%',
   paddingTop: 4,
   paddingBottom: 4,
@@ -387,6 +386,9 @@ const AddButton = styled(Button)(({theme}) => ({
 
 // Text 버튼
 const MenuButton = styled(Button)(() => ({
+  margin: 10,
+  textAlign: 'center',
+  fontWeight: 'bold',
   color: '#0F0F0F',
   fontSize: 15,
   marginBottom: 2,

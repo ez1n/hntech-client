@@ -123,10 +123,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             placeholder='제목을 입력해 주세요'
-            inputProps={{
-              style: {fontSize: 20},
-              maxLength: 30
-            }}
+            inputProps={{style: {fontSize: 20}}}
             sx={{width: '100%'}}
           />
         </Box>

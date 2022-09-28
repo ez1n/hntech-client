@@ -79,6 +79,10 @@ export default function ArchiveItem() {
                 cursor: 'pointer',
                 display: 'flex',
                 justifyContent: 'center',
+                minWidth: '300px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
                 '&: hover': {
                   color: 'blue'
                 }
@@ -113,11 +117,18 @@ export default function ArchiveItem() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                minWidth: '300px',
                 '&: hover': {
                   color: 'blue'
                 }
               }}>
-              {item.title}
+              <Typography sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
+                {item.title}
+              </Typography>
               {item.new == 'true' &&
                   <New>[new]</New>
               }

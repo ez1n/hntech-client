@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Box, Container, Typography, styled} from '@mui/material';
 import EditButton from '../editButton';

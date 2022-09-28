@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {commentApi} from '../../network/comment';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickCommentRemoveGoBack} from '../../app/reducers/dialogSlice';
@@ -90,7 +90,11 @@ export default function Comment({item, questionId}: propsType) {
             width: '100%',
           }}>
           <Typography sx={{fontSize: 20}}>{item.writer}</Typography>
-          <Typography>{item.content}</Typography>
+          {item.content.split('\n').map((value, index) => (
+            <Typography key={index}>
+              {value}
+            </Typography>
+          ))}
         </Stack>
       }
 

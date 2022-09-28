@@ -172,7 +172,8 @@ const ContentTypography = styled(Typography)(({theme}) => ({
   },
   color: '#FCFCFC',
   opacity: 0.8,
-  marginRight: 15
+  marginRight: 15,
+  fontWeight: 'bold'
 })) as typeof Typography;
 
 const SiteBox = styled(Box)(({theme}) => ({
