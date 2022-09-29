@@ -23,40 +23,65 @@ export default function CompanySideMenu() {
         {/* title (회사소개) */}
         <Container sx={{width: 'max-content'}}>
           <Typography
-            variant='h5' sx={{pl: 1, pb: 2, width: 'max-content'}}>
+            variant='h5' sx={{pl: 1, pb: 2, width: 'max-content', fontWeight: 'bold'}}>
             회사소개
           </Typography>
         </Container>
 
         {/* 하위 메뉴 */}
-        <MenuButton onClick={() => {
-          dispatch(clickChangeIntroduce());
-          navigate('/company');
-        }}>
+        <MenuButton
+          onClick={() => {
+            dispatch(clickChangeIntroduce());
+            navigate('/company');
+          }}
+          sx={{
+            color: companyMode === 'INTRODUCE' ? 'darkgreen' : '#0F0F0F',
+            fontSize: companyMode === 'INTRODUCE' ? 'x-large' : 'middle'
+          }}>
           인사말
         </MenuButton>
-        <MenuButton onClick={() => {
-          dispatch(clickChangeHistory());
-          navigate('/company');
-        }}>
+        <MenuButton
+          onClick={() => {
+            dispatch(clickChangeHistory());
+            navigate('/company');
+          }}
+          sx={{
+            color: companyMode === 'HISTORY' ? 'darkgreen' : '#0F0F0F',
+            fontSize: companyMode === 'HISTORY' ? 'x-large' : 'middle'
+          }}>
           회사 연혁
         </MenuButton>
-        <MenuButton onClick={() => {
-          dispatch(clickChangeOrgChart());
-          navigate('/company');
-        }}>
+        <MenuButton
+          onClick={() => {
+            dispatch(clickChangeOrgChart());
+            navigate('/company');
+          }}
+          sx={{
+            color: companyMode === 'CHART' ? 'darkgreen' : '#0F0F0F',
+            fontSize: companyMode === 'CHART' ? 'x-large' : 'middle'
+          }}>
           조직도
         </MenuButton>
-        <MenuButton onClick={() => {
-          dispatch(clickChangeInfo());
-          navigate('/company');
-        }}>
+        <MenuButton
+          onClick={() => {
+            dispatch(clickChangeInfo());
+            navigate('/company');
+          }}
+          sx={{
+            color: companyMode === 'INFORMATION' ? 'darkgreen' : '#0F0F0F',
+            fontSize: companyMode === 'INFORMATION' ? 'x-large' : 'middle'
+          }}>
           CI 소개
         </MenuButton>
-        <MenuButton onClick={() => {
-          dispatch(clickChangeLocation());
-          navigate('/company');
-        }}>
+        <MenuButton
+          onClick={() => {
+            dispatch(clickChangeLocation());
+            navigate('/company');
+          }}
+          sx={{
+            color: companyMode === 'LOCATION' ? 'darkgreen' : '#0F0F0F',
+            fontSize: companyMode === 'LOCATION' ? 'x-large' : 'middle'
+          }}>
           찾아오시는 길
         </MenuButton>
       </TitleStack>
@@ -93,23 +118,23 @@ const TitleStack = styled(Stack)(({theme}) => ({
     borderLeft: 'none',
     display: 'none'
   },
-  borderLeft: '4px solid rgb(46, 125, 50)'
+  borderLeft: '4px solid rgb(46, 125, 50)',
+  width: 'max-content'
 })) as typeof Stack;
 
 const MenuButton = styled(Button)(() => ({
   padding: 10,
   marginLeft: 20,
   width: 'max-content',
-  color: '#0F0F0F',
   fontSize: 15,
+  fontWeight: 'bold',
   marginBottom: 2,
   borderRadius: 5,
   justifyContent: 'flex-start',
   transition: '0.5s',
   '&:hover': {
     backgroundColor: 'rgba(57, 150, 82, 0.1)',
-    transform: 'scale(1.02)',
-    fontWeight: 'bold'
+    transform: 'scale(1.02)'
   }
 })) as typeof Button;
 

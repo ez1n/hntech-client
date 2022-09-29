@@ -21,7 +21,7 @@ export default function Introduce({success}: propsType) {
     adminApi.getIntroduce()
       .then(res => dispatch(updateIntroduce({newIntroduce: res.newIntroduce})))
       .catch(error => console.log(error))
-  }, []);
+  }, [introduce]);
 
   // 인사말 수정
   const putIntroduce = () => {
@@ -57,7 +57,7 @@ export default function Introduce({success}: propsType) {
 
       {/* 내용 */}
       {managerMode ?
-        <Container sx={{textAlign: 'center', mt: 1}}>
+        <Container sx={{textAlign: 'center', mt: 1, }}>
           <TextField
             type='text'
             autoFocus={true}
@@ -74,7 +74,7 @@ export default function Introduce({success}: propsType) {
         <Container sx={{textAlign: 'center'}}>
           {introduce.newIntroduce.split('\n').map((value, index) => (
             <IntroduceContentTypography key={index}>
-              {value}
+              {value === '' ? <br/> : value}
             </IntroduceContentTypography>
           ))}
         </Container>}
@@ -117,6 +117,8 @@ const IntroduceContentTypography = styled(Typography)(({theme}) => ({
     fontSize: 12
   },
   fontSize: 18,
+  fontWeight: 'bold',
+  color: '0F0F0F',
   marginBottom: 20,
   textAlign: 'center'
 })) as typeof Typography;

@@ -17,8 +17,8 @@ export default function Location() {
 
       {/* 지도 */}
       <Container>
-        <Typography>
-          주소 : 경기도 용인시 처인구 모현읍 외개일로 20번길 9-14
+        <Typography sx={{textAlign: 'center', fontSize: 'large', fontWeight: 'bold', color: '0F0F0F'}}>
+          본사 : 경기도 용인시 처인구 모현읍 외개일로 20번길 9-14
         </Typography>
       </Container>
     </TotalBox>

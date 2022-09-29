@@ -88,7 +88,7 @@ export default function History({success}: propsType) {
               border: '2px solid lightgrey',
               borderRadius: 1,
               alignItems: 'center',
-              height: 350,
+              height: 500,
               overflow: 'auto'
             }}>
             <img src={history.path === '' ? `${api.baseUrl()}/files/admin/${history.serverFilename}` : history.path}

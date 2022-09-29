@@ -162,10 +162,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateArchiveTitle({title: event.target.value}))}
-            inputProps={{
-              style: {fontSize: 18},
-              maxLength: 30
-            }}
+            inputProps={{ style: {fontSize: 18} }}
             sx={{width: '100%'}}
           />
         </Box>

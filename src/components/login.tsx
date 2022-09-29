@@ -35,6 +35,7 @@ export default function Login() {
       .then(res => {
         setLoginErrorMsg('');
         dispatch(clickManagerLogin());
+        dispatch(setPassword({password: ''}));
         localStorage.setItem("login", res.result);
         const isLogin = localStorage.getItem("login");
         dispatch(changeMode({login: isLogin}));

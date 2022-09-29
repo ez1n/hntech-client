@@ -131,11 +131,13 @@ export default function ProductInfo({successDelete}: propsType) {
 
       {/* 부가 설명 */}
       <Container sx={{textAlign: 'center'}}>
-        {description.split('\n').map((value, index) => (
-          <DescriptionTypography key={index}>
-            {value}
-          </DescriptionTypography>
-        ))}
+        <Container sx={{width: 'max-content', textAlign: 'start'}}>
+          {description.split('\n').map((value, index) => (
+            <DescriptionTypography key={index}>
+              {value}
+            </DescriptionTypography>
+          ))}
+        </Container>
       </Container>
 
       {/* 삭제 버튼 Dialog */}
@@ -169,10 +171,11 @@ const TitleTypography = styled(Typography)(({theme}) => ({
 
 const DescriptionTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
-    fontSize: 18
-  },
-  [theme.breakpoints.down('sm')]: {
     fontSize: 14
   },
-  fontSize: 20
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 12
+  },
+  fontWeight: 'bold',
+  fontSize: 16
 })) as typeof Typography;

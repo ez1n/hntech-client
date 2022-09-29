@@ -41,7 +41,6 @@ export default function ProductItem({product, index, moveProductItem}: propsType
   const getProduct = (productId: number) => {
     productApi.getProduct(productId)
       .then(res => {
-        console.log(res.category.length);
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
         navigate('/product-detail');
@@ -81,7 +80,7 @@ export default function ProductItem({product, index, moveProductItem}: propsType
         const {id: originId, index: originIndex} = item;
         const didDrop = monitor.didDrop();
         if (!didDrop) {
-          moveProductItem(originId, originIndex);
+          putUpdateCategorySequence(originId, 0);
         }
       },
     }),
@@ -170,8 +169,9 @@ const ProductNameTypography = styled(Typography)(({theme}) => ({
     fontSize: 13
   },
   fontSize: 15,
+  fontWeight: 'bold',
   width: '100%',
   padding: 4,
   borderRadius: 1,
-  backgroundColor: 'rgba(57, 150, 82, 0.2)',
+  backgroundColor: 'rgba(57, 150, 82, 0.2)'
 })) as typeof Typography;

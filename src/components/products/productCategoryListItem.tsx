@@ -39,7 +39,7 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
         const {id: originId, index: originIndex} = item;
         const didDrop = monitor.didDrop();
         if (!didDrop) {
-          moveCategoryItem(originId, originIndex);
+          putUpdateCategorySequence(originId, 0);
         }
       },
     }),
@@ -52,12 +52,6 @@ export default function ProductCategoryListItem({moveCategoryItem, category, id,
       collect: monitor => ({
         isOver: monitor.isOver(),
       }),
-      hover: (item: { id: number, index: number }) => {
-        const {id: draggedId, index: originIndex} = item;
-        if (draggedId !== id) {
-         // moveCategoryItem(draggedId, index);
-        }
-      },
       drop: (item: { id: number, index: number }) => {
         const {id: draggedId, index: originIndex} = item;
         if (draggedId !== id) {

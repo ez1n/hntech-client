@@ -90,6 +90,7 @@ export default function ProductCategories({successDelete}: propsType) {
         setLoginErrorMsg('');
         setCheckPassword(false);
         openDeleteCategory();
+        dispatch(setPassword({password: ''}));
       })
       .catch(error => {
         setLoginErrorMsg(error.response.data.message);
@@ -180,7 +181,7 @@ export default function ProductCategories({successDelete}: propsType) {
         ))}
       </Grid>
     )
-  }
+  };
 
   return (
     <Box sx={{width: '100%'}}>
@@ -226,7 +227,8 @@ export default function ProductCategories({successDelete}: propsType) {
                       variant='h5'
                       sx={{
                         p: 1,
-                        userSelect: 'none'
+                        userSelect: 'none',
+                        fontWeight: 'bold'
                       }}>
                       제품 소개
                   </Typography>
@@ -237,7 +239,7 @@ export default function ProductCategories({successDelete}: propsType) {
                 pl: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                minWidth: 'max-content'
+                width: 'max-content'
               }}>
                 {productCategories.map((value: {
                   categoryName: string;
@@ -251,17 +253,16 @@ export default function ProductCategories({successDelete}: propsType) {
                     onClick={() => {
                       dispatch(selectProductCategoryTrue());
                       dispatch(setCurrentProductCategoryName({category: value.categoryName}));
-                    }}>
-                    <Typography
-                      sx={{
-                        m: 1,
-                        textAlign: 'center',
-                        color: currentProductCategoryName === value.categoryName ? 'darkgreen' : 'black',
-                        fontWeight: currentProductCategoryName === value.categoryName ? 'bold' : 'regular',
-                        fontSize: currentProductCategoryName === value.categoryName ? 'x-large' : 'middle'
-                      }}>
-                      {value.categoryName}
-                    </Typography>
+                    }}
+                    sx={{
+                      color: currentProductCategoryName === value.categoryName ? '#F0F0F0' : '#0F0F0F',
+                      backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(57, 150, 82, 0.1)',
+                      '&:hover': {
+                        backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(57, 150, 82, 0.1)'
+                      }
+                    }}
+                  >
+                    {value.categoryName}
                   </MenuButton>
                 ))}
               </Box>
@@ -326,6 +327,7 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 14
   },
+  fontWeight: 'bold',
   userSelect: 'none',
   padding: 1,
   width: 'max-content',
@@ -339,6 +341,7 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 13
   },
+  fontWeight: 'bold',
   width: '100%',
   paddingTop: 4,
   paddingBottom: 4,
@@ -354,8 +357,8 @@ const CategoryButton = styled(Button)(() => ({
   color: '#0F0F0F',
   display: 'flex',
   flexDirection: 'column',
-  border: '1px solid rgba(57, 150, 82, 0.2)',
   borderRadius: 10,
+  border: '1px solid rgba(57, 150, 82, 0.2)',
   transition: '0.5s',
   '&: hover': {
     transform: 'scale(1.04)'
@@ -387,13 +390,17 @@ const AddButton = styled(Button)(({theme}) => ({
 
 // Text 버튼
 const MenuButton = styled(Button)(() => ({
-  color: '#0F0F0F',
+  padding: 5,
+  paddingLeft: 10,
+  paddingRight: 20,
+  marginLeft: 10,
   fontSize: 15,
-  marginBottom: 2,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  borderRadius: 5,
   justifyContent: 'flex-start',
   transition: '0.5s',
   '&:hover': {
-    backgroundColor: 'rgba(57, 150, 82, 0.1)',
     transform: 'scale(1.02)'
   }
 })) as typeof Button;

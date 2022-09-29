@@ -144,6 +144,7 @@ const FileButton = styled(Button)(() => ({
   paddingRight: 20,
   borderRadius: 10,
   fontSize: 15,
+  fontWeight: 'bold',
   transition: '0.5s',
   '&: hover': {
     transform: 'scale(1.02)',

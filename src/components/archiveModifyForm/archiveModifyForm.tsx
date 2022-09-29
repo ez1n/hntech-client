@@ -165,13 +165,8 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
               dispatch(modifyArchiveTitle({title: event?.target.value}))
             }}
             placeholder='제목을 입력해 주세요'
-            inputProps={{
-              style: {fontSize: 18},
-              maxLength: 30
-            }}
-            sx={{
-              width: '100%'
-            }}
+            inputProps={{ style: {fontSize: 18} }}
+            sx={{width: '100%'}}
           />
         </Box>
 
