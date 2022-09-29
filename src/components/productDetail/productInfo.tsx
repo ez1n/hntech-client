@@ -176,5 +176,6 @@ const DescriptionTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 12
   },
+  fontWeight: 'bold',
   fontSize: 16
 })) as typeof Typography;

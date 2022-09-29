@@ -117,6 +117,8 @@ const IntroduceContentTypography = styled(Typography)(({theme}) => ({
     fontSize: 12
   },
   fontSize: 18,
+  fontWeight: 'bold',
+  color: '0F0F0F',
   marginBottom: 20,
   textAlign: 'center'
 })) as typeof Typography;

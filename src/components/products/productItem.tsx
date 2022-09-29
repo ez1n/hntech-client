@@ -80,7 +80,7 @@ export default function ProductItem({product, index, moveProductItem}: propsType
         const {id: originId, index: originIndex} = item;
         const didDrop = monitor.didDrop();
         if (!didDrop) {
-          moveProductItem(originId, originIndex);
+          putUpdateCategorySequence(originId, 0);
         }
       },
     }),

@@ -128,12 +128,14 @@ const Spacing = styled(Container)(({theme}) => ({
 
 // 제품 목록 버튼
 const MenuButton = styled(Button)(() => ({
-  margin: 10,
-  textAlign: 'start',
+  padding: 10,
+  marginLeft: 10,
+  width: 'max-content',
+  fontSize: 15,
   fontWeight: 'bold',
   color: '#0F0F0F',
-  fontSize: 15,
   marginBottom: 2,
+  borderRadius: 5,
   justifyContent: 'flex-start',
   transition: '0.5s',
   '&:hover': {

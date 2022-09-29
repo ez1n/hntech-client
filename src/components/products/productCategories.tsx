@@ -239,7 +239,7 @@ export default function ProductCategories({successDelete}: propsType) {
                 pl: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                minWidth: 'max-content'
+                width: 'max-content'
               }}>
                 {productCategories.map((value: {
                   categoryName: string;
@@ -255,9 +255,13 @@ export default function ProductCategories({successDelete}: propsType) {
                       dispatch(setCurrentProductCategoryName({category: value.categoryName}));
                     }}
                     sx={{
-                      color: currentProductCategoryName === value.categoryName ? 'darkgreen' : 'black',
-                      fontSize: currentProductCategoryName === value.categoryName ? 'x-large' : 'middle'
-                    }}>
+                      color: currentProductCategoryName === value.categoryName ? '#F0F0F0' : '#0F0F0F',
+                      backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(57, 150, 82, 0.1)',
+                      '&:hover': {
+                        backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(57, 150, 82, 0.1)'
+                      }
+                    }}
+                  >
                     {value.categoryName}
                   </MenuButton>
                 ))}
@@ -353,8 +357,8 @@ const CategoryButton = styled(Button)(() => ({
   color: '#0F0F0F',
   display: 'flex',
   flexDirection: 'column',
-  border: '1px solid rgba(57, 150, 82, 0.2)',
   borderRadius: 10,
+  border: '1px solid rgba(57, 150, 82, 0.2)',
   transition: '0.5s',
   '&: hover': {
     transform: 'scale(1.04)'
@@ -386,16 +390,17 @@ const AddButton = styled(Button)(({theme}) => ({
 
 // Text 버튼
 const MenuButton = styled(Button)(() => ({
-  margin: 10,
-  textAlign: 'center',
-  fontWeight: 'bold',
-  color: '#0F0F0F',
+  padding: 5,
+  paddingLeft: 10,
+  paddingRight: 20,
+  marginLeft: 10,
   fontSize: 15,
-  marginBottom: 2,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  borderRadius: 5,
   justifyContent: 'flex-start',
   transition: '0.5s',
   '&:hover': {
-    backgroundColor: 'rgba(57, 150, 82, 0.1)',
     transform: 'scale(1.02)'
   }
 })) as typeof Button;

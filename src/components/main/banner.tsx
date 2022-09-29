@@ -1,7 +1,7 @@
 import React from 'react';
 import {api} from '../../network/network';
 import {Swiper, SwiperSlide} from 'swiper/react';
-import {EffectFade, Navigation, Pagination, Autoplay} from 'swiper';
+import {EffectFade, Navigation, Autoplay} from 'swiper';
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -16,13 +16,12 @@ export default function Banner() {
     <TotalBox>
       <Swiper
         effect="fade"
-        modules={[EffectFade, Navigation, Pagination, Autoplay]}
+        modules={[EffectFade, Navigation, Autoplay]}
         spaceBetween={50}
         slidesPerView={1}
         navigation
         loop={true}
         loopFillGroupWithBlank={true}
-        pagination={{clickable: true}}
         autoplay={{delay: 5500}}>
         {banner?.map((item: {
           id: number,
