@@ -9,6 +9,10 @@ img {
   height: 3rem;
 }
 
+.korHeaderLogo {
+  width: 14rem;
+}
+
 /* footer */
 
 .logoKor {
@@ -19,10 +23,24 @@ img {
 text-decoration: none;
 }
 
+/* banner */
+
+.swiper-button-next::after {
+  position: absolute;
+  right: 100px;
+  color: #cbe0df;
+}
+
+.swiper-button-prev::after {
+  position: absolute;
+  left: 100px;
+  color: #cbe0df;
+}
+
 /* orgChart, history */
 
 .CIImage {
-  width: 15%;
+  width: 13%;
 }
 
 .companyImage {
@@ -140,6 +158,10 @@ text-decoration: none;
     height: 2rem;
   }
 
+  .korHeaderLogo {
+    width: 10rem;
+  }
+
   .logoKor {
     height: 2rem;
   }
@@ -165,7 +187,7 @@ text-decoration: none;
     height: 1.3rem;
   }
 
-  .CIImage {
+  .CIImage, .korHeaderLogo {
     display: none;
   }
 

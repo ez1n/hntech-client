@@ -72,11 +72,12 @@ export default function Header() {
       {/* 로고 */}
       <Button onClick={() => navigate('/')}>
         <Stack direction='column'>
-          <Stack direction='row' sx={{alignItems: 'center'}}>
+          <Stack direction='row' spacing={2} sx={{alignItems: 'center'}}>
             <img className='logoImage' src={`${api.baseUrl()}/files/admin/${logo.serverFilename}`}
                  alt='HNTECH logo'/>
-            <CompanyName>(주)에이치앤테크</CompanyName>
+            <img className='korHeaderLogo' src='/images/korHeaderLogo.png' alt='korean logo'/>
           </Stack>
+
           {/* 관리자 모드 */}
           {managerMode && <AdminMode>관리자 모드</AdminMode>}
         </Stack>
@@ -393,7 +394,7 @@ const CompanyName = styled(Typography)(({theme}) => ({
 
 const AdminMode = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
-    top: '3.5em',
+    top: '3em',
     fontSize: '1em'
   },
   [theme.breakpoints.down('sm')]: {
@@ -401,7 +402,7 @@ const AdminMode = styled(Typography)(({theme}) => ({
   },
   position: 'absolute',
   top: '3em',
-  left: '7.5em',
+  right: '1em',
   color: '#0F0F0F',
   fontWeight: 'bold',
   width: 'max-content'
@@ -458,7 +459,7 @@ const ListBox = styled(List)(() => ({
   flexDirection: 'column',
   transition: 'height ease-out 0.3s 0s',
   overflow: 'hidden',
-  backgroundColor: 'rgb(126,162,126)',
+  backgroundColor: 'rgb(60,84,60)',
   padding: 0
 })) as typeof List;
 
@@ -474,7 +475,7 @@ const MainMenu = styled(Button)(({theme}) => ({
   color: '#21381c',
   transition: '0.5s',
   '&:hover': {
-    backgroundColor: 'rgba(57, 150, 82, 0.1)',
+    backgroundColor: 'rgba(70,73,71,0.1)',
     transform: 'scale(1.02)'
   }
 })) as typeof Button;
@@ -484,6 +485,7 @@ const DropdownMenu = styled(ListItem)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: 10,
   },
+  fontWeight: 'bold',
   justifyContent: 'center',
   fontSize: 15,
   color: '#FCFCFC',

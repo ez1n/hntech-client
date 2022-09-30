@@ -35,8 +35,11 @@ export default function CompanySideMenu() {
             navigate('/company');
           }}
           sx={{
-            color: companyMode === 'INTRODUCE' ? 'darkgreen' : '#0F0F0F',
-            fontSize: companyMode === 'INTRODUCE' ? 'x-large' : 'middle'
+            color: companyMode === 'INTRODUCE' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: companyMode === 'INTRODUCE' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            '&:hover': {
+              backgroundColor: companyMode === 'INTRODUCE' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+            }
           }}>
           인사말
         </MenuButton>
@@ -46,8 +49,11 @@ export default function CompanySideMenu() {
             navigate('/company');
           }}
           sx={{
-            color: companyMode === 'HISTORY' ? 'darkgreen' : '#0F0F0F',
-            fontSize: companyMode === 'HISTORY' ? 'x-large' : 'middle'
+            color: companyMode === 'HISTORY' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: companyMode === 'HISTORY' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            '&:hover': {
+              backgroundColor: companyMode === 'HISTORY' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+            }
           }}>
           회사 연혁
         </MenuButton>
@@ -57,8 +63,11 @@ export default function CompanySideMenu() {
             navigate('/company');
           }}
           sx={{
-            color: companyMode === 'CHART' ? 'darkgreen' : '#0F0F0F',
-            fontSize: companyMode === 'CHART' ? 'x-large' : 'middle'
+            color: companyMode === 'CHART' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: companyMode === 'CHART' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            '&:hover': {
+              backgroundColor: companyMode === 'CHART' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+            }
           }}>
           조직도
         </MenuButton>
@@ -68,8 +77,11 @@ export default function CompanySideMenu() {
             navigate('/company');
           }}
           sx={{
-            color: companyMode === 'INFORMATION' ? 'darkgreen' : '#0F0F0F',
-            fontSize: companyMode === 'INFORMATION' ? 'x-large' : 'middle'
+            color: companyMode === 'INFORMATION' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: companyMode === 'INFORMATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            '&:hover': {
+              backgroundColor: companyMode === 'INFORMATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+            }
           }}>
           CI 소개
         </MenuButton>
@@ -79,8 +91,11 @@ export default function CompanySideMenu() {
             navigate('/company');
           }}
           sx={{
-            color: companyMode === 'LOCATION' ? 'darkgreen' : '#0F0F0F',
-            fontSize: companyMode === 'LOCATION' ? 'x-large' : 'middle'
+            color: companyMode === 'LOCATION' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: companyMode === 'LOCATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            '&:hover': {
+              backgroundColor: companyMode === 'LOCATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+            }
           }}>
           찾아오시는 길
         </MenuButton>
@@ -124,16 +139,16 @@ const TitleStack = styled(Stack)(({theme}) => ({
 
 const MenuButton = styled(Button)(() => ({
   padding: 10,
+  paddingLeft: 10,
+  paddingRight: 20,
   marginLeft: 20,
-  width: 'max-content',
   fontSize: 15,
   fontWeight: 'bold',
-  marginBottom: 2,
+  marginBottom: 10,
   borderRadius: 5,
   justifyContent: 'flex-start',
   transition: '0.5s',
   '&:hover': {
-    backgroundColor: 'rgba(57, 150, 82, 0.1)',
     transform: 'scale(1.02)'
   }
 })) as typeof Button;

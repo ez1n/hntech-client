@@ -19,8 +19,6 @@ import {
   Stack,
   Grid
 } from '@mui/material';
-import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 
 export default function Representation() {
   const navigate = useNavigate();
@@ -208,14 +206,14 @@ const DocumentStack = styled(Stack)(({theme}) => ({
 const SideButton = styled(Button)(() => ({
   fontSize: 13,
   borderRadius: 10,
-  backgroundColor: 'rgb(46, 125, 50)',
+  backgroundColor: 'rgb(48,103,51)',
   color: '#FCFCFC',
   '&: focus': {
-    backgroundColor: 'rgba(50, 150, 77)'
+    backgroundColor: 'rgb(62,147,67)'
   },
   '&: hover': {
     transform: 'scale(1.02)',
-    backgroundColor: 'rgb(74,154,77)'
+    backgroundColor: 'rgb(62,147,67)'
   }
 })) as typeof Button;
 
@@ -231,7 +229,7 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   paddingTop: 4,
   paddingBottom: 4,
   borderRadius: 1,
-  backgroundColor: 'rgba(57, 150, 82, 0.2)'
+  backgroundColor: 'rgba(79,79,79,0.78)'
 })) as typeof Typography;
 
 // Image 버튼
@@ -239,10 +237,10 @@ const CategoryButton = styled(Button)(() => ({
   width: '100%',
   overflow: 'hidden',
   height: 200,
-  color: '#0F0F0F',
+  color: '#F0F0F0',
   display: 'flex',
   flexDirection: 'column',
-  border: '1px solid rgba(57, 150, 82, 0.2)',
+  border: '3px solid rgba(79,79,79,0.78)',
   borderRadius: 10,
   transition: '0.5s',
   '&: hover': {

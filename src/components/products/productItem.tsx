@@ -9,8 +9,6 @@ import {getCurrentProductData, getProductDetail, getProductList} from '../../app
 import {Box, Button, styled, Typography, Grid} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
-import {categoryApi} from "../../network/category";
-import {setAllProductCategories} from "../../app/reducers/categorySlice";
 import {useDrag, useDrop} from "react-dnd";
 
 interface propsType {
@@ -108,12 +106,15 @@ export default function ProductItem({product, index, moveProductItem}: propsType
         {/* 제품 */}
         <ProductButton onClick={() => getProduct(id)}>
           <Box sx={{height: 150, overflow: 'hidden'}}>
-            <img
-              className='productImage'
-              src={`${api.baseUrl()}/files/product/${image.serverFilename}`}
-              width='100%'
-              height='100%'
-              alt={image.originalFilename}/>
+            {image.serverFilename !== null ?
+              <img
+                className='productImage'
+                src={`${api.baseUrl()}/files/product/${image.serverFilename}`}
+                width='100%'
+                height='100%'
+                alt={image.originalFilename}/> :
+              <Typography>no Image</Typography>
+            }
           </Box>
           <ProductNameTypography>
             {productName}
@@ -153,10 +154,10 @@ const ProductBox = styled(Box)(() => ({
 const ProductButton = styled(Button)(() => ({
   width: '100%',
   height: 200,
-  color: '#0F0F0F',
+  color: '#F0F0F0',
   display: 'flex',
   flexDirection: 'column',
-  border: '1px solid rgba(57, 150, 82, 0.2)',
+  border: '3px solid rgba(79,79,79,0.78)',
   borderRadius: 10,
   transition: '0.5s',
   '&: hover': {
@@ -172,6 +173,6 @@ const ProductNameTypography = styled(Typography)(({theme}) => ({
   fontWeight: 'bold',
   width: '100%',
   padding: 4,
-  borderRadius: 1,
-  backgroundColor: 'rgba(57, 150, 82, 0.2)'
+  borderRadius: 8,
+  backgroundColor: 'rgba(79,79,79,0.78)'
 })) as typeof Typography;

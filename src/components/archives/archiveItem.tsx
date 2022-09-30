@@ -67,7 +67,7 @@ export default function ArchiveItem() {
               flex: 1,
               p: 1.5,
               borderBottom: '1px solid #3B6C46',
-              backgroundColor: 'rgba(46, 125, 50, 0.1)',
+              backgroundColor: 'rgba(105,162,149,0.1)',
               alignItems: 'center'
             }}>
             <List sx={{flex: 0.1}}><Icon/></List>
