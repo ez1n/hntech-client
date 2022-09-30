@@ -53,10 +53,18 @@ export default function ProductDetail({successDelete}: propsType) {
             pl: 2,
             display: 'flex',
             flexDirection: 'column',
-            minWidth: 'max-content'
+            width: 'max-content'
           }}>
 
-            <MenuButton onClick={() => navigate('/client-product')}>
+            <MenuButton
+              onClick={() => navigate('/client-product')}
+              sx={{
+                color: '#0F0F0F',
+                backgroundColor: 'rgba(166,166,166,0.25)',
+                '&:hover': {
+                  backgroundColor: 'rgba(166,166,166,0.25)'
+                }
+              }}>
               전체
             </MenuButton>
             {productList.map((item: {
@@ -73,8 +81,11 @@ export default function ProductDetail({successDelete}: propsType) {
                 key={item.id}
                 onClick={() => getProduct(item.id)}
                 sx={{
-                  color: item.productName === productName ? 'darkgreen' : '#0F0F0F',
-                  fontSize: item.productName === productName ? 'x-large' : 'middle'
+                  color: item.productName === productName ? '#F0F0F0' : '#0F0F0F',
+                  backgroundColor: item.productName === productName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+                  '&:hover': {
+                    backgroundColor: item.productName === productName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+                  }
                 }}>
                 {item.productName}
               </MenuButton>
@@ -105,7 +116,7 @@ export default function ProductDetail({successDelete}: propsType) {
       </SelectBox>
 
       {/* 제품 정보 */}
-      <Box sx={{flex: 0.7, pt: 5, textAlign: 'center'}}>
+      <Box sx={{flex: 0.8, pt: 5, textAlign: 'center'}}>
         <ProductInfo successDelete={successDelete}/>
 
         <Spacing/>
@@ -129,17 +140,16 @@ const Spacing = styled(Container)(({theme}) => ({
 // 제품 목록 버튼
 const MenuButton = styled(Button)(() => ({
   padding: 10,
+  paddingLeft: 10,
+  paddingRight: 20,
   marginLeft: 10,
-  width: 'max-content',
   fontSize: 15,
   fontWeight: 'bold',
-  color: '#0F0F0F',
-  marginBottom: 2,
+  marginBottom: 10,
   borderRadius: 5,
   justifyContent: 'flex-start',
   transition: '0.5s',
   '&:hover': {
-    backgroundColor: 'rgba(57, 150, 82, 0.1)',
     transform: 'scale(1.02)'
   }
 })) as typeof Button;
@@ -148,7 +158,7 @@ const CategoryTotalBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none'
   },
-  flex: 0.3
+  flex: 0.2
 })) as typeof Box;
 
 const CategoryBox = styled(Box)(({theme}) => ({

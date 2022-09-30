@@ -448,7 +448,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                 serverFilename: string,
                 type: string
               }, index: number) => (
-                <Stack key={index} direction='row' spacing={1} sx={{alignItems: 'center'}}>
+                <Stack key={item.id} direction='row' spacing={1} sx={{alignItems: 'center'}}>
                   <TextField
                     size='small'
                     defaultValue={item.type}
@@ -491,7 +491,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                 originalFilename: string,
                 type: string
               }, index: number) => (
-                <Stack key={index} direction='row' spacing={1} sx={{alignItems: 'center'}}>
+                <Stack key={item.id} direction='row' spacing={1} sx={{alignItems: 'center'}}>
                   <TextField
                     size='small'
                     defaultValue={item.type}

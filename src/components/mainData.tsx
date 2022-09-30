@@ -136,7 +136,7 @@ const FileBox = styled(Box)(({theme}) => ({
 // 버튼 스타일
 const FileButton = styled(Button)(() => ({
   color: '#FCFCFC',
-  backgroundColor: 'green',
+  backgroundColor: 'rgb(48,103,51)',
   marginTop: 25,
   paddingTop: 10,
   paddingBottom: 10,
@@ -148,6 +148,6 @@ const FileButton = styled(Button)(() => ({
   transition: '0.5s',
   '&: hover': {
     transform: 'scale(1.02)',
-    backgroundColor: 'rgb(66, 183, 72)'
+    backgroundColor: 'rgb(62,147,67)'
   }
 })) as typeof Button;

@@ -50,7 +50,7 @@ export default function PasswordUpdate({successModify}: propsType) {
   };
 
   // 관리자 비밀번호 변경
-  const putUpdatePassword = (updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) => {
+  const putUpdatePassword = () => {
     validate() &&
     adminApi.putUpdatePassword(updatePassword)
       .then(res => {
@@ -61,17 +61,24 @@ export default function PasswordUpdate({successModify}: propsType) {
       .catch(error => console.log(error))
   };
 
-  const onPutUpdatePasswordKeyUp = (event: any, updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) => {
+  const onPutUpdatePasswordKeyUp = (event: any) => {
     if (event.key === 'Enter') {
-      putUpdatePassword(updatePassword)
+      putUpdatePassword();
     }
-    ;
+  };
+
+  // 다이얼로그 닫기 이벤트
+  const closeDialog = () => {
+    setCurPasswordErrorMsg('');
+    setNewPasswordErrorMsg('');
+    setNewPasswordCheckErrorMsg('');
+    dispatch(clickPasswordStateGoBack());
   };
 
   return (
     <Dialog
       open={passwordState}
-      onClose={() => dispatch(clickPasswordStateGoBack())}>
+      onClose={closeDialog}>
       <DialogTitle sx={{textAlign: 'center'}}>
         비밀번호 변경
       </DialogTitle>
@@ -81,28 +88,28 @@ export default function PasswordUpdate({successModify}: propsType) {
             type={'password'}
             onChange={event => dispatch(updateCurPassword({curPassword: event?.target.value}))}
             placeholder={'현재 비밀번호'}
-            error={curPasswordErrorMsg ? true : false}
+            error={!!curPasswordErrorMsg}
             helperText={curPasswordErrorMsg}/>
 
           <TextField
             type={'password'}
             onChange={event => dispatch(updateNewPassword({newPassword: event?.target.value}))}
             placeholder={'새 비밀번호'}
-            error={newPasswordErrorMsg ? true : false}
+            error={!!newPasswordErrorMsg}
             helperText={newPasswordErrorMsg}/>
 
           <TextField
             type={'password'}
             onChange={event => dispatch(updateNewPasswordCheck({newPasswordCheck: event?.target.value}))}
-            onKeyUp={event => onPutUpdatePasswordKeyUp(event, updatePassword)}
+            onKeyUp={onPutUpdatePasswordKeyUp}
             placeholder={'새 비밀번호 확인'}
-            error={newPasswordCheckErrorMsg ? true : false}
+            error={!!newPasswordCheckErrorMsg}
             helperText={newPasswordCheckErrorMsg}/>
         </Stack>
       </DialogContent>
       <DialogActions sx={{justifyContent: 'center'}}>
-        <EditButton name='변경' onClick={() => putUpdatePassword(updatePassword)}/>
-        <EditButton name='취소' onClick={() => dispatch(clickPasswordStateGoBack())}/>
+        <EditButton name='변경' onClick={putUpdatePassword}/>
+        <EditButton name='취소' onClick={closeDialog}/>
       </DialogActions>
     </Dialog>
   )

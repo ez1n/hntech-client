@@ -256,12 +256,11 @@ export default function ProductCategories({successDelete}: propsType) {
                     }}
                     sx={{
                       color: currentProductCategoryName === value.categoryName ? '#F0F0F0' : '#0F0F0F',
-                      backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(57, 150, 82, 0.1)',
+                      backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
                       '&:hover': {
-                        backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(57, 150, 82, 0.1)'
+                        backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
                       }
-                    }}
-                  >
+                    }}>
                     {value.categoryName}
                   </MenuButton>
                 ))}
@@ -345,8 +344,8 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   width: '100%',
   paddingTop: 4,
   paddingBottom: 4,
-  borderRadius: 1,
-  backgroundColor: 'rgba(57, 150, 82, 0.2)'
+  borderRadius: 8,
+  backgroundColor: 'rgba(79,79,79,0.78)'
 })) as typeof Typography;
 
 // Image 버튼
@@ -354,14 +353,15 @@ const CategoryButton = styled(Button)(() => ({
   width: '100%',
   overflow: 'hidden',
   height: 200,
-  color: '#0F0F0F',
+  color: '#F0F0F0',
   display: 'flex',
   flexDirection: 'column',
   borderRadius: 10,
-  border: '1px solid rgba(57, 150, 82, 0.2)',
+  border: '3px solid rgba(79,79,79,0.78)',
   transition: '0.5s',
   '&: hover': {
-    transform: 'scale(1.04)'
+    transform: 'scale(1.04)',
+    border: '3px solid rgba(79,79,79,0.78)',
   }
 })) as typeof Button;
 
@@ -390,7 +390,7 @@ const AddButton = styled(Button)(({theme}) => ({
 
 // Text 버튼
 const MenuButton = styled(Button)(() => ({
-  padding: 5,
+  padding: 10,
   paddingLeft: 10,
   paddingRight: 20,
   marginLeft: 10,
