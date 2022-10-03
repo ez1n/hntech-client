@@ -22,7 +22,6 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
  * addProductDocUploadButton : 첨부파일 업로드 버튼 추가 (빈 버튼)
  * deleteProductDocUploadButton : 첨부파일 업로드 버튼 삭제
  * resetProductForm : 폼 초기화
- * deleteOriginalProductFile: 기존 제품 이미지 삭제
  */
 
 interface productFormInitialState {
@@ -51,7 +50,7 @@ interface productFormInitialState {
       }[]
     }
   },
-};
+}
 
 const ProductFormInitialState: productFormInitialState = {
   productContent: {
@@ -112,13 +111,12 @@ export const ProductFormSlice = createSlice({
         }
       }>
     ) => {
-      const newProductContent = {
+      state.productContent = {
         ...state.productContent,
         category: action.payload.detail.category,
         description: action.payload.detail.description,
         productName: action.payload.detail.productName
       };
-      state.productContent = newProductContent;
     },
     addProductName: (
       state,
@@ -142,48 +140,45 @@ export const ProductFormSlice = createSlice({
       state,
       action: PayloadAction<{ repProduct: { file: string, path: string } }>
     ) => {
-      const newFile = {file: [action.payload.repProduct.file], path: action.payload.repProduct.path};
-      state.productContent.files.representativeImage = newFile;
+      state.productContent.files.representativeImage = {
+        file: [action.payload.repProduct.file],
+        path: action.payload.repProduct.path
+      };
     },
     addProductImage: (
       state,
       action: PayloadAction<{ product: { file: string, path: string } }>
     ) => {
-      const newFile = [...state.productContent.files.productImages, action.payload.product];
-      state.productContent.files.productImages = newFile;
+      state.productContent.files.productImages = [...state.productContent.files.productImages, action.payload.product];
     },
     deleteProductImage: (
       state,
       action: PayloadAction<{ index: number }>
     ) => {
-      const newFile = state.productContent.files.productImages.filter((value, index) => index !== action.payload.index);
-      state.productContent.files.productImages = newFile;
+      state.productContent.files.productImages = state.productContent.files.productImages.filter((value, index) => index !== action.payload.index);
     },
     addStandardImage: (
       state,
       action: PayloadAction<{ standard: { file: string, path: string } }>
     ) => {
-      const newFile = [...state.productContent.files.standardImages, action.payload.standard];
-      state.productContent.files.standardImages = newFile;
+      state.productContent.files.standardImages = [...state.productContent.files.standardImages, action.payload.standard];
     },
     deleteStandardImage: (
       state,
       action: PayloadAction<{ index: number }>
     ) => {
-      const newFile = state.productContent.files.standardImages.filter((value, index) => index !== action.payload.index);
-      state.productContent.files.standardImages = newFile;
+      state.productContent.files.standardImages = state.productContent.files.standardImages.filter((value, index) => index !== action.payload.index);
     },
     addProductDocType: (
       state,
       action: PayloadAction<{ id: Number, type: string }>
     ) => {
-      const newFile = state.productContent.files.docFiles.map(item => {
+      state.productContent.files.docFiles = state.productContent.files.docFiles.map(item => {
         if (item.id === action.payload.id) {
           return {...item, type: action.payload.type}
         }
         return item;
-      })
-      state.productContent.files.docFiles = newFile;
+      });
     },
     addProductDoc: (
       state,
@@ -195,7 +190,7 @@ export const ProductFormSlice = createSlice({
         }
       }>
     ) => {
-      const newFile = state.productContent.files.docFiles.map(item => {
+      state.productContent.files.docFiles = state.productContent.files.docFiles.map(item => {
         if (item.id === action.payload.id) {
           return {
             ...item,
@@ -204,48 +199,43 @@ export const ProductFormSlice = createSlice({
           }
         }
         return item;
-      })
-      state.productContent.files.docFiles = newFile;
+      });
     },
 
     deleteProductDoc: (
       state,
       action: PayloadAction<{ id: number }>
     ) => {
-      const newFile = state.productContent.files.docFiles.map(item => {
+      state.productContent.files.docFiles = state.productContent.files.docFiles.map(item => {
         if (item.id === action.payload.id) {
           return {...item, originalFilename: '', file: ''}
         }
         return item;
-      })
-      state.productContent.files.docFiles = newFile;
+      });
     },
     addProductDocUploadButton: (state) => {
       const fileLen = state.productContent.files.docFiles['length'];
       if (fileLen === 0) {
-        const newFile = [{
+        state.productContent.files.docFiles = [{
           id: 0,
           file: '',
           originalFilename: '',
           type: ''
         }];
-        state.productContent.files.docFiles = newFile;
       } else {
-        const newFile = [...state.productContent.files.docFiles, {
+        state.productContent.files.docFiles = [...state.productContent.files.docFiles, {
           id: state.productContent.files.docFiles[fileLen - 1].id + 1,
           file: '',
           originalFilename: '',
           type: ''
         }];
-        state.productContent.files.docFiles = newFile;
       }
     },
     deleteProductDocUploadButton: (
       state,
       action: PayloadAction<{ index: number }>
     ) => {
-      const newFile = state.productContent.files.docFiles.filter((item, index) => index !== action.payload.index);
-      state.productContent.files.docFiles = newFile;
+      state.productContent.files.docFiles = state.productContent.files.docFiles.filter((item, index) => index !== action.payload.index);
     },
     resetProductForm: (state) => {
       state.productContent = {

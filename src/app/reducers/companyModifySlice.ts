@@ -31,7 +31,7 @@ interface modeInitialState {
     historyImage: { file: string, path: string, serverFilename: string },
     orgChartImage: { file: string, path: string, serverFilename: string }
   }
-};
+}
 
 const CompanyModifyInitialState: modeInitialState = {
   introduce: {newIntroduce: ''},
@@ -70,33 +70,29 @@ export const ModeSlice = createSlice({
         }
       }>
     ) => {
-      const newCompanyImage = {
+      state.companyImage = {
         compInfoImage: {file: '', path: '', serverFilename: action.payload.data.compInfoImage},
         historyImage: {file: '', path: '', serverFilename: action.payload.data.historyImage},
         orgChartImage: {file: '', path: '', serverFilename: action.payload.data.orgChartImage}
       };
-      state.companyImage = newCompanyImage;
     },
     getHistoryImage: (
       state,
       action: PayloadAction<{ historyImage: string }>
     ) => {
-      const newHistoryImage = {file: '', path: '', serverFilename: action.payload.historyImage};
-      state.companyImage.historyImage = newHistoryImage;
+      state.companyImage.historyImage = {file: '', path: '', serverFilename: action.payload.historyImage};
     },
     getCompanyInfoImage: (
       state,
       action: PayloadAction<{ companyInfoImage: string }>
     ) => {
-      const newCompanyInfo = {file: '', path: '', serverFilename: action.payload.companyInfoImage};
-      state.companyImage.compInfoImage = newCompanyInfo;
+      state.companyImage.compInfoImage = {file: '', path: '', serverFilename: action.payload.companyInfoImage};
     },
     getOrgChartImage: (
       state,
       action: PayloadAction<{ orgChartImage: string }>
     ) => {
-      const newOrgChart = {file: '', path: '', serverFilename: action.payload.orgChartImage};
-      state.companyImage.orgChartImage = newOrgChart;
+      state.companyImage.orgChartImage = {file: '', path: '', serverFilename: action.payload.orgChartImage};
     },
     updateIntroduce: (
       state,
@@ -108,26 +104,31 @@ export const ModeSlice = createSlice({
       state,
       action: PayloadAction<{ file: string, path: string }>
     ) => {
-      const newHistory = {...state.companyImage.compInfoImage, file: action.payload.file, path: action.payload.path};
-      state.companyImage.historyImage = newHistory;
+      state.companyImage.historyImage = {
+        ...state.companyImage.compInfoImage,
+        file: action.payload.file,
+        path: action.payload.path
+      };
     },
     updateOrgChart: (
       state,
       action: PayloadAction<{ file: string, path: string }>
     ) => {
-      const newOrgChart = {...state.companyImage.historyImage, file: action.payload.file, path: action.payload.path};
-      state.companyImage.orgChartImage = newOrgChart;
+      state.companyImage.orgChartImage = {
+        ...state.companyImage.historyImage,
+        file: action.payload.file,
+        path: action.payload.path
+      };
     },
     updateCompanyInfo: (
       state,
       action: PayloadAction<{ file: string, path: string }>
     ) => {
-      const newCompanyInfo = {
+      state.companyImage.compInfoImage = {
         ...state.companyImage.orgChartImage,
         file: action.payload.file,
         path: action.payload.path
       };
-      state.companyImage.compInfoImage = newCompanyInfo;
     }
   }
 });

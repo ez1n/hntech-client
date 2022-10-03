@@ -4,12 +4,13 @@ const SUCCESS = 200
 
 class QuestionApi {
   // 문의사항 글쓰기
-  async postCreateQuestion(createQuestionForm: {}) {
+  async postCreateQuestion(createQuestionForm: FormData) {
     const response = await axios.post(`/question`, createQuestionForm);
     if (response.status !== SUCCESS) {
       console.error(response.data);
       return;
     }
+    return response.data
   };
 
   // 문의사항 목록 받아오기
@@ -48,14 +49,14 @@ class QuestionApi {
     return response.data;
   };
 
-  // 문의사항 글 수정 (변경 요청)
-  async putQuestion(questionId: number, updateQuestionForm: {}) {
+  // 문의사항 변경하기
+  async putQuestion(questionId: number, updateQuestionForm: FormData) {
     const response = await axios.put(`/question/${questionId}`, updateQuestionForm);
     return response.data;
   };
 
   // 문의게시판 FAQ (게시글 수정)
-  async putUpdateFAQ(questionId: number, currentQuestion: { title: string, content: string, faq: string }) {
+  async putUpdateFAQ(questionId: number, currentQuestion: FormData) {
     const response = await axios.put(`/admin/question/${questionId}`, currentQuestion);
     if (response.status !== SUCCESS) {
       console.error(response.data);
@@ -67,6 +68,11 @@ class QuestionApi {
   // 문의게시판 답변완료
   async putUpdateQuestionStatus(questionId: number) {
     const response = await axios.put(`/admin/question/${questionId}/complete`);
+    return response.data;
+  };
+
+  async deleteQuestionFile(questionId: number, fileId: number) {
+    const response = await axios.delete(`/question/${questionId}/file/${fileId}`);
     return response.data;
   };
 };

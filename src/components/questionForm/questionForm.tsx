@@ -8,7 +8,9 @@ import {
   updateQuestionName,
   updateQuestionPassword,
   updateQuestionContent,
-  resetQuestionContent
+  resetQuestionContent,
+  deleteQuestionFile,
+  addQuestionFile
 } from '../../app/reducers/questionFormSlice';
 import {
   Container,
@@ -17,10 +19,12 @@ import {
   Box,
   List,
   ListItem,
-  TextField
+  TextField,
+  Stack
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 
 interface propsType {
   success: () => void,
@@ -31,8 +35,12 @@ export default function QuestionForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const questionForm = new FormData();
+
   // state
+  const questionFile = useAppSelector(state => state.questionForm.questionFile);
   const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보
+  const {title, writer, password, content} = questionContent
   const [deleteQuestionForm, setDeleteQuestionForm] = useState(false); // 글쓰기 취소
 
   // error message
@@ -46,15 +54,15 @@ export default function QuestionForm({success, errorToast}: propsType) {
 
   const validate = () => {
     let isValid = true;
-    if (questionContent.writer === '') {
+    if (writer === '') {
       setNameErrorMsg('이름을 입력해 주세요.');
       isValid = false;
     } else setNameErrorMsg('');
-    if (questionContent.password === '' || questionContent.password.length < 4) {
+    if (password === '' || password.length < 4) {
       setPasswordErrorMsg('비밀번호 4자리를 입력해 주세요.');
       isValid = false;
     } else setPasswordErrorMsg('');
-    if (questionContent.title === '') {
+    if (title === '') {
       setTitleErrorMsg('제목을 작성해 주세요.');
       isValid = false;
     } else setTitleErrorMsg('');
@@ -71,10 +79,27 @@ export default function QuestionForm({success, errorToast}: propsType) {
     setDeleteQuestionForm(false);
   };
 
+  // 파일 선택 이벤트
+  const selectFile = (event: any) => {
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(addQuestionFile({
+        file: {file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
+        }
+      }))
+    }
+  };
+
   // 문의사항 작성하기
   const postCreateQuestion = () => {
+    questionForm.append('writer', writer);
+    questionForm.append('password', password);
+    questionForm.append('title', title);
+    questionForm.append('content', content);
+    questionFile.map((item: {file: string, path: string}) => questionForm.append('files', item.file));
+    questionForm.append('FAQ', 'false');
+
     validate() &&
-    questionApi.postCreateQuestion(questionContent)
+    questionApi.postCreateQuestion(questionForm)
       .then(res => {
         success();
         navigate('/client-question');
@@ -106,7 +131,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
       {/* 문의 글쓰기 폼 */}
       <Box sx={{
         borderTop: '3px solid #2E7D32',
-        borderBottom: '3px solid #2E7D32',
+        borderBottom: '3px solid #2E7D32'
       }}>
 
         {/* 제목 */}
@@ -168,7 +193,43 @@ export default function QuestionForm({success, errorToast}: propsType) {
         </Box>
 
         {/* 문의 내용 */}
-        <Box p={2}>
+        <Stack spacing={2} p={2}>
+          <Box>
+            <label className='uploadButton' htmlFor='inputQuestionPhoto' onChange={selectFile}>
+              사진 첨부
+              <input className='questionInput' id='inputQuestionPhoto' type='file' accept={'image/*'} multiple/>
+            </label>
+          </Box>
+
+          {/* 첨부파일 */}
+          <Container
+            sx={{
+              border: '1.8px solid lightgrey',
+              borderRadius: 1,
+              mb: 2,
+              height: 300,
+              display: 'flex',
+              flexWrap: 'wrap',
+              overflow: 'auto',
+              alignItems: 'center'
+            }}>
+            {questionFile.length === 0 &&
+              <Typography sx={{color: 'lightgrey', fontSize: 18}}>
+                이미지 미리보기
+              </Typography>
+            }
+            {questionFile.map((item: { file: string, path: string }, index: number) => (
+              <Box key={index} sx={{width: '23%', m: 1}}>
+                <Box sx={{textAlign: 'end'}}>
+                  <ClearRoundedIcon
+                    onClick={() => dispatch(deleteQuestionFile({index: index}))}
+                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                </Box>
+                <img src={item.path} alt='이미지' width='100%'/>
+              </Box>
+            ))}
+          </Container>
+
           <TextField
             type='text'
             multiline
@@ -179,7 +240,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
             inputProps={{style: {fontSize: 18}}}
             sx={{width: '100%'}}
           />
-        </Box>
+        </Stack>
       </Box>
 
       <Spacing/>

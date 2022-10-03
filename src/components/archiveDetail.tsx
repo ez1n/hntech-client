@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
+import {api} from "../network/network";
 
 interface propsType {
   successDelete: () => void
@@ -119,6 +120,18 @@ export default function ArchiveDetail({successDelete}: propsType) {
 
         {/* content */}
         <Box sx={{p: 3, minHeight: 300, borderBottom: '1px solid #3B6C46'}}>
+          <Stack direction='row' sx={{flexWrap: 'wrap', mb: 2}}>
+            {detail.contentImageFiles?.map((item: {
+              id: number,
+              originalFilename: string,
+              savedPath: string,
+              serverFilename: string
+            }) => (
+              <img key={item.id} src={`${api.baseUrl()}/files/question/${item.serverFilename}`} width={'30%'}
+                   alt={item.originalFilename}/>
+            ))}
+          </Stack>
+
           {detail.content.split('\n').map((value, index) => (
             <Typography key={index}>
               {value === '\r' ? <br/> : value}
@@ -131,7 +144,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
           <ContentTypography>첨부파일</ContentTypography>
           <ContentTypography>|</ContentTypography>
           <Box>
-            {detail.files.map((item: {
+            {detail.attachedFiles.map((item: {
               id: number,
               originalFilename: string,
               savedPath: string,

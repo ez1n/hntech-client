@@ -1,9 +1,15 @@
 import React, {useState} from 'react';
-import {questionApi} from '../../network/question';
 import {useNavigate} from 'react-router-dom';
+import {questionApi} from '../../network/question';
+import {api} from "../../network/network";
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {changeMode} from '../../app/reducers/managerModeSlice';
-import {modifyQuestionTitle, modifyQuestionContent} from '../../app/reducers/questionFormSlice';
+import {
+  modifyQuestionTitle,
+  modifyQuestionContent,
+  addQuestionFile,
+  deleteQuestionFile, deleteOriginalQuestionFile
+} from '../../app/reducers/questionFormSlice';
 import {
   setFaqState,
   setDetailData
@@ -20,6 +26,7 @@ import {
   Stack,
   TextField
 } from '@mui/material';
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 
@@ -32,12 +39,16 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const questionForm = new FormData();
+
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
   const currentQuestion = useAppSelector(state => state.questionForm.currentQuestion); // 현재 문의사항 정보 (수정용)
   const faqState = useAppSelector(state => state.question.faqState); // FAQ
+  const questionFile = useAppSelector(state => state.questionForm.questionFile);
   const [cancelQuestionModify, setCancelQuestionModify] = useState(false); // 문의사항 변경 취소
+  const [deleteQuestionId, setDeleteQuestionId] = useState<{ questionId: number, fileId: number }[]>([]);
 
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
@@ -61,15 +72,39 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
     setCancelQuestionModify(false);
   };
 
+  // 파일 첨부
+  const selectFile = (event: any) => {
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(addQuestionFile({
+        file: {
+          file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
+        }
+      }))
+    }
+  };
+
+  // 기존 이미지 삭제
+  const deleteOriginQuestionFile = (index: number, questionId: number, fileId: number) => {
+    dispatch(deleteOriginalQuestionFile({index: index}));
+    setDeleteQuestionId([...deleteQuestionId, {questionId: questionId, fileId: fileId}]);
+  };
+
   // 문의사항 변경하기
-  const putQuestion = (questionId: number, currentQuestion: { title: string, content: string }) => {
+  const putQuestion = (questionId: number) => {
+    questionForm.append('title', currentQuestion.title);
+    questionForm.append('content', currentQuestion.content);
+    questionFile.map((item: { file: string, path: string }) => questionForm.append('files', item.file));
+
+    deleteQuestionId.map((item: { questionId: number, fileId: number }) => (
+      questionApi.deleteQuestionFile(item.questionId, item.fileId)
+        .then()
+        .catch(error => console.log(error))
+    ));
+
     if (managerMode) {
+      questionForm.append('FAQ', faqState)
       validate() &&
-      questionApi.putUpdateFAQ(questionId, {
-        title: currentQuestion.title,
-        content: currentQuestion.content,
-        faq: faqState
-      })
+      questionApi.putUpdateFAQ(questionId, questionForm)
         .then(res => {
           successModify();
           dispatch(setDetailData({detail: res}));
@@ -78,7 +113,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         .catch(error => console.log(error))
     } else {
       validate() &&
-      questionApi.putQuestion(questionId, currentQuestion)
+      questionApi.putQuestion(questionId, questionForm)
         .then(res => {
           successModify();
           dispatch(setDetailData({detail: res}));
@@ -91,7 +126,6 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
-          ;
         })
     }
   };
@@ -108,7 +142,6 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         borderTop: '3px solid #2E7D32',
         borderBottom: '3px solid #2E7D32',
       }}>
-
         {/* 제목 */}
         <Box sx={{
           textAlign: 'center',
@@ -149,19 +182,19 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
             />
 
             {managerMode &&
-                <FormControlLabel
-                    control={<Checkbox
-                      defaultChecked={!!faqState}
-                      onChange={event => dispatch(setFaqState({faq: event.target.checked}))}
-                      sx={{
-                        color: 'darkgrey',
-                        '&.Mui-checked': {
-                          color: 'green',
-                        },
-                      }}/>}
-                    label='FAQ'
-                    labelPlacement='start'
-                    sx={{color: 'darkgrey'}}/>
+              <FormControlLabel
+                control={<Checkbox
+                  defaultChecked={faqState === 'true'}
+                  onChange={event => dispatch(setFaqState({faq: event.target.checked}))}
+                  sx={{
+                    color: 'darkgrey',
+                    '&.Mui-checked': {
+                      color: 'green',
+                    },
+                  }}/>}
+                label='FAQ'
+                labelPlacement='start'
+                sx={{color: 'darkgrey'}}/>
             }
 
           </Stack>
@@ -174,7 +207,52 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         </Box>
 
         {/* 문의 내용 */}
-        <Box p={2}>
+        <Stack spacing={2} p={2}>
+          <Box>
+            <label className='uploadButton' htmlFor='inputQuestionPhoto' onChange={selectFile}>
+              사진 첨부
+              <input className='questionInput' id='inputQuestionPhoto' type='file' accept={'image/*'} multiple/>
+            </label>
+          </Box>
+
+          {/* 첨부파일 */}
+          <Container
+            sx={{
+              border: '1.8px solid lightgrey',
+              borderRadius: 1,
+              mb: 2,
+              height: 300,
+              display: 'flex',
+              flexWrap: 'wrap',
+              overflow: 'auto',
+              alignItems: 'center'
+            }}>
+            {/* 기존 이미지 */}
+            {currentQuestion.files.map((item: { id: number, originalFilename: string, savedPath: string, serverFilename: string }, index: number) => (
+              <Box key={item.id} sx={{width: '23%', m: 1}}>
+                <Box sx={{textAlign: 'end'}}>
+                  <ClearRoundedIcon
+                    onClick={() => deleteOriginQuestionFile(index, detail.id, item.id)}
+                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                </Box>
+                <img src={`${api.baseUrl()}/files/question/${item.serverFilename}`} alt={item.originalFilename}
+                     width='100%'/>
+              </Box>
+            ))}
+
+            {/* 새로 추가한 이미지 */}
+            {questionFile.map((item: { file: string, path: string }, index: number) => (
+              <Box key={index} sx={{width: '23%', m: 1}}>
+                <Box sx={{textAlign: 'end'}}>
+                  <ClearRoundedIcon
+                    onClick={() => dispatch(deleteQuestionFile({index: index}))}
+                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                </Box>
+                <img src={item.path} alt='이미지' width='100%'/>
+              </Box>
+            ))}
+          </Container>
+
           <TextField
             type='text'
             value={currentQuestion.content}
@@ -190,14 +268,14 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
             }}
             sx={{width: '100%'}}
           />
-        </Box>
+        </Stack>
       </Box>
 
       <Spacing/>
 
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
-        <EditButton name='변경완료' onClick={() => putQuestion(detail.id, currentQuestion)}/>
+        <EditButton name='변경완료' onClick={() => putQuestion(detail.id)}/>
         <EditButton name='변경취소' onClick={openCancelQuestionModify}/>
       </Spacing>
 

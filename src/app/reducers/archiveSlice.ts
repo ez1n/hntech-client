@@ -48,8 +48,14 @@ interface archiveInitialState {
     categoryName: string,
     content: string,
     createTime: string,
-    files: {
-      id: 0,
+    attachedFiles: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    }[],
+    contentImageFiles: {
+      id: number,
       originalFilename: string,
       savedPath: string,
       serverFilename: string
@@ -66,7 +72,7 @@ const ArchiveInitialState: archiveInitialState = {
   totalElements: 0,
   archives: [],
   notice: [],
-  detail: {categoryName: '', content: '', createTime: '', id: 0, files: [], title: '', notice: ''},
+  detail: {categoryName: '', content: '', createTime: '', id: 0, attachedFiles: [], contentImageFiles: [], title: '', notice: ''},
 };
 
 export const ArchiveSlice = createSlice({
@@ -114,8 +120,14 @@ export const ArchiveSlice = createSlice({
           categoryName: string,
           content: string,
           createTime: string,
-          files: {
-            id: 0,
+          attachedFiles: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          }[],
+          contentImageFiles: {
+            id: number,
             originalFilename: string,
             savedPath: string,
             serverFilename: string

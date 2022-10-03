@@ -55,13 +55,19 @@ interface questionInitialState {
     }[],
     content: string,
     createTime: string,
+    files: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    }[]
     id: number,
     title: string,
     status: string,
     writer: string
   },
   faqState: string
-};
+}
 
 const QuestionInitialState: questionInitialState = {
   pw: {password: ''},
@@ -76,6 +82,7 @@ const QuestionInitialState: questionInitialState = {
     comments: [],
     content: '',
     createTime: '',
+    files: [],
     id: 0,
     title: '',
     status: '',
@@ -131,6 +138,7 @@ export const QuestionSlice = createSlice({
           comments: [],
           content: string,
           createTime: string,
+          files: [],
           id: number,
           title: string,
           status: string,

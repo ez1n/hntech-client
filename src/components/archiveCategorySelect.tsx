@@ -14,7 +14,7 @@ export default function ArchiveCategorySelect({defaultCategory, categoryErrorMsg
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
 
   return (
-    <ArchiveCategoryFormControl error={categoryErrorMsg ? true : false}>
+    <ArchiveCategoryFormControl error={!!categoryErrorMsg}>
       <Select
         size={'small'}
         defaultValue={defaultCategory ? defaultCategory : undefined}
