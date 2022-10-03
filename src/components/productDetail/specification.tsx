@@ -33,8 +33,7 @@ export default function Specification() {
           savedPath: string,
           serverFilename: string
         }) => (
-          <img key={item.id} src={`${api.baseUrl()}/files/product/${item.serverFilename}`} width={'100%'}
-               alt={item.originalFilename}/>
+          <img key={item.id} src={`${api.baseUrl()}/files/product/${item.serverFilename}`} width={'100%'} alt={item.originalFilename}/>
         ))}
       </Box>
     </Box>

@@ -35,7 +35,7 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
 
   // 수정 데이터 업데이트
   useEffect(() => {
-    dispatch(setCurrentQuestion({content: detail.content, title: detail.title}));
+    dispatch(setCurrentQuestion({question: {content: detail.content, title: detail.title, files: detail.files}}));
   }, []);
 
   // 게시글 삭제 modal - open

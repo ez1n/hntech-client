@@ -1,6 +1,7 @@
 import React from 'react';
 import {useAppSelector} from '../../app/hooks';
 import {Box, Stack, Typography, styled} from '@mui/material';
+import {api} from "../../network/network";
 
 export default function QuestionContent() {
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
@@ -34,9 +35,21 @@ export default function QuestionContent() {
 
       {/* 문의 내용 */}
       <Box sx={{p: 3, minHeight: 300}}>
+        <Stack direction='row' sx={{flexWrap: 'wrap', mb: 2}}>
+          {detail.files.map((item: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          }) => (
+            <img key={item.id} src={`${api.baseUrl()}/files/question/${item.serverFilename}`} width={'30%'}
+                 alt={item.originalFilename}/>
+          ))}
+        </Stack>
+
         {detail.content.split('\n').map((value, index) => (
           <Typography key={index} sx={{fontSize: 18}}>
-            {value === "" ? <br/> : value}
+            {value === '' ? <br/> : value}
           </Typography>
         ))}
       </Box>

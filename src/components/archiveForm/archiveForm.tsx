@@ -4,6 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {onLoading} from '../../app/reducers/dialogSlice';
+import {changeMode} from '../../app/reducers/managerModeSlice';
 import {
   addArchiveFile,
   deleteArchiveFile,
@@ -14,7 +15,9 @@ import {
   updateArchiveNoticeChecked,
   resetArchiveState,
   resetArchiveFile,
-  updateArchiveCategory
+  updateArchiveCategory,
+  addArchiveContentFile,
+  deleteArchiveContentFile
 } from '../../app/reducers/archiveFormSlice';
 import {
   Container,
@@ -30,7 +33,6 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ArchiveCategorySelect from '../archiveCategorySelect';
-import {changeMode} from '../../app/reducers/managerModeSlice';
 import Loading from '../loading';
 
 interface propsType {
@@ -46,8 +48,9 @@ export default function ArchiveForm({success, errorToast}: propsType) {
 
   // state
   const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용
-  const fileData = useAppSelector(state => state.archiveForm.archiveFile.data); // 첨부파일 이름 목록
-  const fileName = useAppSelector(state => state.archiveForm.archiveFile.name); // 첨부파일 이름 목록
+  const attachedFileData = useAppSelector(state => state.archiveForm.attachedFiles.data); // 첨부파일 이름 목록
+  const attachedFileName = useAppSelector(state => state.archiveForm.attachedFiles.name); // 첨부파일 이름 목록
+  const contentImageFiles = useAppSelector(state => state.archiveForm.contentImageFiles);
   const [cancelArchive, setCancelArchive] = useState(false); // 자료실 글쓰기 취소
 
   // error message
@@ -96,6 +99,16 @@ export default function ArchiveForm({success, errorToast}: propsType) {
     }
   };
 
+  // 파일 선택 이벤트
+  const selectContentFile = (event: any) => {
+    for (let i = 0; i < event.target.files.length; i++) {
+      dispatch(addArchiveContentFile({
+        file: {file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
+        }
+      }))
+    }
+  };
+
   // 파일 선택 취소
   const deleteFile = (index: number) => {
     dispatch(deleteArchiveFile({num: index}));
@@ -104,16 +117,16 @@ export default function ArchiveForm({success, errorToast}: propsType) {
 
   // 자료실 글쓰기
   const postArchiveForm = () => {
-    fileData.map(item => archiveData.append('files', item));
-    archiveData.append('categoryName', archiveContent.categoryName)
-    archiveData.append('content', archiveContent.content)
-    archiveData.append('notice', archiveContent.notice)
-    archiveData.append('title', archiveContent.title)
+    attachedFileData.map(item => archiveData.append('attachedFiles', item));
+    archiveData.append('categoryName', archiveContent.categoryName);
+    archiveData.append('content', archiveContent.content);
+    contentImageFiles.map((item: {file: string, path: string}) => archiveData.append('contentImageFiles', item.file));
+    archiveData.append('notice', archiveContent.notice);
+    archiveData.append('title', archiveContent.title);
 
     // 게시글 내용 보내기
     if (validate()) {
       dispatch(onLoading());
-      console.log(archiveData.get("content"))
       archiveApi.postCreateArchive(archiveData)
         .then(res => {
           success();
@@ -155,8 +168,8 @@ export default function ArchiveForm({success, errorToast}: propsType) {
         }}>
           <TextField
             type='text'
-            required={true}
-            autoFocus={true}
+            required
+            autoFocus
             autoComplete='off'
             placeholder='제목을 입력해 주세요'
             error={!!titleErrorMsg}
@@ -194,15 +207,52 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             sx={{color: 'darkgrey'}}/>
         </Box>
 
-        {/* 문의 내용 */}
-        <Box sx={{p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)'}}>
+        {/* 내용 */}
+        <Stack spacing={2} sx={{p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)'}}>
+          <Box>
+            <label className='uploadButton' htmlFor='inputArchivePhoto' onChange={selectContentFile}>
+              사진 첨부
+              <input id='inputArchivePhoto' type='file' accept={'image/*'} multiple/>
+            </label>
+          </Box>
+
+          {/* 첨부파일 */}
+          <Container
+            sx={{
+              border: '1.8px solid lightgrey',
+              borderRadius: 1,
+              mb: 2,
+              height: 300,
+              display: 'flex',
+              flexWrap: 'wrap',
+              overflow: 'auto',
+              alignItems: 'center'
+            }}>
+            {contentImageFiles.length === 0 &&
+              <Typography sx={{color: 'lightgrey', fontSize: 18}}>
+                이미지 미리보기
+              </Typography>
+            }
+            {contentImageFiles.map((item: { file: string, path: string }, index: number) => (
+              <Box key={index} sx={{width: '23%', m: 1}}>
+                <Box sx={{textAlign: 'end'}}>
+                  <ClearRoundedIcon
+                    onClick={() => dispatch(deleteArchiveContentFile({index: index}))}
+                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                </Box>
+                <img src={item.path} alt='이미지' width='100%'/>
+              </Box>
+            ))}
+          </Container>
+
           <TextField
+            autoComplete='off'
             placeholder='내용을 입력하세요'
             multiline
             minRows={15}
             onChange={event => dispatch(updateArchiveContent({content: event.target.value}))}
             sx={{width: '100%', overflow: 'auto'}}/>
-        </Box>
+        </Stack>
 
         {/* 첨부파일 */}
         <Stack direction='row' spacing={2} sx={{p: 2}}>
@@ -216,12 +266,12 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             alignItems: 'center'
           }}>
             <Stack>
-              {fileName.length === 0 &&
+              {attachedFileName.length === 0 &&
                   <UploadFileTypography>
                       업로드할 파일
                   </UploadFileTypography>
               }
-              {fileName.map((item, index) => (
+              {attachedFileName.map((item, index) => (
                 <Stack direction='row' key={index}>
                   <UploadFileTypography>{item}</UploadFileTypography>
                   <ClearRoundedIcon

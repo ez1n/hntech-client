@@ -148,7 +148,9 @@ text-decoration: none;
 #footerLogoInput,
 #catalogInput,
 #approvalInput,
-#taxInput{
+#taxInput,
+#inputQuestionPhoto,
+#inputArchivePhoto{
   display: none;
 }
 

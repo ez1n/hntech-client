@@ -19,12 +19,23 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 interface initialState {
   questionContent: { title: string, writer: string, password: string, content: string },
-  currentQuestion: { title: string, content: string }
+  questionFile: { file: string, path: string }[]
+  currentQuestion: {
+    title: string,
+    content: string,
+    files: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    }[]
+  }
 };
 
 const InitialState: initialState = {
   questionContent: {title: '', writer: '', password: '', content: ''},
-  currentQuestion: {title: '', content: ''}
+  questionFile: [],
+  currentQuestion: {title: '', content: '', files: []}
 };
 
 export const QuestionFormSlice = createSlice({
@@ -32,7 +43,8 @@ export const QuestionFormSlice = createSlice({
   initialState: InitialState,
   reducers: {
     resetQuestionContent: state => {
-      state.questionContent = {title: '', writer: '', password: '', content: ''}
+      state.questionContent = {title: '', writer: '', password: '', content: ''};
+      state.questionFile = []
     },
     updateQuestionTitle: (
       state,
@@ -58,12 +70,34 @@ export const QuestionFormSlice = createSlice({
     ) => {
       state.questionContent.content = action.payload.content
     },
+    addQuestionFile: (
+      state,
+      action: PayloadAction<{ file: { file: string, path: string } }>
+    ) => {
+      state.questionFile = [...state.questionFile, action.payload.file];
+    },
+    deleteQuestionFile: (
+      state,
+      action: PayloadAction<{ index: number }>
+    ) => {
+      state.questionFile = state.questionFile.filter((value, index) => index !== action.payload.index);
+    },
     setCurrentQuestion: (
       state,
-      action: PayloadAction<{ content: string, title: string }>
+      action: PayloadAction<{
+        question: {
+          content: string,
+          title: string,
+          files: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          }[]
+        }
+      }>
     ) => {
-      state.currentQuestion.content = action.payload.content;
-      state.currentQuestion.title = action.payload.title;
+      state.currentQuestion = action.payload.question;
     },
     modifyQuestionTitle: (
       state,
@@ -76,6 +110,12 @@ export const QuestionFormSlice = createSlice({
       action: PayloadAction<{ content: string }>
     ) => {
       state.currentQuestion.content = action.payload.content
+    },
+    deleteOriginalQuestionFile: (
+      state,
+      action: PayloadAction<{ index: number }>
+    ) => {
+      state.currentQuestion.files = state.currentQuestion.files.filter((value, index) => index !== action.payload.index);
     }
   }
 });
@@ -86,8 +126,11 @@ export const {
   updateQuestionName,
   updateQuestionPassword,
   updateQuestionContent,
+  addQuestionFile,
+  deleteQuestionFile,
   setCurrentQuestion,
   modifyQuestionTitle,
-  modifyQuestionContent
+  modifyQuestionContent,
+  deleteOriginalQuestionFile
 } = QuestionFormSlice.actions;
 export default QuestionFormSlice.reducer;

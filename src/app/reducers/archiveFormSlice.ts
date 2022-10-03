@@ -3,7 +3,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 // 자료실 글 등록
 
 /**
- * archiveFile : 자료실 첨부파일 (이름, 정보)
+ * attachedFiles : 자료실 첨부파일 (이름, 정보)
  * archiveModifyContent : 상세보기 정보 (수정용)
  * archiveContent : 자료실 글 쓰기 (폼 내용)
  */
@@ -29,15 +29,22 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
  */
 
 interface archiveFormInitialState {
-  archiveFile: {
+  attachedFiles: {
     name: string[],
     data: string[],
   },
+  contentImageFiles: { file: string, path: string }[],
   archiveModifyContent: {
     categoryName: string,
     content: string,
-    files: {
-      id: 0,
+    attachedFiles: {
+      id: number,
+      originalFilename: string,
+      savedPath: string,
+      serverFilename: string
+    }[],
+    contentImageFiles: {
+      id: number,
       originalFilename: string,
       savedPath: string,
       serverFilename: string
@@ -51,14 +58,15 @@ interface archiveFormInitialState {
     notice: string,
     title: string,
   }
-};
+}
 
 const ArchiveFormInitialState: archiveFormInitialState = {
-  archiveFile: {
+  attachedFiles: {
     name: [],
     data: []
   },
-  archiveModifyContent: {categoryName: '', content: '', files: [], notice: '', title: '',},
+  contentImageFiles: [],
+  archiveModifyContent: {categoryName: '', content: '', attachedFiles: [], contentImageFiles: [], notice: '', title: '',},
   archiveContent: {categoryName: '전체', content: '', notice: 'false', title: ''}
 };
 
@@ -70,32 +78,29 @@ export const ArchiveFormSlice = createSlice({
       state,
       action: PayloadAction<{ item: string }>
     ) => {
-      const newFile = [...state.archiveFile.name, action.payload.item];
-      state.archiveFile.name = newFile;
+      state.attachedFiles.name = [...state.attachedFiles.name, action.payload.item];
     },
     deleteArchiveFile: (
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newFile = state.archiveFile.name.filter((value, index) => index !== action.payload.num);
-      state.archiveFile.name = newFile;
+      state.attachedFiles.name = state.attachedFiles.name.filter((value, index) => index !== action.payload.num);
     },
     updateArchiveFileData: (
       state,
       action: PayloadAction<{ file: string }>
     ) => {
-      const newFile = [...state.archiveFile.data, action.payload.file];
-      state.archiveFile.data = newFile;
+      state.attachedFiles.data = [...state.attachedFiles.data, action.payload.file];
     },
     deleteArchiveFileData: (
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newFile = state.archiveFile.data.filter((value, index) => index !== action.payload.num);
-      state.archiveFile.data = newFile;
+      state.attachedFiles.data = state.attachedFiles.data.filter((value, index) => index !== action.payload.num);
     },
     resetArchiveFile: (state) => {
-      state.archiveFile = {name: [], data: []}
+      state.attachedFiles = {name: [], data: []};
+      state.contentImageFiles = [];
     },
     copyArchiveDetailData: (
       state,
@@ -104,8 +109,14 @@ export const ArchiveFormSlice = createSlice({
           categoryName: string,
           content: string,
           createTime: string,
-          files: {
-            id: 0,
+          attachedFiles: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          }[],
+          contentImageFiles: {
+            id: number,
             originalFilename: string,
             savedPath: string,
             serverFilename: string
@@ -118,9 +129,10 @@ export const ArchiveFormSlice = createSlice({
     ) => {
       state.archiveModifyContent.categoryName = action.payload.detail.categoryName;
       state.archiveModifyContent.content = action.payload.detail.content;
-      state.archiveModifyContent.files = action.payload.detail.files;
+      state.archiveModifyContent.attachedFiles = action.payload.detail.attachedFiles;
       state.archiveModifyContent.notice = action.payload.detail.notice;
       state.archiveModifyContent.title = action.payload.detail.title;
+      state.archiveModifyContent.contentImageFiles = action.payload.detail.contentImageFiles;
     },
     updateArchiveTitle: (
       state,
@@ -171,8 +183,25 @@ export const ArchiveFormSlice = createSlice({
       state,
       action: PayloadAction<{ num: number }>
     ) => {
-      const newFile = state.archiveModifyContent.files.filter((value, index) => index !== action.payload.num);
-      state.archiveModifyContent.files = newFile;
+      state.archiveModifyContent.attachedFiles = state.archiveModifyContent.attachedFiles.filter((value, index) => index !== action.payload.num);
+    },
+    addArchiveContentFile: (
+      state,
+      action: PayloadAction<{ file: { file: string, path: string } }>
+    ) => {
+      state.contentImageFiles = [...state.contentImageFiles, action.payload.file];
+    },
+    deleteArchiveContentFile: (
+      state,
+      action: PayloadAction<{ index: number }>
+    ) => {
+      state.contentImageFiles = state.contentImageFiles.filter((value, index) => index !== action.payload.index);
+    },
+    deleteOriginalArchiveContentFile: (
+      state,
+      action: PayloadAction<{ index: number }>
+    ) => {
+      state.archiveModifyContent.contentImageFiles = state.archiveModifyContent.contentImageFiles.filter((value, index) => index !== action.payload.index);
     },
   }
 });
@@ -192,6 +221,9 @@ export const {
   modifyArchiveTitle,
   modifyArchiveContent,
   modifyArchiveNoticeChecked,
-  deleteArchiveOriginFile
+  deleteArchiveOriginFile,
+  addArchiveContentFile,
+  deleteArchiveContentFile,
+  deleteOriginalArchiveContentFile
 } = ArchiveFormSlice.actions;
 export default ArchiveFormSlice.reducer;

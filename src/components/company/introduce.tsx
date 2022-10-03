@@ -21,7 +21,7 @@ export default function Introduce({success}: propsType) {
     adminApi.getIntroduce()
       .then(res => dispatch(updateIntroduce({newIntroduce: res.newIntroduce})))
       .catch(error => console.log(error))
-  }, [introduce]);
+  }, []);
 
   // 인사말 수정
   const putIntroduce = () => {
@@ -37,7 +37,6 @@ export default function Introduce({success}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -57,18 +56,14 @@ export default function Introduce({success}: propsType) {
 
       {/* 내용 */}
       {managerMode ?
-        <Container sx={{textAlign: 'center', mt: 1, }}>
+        <Container sx={{textAlign: 'center', mt: 1}}>
           <TextField
-            type='text'
-            autoFocus={true}
-            autoComplete='off'
+            autoFocus
             multiline
-            value={introduce.newIntroduce}
-            onChange={event => dispatch(updateIntroduce({newIntroduce: event?.target.value}))}
+            defaultValue={introduce.newIntroduce}
+            onChange={event => dispatch(updateIntroduce({newIntroduce: event.target.value}))}
             minRows={10}
-            InputProps={{
-              style: {fontSize: 18}
-            }}
+            InputProps={{style: {fontSize: 18}}}
             sx={{mt: 3, width: '100%'}}/>
         </Container> :
         <Container sx={{textAlign: 'center'}}>
