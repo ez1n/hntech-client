@@ -209,4 +209,8 @@ text-decoration: none;
     font-size: 11px;
     width: 60px;
   }
+
+  .companyImage {
+    width: 90%;
+  }
 }

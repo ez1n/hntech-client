@@ -127,8 +127,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
               savedPath: string,
               serverFilename: string
             }) => (
-              <img key={item.id} src={`${api.baseUrl()}/files/question/${item.serverFilename}`} width={'30%'}
-                   alt={item.originalFilename}/>
+              <img key={item.id} src={`${api.baseUrl()}/files/archive/${item.serverFilename}`} width={'30%'} alt={item.originalFilename}/>
             ))}
           </Stack>
 

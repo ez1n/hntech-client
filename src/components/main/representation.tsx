@@ -78,40 +78,6 @@ export default function Representation() {
       <Grid container columns={categoryColumn} spacing={3}>
         {productMainCategories?.map((item: { categoryName: string, id: number, imageServerFilename: string }) => (
           <Grid item xs={1} key={item.id}>
-            {/*
-              <RepProductionButton onClick={() => onClickButton(item.categoryName)} >
-                <Container
-                  style={{backgroundImage: `url(${api.baseUrl()}/files/category/${item.imageServerFilename})`}}
-                  sx={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                  }}/>
-                <ImageBackdrop className='MuiImageBackdrop-root'/>
-
-                <Container sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#FCFCFC'
-                }}>
-                  <Typography sx={{
-                    p: 2,
-                    position: 'relative',
-                    fontSize: 18,
-                    fontWeight: 'bold',
-                    display: 'none'
-                  }}>
-                    {item.categoryName}
-                  </Typography>
-                </Container>
-              </RepProductionButton>
-              */}
-
             <CategoryButton onClick={() => onClickButton(item.categoryName)}>
               {/* 카테고리 */}
               <Box sx={{height: 150, minWidth: 214}}>
@@ -228,7 +194,7 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   width: '100%',
   paddingTop: 4,
   paddingBottom: 4,
-  borderRadius: 1,
+  borderRadius: 8,
   backgroundColor: 'rgba(79,79,79,0.78)'
 })) as typeof Typography;
 
