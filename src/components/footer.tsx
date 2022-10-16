@@ -27,11 +27,11 @@ export default function Footer() {
 
   // 로그아웃 modal
   const openLogout = () => {
-    setOnLogout(onLogout => !onLogout);
+    setOnLogout(onLogout => !onLogout)
   };
 
   const closeLogout = () => {
-    setOnLogout(false);
+    setOnLogout(false)
   };
 
   // 로그아웃
@@ -75,7 +75,7 @@ export default function Footer() {
           </ContentBox>
 
           <ContentTypography sx={{mt: 2}}>
-            https://www.hntec.co.kr
+            http://www.hntec.co.kr
           </ContentTypography>
         </InfoBox>
 

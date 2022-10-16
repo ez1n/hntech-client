@@ -157,18 +157,7 @@ export default function QuestionItem() {
             <List sx={{flex: 0.1}}>
               <Icon/>
             </List>
-            <List
-              onClick={() => getFAQDetail(item.id)}
-              sx={{
-                flex: 0.5,
-                display: 'flex',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                minWidth: '300px',
-                '&: hover': {
-                  color: 'blue'
-                }
-              }}>
+            <TitleList onClick={() => getFAQDetail(item.id)}>
               <List sx={{
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -179,7 +168,7 @@ export default function QuestionItem() {
               {item.new == 'true' &&
                   <New>[new]</New>
               }
-            </List>
+            </TitleList>
             <List sx={{flex: 0.1}}>{item.status}</List>
             <List sx={{flex: 0.1}}>{masking(item.writer)}</List>
             <List sx={{flex: 0.2}}>{item.createTime}</List>
@@ -190,18 +179,7 @@ export default function QuestionItem() {
         {questions.map((item, index: number) => (
           <Box key={item.id} sx={{display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46'}}>
             <List sx={{flex: 0.1}}>{totalElements - index}</List>
-            <List
-              onClick={() => getQuestionByAdmin(item.id)}
-              sx={{
-                flex: 0.5,
-                display: 'flex',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                minWidth: '300px',
-                '&: hover': {
-                  color: 'blue'
-                }
-              }}>
+            <TitleList onClick={() => getQuestionByAdmin(item.id)}>
               <List sx={{
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -212,7 +190,7 @@ export default function QuestionItem() {
               {item.new == 'true' &&
                   <New>[new]</New>
               }
-            </List>
+            </TitleList>
             <List sx={{flex: 0.1}}>{item.status}</List>
             <List sx={{flex: 0.1}}>{masking(item.writer)}</List>
             <List sx={{flex: 0.2}}>{item.createTime}</List>
@@ -285,6 +263,31 @@ const List = styled(Box)(({theme}) => ({
   textAlign: 'center',
   alignItems: 'center',
   fontSize: 15
+})) as typeof Box;
+
+const TitleList = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 13,
+    minWidth: '265px'
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 11,
+    minWidth: '155px'
+  },
+  textAlign: 'center',
+  alignItems: 'center',
+  fontSize: 15,
+  flex: 0.5,
+  cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'center',
+  minWidth: '300px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  '&: hover': {
+    color: 'blue'
+  }
 })) as typeof Box;
 
 const New = styled(Typography)(({theme}) => ({

@@ -131,7 +131,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
 
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
-    attachedFileData.map((item: string) => archiveData.append('files', item));
+    attachedFileData.map((item: string) => archiveData.append('attachedFiles', item));
     archiveData.append('categoryName', categoryName);
     archiveData.append('content', archiveModifyContent.content);
     contentImageFiles.map((item: { file: string, path: string }) => archiveData.append('contentImageFiles', item.file));

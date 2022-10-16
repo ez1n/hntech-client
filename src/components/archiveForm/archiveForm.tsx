@@ -130,7 +130,6 @@ export default function ArchiveForm({success, errorToast}: propsType) {
       archiveApi.postCreateArchive(archiveData)
         .then(res => {
           success();
-          console.log(res)
           dispatch(resetArchiveState());
           dispatch(onLoading());
           navigate('/client-archive');
@@ -282,7 +281,10 @@ export default function ArchiveForm({success, errorToast}: propsType) {
               ))}
             </Stack>
           </Box>
-          <label className='fileUploadButton' htmlFor='archiveFile' onChange={event => selectFile(event)}>
+          <label
+            className='fileUploadButton'
+            htmlFor='archiveFile'
+            onChange={event => selectFile(event)}>
             업로드
             <input type='file' id='archiveFile' multiple style={{display: 'none'}}/>
           </label>

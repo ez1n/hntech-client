@@ -72,26 +72,14 @@ export default function ArchiveItem() {
             }}>
             <List sx={{flex: 0.1}}><Icon/></List>
             <List sx={{flex: 0.2}}>{item.categoryName}</List>
-            <List
-              onClick={() => openDetail(item.id)}
-              sx={{
-                flex: 0.5,
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'center',
-                minWidth: '300px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                '&: hover': {
-                  color: 'blue'
-                }
-              }}>
-              {item.title}
+            <TitleList onClick={() => openDetail(item.id)}>
+              <TitleTypography>
+                {item.title}
+              </TitleTypography>
               {item.new == 'true' &&
-                  <New>[new]</New>
+                <New>[new]</New>
               }
-            </List>
+            </TitleList>
             <List sx={{flex: 0.2}}>{item.createTime}</List>
 
           </Box>
@@ -109,30 +97,14 @@ export default function ArchiveItem() {
             }}>
             <List sx={{flex: 0.1}}>{totalElements - index}</List>
             <List sx={{flex: 0.2}}>{item.categoryName}</List>
-            <List
-              onClick={() => openDetail(item.id)}
-              sx={{
-                flex: 0.5,
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minWidth: '300px',
-                '&: hover': {
-                  color: 'blue'
-                }
-              }}>
-              <Typography sx={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }}>
+            <TitleList onClick={() => openDetail(item.id)}>
+              <TitleTypography>
                 {item.title}
-              </Typography>
+              </TitleTypography>
               {item.new == 'true' &&
-                  <New>[new]</New>
+                <New>[new]</New>
               }
-            </List>
+            </TitleList>
             <List sx={{flex: 0.2}}>{item.createTime}</List>
 
           </Box>
@@ -178,6 +150,44 @@ const List = styled(Box)(({theme}) => ({
   alignItems: 'center',
   fontSize: 15
 })) as typeof Box;
+
+const TitleList = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 13,
+    minWidth: '265px'
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 11,
+    minWidth: '155px'
+  },
+  textAlign: 'center',
+  alignItems: 'center',
+  fontSize: 15,
+  flex: 0.5,
+  cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'center',
+  minWidth: '300px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  '&: hover': {
+    color: 'blue'
+  }
+})) as typeof Box;
+
+const TitleTypography = styled(Typography)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: 13
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 11
+  },
+  fontSize: 15,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap'
+})) as typeof Typography;
 
 const Icon = styled(ErrorIcon)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
