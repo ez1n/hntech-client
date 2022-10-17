@@ -88,6 +88,7 @@ export default function Representation() {
                   width='100%'
                   height='100%'/>
               </Box>
+
               <CategoryNameTypography>
                 {item.categoryName}
               </CategoryNameTypography>
@@ -194,7 +195,7 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   width: '100%',
   paddingTop: 4,
   paddingBottom: 4,
-  borderRadius: 8,
+  borderRadius: '8px',
   backgroundColor: 'rgba(79,79,79,0.78)'
 })) as typeof Typography;
 

@@ -26,7 +26,7 @@ export default function SideMenu() {
         <Typography sx={{fontSize: 13}}>자재승인서</Typography>
       </SideButton>
 
-      <SideButton onClick={() => navigate('/client-archive')}>
+      <SideButton onClick={() => navigate('/client-archive/page/1')}>
         <DescriptionIcon sx={{fontSize: 30, mb: 1}}/>
         <Typography sx={{fontSize: 13}}>자료실</Typography>
       </SideButton>
@@ -39,7 +39,7 @@ export default function SideMenu() {
         }
         arrow
         placement='right'>
-        <SideButton onClick={() => navigate('/client-question')}>
+        <SideButton onClick={() => navigate('/client-question/page/1')}>
           <BuildRoundedIcon sx={{fontSize: 30, mb: 1, color: '#FCFCFC'}}/>
           <Typography sx={{fontSize: 13, color: '#FCFCFC'}}>A/S</Typography>
         </SideButton>

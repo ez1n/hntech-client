@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {archiveApi} from '../../network/archive';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {getAllArchives, getDetailData} from '../../app/reducers/archiveSlice';
+import {getAllArchives, getDetailData, getNotice} from '../../app/reducers/archiveSlice';
 import {
   Box,
   Container,
@@ -16,12 +16,35 @@ import ErrorIcon from '@mui/icons-material/Error';
 export default function ArchiveItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { currentPage } = useParams();
+  let page = currentPage ? parseInt(currentPage) : 1;
 
   const totalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
   const totalElements = useAppSelector(state => state.archive.totalElements); // 전체 페이지
-  const currentPage = useAppSelector(state => state.archive.currentPage); // 현재 페이지
   const archives = useAppSelector(state => state.archive.archives); // 자료실 글 목록
   const notice = useAppSelector(state => state.archive.notice); // 공지 목록
+
+  // 공지 목록 받아오기
+  useEffect(() => {
+    archiveApi.getArchivesNotice()
+      .then(res => {
+        dispatch(getNotice({notice: res.notices}))
+      })
+  }, []);
+  
+  // 자료 목록 받아오기
+  useEffect(() => {
+    archiveApi.getArchives(page - 1)
+      .then(res => {
+        dispatch(getAllArchives({
+          archives: res.archives,
+          totalPage: res.totalPages,
+          currentPage: res.currentPage,
+          totalElements: res.totalElements
+        }))
+      })
+      .catch(error => console.log(error))
+  }, [currentPage]);
 
   // 게시글 보기 (정보 받아오기)
   const openDetail = (archiveId: number) => {
@@ -35,16 +58,7 @@ export default function ArchiveItem() {
 
   // 페이지 전환
   const changePage = (value: number) => {
-    archiveApi.getArchives(value - 1)
-      .then(res => {
-        dispatch(getAllArchives({
-          archives: res.archives,
-          totalPage: res.totalPages,
-          currentPage: res.currentPage,
-          totalElements: res.totalElements
-        }))
-      })
-      .catch(error => console.log(error))
+    navigate('/client-archive/page/' + value);
   };
 
   return (
@@ -95,7 +109,7 @@ export default function ArchiveItem() {
               p: 1.5,
               borderBottom: '1px solid #3B6C46'
             }}>
-            <List sx={{flex: 0.1}}>{totalElements - index}</List>
+            <List sx={{flex: 0.1}}>{totalElements - 15 * (page - 1) - index}</List>
             <List sx={{flex: 0.2}}>{item.categoryName}</List>
             <TitleList onClick={() => openDetail(item.id)}>
               <TitleTypography>
@@ -116,7 +130,8 @@ export default function ArchiveItem() {
       <Stack>
         <Pagination
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
-          count={totalPage}
+          count={totalPage === 0 ? 1 : totalPage}
+          page={page}
           sx={{m: '0 auto'}}/>
       </Stack>
     </>

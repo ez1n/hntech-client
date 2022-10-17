@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {questionApi} from '../../network/question';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {setCurrentId, setDetailData, setFaqState} from '../../app/reducers/questionSlice';
 import {getAllQuestions, setPassword, inputPassword, getFaq} from '../../app/reducers/questionSlice';
@@ -23,6 +23,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 export default function QuestionItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const {currentPage} = useParams();
+  let page = currentPage ? parseInt(currentPage) : 1;
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const passwordState = useAppSelector(state => state.question.passwordState); // 비밀번호 dialog state
@@ -30,18 +32,20 @@ export default function QuestionItem() {
   const questions = useAppSelector(state => state.question.questions); // 문의 목록 state
   const totalPage = useAppSelector(state => state.question.totalPage); // 전체 페이지 state
   const totalElements = useAppSelector(state => state.question.totalElements);
-  const currentPage = useAppSelector(state => state.question.currentPage); // 현재 페이지 state
   const faq = useAppSelector(state => state.question.faq); // FAQ 목록 state
   const currentId = useAppSelector(state => state.question.currentId); // 선택한 게시글 id state
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
 
+  // 자주하는 질문 목록 받아오기
   useEffect(() => {
-    // 자주하는 질문 목록 받아오기
     questionApi.getFAQ()
       .then(res => dispatch(getFaq({faq: res.questions})))
       .catch(error => console.log('faq error', error))
-    // 문의 목록 받아오기
-    questionApi.getAllQuestions(0)
+  }, []);
+
+  // 문의 목록 받아오기
+  useEffect(() => {
+    questionApi.getAllQuestions(page - 1)
       .then(res => dispatch(getAllQuestions({
         questions: res.questions,
         totalPage: res.totalPage,
@@ -49,7 +53,7 @@ export default function QuestionItem() {
         totalElements: res.totalElements
       })))
       .catch(error => console.log('error', error))
-  }, []);
+  }, [currentPage]);
 
   const validate = () => {
     let isValid = true;
@@ -123,14 +127,7 @@ export default function QuestionItem() {
 
   // 페이지 전환
   const changePage = (value: number) => {
-    questionApi.getAllQuestions(value - 1)
-      .then(res => dispatch(getAllQuestions({
-        questions: res.questions,
-        totalPage: res.totalPage,
-        currentPage: res.currentPage,
-        totalElements: res.totalElements
-      })))
-      .catch(error => console.log(error))
+    navigate('/client-question/page/' + value);
   };
 
   return (
@@ -202,8 +199,9 @@ export default function QuestionItem() {
 
       <Stack>
         <Pagination
-          count={totalPage}
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
+          count={totalPage}
+          page={page}
           sx={{m: '0 auto'}}/>
       </Stack>
 

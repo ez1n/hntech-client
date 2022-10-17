@@ -181,7 +181,7 @@ export default function App() {
                 <MainData/>
               }></Route>
 
-              <Route path='/client-question' element={
+              <Route path='/client-question/page/:currentPage' element={
                 <Questions/>
               }></Route>
 
@@ -203,7 +203,7 @@ export default function App() {
                   successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/client-archive' element={
+              <Route path='/client-archive/page/:currentPage' element={
                 <Archives errorToast={errorToast}/>
               }></Route>
 
