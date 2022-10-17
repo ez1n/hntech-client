@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
@@ -20,29 +20,8 @@ export default function Archives({errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
-  const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록 state
   const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName); // 선택한 카테고리
   const [searchContent, setSearchContent] = useState<string>('');
-
-  useEffect(() => {
-    // 자료실 목록 받아오기
-    archiveApi.getArchives(0)
-      .then(res => {
-        dispatch(getAllArchives({
-          archives: res.archives,
-          totalPage: res.totalPages,
-          currentPage: res.currentPage,
-          totalElements: res.totalElements
-        }));
-      })
-
-    // 공지 목록 받아오기
-    archiveApi.getArchivesNotice()
-      .then(res => {
-        dispatch(getNotice({notice: res.notices}))
-      })
-  }, [detail, archiveCategory]);
 
   // 자료 검색
   const getSearchArchive = () => {
@@ -60,7 +39,6 @@ export default function Archives({errorToast}: propsType) {
     if (event.key === 'Enter') {
       getSearchArchive()
     }
-    ;
   };
 
   return (
