@@ -70,7 +70,7 @@ export default function Archives({errorToast}: propsType) {
         {managerMode &&
             <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
                 <EditButton name='카테고리 수정' onClick={() => dispatch(clickArchivesGoBack())}/>
-                <EditButton name='글쓰기' onClick={() => navigate('/archive-form')}/>
+                <EditButton name='글쓰기' onClick={() => navigate('/archive/form')}/>
             </Box>
         }
 

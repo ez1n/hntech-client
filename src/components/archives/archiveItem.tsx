@@ -51,14 +51,14 @@ export default function ArchiveItem() {
     archiveApi.getArchive(archiveId)
       .then(res => {
         dispatch(getDetailData({detail: res}));
-        navigate('/archive-detail');
+        navigate('/archive/page/' + page + '/list/' + res.id);
       })
       .catch(error => console.log(error))
   };
 
   // 페이지 전환
   const changePage = (value: number) => {
-    navigate('/client-archive/page/' + value);
+    navigate('/archive/page/' + value);
   };
 
   return (

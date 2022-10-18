@@ -60,8 +60,6 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   const photoInputRef: any = useRef();
   const standardInputRef: any = useRef();
 
-  const productForm = new FormData();
-
   // state
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const {category, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
@@ -193,6 +191,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
 
   // 제품 정보 수정 
   const putProduct = (productId: number) => {
+    const productForm = new FormData();
     productForm.append('categoryName', category);
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));

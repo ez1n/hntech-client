@@ -389,6 +389,13 @@ export const ManagerSlice = createSlice({
     ) => {
       state.document = action.payload.document
     },
+    resetDocumentFile: state => {
+      state.documentFile = {
+        catalog: {file: '', name: ''},
+        approval: {file: '', name: ''},
+        tax: {file: '', name: ''}
+      }
+    },
     addCatalog: (
       state,
       action: PayloadAction<{ catalog: { file: string, name: string } }>
@@ -482,6 +489,7 @@ export const {
   addSitesUploadButton,
   deleteSitesUploadButton,
   updateSiteButtonName,
-  updateSiteLink
+  updateSiteLink,
+  resetDocumentFile
 } = ManagerSlice.actions;
 export default ManagerSlice.reducer;

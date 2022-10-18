@@ -52,7 +52,7 @@ export default function ProductInfo({successDelete}: propsType) {
             successDelete();
             dispatch(getProductList({productList: res}));
             closeDeleteProductItem();
-            navigate('/client-product');
+            navigate('/product/category');
           })
           .catch(error => console.log(error))
       })
@@ -64,7 +64,7 @@ export default function ProductInfo({successDelete}: propsType) {
     productApi.getProduct(id)
       .then(res => {
         dispatch(getProductContent({detail: res}));
-        navigate('/product-modify');
+        navigate('/product/modify');
       })
   };
 

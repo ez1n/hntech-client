@@ -33,7 +33,7 @@ import {
   deleteSitesUploadButton,
   updateSiteButtonName,
   updateSiteLink,
-  addTax
+  addTax, resetDocumentFile
 } from '../../app/reducers/managerModeSlice';
 import {
   Drawer,
@@ -60,14 +60,10 @@ interface propsType {
   successModify: () => void
 }
 
-export default function FloatingButton({successModify}: propsType) {
+export default function AdminPanel({successModify}: propsType) {
   const dispatch = useAppDispatch();
 
   const [deleteBannerName, setDeleteBannerName] = useState<{ name: string }[]>([])
-
-  const bannerForm = new FormData();
-  const logoForm = new FormData();
-  const documentForm = new FormData();
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
@@ -126,14 +122,6 @@ export default function FloatingButton({successModify}: propsType) {
     dispatch(deleteOriginBanner({num: index}));
   };
 
-  // 관리자 패널 정보
-  const getPanelInfo = () => {
-    adminApi.getPanelInfo()
-      .then(res => {
-        dispatch(copyManagerData({panelData: res}));
-      })
-  };
-
   // 관리자, 회사 정보 변경 요청
   const putUpdatePanelInfo = () => {
     adminApi.putUpdatePanelInfo({
@@ -172,10 +160,12 @@ export default function FloatingButton({successModify}: propsType) {
   // 로고, 배너 변경 요청
   const putUpdateImageInfo = () => {
     // 로고 사진
+    const logoForm = new FormData();
     logoForm.append('file', logoFile.file);
     logoForm.append('where', 'logo');
 
     // 배너 사진
+    const bannerForm = new FormData();
     bannerFile.map((item: { file: string, name: string }) => bannerForm.append('files', item.file))
 
     // 로고 정보 변경 요청
@@ -226,10 +216,16 @@ export default function FloatingButton({successModify}: propsType) {
   // 카다록, 자재승인서 변경 요청
   const putUpdateDocumentInfo = () => {
     dispatch(onLoading());
-
-    documentForm.append('catalogFile', documentFile.catalog.file);
-    documentForm.append('materialFile', documentFile.approval.file);
-    documentForm.append('taxFile', documentFile.tax.file);
+    const documentForm = new FormData();
+    documentFile.catalog.file === '' ?
+      documentForm.append('catalogFile', new Blob()) :
+      documentForm.append('catalogFile', documentFile.catalog.file);
+    documentFile.approval.file === '' ?
+      documentForm.append('materialFile', new Blob()) :
+      documentForm.append('materialFile', documentFile.approval.file);
+    documentFile.tax.file === '' ?
+      documentForm.append('taxFile', new Blob()) :
+      documentForm.append('taxFile', documentFile.tax.file);
 
     adminApi.postDocument(documentForm)
       .then(res => {
@@ -237,6 +233,7 @@ export default function FloatingButton({successModify}: propsType) {
           .then(res => {
             dispatch(onLoading());
             dispatch(setDocument({document: res}));
+            dispatch(resetDocumentFile());
             successModify();
           })
       })
@@ -255,10 +252,10 @@ export default function FloatingButton({successModify}: propsType) {
     <>
       {/*  정보변경 버튼 */}
       {managerMode &&
-          <AdminFab variant={'extended'} onClick={openOnEdit}>
-              <ManageAccountsRoundedIcon fontSize='large'/>
-              <AdminTypography>정보 수정</AdminTypography>
-          </AdminFab>
+        <AdminFab variant={'extended'} onClick={openOnEdit}>
+          <ManageAccountsRoundedIcon fontSize='large'/>
+          <AdminTypography>정보 수정</AdminTypography>
+        </AdminFab>
       }
 
       {/* 슬라이딩 패널 */}

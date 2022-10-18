@@ -45,8 +45,6 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const archiveData = new FormData(); // 자료실 첨부파일
-
   // state
   const archiveModifyContent = useAppSelector(state => state.archiveForm.archiveModifyContent); // 자료실 글쓰기 수정 내용
   const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName);
@@ -131,6 +129,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
 
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
+    const archiveData = new FormData();
     attachedFileData.map((item: string) => archiveData.append('attachedFiles', item));
     archiveData.append('categoryName', categoryName);
     archiveData.append('content', archiveModifyContent.content);

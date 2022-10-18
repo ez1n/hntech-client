@@ -39,8 +39,6 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const questionForm = new FormData();
-
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
@@ -91,6 +89,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
 
   // 문의사항 변경하기
   const putQuestion = (questionId: number) => {
+    const questionForm = new FormData();
     questionForm.append('title', currentQuestion.title);
     questionForm.append('content', currentQuestion.content);
     questionFile.map((item: { file: string, path: string }) => questionForm.append('files', item.file));
@@ -108,7 +107,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         .then(res => {
           successModify();
           dispatch(setDetailData({detail: res}));
-          navigate('/question-detail');
+          navigate(-1);
         })
         .catch(error => console.log(error))
     } else {
@@ -117,7 +116,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         .then(res => {
           successModify();
           dispatch(setDetailData({detail: res}));
-          navigate('/question-detail');
+          navigate(-1);
         })
         .catch(error => {
           errorToast(error.response.data.message);

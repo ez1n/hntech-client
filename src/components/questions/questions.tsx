@@ -16,7 +16,7 @@ export default function Questions() {
 
       {/* 버튼 */}
       <Box sx={{textAlign: 'end'}}>
-        <EditButton name='글쓰기' onClick={() => navigate('/question-form')}/>
+        <EditButton name='글쓰기' onClick={() => navigate('/question/form')}/>
       </Box>
 
       {/* 문의 목록 */}

@@ -54,9 +54,6 @@ export default function ProductForm({success, errorToast}: propsType) {
   const photoInputRef: any = useRef();
   const gradeInputRef: any = useRef();
 
-  // 폼데이터
-  const productForm = new FormData();
-
   // state
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
   const {category, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 제품 등록 내용
@@ -168,7 +165,7 @@ export default function ProductForm({success, errorToast}: propsType) {
       item.originalFilename === productData.originalFilename &&
       productApi.putUpdateProductDocFiles(productId, productData.id, {filename: item.type})
         .then(res => {
-          navigate('/client-product');
+          navigate(-1);
           dispatch(onLoading());
           if (index === docFiles.length - 1) success();
         })
@@ -178,6 +175,7 @@ export default function ProductForm({success, errorToast}: propsType) {
 
   // 제품 등록
   const postProduct = () => {
+    const productForm = new FormData();
     productForm.append('categoryName', category)
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
@@ -193,7 +191,7 @@ export default function ProductForm({success, errorToast}: propsType) {
           if (docFiles.length === 0) {
             success();
             dispatch(onLoading());
-            navigate('/client-product');
+            navigate(-1);
           } else {
             res.files.docFiles.map((item: {
               id: number,
