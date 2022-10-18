@@ -35,8 +35,6 @@ export default function QuestionForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const questionForm = new FormData();
-
   // state
   const questionFile = useAppSelector(state => state.questionForm.questionFile);
   const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보
@@ -91,6 +89,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
 
   // 문의사항 작성하기
   const postCreateQuestion = () => {
+    const questionForm = new FormData();
     questionForm.append('writer', writer);
     questionForm.append('password', password);
     questionForm.append('title', title);
@@ -102,7 +101,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
     questionApi.postCreateQuestion(questionForm)
       .then(res => {
         success();
-        navigate('/client-question');
+        navigate('/question/page/1');
       })
       .catch(error => {
         errorToast(error.response.data.message);

@@ -31,8 +31,6 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const productCategoryForm = new FormData(); // 카테고리 폼 데이터
-
   const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
   const productCategoryName = useAppSelector(state => state.category.productCategoryName); // 카테고리 이름 state
   const productCategoryImage = useAppSelector(state => state.category.productCategoryImage); // 카테고리 이미지 state
@@ -68,6 +66,7 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
 
   // 카테고리 등록
   const postProductCategory = () => {
+    const productCategoryForm = new FormData();
     productCategoryForm.append('image', productCategoryImage);
     productCategoryForm.append('categoryName', productCategoryName);
     productCategoryForm.append('showInMain', productCategoryShowInMain);

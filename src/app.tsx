@@ -181,7 +181,7 @@ export default function App() {
                 <MainData/>
               }></Route>
 
-              <Route path='/client-question/page/:currentPage' element={
+              <Route path='/question/page/:currentPage' element={
                 <Questions/>
               }></Route>
 
@@ -197,13 +197,13 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/question-detail' element={
+              <Route path='/question/page/:currentPage/list/:currentId' element={
                 <QuestionDetail
                   successAnswer={successAnswer}
                   successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/client-archive/page/:currentPage' element={
+              <Route path='/archive/page/:currentPage' element={
                 <Archives errorToast={errorToast}/>
               }></Route>
 
@@ -221,7 +221,7 @@ export default function App() {
                 />
               }></Route>
 
-              <Route path='/archive-detail' element={
+              <Route path='/archive/page/:currentPage/list/:currentId' element={
                 <ArchiveDetail successDelete={successDelete}/>
               }></Route>
 

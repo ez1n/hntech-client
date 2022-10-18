@@ -44,8 +44,6 @@ export default function ArchiveForm({success, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const archiveData = new FormData(); // 자료실 첨부파일
-
   // state
   const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용
   const attachedFileData = useAppSelector(state => state.archiveForm.attachedFiles.data); // 첨부파일 이름 목록
@@ -117,6 +115,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
 
   // 자료실 글쓰기
   const postArchiveForm = () => {
+    const archiveData = new FormData();
     attachedFileData.map(item => archiveData.append('attachedFiles', item));
     archiveData.append('categoryName', archiveContent.categoryName);
     archiveData.append('content', archiveContent.content);
@@ -132,7 +131,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           success();
           dispatch(resetArchiveState());
           dispatch(onLoading());
-          navigate('/client-archive');
+          navigate('/client-archive/page/1');
         })
         .catch(error => {
           dispatch(onLoading());
@@ -308,7 +307,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
         text1={'작성중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
-          navigate('/client-archive');
+          navigate(-1);
           closeCancelArchive()
         }}
         closeAction={closeCancelArchive}/>

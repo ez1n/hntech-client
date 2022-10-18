@@ -41,6 +41,8 @@ export default function QuestionItem() {
     questionApi.getFAQ()
       .then(res => dispatch(getFaq({faq: res.questions})))
       .catch(error => console.log('faq error', error))
+
+    localStorage.removeItem('qnaPassword');
   }, []);
 
   // 문의 목록 받아오기
@@ -48,7 +50,7 @@ export default function QuestionItem() {
     questionApi.getAllQuestions(page - 1)
       .then(res => dispatch(getAllQuestions({
         questions: res.questions,
-        totalPage: res.totalPage,
+        totalPage: res.totalPages,
         currentPage: res.currentPage,
         totalElements: res.totalElements
       })))
@@ -86,8 +88,9 @@ export default function QuestionItem() {
         .then(res => {
           dispatch(inputPassword());
           dispatch(setDetailData({detail: res}));
+          localStorage.setItem('qnaPassword', pw.password);
           dispatch(setPassword({password: ''}));
-          navigate('/question-detail');
+          navigate('/question/page/' + page + '/list/' + res.id);
         })
         .catch(error => setPasswordErrorMsg('비밀번호를 확인해 주세요'))
     }
@@ -106,7 +109,7 @@ export default function QuestionItem() {
         .then(res => {
           dispatch(setDetailData({detail: res}));
           dispatch(setFaqState({faq: false}));
-          navigate('/question-detail');
+          navigate('/question/page/' + page + '/list/' + res.id);
         })
     } else {
       dispatch(inputPassword());
@@ -120,15 +123,13 @@ export default function QuestionItem() {
       .then(res => {
         dispatch(setDetailData({detail: res}));
         dispatch(setFaqState({faq: true}));
-        navigate('/question-detail');
+        navigate('/question/page/' + page + '/list/' + res.id);
       })
       .catch(error => console.log(error))
   };
 
   // 페이지 전환
-  const changePage = (value: number) => {
-    navigate('/client-question/page/' + value);
-  };
+  const changePage = (value: number) => {navigate('/question/page/' + value)};
 
   return (
     <>
@@ -163,7 +164,7 @@ export default function QuestionItem() {
                 {item.title}
               </List>
               {item.new == 'true' &&
-                  <New>[new]</New>
+                <New>[new]</New>
               }
             </TitleList>
             <List sx={{flex: 0.1}}>{item.status}</List>
@@ -175,7 +176,7 @@ export default function QuestionItem() {
         {/* 목록 */}
         {questions.map((item, index: number) => (
           <Box key={item.id} sx={{display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46'}}>
-            <List sx={{flex: 0.1}}>{totalElements - index}</List>
+            <List sx={{flex: 0.1}}>{totalElements - 15 * (page - 1) - index}</List>
             <TitleList onClick={() => getQuestionByAdmin(item.id)}>
               <List sx={{
                 overflow: 'hidden',
@@ -185,7 +186,7 @@ export default function QuestionItem() {
                 {item.title}
               </List>
               {item.new == 'true' &&
-                  <New>[new]</New>
+                <New>[new]</New>
               }
             </TitleList>
             <List sx={{flex: 0.1}}>{item.status}</List>
@@ -207,29 +208,29 @@ export default function QuestionItem() {
 
       {/* dialog */}
       {!managerMode &&
-          <Dialog
-              open={passwordState}
-              onClose={() => dispatch(inputPassword())}
-              sx={{textAlign: 'center'}}>
-              <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
-              <DialogContent>
-                  <TextField
-                      type={'password'}
-                      size={'small'}
-                      error={!!passwordErrorMsg}
-                      helperText={passwordErrorMsg}
-                      inputProps={{maxLength: 4}}
-                      onChange={event => dispatch(setPassword({password: event.target.value}))}
-                      onKeyUp={event => onOpenDetailKeyUp(event, currentId)}/>
-              </DialogContent>
+        <Dialog
+          open={passwordState}
+          onClose={() => dispatch(inputPassword())}
+          sx={{textAlign: 'center'}}>
+          <DialogTitle>비밀번호를 입력해 주세요</DialogTitle>
+          <DialogContent>
+            <TextField
+              type={'password'}
+              size={'small'}
+              error={!!passwordErrorMsg}
+              helperText={passwordErrorMsg}
+              inputProps={{maxLength: 4}}
+              onChange={event => dispatch(setPassword({password: event.target.value}))}
+              onKeyUp={event => onOpenDetailKeyUp(event, currentId)}/>
+          </DialogContent>
 
-              <DialogActions sx={{justifyContent: 'center'}}>
-                  <Button onClick={() => openDetail(currentId)}>
-                      확인
-                  </Button>
-                  <Button onClick={() => dispatch(inputPassword())}>취소</Button>
-              </DialogActions>
-          </Dialog>
+          <DialogActions sx={{justifyContent: 'center'}}>
+            <Button onClick={() => openDetail(currentId)}>
+              확인
+            </Button>
+            <Button onClick={() => dispatch(inputPassword())}>취소</Button>
+          </DialogActions>
+        </Dialog>
       }
     </>
   )

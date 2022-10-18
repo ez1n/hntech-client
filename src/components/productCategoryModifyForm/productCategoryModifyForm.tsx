@@ -33,8 +33,6 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const productCategoryForm = new FormData(); // 카테고리 폼 데이터
-
   const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 변경 취소 dialog
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보 state
   const productCategoryImagePath = useAppSelector(state => state.category.productCategoryImagePath);
@@ -62,6 +60,8 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
   // 카테고리 수정
   const putProductCategory = (categoryId: number) => {
     dispatch(onLoading());
+
+    const productCategoryForm = new FormData();
     productCategoryImage === '' ? [].map(item => productCategoryForm.append('image', item)) : productCategoryForm.append('image', productCategoryImage);
     productCategoryForm.append('categoryName', productCurrentCategory.categoryName);
     productCategoryForm.append('showInMain', productCurrentCategory.showInMain);

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {archiveApi} from '../network/archive';
 import {fileApi} from '../network/file';
 import {useAppSelector, useAppDispatch} from '../app/hooks';
@@ -16,6 +16,7 @@ import {
 import EditButton from './editButton';
 import CancelModal from './cancelModal';
 import {api} from "../network/network";
+import {getDetailData} from "../app/reducers/archiveSlice";
 
 interface propsType {
   successDelete: () => void
@@ -24,6 +25,7 @@ interface propsType {
 export default function ArchiveDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const {currentId} = useParams();
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
@@ -34,6 +36,13 @@ export default function ArchiveDetail({successDelete}: propsType) {
   useEffect(() => {
     dispatch(copyArchiveDetailData({detail: detail}));
     dispatch(resetArchiveFile());
+  }, []);
+
+  useEffect(() => {
+    currentId &&
+    archiveApi.getArchive(parseInt(currentId))
+      .then(res => dispatch(getDetailData({detail: res})))
+      .catch(error => console.log(error))
   }, []);
 
   // 게시글 삭제 modal - open
@@ -52,7 +61,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
       .then(res => {
         successDelete();
         closeDeleteArchiveDetail();
-        navigate('/client-archive');
+        navigate('/archive/page/1');
       })
       .catch(error => {
         console.log(error);
@@ -165,7 +174,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
       <Box sx={{mt: 1, display: 'flex', justifyContent: 'flex-end'}}>
         <Button
           size='small'
-          onClick={() => navigate('/client-archive')}
+          onClick={() => navigate('/archive/page/1')}
           sx={{
             color: 'white',
             backgroundColor: '#2E7D32',
