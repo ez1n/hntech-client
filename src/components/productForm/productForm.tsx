@@ -165,7 +165,7 @@ export default function ProductForm({success, errorToast}: propsType) {
       item.originalFilename === productData.originalFilename &&
       productApi.putUpdateProductDocFiles(productId, productData.id, {filename: item.type})
         .then(res => {
-          navigate('/client-product');
+          navigate(-1);
           dispatch(onLoading());
           if (index === docFiles.length - 1) success();
         })
@@ -191,7 +191,7 @@ export default function ProductForm({success, errorToast}: propsType) {
           if (docFiles.length === 0) {
             success();
             dispatch(onLoading());
-            navigate('/client-product');
+            navigate(-1);
           } else {
             res.files.docFiles.map((item: {
               id: number,

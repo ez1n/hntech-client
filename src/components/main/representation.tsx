@@ -42,7 +42,7 @@ export default function Representation() {
   const onClickButton = (categoryName: string) => {
     dispatch(selectProductCategoryTrue());
     dispatch(setCurrentProductCategoryName({category: categoryName}));
-    navigate('/client-product'); // 페이지 이동
+    navigate('/product/category'); // 페이지 이동
   };
 
   // 파일 다운로드

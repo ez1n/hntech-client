@@ -60,7 +60,7 @@ interface propsType {
   successModify: () => void
 }
 
-export default function FloatingButton({successModify}: propsType) {
+export default function AdminPanel({successModify}: propsType) {
   const dispatch = useAppDispatch();
 
   const [deleteBannerName, setDeleteBannerName] = useState<{ name: string }[]>([])

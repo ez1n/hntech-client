@@ -35,7 +35,7 @@ import QuestionDetail from './components/questionDetail/questionDetail';
 import Archives from './components/archives/archives';
 import ArchiveForm from './components/archiveForm/archiveForm';
 import ArchiveDetail from './components/archiveDetail';
-import FloatingButton from './components/managerPanel/floatingButton';
+import AdminPanel from './components/adminPanel/adminPanel';
 import ProductModifyForm from './components/productModifyForm/productModifyForm';
 import QuestionModifyForm from './components/questionModifyForm/questionModifyForm';
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
@@ -145,33 +145,33 @@ export default function App() {
                 <Company success={success}/>
               }></Route>
 
-              <Route path='/client-product' element={
+              <Route path='/product/category' element={
                 <Products successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/product-detail' element={
+              <Route path='/product/category=:currentCategoryName&item=:currentProductId' element={
                 <ProductDetail successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/product-form' element={
+              <Route path='/product/form' element={
                 <ProductForm
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/product-modify' element={
+              <Route path='/product/modify' element={
                 <ProductModifyForm
                   successModify={successModify}
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/productCategory-form' element={
+              <Route path='/productCategory/form' element={
                 <ProductCategoryForm
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/productCategory-modify' element={
+              <Route path='/productCategory/modify' element={
                 <ProductCategoryModifyForm
                   successModify={successModify}
                   errorToast={errorToast}/>
@@ -185,13 +185,13 @@ export default function App() {
                 <Questions/>
               }></Route>
 
-              <Route path='/question-form' element={
+              <Route path='/question/form' element={
                 <QuestionForm
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/question-modify' element={
+              <Route path='/question/modify' element={
                 <QuestionModifyForm
                   successModify={successModify}
                   errorToast={errorToast}/>
@@ -207,14 +207,14 @@ export default function App() {
                 <Archives errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/archive-form' element={
+              <Route path='/archive/form' element={
                 <ArchiveForm
                   success={success}
                   errorToast={errorToast}
                 />
               }></Route>
 
-              <Route path='/archive-modify' element={
+              <Route path='/archive/modify' element={
                 <ArchiveModifyForm
                   successModify={successModify}
                   errorToast={errorToast}
@@ -227,7 +227,7 @@ export default function App() {
 
               <Route path='*' element={<NotFound/>}></Route></Routes>
 
-            <FloatingButton successModify={successModify}/>
+            <AdminPanel successModify={successModify}/>
           </Box>
           <Footer/>
         </Box>

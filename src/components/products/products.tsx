@@ -152,7 +152,7 @@ export default function Products({successDelete}: propsType) {
                       <ProductGrid/>
                   </Box>
                 {managerMode &&
-                    <AddButton onClick={() => navigate('/product-form')}>
+                    <AddButton onClick={() => navigate('/product/form')}>
                         <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
                     </AddButton>}
               </Box>

@@ -146,7 +146,7 @@ export default function Header() {
           onMouseLeave={() => dispatch(mouseLeaveProduct())}
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}>
           <MainMenu onClick={() => {
-            navigate('/client-product');
+            navigate('/product/category ');
             dispatch(selectProductCategoryFalse());
           }}>
             제품소개
@@ -162,7 +162,7 @@ export default function Header() {
               <DropdownMenu
                 key={item.id}
                 onClick={() => {
-                  navigate('/client-product');
+                  navigate('/product/category');
                   dispatch(selectProductCategoryTrue());
                   dispatch(setCurrentProductCategoryName({category: item.categoryName}));
                 }}>
@@ -305,7 +305,7 @@ export default function Header() {
                 <ListItemButton
                   key={item.id}
                   onClick={() => {
-                    navigate('/client-product');
+                    navigate('/product/category');
                     dispatch(setCurrentProductCategoryName({category: item.categoryName}));
                     dispatch(selectProductCategoryTrue());
                     clickCloseMenu();

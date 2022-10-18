@@ -104,7 +104,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
       <Spacing>
         {managerMode &&
             <Box sx={{textAlign: 'end'}}>
-                <EditButton name='수정' onClick={() => navigate('/archive-modify')}/>
+                <EditButton name='수정' onClick={() => navigate('/archive/modify')}/>
                 <EditButton name='삭제' onClick={openDeleteArchiveDetail}/>
             </Box>
         }

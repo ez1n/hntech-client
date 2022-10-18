@@ -117,14 +117,14 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
       return (
         managerMode &&
         <>
-            <EditButton name='수정' onClick={() => navigate('/question-modify')}/>
+            <EditButton name='수정' onClick={() => navigate('/question/modify')}/>
             <EditButton name='삭제' onClick={openDeleteQuestionDetail}/>
         </>
       )
     } else {
       return (
         <>
-          <EditButton name='수정' onClick={() => navigate('/question-modify')}/>
+          <EditButton name='수정' onClick={() => navigate('/question/modify')}/>
           <EditButton name='삭제' onClick={openDeleteQuestionDetail}/>
         </>
       )

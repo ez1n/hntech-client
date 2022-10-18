@@ -41,7 +41,7 @@ export default function ProductItem({product, index, moveProductItem}: propsType
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
-        navigate('/product-detail');
+        navigate('/product/category=' + res.category + '&item=' + res.id);
       })
   };
 
@@ -51,7 +51,7 @@ export default function ProductItem({product, index, moveProductItem}: propsType
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
-        navigate('/product-modify');
+        navigate('/product/modify');
       })
   };
 
@@ -123,19 +123,19 @@ export default function ProductItem({product, index, moveProductItem}: propsType
 
         {/* 수정 버튼 */}
         {managerMode &&
-            <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-around'}}>
-                <Button
-                    onClick={() => {
-                      dispatch(getCurrentProductData({productData: product}))
-                      dispatch(clickProductItemGoBack());
-                    }}
-                    sx={{color: 'red'}}>
-                    <RemoveCircleRoundedIcon sx={{fontSize: 25}}/>
-                </Button>
-                <Button onClick={putProduct} sx={{color: 'green', padding: 0}}>
-                    <CreateRoundedIcon sx={{fontSize: 25}}/>
-                </Button>
-            </Box>
+          <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-around'}}>
+            <Button
+              onClick={() => {
+                dispatch(getCurrentProductData({productData: product}))
+                dispatch(clickProductItemGoBack());
+              }}
+              sx={{color: 'red'}}>
+              <RemoveCircleRoundedIcon sx={{fontSize: 25}}/>
+            </Button>
+            <Button onClick={putProduct} sx={{color: 'green', padding: 0}}>
+              <CreateRoundedIcon sx={{fontSize: 25}}/>
+            </Button>
+          </Box>
         }
       </ProductBox>
     </Grid>
