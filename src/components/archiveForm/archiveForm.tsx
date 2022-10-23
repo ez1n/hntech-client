@@ -208,7 +208,11 @@ export default function ArchiveForm({success, errorToast}: propsType) {
         {/* 내용 */}
         <Stack spacing={2} sx={{p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)'}}>
           <Box>
-            <label className='uploadButton' htmlFor='inputArchivePhoto' onChange={selectContentFile}>
+            <label
+              className='uploadButton'
+              htmlFor='inputArchivePhoto'
+              onChange={selectContentFile}
+              onClick={(e: any) => e.target.value = null}>
               사진 첨부
               <input id='inputArchivePhoto' type='file' accept={'image/*'} multiple/>
             </label>
@@ -283,7 +287,8 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           <label
             className='fileUploadButton'
             htmlFor='archiveFile'
-            onChange={event => selectFile(event)}>
+            onChange={event => selectFile(event)}
+            onClick={(e: any) => e.target.value = null}>
             업로드
             <input type='file' id='archiveFile' multiple style={{display: 'none'}}/>
           </label>

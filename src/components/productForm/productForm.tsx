@@ -260,15 +260,15 @@ export default function ProductForm({success, errorToast}: propsType) {
         }}>
           <ButtonBox>
             {/* 숨김 input */}
-            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={selectRepProductImage}>
+            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={selectRepProductImage} onClick={(e:any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputRepPhoto' accept='image/*'/>
             </label>
 
-            <label ref={photoInputRef} htmlFor='inputPhoto' onChange={selectProductImage}>
+            <label ref={photoInputRef} htmlFor='inputPhoto' onChange={selectProductImage} onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputPhoto' multiple accept='image/*'/>
             </label>
 
-            <label ref={gradeInputRef} htmlFor='inputGrade' onChange={selectStandardImage}>
+            <label ref={gradeInputRef} htmlFor='inputGrade' onChange={selectStandardImage} onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputGrade' multiple accept='image/*'/>
             </label>
 
@@ -420,8 +420,10 @@ export default function ProductForm({success, errorToast}: propsType) {
                       '파일'}
                   </Typography>
                   <label
-                    className='fileUploadButton' htmlFor={`inputFile${item.id}`}
-                    onChange={event => selectProductDoc(item.id, event)}>
+                    className='fileUploadButton'
+                    htmlFor={`inputFile${item.id}`}
+                    onChange={event => selectProductDoc(item.id, event)}
+                    onClick={(e: any) => e.target.value = null}>
                     업로드
                     <input className='productInput' type='file' id={`inputFile${item.id}`}/>
                   </label>

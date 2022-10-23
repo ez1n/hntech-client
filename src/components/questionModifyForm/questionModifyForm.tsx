@@ -208,7 +208,11 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         {/* 문의 내용 */}
         <Stack spacing={2} p={2}>
           <Box>
-            <label className='uploadButton' htmlFor='inputQuestionPhoto' onChange={selectFile}>
+            <label
+              className='uploadButton'
+              htmlFor='inputQuestionPhoto'
+              onChange={selectFile}
+              onClick={(e: any) => e.target.value = null}>
               사진 첨부
               <input className='questionInput' id='inputQuestionPhoto' type='file' accept={'image/*'} multiple/>
             </label>
