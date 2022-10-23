@@ -79,7 +79,7 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
           success();
           dispatch(addProductCategoryImage({image: undefined}));
           dispatch(onLoading());
-          navigate('/client-product');
+          navigate('/product/category');
         })
         .catch(error => {
           dispatch(onLoading());
@@ -89,7 +89,6 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
-          ;
         })
     }
   };
@@ -118,7 +117,7 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
             required={true}
             autoFocus={true}
             placeholder='카테고리명'
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateProductCategoryName({categoryName: event?.target.value}))}
             inputProps={{style: {fontSize: 18}}}
@@ -131,7 +130,7 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
         <Stack direction='row' sx={{mt: 2, alignItems: 'center'}}>
           {/* 사진 추가 */}
           <Box sx={{pl: 1}}>
-            <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage}>
+            <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage} onClick={(e) => e.target.value = null}>
               사진 추가
               <input type='file' id='productCategoryInput' accept='image/*'/>
             </label>
@@ -152,7 +151,7 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
         </Stack>
 
         {/* 제품 사진 미리보기 */}
-        <FormControl error={imageErrorMsg ? true : false} sx={{width: '100%'}}>
+        <FormControl error={!!imageErrorMsg} sx={{width: '100%'}}>
           <Box sx={{p: 2, borderBottom: '1px solid rgba(46, 125, 50, 0.5)'}}>
             <FormHelperText>{imageErrorMsg}</FormHelperText>
             <Container
@@ -195,7 +194,7 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
         text2='취소하시겠습니까?'
         yesAction={() => {
           dispatch(clickProductCategoryFormGoBack());
-          navigate('/client-product');
+          navigate('/product/category');
         }}
         closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
     </Container>

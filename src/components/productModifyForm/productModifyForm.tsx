@@ -284,15 +284,27 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
         }}>
           <Box>
             {/* 숨김 input */}
-            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={(event) => selectRepProductImage(event)}>
+            <label
+              ref={repPhotoInputRef}
+              htmlFor='inputRepPhoto'
+              onChange={(event) => selectRepProductImage(event)}
+              onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputRepPhoto' accept='image/*'/>
             </label>
 
-            <label ref={photoInputRef} htmlFor='inputPhoto' onChange={(event) => selectProductImage(event)}>
+            <label
+              ref={photoInputRef}
+              htmlFor='inputPhoto'
+              onChange={(event) => selectProductImage(event)}
+              onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputPhoto' multiple accept='image/*'/>
             </label>
 
-            <label ref={standardInputRef} htmlFor='inputGrade' onChange={(event) => selectGradeImage(event)}>
+            <label
+              ref={standardInputRef}
+              htmlFor='inputGrade'
+              onChange={(event) => selectGradeImage(event)}
+              onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputGrade' multiple accept='image/*'/>
             </label>
 
@@ -369,7 +381,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
               alignItems: 'center'
             }}>
             {productDetail.files.productImages.length + productImages.length === 0 &&
-                <Typography sx={{color: 'lightgrey', fontSize: 18}}>제품 이미지 미리보기</Typography>}
+              <Typography sx={{color: 'lightgrey', fontSize: 18}}>제품 이미지 미리보기</Typography>}
             {/* 기존 제품이미지 */}
             {productDetail.files.productImages.map((item, index) => (
               <Box key={index} sx={{width: '23%', m: 1}}>
@@ -409,7 +421,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
               alignItems: 'center'
             }}>
             {productDetail.files.standardImages.length + standardImages.length === 0 &&
-                <Typography sx={{color: 'lightgrey', fontSize: 18}}>규격 이미지 미리보기</Typography>}
+              <Typography sx={{color: 'lightgrey', fontSize: 18}}>규격 이미지 미리보기</Typography>}
             {/* 기존 규격 이미지 */}
             {productDetail.files.standardImages.map((item, index) => (
               <Box key={index} sx={{width: '23%', m: 1}}>
@@ -469,9 +481,11 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                   }}>
                     {item.originalFilename}
                   </Typography>
-                  <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={event => {
-                    selectFile(item.id, event)
-                  }}>
+                  <label
+                    className='fileUploadButton'
+                    htmlFor={`inputFile${item.id}`}
+                    onChange={event => selectFile(item.id, event)}
+                    onClick={(e: any) => e.target.value = null}>
                     업로드
                     <input className='productInput' type='file' id={`inputFile${item.id}`}/>
                   </label>
@@ -520,9 +534,11 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                         '파일'}
                     </>
                   </Typography>
-                  <label className='fileUploadButton' htmlFor={`inputFile${item.id}`} onChange={(event) => {
-                    selectFile(item.id, event)
-                  }}>
+                  <label
+                    className='fileUploadButton'
+                    htmlFor={`inputFile${item.id}`}
+                    onChange={(event) => selectFile(item.id, event)}
+                    onClick={(e: any) => e.target.value = null}>
                     업로드
                     <input className='productInput' type='file' id={`inputFile${item.id}`}/>
                   </label>

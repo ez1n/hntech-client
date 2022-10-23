@@ -72,7 +72,7 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
         dispatch(onLoading());
         successModify();
         dispatch(updateProductCategoryImage({categoryImage: ''}));
-        navigate('/client-product');
+        navigate(-1);
       })
       .catch(error => {
         dispatch(onLoading());
@@ -82,7 +82,6 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -109,7 +108,7 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
             type='text'
             required={true}
             value={productCurrentCategory.categoryName}
-            error={titleErrorMsg ? true : false}
+            error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             placeholder='카테고리명'
             onChange={event => dispatch(updateCurrentProductCategoryName({categoryName: event?.target.value}))}
@@ -122,7 +121,7 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
           {/* 사진 변경 */}
           <Box sx={{pl: 1}}>
             <label className='categoryUploadButton' htmlFor='productCategoryInput'
-                   onChange={(event) => selectCategoryImage(event)}>
+                   onChange={e => selectCategoryImage(e)} onClick={(e: any) => e.target.value = null}>
               사진 변경
               <input type='file' id='productCategoryInput' accept='image/*'/>
             </label>
@@ -131,7 +130,7 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
           {/* 메인 카테고리 */}
           <FormControlLabel
             control={<Checkbox
-              defaultChecked={productCurrentCategory.showInMain === 'true' ? true : false}
+              defaultChecked={productCurrentCategory.showInMain === 'true'}
               onChange={event => dispatch(updateCurrentProductCategoryShowInMain({showInMain: event?.target.checked}))}
               sx={{
                 color: 'darkgrey',
@@ -187,7 +186,7 @@ export default function ProductCategoryModifyForm({successModify, errorToast}: p
         text2='취소하시겠습니까?'
         yesAction={() => {
           dispatch(clickProductCategoryFormGoBack());
-          navigate('/client-product');
+          navigate(-1);
         }}
         closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
     </Container>
