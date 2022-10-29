@@ -20,7 +20,9 @@ import {
   List,
   ListItem,
   TextField,
-  Stack
+  Stack,
+  FormControl,
+  FormHelperText
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
@@ -45,6 +47,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
   const [nameErrorMsg, setNameErrorMsg] = useState('');
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const [contentErrorMsg, setContentErrorMsg] = useState('');
 
   useEffect(() => {
     dispatch(resetQuestionContent());
@@ -64,6 +67,10 @@ export default function QuestionForm({success, errorToast}: propsType) {
       setTitleErrorMsg('제목을 작성해 주세요.');
       isValid = false;
     } else setTitleErrorMsg('');
+    if (!content) {
+      setContentErrorMsg('문의 내용을 입력해 주세요.')
+      isValid = false;
+    } else setContentErrorMsg('');
     return isValid;
   };
 
@@ -81,7 +88,8 @@ export default function QuestionForm({success, errorToast}: propsType) {
   const selectFile = (event: any) => {
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addQuestionFile({
-        file: {file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
+        file: {
+          file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
         }
       }))
     }
@@ -94,7 +102,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
     questionForm.append('password', password);
     questionForm.append('title', title);
     questionForm.append('content', content);
-    questionFile.map((item: {file: string, path: string}) => questionForm.append('files', item.file));
+    questionFile.map((item: { file: string, path: string }) => questionForm.append('files', item.file));
     questionForm.append('FAQ', 'false');
 
     validate() &&
@@ -205,33 +213,31 @@ export default function QuestionForm({success, errorToast}: propsType) {
           </Box>
 
           {/* 첨부파일 */}
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 300,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {questionFile.length === 0 &&
-              <Typography sx={{color: 'lightgrey', fontSize: 18}}>
-                이미지 미리보기
-              </Typography>
-            }
-            {questionFile.map((item: { file: string, path: string }, index: number) => (
-              <Box key={index} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteQuestionFile({index: index}))}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+          {questionFile.length > 0 &&
+            <Container
+              sx={{
+                border: '1.8px solid lightgrey',
+                borderRadius: 1,
+                mb: 2,
+                height: 300,
+                display: 'flex',
+                flexWrap: 'wrap',
+                overflow: 'auto',
+                alignItems: 'center'
+              }}>
+              {questionFile.map((item: { file: string, path: string }, index: number) => (
+                <Box key={index} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => dispatch(deleteQuestionFile({index: index}))}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={item.path} alt='이미지' width='100%'/>
                 </Box>
-                <img src={item.path} alt='이미지' width='100%'/>
-              </Box>
-            ))}
-          </Container>
+              ))}
+            </Container>
+          }
+
 
           <TextField
             type='text'
@@ -239,6 +245,8 @@ export default function QuestionForm({success, errorToast}: propsType) {
             minRows={15}
             required={true}
             onChange={event => dispatch(updateQuestionContent({content: event.target.value}))}
+            error={!!contentErrorMsg}
+            helperText={contentErrorMsg}
             placeholder='문의사항을 작성해 주세요'
             inputProps={{style: {fontSize: 18}}}
             sx={{width: '100%'}}

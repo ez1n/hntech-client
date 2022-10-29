@@ -219,42 +219,44 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
           </Box>
 
           {/* 첨부파일 */}
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 300,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {/* 기존 이미지 */}
-            {currentQuestion.files.map((item: { id: number, originalFilename: string, savedPath: string, serverFilename: string }, index: number) => (
-              <Box key={item.id} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => deleteOriginQuestionFile(index, detail.id, item.id)}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+          {questionFile.length + currentQuestion.files.length > 0 &&
+            <Container
+              sx={{
+                border: '1.8px solid lightgrey',
+                borderRadius: 1,
+                mb: 2,
+                height: 300,
+                display: 'flex',
+                flexWrap: 'wrap',
+                overflow: 'auto',
+                alignItems: 'center'
+              }}>
+              {/* 기존 이미지 */}
+              {currentQuestion.files.map((item: { id: number, originalFilename: string, savedPath: string, serverFilename: string }, index: number) => (
+                <Box key={item.id} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => deleteOriginQuestionFile(index, detail.id, item.id)}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={`${api.baseUrl()}/files/question/${item.serverFilename}`} alt={item.originalFilename}
+                       width='100%'/>
                 </Box>
-                <img src={`${api.baseUrl()}/files/question/${item.serverFilename}`} alt={item.originalFilename}
-                     width='100%'/>
-              </Box>
-            ))}
+              ))}
 
-            {/* 새로 추가한 이미지 */}
-            {questionFile.map((item: { file: string, path: string }, index: number) => (
-              <Box key={index} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteQuestionFile({index: index}))}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+              {/* 새로 추가한 이미지 */}
+              {questionFile.map((item: { file: string, path: string }, index: number) => (
+                <Box key={index} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => dispatch(deleteQuestionFile({index: index}))}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={item.path} alt='이미지' width='100%'/>
                 </Box>
-                <img src={item.path} alt='이미지' width='100%'/>
-              </Box>
-            ))}
-          </Container>
+              ))}
+            </Container>
+          }
 
           <TextField
             type='text'
@@ -289,7 +291,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         text1={'변경중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
-          navigate('/question-detail');
+          navigate(-1);
           closeCancelQuestionModify();
         }}
         closeAction={closeCancelQuestionModify}/>

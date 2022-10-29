@@ -129,7 +129,9 @@ export default function QuestionItem() {
   };
 
   // 페이지 전환
-  const changePage = (value: number) => {navigate('/question/page/' + value)};
+  const changePage = (value: number) => {
+    navigate('/question/page/' + value)
+  };
 
   return (
     <>
@@ -194,6 +196,12 @@ export default function QuestionItem() {
             <List sx={{flex: 0.2}}>{item.createTime}</List>
           </Box>
         ))}
+
+        {faq.length + questions.length === 0 &&
+          <Box sx={{p: 2, textAlign: 'center'}}>
+            <Typography sx={{color: 'darkGrey'}}>문의사항이 존재하지 않습니다.</Typography>
+          </Box>
+        }
       </Box>
 
       <Spacing/>
@@ -201,7 +209,7 @@ export default function QuestionItem() {
       <Stack>
         <Pagination
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
-          count={totalPage}
+          count={totalPage === 0 ? 1 : totalPage}
           page={page}
           sx={{m: '0 auto'}}/>
       </Stack>

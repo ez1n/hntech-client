@@ -230,47 +230,49 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           </Box>
 
           {/* 첨부파일 */}
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 300,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {/* 기존 이미지 */}
-            {archiveModifyContent.contentImageFiles.map((item: {
-              id: number,
-              originalFilename: string,
-              savedPath: string,
-              serverFilename: string
-            }, index: number) => (
-              <Box key={item.id} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => deleteOriginArchiveContentFile(index, archiveId, item.id)}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+          {archiveModifyContent.contentImageFiles.length + contentImageFiles.length > 0 &&
+            <Container
+              sx={{
+                border: '1.8px solid lightgrey',
+                borderRadius: 1,
+                mb: 2,
+                height: 300,
+                display: 'flex',
+                flexWrap: 'wrap',
+                overflow: 'auto',
+                alignItems: 'center'
+              }}>
+              {/* 기존 이미지 */}
+              {archiveModifyContent.contentImageFiles.map((item: {
+                id: number,
+                originalFilename: string,
+                savedPath: string,
+                serverFilename: string
+              }, index: number) => (
+                <Box key={item.id} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => deleteOriginArchiveContentFile(index, archiveId, item.id)}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={`${api.baseUrl()}/files/archive/${item.serverFilename}`} alt={item.originalFilename}
+                       width='100%'/>
                 </Box>
-                <img src={`${api.baseUrl()}/files/archive/${item.serverFilename}`} alt={item.originalFilename}
-                     width='100%'/>
-              </Box>
-            ))}
+              ))}
 
-            {/* 새로 추가한 이미지 */}
-            {contentImageFiles.map((item: { file: string, path: string }, index: number) => (
-              <Box key={index} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteArchiveContentFile({index: index}))}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+              {/* 새로 추가한 이미지 */}
+              {contentImageFiles.map((item: { file: string, path: string }, index: number) => (
+                <Box key={index} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => dispatch(deleteArchiveContentFile({index: index}))}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={item.path} alt='이미지' width='100%'/>
                 </Box>
-                <img src={item.path} alt='이미지' width='100%'/>
-              </Box>
-            ))}
-          </Container>
+              ))}
+            </Container>
+          }
 
           <TextField
             defaultValue={archiveModifyContent.content}
