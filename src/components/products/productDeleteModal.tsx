@@ -104,7 +104,7 @@ export default function ProductDeleteModal(props: PropsType) {
         </Dialog>
 
         <Dialog open={check} onClose={closeDeleteModal}>
-          <DialogTitle>{props.category.categoryName} 카테고리 삭제</DialogTitle>
+          <DialogTitle sx={{fontWeight: 'bold'}}>{props.category.categoryName} 삭제</DialogTitle>
 
           <DialogContent>
             <DialogContentText sx={{mb: 1}}>
@@ -112,7 +112,7 @@ export default function ProductDeleteModal(props: PropsType) {
             </DialogContentText>
 
             <TextField value={deleteCategoryName} onChange={changeValue} error={!!categoryNameErrorMessage} helperText={categoryNameErrorMessage}
-                       autoComplete='off' autoFocus fullWidth placeholder='삭제할 카테고리 이름'/>
+                       autoComplete='off' autoFocus fullWidth placeholder='정확한 명칭을 입력해 주세요'/>
           </DialogContent>
 
           <DialogActions>
