@@ -22,11 +22,10 @@ interface propsType {
     },
     productName: string
   },
-  index: number,
-  moveProductItem: (id: number, targetIndex: number) => void
+  index: number
 }
 
-export default function ProductItem({product, index, moveProductItem}: propsType) {
+export default function ProductItem({product, index}: propsType) {
   const {id, image, productName} = product;
 
   const navigate = useNavigate();

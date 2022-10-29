@@ -1,4 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 import {useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
@@ -7,13 +9,12 @@ import {resetProductForm} from '../../app/reducers/productFormSlice';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {selectProductCategoryTrue, setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
-import {Box, Button, styled, Select, MenuItem, Typography, Grid} from '@mui/material';
+import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs, Container} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ProductCategories from './productCategories';
 import CancelModal from '../cancelModal';
 import ProductItem from './productItem';
-import {DndProvider} from "react-dnd";
-import {HTML5Backend} from "react-dnd-html5-backend";
 
 interface propsType {
   successDelete: () => void
@@ -68,16 +69,7 @@ export default function Products({successDelete}: propsType) {
       })
   };
 
-  // 제품 순서 변경 보여주기
-  const moveProductItem = (id: number, targetIndex: number) => {
-    const index = productList.findIndex(category => category.id === id);
-    let newIdList = [...productList];
-    const moveItem = newIdList.splice(index, 1)[0];
-    newIdList.splice(targetIndex + 1, 0, moveItem);
-    dispatch(getProductList({productList: newIdList}));
-  };
-
-  const ProductGrid = () => {
+  function ProductGrid() {
     let productColumn = 4;
     if (windowSize < 1200) productColumn = 3;
     if (windowSize < 900) productColumn = 2;
@@ -97,7 +89,7 @@ export default function Products({successDelete}: propsType) {
               },
               productName: string
             }, index: number) => (
-              <ProductItem key={item.id} product={item} index={index} moveProductItem={moveProductItem}/>
+              <ProductItem key={item.id} product={item} index={index}/>
             )) : // 제품 존재하지 않는 경우
             <Typography>
               해당 카테고리에 제품이 존재하지 않습니다.
@@ -108,55 +100,75 @@ export default function Products({successDelete}: propsType) {
   }
 
   return (
-    <Box>
+    <>
       {!productCategorySelected &&
-          <Box sx={{p: 5, margin: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-              <ProductCategories successDelete={successDelete}/>
+        <>
+          <Box sx={{m: 'auto', mt: 5, width: '70vw'}}>
+            <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
+              {[<Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>대분류 카테고리</Typography>]}
+            </Breadcrumbs>
           </Box>
+
+          <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
+            <ProductCategories successDelete={successDelete}/>
+          </Box>
+        </>
       }
 
       {/* category selected */}
       {productCategorySelected &&
+        <Box>
+          <Box sx={{m: 'auto', mt: 5, width: '70vw'}}>
+            <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
+              {[
+                <Typography sx={{fontSize: 'large'}} key="1">대분류 카테고리</Typography>,
+                <Typography sx={{fontSize: 'large'}} key="1">중분류 카테고리</Typography>,
+                <Typography sx={{fontSize: 'large', fontWeight: 'bold'}} key="2">제품 목록</Typography>
+              ]}
+            </Breadcrumbs>
+          </Box>
+
           <TotalBox>
             {/* 사이드 메뉴 */}
-              <Box sx={{flex: 0.2}}>
-                  <CategoryBox>
-                      <ProductCategories successDelete={successDelete}/>
-                  </CategoryBox>
-              </Box>
+            <Box sx={{flex: 0.2}}>
+              <CategoryBox>
+                <ProductCategories successDelete={successDelete}/>
+              </CategoryBox>
+            </Box>
 
             {/* 900px 이하 사이드 메뉴 */}
-              <SelectBox>
-                  <MenuSelect
-                      defaultValue={currentProductCategoryName}
-                      onChange={(event: any) => {
-                        dispatch(selectProductCategoryTrue());
-                        dispatch(setCurrentProductCategoryName({category: event?.target.value}));
-                      }}
-                      size='small'>
-                    {productCategories.map((item: {
-                      categoryName: string;
-                      id: number;
-                      imageServerFilename: string;
-                      imageOriginalFilename: string;
-                      showInMain: string;
-                    }) => (
-                      <MenuList key={item.id} value={item.categoryName}>{item.categoryName}</MenuList>
-                    ))}
-                  </MenuSelect>
-              </SelectBox>
+            <SelectBox>
+              <MenuSelect
+                defaultValue={currentProductCategoryName}
+                onChange={(event: any) => {
+                  dispatch(selectProductCategoryTrue());
+                  dispatch(setCurrentProductCategoryName({category: event?.target.value}));
+                }}
+                size='small'>
+                {productCategories.map((item: {
+                  categoryName: string;
+                  id: number;
+                  imageServerFilename: string;
+                  imageOriginalFilename: string;
+                  showInMain: string;
+                }) => (
+                  <MenuList key={item.id} value={item.categoryName}>{item.categoryName}</MenuList>
+                ))}
+              </MenuSelect>
+            </SelectBox>
 
             {/* 제품 목록 */}
-              <Box sx={{flex: 0.8, pt: 5}}>
-                  <Box sx={{p: 1, display: 'flex', flexWrap: 'wrap'}}>
-                      <ProductGrid/>
-                  </Box>
-                {managerMode &&
-                    <AddButton onClick={() => navigate('/product/form')}>
-                        <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
-                    </AddButton>}
+            <Box sx={{flex: 0.8, pt: 5}}>
+              <Box sx={{p: 1, display: 'flex', flexWrap: 'wrap'}}>
+                <ProductGrid/>
               </Box>
+              {managerMode &&
+                <AddButton onClick={() => navigate('/product/form')}>
+                  <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
+                </AddButton>}
+            </Box>
           </TotalBox>
+        </Box>
       }
 
       {/* 삭제 버튼 Dialog */}
@@ -167,7 +179,7 @@ export default function Products({successDelete}: propsType) {
         text2='삭제하시겠습니까?'
         yesAction={() => deleteProduct(currentProductData.id)}
         closeAction={() => dispatch(clickProductItemGoBack())}/>
-    </Box>
+    </>
   )
 };
 

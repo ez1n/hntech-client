@@ -16,7 +16,7 @@ import {clickProductCategoryListGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode, setPassword} from '../../app/reducers/managerModeSlice';
 import {setAllProductCategories, setCurrentProductCategory} from '../../app/reducers/categorySlice';
 import {
-  Box,
+  Box, Breadcrumbs,
   Button,
   Container,
   Dialog,
@@ -35,6 +35,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CancelModal from '../cancelModal';
 import EditButton from "../editButton";
 import ProductCategoryList from "./productCategoryList";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 interface propsType {
   successDelete: () => void
@@ -106,11 +107,12 @@ export default function ProductCategories({successDelete}: propsType) {
   // 카테고리 삭제
   const deleteProductCategory = (categoryId: number) => {
     categoryApi.deleteProductCategory(categoryId)
-      .then(res => {
+      .then(() => {
         successDelete();
         closeDeleteCategory();
         categoryApi.getAllProductCategories()
           .then(res => dispatch(setAllProductCategories({categories: res.categories})))
+          .catch(error => console.log(error))
       })
       .catch(error => {
         if (error.response.status === 401) {
@@ -120,6 +122,12 @@ export default function ProductCategories({successDelete}: propsType) {
         }
       })
   };
+
+  // 카테고리 선택
+  const selectProductCategory = (categoryName: string) => {
+    dispatch(selectProductCategoryTrue());
+    dispatch(setCurrentProductCategoryName({category: categoryName}));
+  }
 
   // 카테고리 목록
   const CategoryGrid = () => {
@@ -138,10 +146,7 @@ export default function ProductCategories({successDelete}: propsType) {
           showInMain: string
         }) => (
           <Grid item xs={1} key={value.id}>
-            <CategoryButton onClick={() => {
-              dispatch(selectProductCategoryTrue());
-              dispatch(setCurrentProductCategoryName({category: value.categoryName}));
-            }}>
+            <CategoryButton onClick={() => selectProductCategory(value.categoryName)}>
               {/* 카테고리 */}
               <Box sx={{height: 150}}>
                 <img
@@ -158,24 +163,24 @@ export default function ProductCategories({successDelete}: propsType) {
 
             {/* 수정 버튼 */}
             {managerMode &&
-                <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
-                    <Button
-                        onClick={() => {
-                          dispatch(setCurrentProductCategory({category: value}));
-                          setCheckPassword(checkPassword => !checkPassword);
-                        }}
-                        sx={{color: 'red'}}>
-                        <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
-                    </Button>
-                    <Button
-                        onClick={() => {
-                          dispatch(setCurrentProductCategory({category: value}));
-                          navigate('/productCategory/modify');
-                        }}
-                        sx={{color: 'darkgreen'}}>
-                        <CreateRoundedIcon sx={{fontSize: 30}}/>
-                    </Button>
-                </Box>
+              <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+                <Button
+                  onClick={() => {
+                    dispatch(setCurrentProductCategory({category: value}));
+                    setCheckPassword(checkPassword => !checkPassword);
+                  }}
+                  sx={{color: 'red'}}>
+                  <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
+                </Button>
+                <Button
+                  onClick={() => {
+                    dispatch(setCurrentProductCategory({category: value}));
+                    navigate('/productCategory/modify');
+                  }}
+                  sx={{color: 'darkgreen'}}>
+                  <CreateRoundedIcon sx={{fontSize: 30}}/>
+                </Button>
+              </Box>
             }
           </Grid>
         ))}
@@ -187,85 +192,85 @@ export default function ProductCategories({successDelete}: propsType) {
     <Box sx={{width: '100%'}}>
       {/* default */}
       {!productCategorySelected &&
-          <>
-              <Container sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                mb: 5
-              }}>
-                  <TitleTypography variant='h5'>
-                      제품 소개
-                  </TitleTypography>
-              </Container>
-            {managerMode &&
-                <Spacing sx={{textAlign: 'end'}}>
-                    <EditButton name={'카테고리 목록'} onClick={() => dispatch(clickProductCategoryListGoBack())}/>
+        <>
+          <Container sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mb: 5
+          }}>
+            <TitleTypography variant='h5'>
+              제품 소개
+            </TitleTypography>
+          </Container>
+          {managerMode &&
+            <Spacing sx={{textAlign: 'end'}}>
+              <EditButton name={'카테고리 목록'} onClick={() => dispatch(clickProductCategoryListGoBack())}/>
 
-                    <DndProvider backend={HTML5Backend}>
-                        <ProductCategoryList/>
-                    </DndProvider>
-                </Spacing>
-            }
+              <DndProvider backend={HTML5Backend}>
+                <ProductCategoryList/>
+              </DndProvider>
+            </Spacing>
+          }
 
-            {/* 카테고리 목록 */}
-              <CategoryGrid/>
+          {/* 카테고리 목록 */}
+          <CategoryGrid/>
 
-            {/* 추가 버튼 */}
-            {managerMode &&
-                <AddButton onClick={() => navigate('/productCategory/form')}>
-                    <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
-                </AddButton>
-            }
-          </>
+          {/* 추가 버튼 */}
+          {managerMode &&
+            <AddButton onClick={() => navigate('/productCategory/form')}>
+              <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
+            </AddButton>
+          }
+        </>
       }
 
       {/* category selected */}
       {productCategorySelected &&
-          <>
-              <Container sx={{display: 'flex'}}>
-                  <Typography
-                      variant='h5'
-                      sx={{
-                        p: 1,
-                        userSelect: 'none',
-                        fontWeight: 'bold'
-                      }}>
-                      제품 소개
-                  </Typography>
-              </Container>
-              <Box sx={{
-                pt: 1,
-                pb: 1,
-                pl: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                width: 'max-content'
+        <>
+          <Container sx={{display: 'flex'}}>
+            <Typography
+              variant='h5'
+              sx={{
+                p: 1,
+                userSelect: 'none',
+                fontWeight: 'bold'
               }}>
-                {productCategories.map((value: {
-                  categoryName: string;
-                  id: number;
-                  imageServerFilename: string;
-                  imageOriginalFilename: string;
-                  showInMain: string;
-                }) => (
-                  <MenuButton
-                    key={value.id}
-                    onClick={() => {
-                      dispatch(selectProductCategoryTrue());
-                      dispatch(setCurrentProductCategoryName({category: value.categoryName}));
-                    }}
-                    sx={{
-                      color: currentProductCategoryName === value.categoryName ? '#F0F0F0' : '#0F0F0F',
-                      backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
-                      '&:hover': {
-                        backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
-                      }
-                    }}>
-                    {value.categoryName}
-                  </MenuButton>
-                ))}
-              </Box>
-          </>
+              제품 소개
+            </Typography>
+          </Container>
+          <Box sx={{
+            pt: 1,
+            pb: 1,
+            pl: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            width: 'max-content'
+          }}>
+            {productCategories.map((value: {
+              categoryName: string;
+              id: number;
+              imageServerFilename: string;
+              imageOriginalFilename: string;
+              showInMain: string;
+            }) => (
+              <MenuButton
+                key={value.id}
+                onClick={() => {
+                  dispatch(selectProductCategoryTrue());
+                  dispatch(setCurrentProductCategoryName({category: value.categoryName}));
+                }}
+                sx={{
+                  color: currentProductCategoryName === value.categoryName ? '#F0F0F0' : '#0F0F0F',
+                  backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+                  '&:hover': {
+                    backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+                  }
+                }}>
+                {value.categoryName}
+              </MenuButton>
+            ))}
+          </Box>
+        </>
       }
 
       {/* 카테고리 삭제 비밀번호 확인 Dialog */}
