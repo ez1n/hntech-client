@@ -3,7 +3,16 @@ import {categoryApi} from "../../network/category";
 import {useAppDispatch} from "../../app/hooks";
 import {setAllProductCategories} from "../../app/reducers/categorySlice";
 import {changeMode} from "../../app/reducers/managerModeSlice";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
+import {
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField
+} from "@mui/material";
 
 interface PropsType {
   open: boolean,
@@ -74,14 +83,18 @@ export default function ProductDeleteModal(props: PropsType) {
   return (
     <>
         <Dialog open={props.open} onClose={closeDeleteModal}>
-          <DialogTitle>{props.category.categoryName} 카테고리 삭제</DialogTitle>
+          <DialogTitle sx={{fontWeight: 'bold'}}>{props.category.categoryName} 카테고리 삭제</DialogTitle>
 
           <DialogContent>
-            <DialogContentText>
-              카테고리에 포함된 제품이 삭제되고 복구할 수없습니다.
+            <DialogContentText sx={{color: '#b03030', fontWeight: 'bold'}}>
+              카테고리에 포함된 모든 제품이 삭제되며
             </DialogContentText>
-
-            <DialogContentText>삭제하시겠습니까?</DialogContentText>
+            <DialogContentText sx={{color: '#b03030', fontWeight: 'bold'}}>
+              복구가 불가능합니다.
+            </DialogContentText>
+            <DialogContentText sx={{mt: 1, color: '#3d3c3c'}}>
+              정말 삭제하시겠습니까?
+            </DialogContentText>
           </DialogContent>
 
           <DialogActions>
@@ -94,13 +107,12 @@ export default function ProductDeleteModal(props: PropsType) {
           <DialogTitle>{props.category.categoryName} 카테고리 삭제</DialogTitle>
 
           <DialogContent>
-            <DialogContentText>
+            <DialogContentText sx={{mb: 1}}>
               삭제할 카테고리 이름을 입력해 주세요.
             </DialogContentText>
 
-            <TextField value={deleteCategoryName} onChange={changeValue} error={!!categoryNameErrorMessage}
-                       helperText={categoryNameErrorMessage}
-                       autoFocus fullWidth placeholder='삭제할 카테고리 이름'/>
+            <TextField value={deleteCategoryName} onChange={changeValue} error={!!categoryNameErrorMessage} helperText={categoryNameErrorMessage}
+                       autoComplete='off' autoFocus fullWidth placeholder='삭제할 카테고리 이름'/>
           </DialogContent>
 
           <DialogActions>
