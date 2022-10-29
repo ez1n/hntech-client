@@ -101,7 +101,8 @@ export default function ArchiveForm({success, errorToast}: propsType) {
   const selectContentFile = (event: any) => {
     for (let i = 0; i < event.target.files.length; i++) {
       dispatch(addArchiveContentFile({
-        file: {file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
+        file: {
+          file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
         }
       }))
     }
@@ -119,7 +120,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
     attachedFileData.map(item => archiveData.append('attachedFiles', item));
     archiveData.append('categoryName', archiveContent.categoryName);
     archiveData.append('content', archiveContent.content);
-    contentImageFiles.map((item: {file: string, path: string}) => archiveData.append('contentImageFiles', item.file));
+    contentImageFiles.map((item: { file: string, path: string }) => archiveData.append('contentImageFiles', item.file));
     archiveData.append('notice', archiveContent.notice);
     archiveData.append('title', archiveContent.title);
 
@@ -131,7 +132,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           success();
           dispatch(resetArchiveState());
           dispatch(onLoading());
-          navigate('/client-archive/page/1');
+          navigate('/archive/page/1');
         })
         .catch(error => {
           dispatch(onLoading());
@@ -173,7 +174,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             onChange={event => dispatch(updateArchiveTitle({title: event.target.value}))}
-            inputProps={{ style: {fontSize: 18} }}
+            inputProps={{style: {fontSize: 18}}}
             sx={{width: '100%'}}
           />
         </Box>
@@ -186,7 +187,6 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           p: 1,
           pl: 2
         }}>
-
           {/* 카테고리 선택 */}
           <ArchiveCategorySelect defaultCategory={null} categoryErrorMsg={categoryErrorMsg}/>
 
@@ -219,33 +219,31 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           </Box>
 
           {/* 첨부파일 */}
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 300,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {contentImageFiles.length === 0 &&
-              <Typography sx={{color: 'lightgrey', fontSize: 18}}>
-                이미지 미리보기
-              </Typography>
-            }
-            {contentImageFiles.map((item: { file: string, path: string }, index: number) => (
-              <Box key={index} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteArchiveContentFile({index: index}))}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+          {contentImageFiles.length > 0 &&
+            <Container
+              sx={{
+                border: '1.8px solid lightgrey',
+                borderRadius: 1,
+                mb: 2,
+                height: 300,
+                display: 'flex',
+                flexWrap: 'wrap',
+                overflow: 'auto',
+                alignItems: 'center'
+              }}>
+              {contentImageFiles.map((item: { file: string, path: string }, index: number) => (
+                <Box key={index} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => dispatch(deleteArchiveContentFile({index: index}))}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={item.path} alt='이미지' width='100%'/>
                 </Box>
-                <img src={item.path} alt='이미지' width='100%'/>
-              </Box>
-            ))}
-          </Container>
+              ))}
+            </Container>
+          }
+
 
           <TextField
             autoComplete='off'
@@ -269,9 +267,9 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           }}>
             <Stack>
               {attachedFileName.length === 0 &&
-                  <UploadFileTypography>
-                      업로드할 파일
-                  </UploadFileTypography>
+                <UploadFileTypography>
+                  업로드할 파일
+                </UploadFileTypography>
               }
               {attachedFileName.map((item, index) => (
                 <Stack direction='row' key={index}>

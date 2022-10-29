@@ -91,7 +91,7 @@ export default function ProductForm({success, errorToast}: propsType) {
 
   // 제품 등록 취소 modal - open
   const openCancelProductForm = () => {
-   setCancelProductForm(cancelProductForm => ! cancelProductForm);
+    setCancelProductForm(cancelProductForm => !cancelProductForm);
   };
 
   // 제품 등록 취소 modal - close
@@ -260,15 +260,18 @@ export default function ProductForm({success, errorToast}: propsType) {
         }}>
           <ButtonBox>
             {/* 숨김 input */}
-            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={selectRepProductImage} onClick={(e:any) => e.target.value = null}>
+            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={selectRepProductImage}
+                   onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputRepPhoto' accept='image/*'/>
             </label>
 
-            <label ref={photoInputRef} htmlFor='inputPhoto' onChange={selectProductImage} onClick={(e: any) => e.target.value = null}>
+            <label ref={photoInputRef} htmlFor='inputPhoto' onChange={selectProductImage}
+                   onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputPhoto' multiple accept='image/*'/>
             </label>
 
-            <label ref={gradeInputRef} htmlFor='inputGrade' onChange={selectStandardImage} onClick={(e: any) => e.target.value = null}>
+            <label ref={gradeInputRef} htmlFor='inputGrade' onChange={selectStandardImage}
+                   onClick={(e: any) => e.target.value = null}>
               <input className='productInput' type='file' id='inputGrade' multiple accept='image/*'/>
             </label>
 
@@ -291,20 +294,37 @@ export default function ProductForm({success, errorToast}: propsType) {
           <TextField
             placeholder='제품 설명'
             multiline
-            minRows={3}
-            autoComplete={'off'}
+            rows={5}
+            autoComplete='off'
             onChange={event => dispatch(addProductDescription({description: event.target.value}))}
-            inputProps={{
-              style: {
-                fontSize: 18
-              }
-            }}
-            sx={{width: '100%', mb: 2}}
+            inputProps={{style: {fontSize: 18}}}
+            sx={{width: '100%', mb: 2, overflow: 'auto'}}
           />
 
           {/* 대표 제품 이미지 미리보기 */}
-          <FormControl error={!!repImgErrorMsg} sx={{width: '100%'}}>
-            <FormHelperText>{repImgErrorMsg}</FormHelperText>
+          {representativeImage.path &&
+            <FormControl error={!!repImgErrorMsg} sx={{width: '100%'}}>
+              <FormHelperText sx={{fontSize: 12}}>{repImgErrorMsg}</FormHelperText>
+              <Container
+                sx={{
+                  border: '1.8px solid lightgrey',
+                  borderRadius: 1,
+                  mb: 2,
+                  height: 250,
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  overflow: 'auto',
+                  alignItems: 'center'
+                }}>
+                <Box sx={{width: '23%', m: 1}}>
+                  <img src={representativeImage.path} alt='대표 제품 이미지' width='100%'/>
+                </Box>
+              </Container>
+            </FormControl>
+          }
+
+          {/* 제품 이미지 미리보기 */}
+          {productImages.length > 0 &&
             <Container
               sx={{
                 border: '1.8px solid lightgrey',
@@ -316,74 +336,45 @@ export default function ProductForm({success, errorToast}: propsType) {
                 overflow: 'auto',
                 alignItems: 'center'
               }}>
-              {representativeImage.path === undefined ?
-                <Typography sx={{color: 'lightgrey', fontSize: 18}}>
-                  대표 제품 이미지 미리보기
-                </Typography> :
-                <Box sx={{width: '23%', m: 1}}>
-                  <img src={representativeImage.path} alt='대표 제품 이미지' width='100%'/>
+              {productImages.map((item: { file: string, path: string }, index: number) => (
+                <Box key={index} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => dispatch(deleteProductImage({index: index}))}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={item.path} alt='제품 이미지' width='100%'/>
                 </Box>
-              }
+              ))}
             </Container>
-          </FormControl>
+          }
 
-          {/* 제품 이미지 미리보기 */}
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 250,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {productImages.length === 0 &&
-                <Typography sx={{color: 'lightgrey', fontSize: 18}}>
-                    제품 이미지 미리보기
-                </Typography>
-            }
-            {productImages.map((item: { file: string, path: string }, index: number) => (
-              <Box key={index} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteProductImage({index: index}))}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
-                </Box>
-                <img src={item.path} alt='제품 이미지' width='100%'/>
-              </Box>
-            ))}
-          </Container>
 
           {/* 규격 이미지 미리보기 */}
-          <Container
-            sx={{
-              border: '1.8px solid lightgrey',
-              borderRadius: 1,
-              mb: 2,
-              height: 300,
-              display: 'flex',
-              flexWrap: 'wrap',
-              overflow: 'auto',
-              alignItems: 'center'
-            }}>
-            {standardImages.length === 0 &&
-                <Typography sx={{color: 'lightgrey', fontSize: 18}}>
-                    규격 이미지 미리보기
-                </Typography>
-            }
-            {standardImages.map((file: { file: string, path: string }, index) => (
-              <Box key={index} sx={{width: '23%', m: 1}}>
-                <Box sx={{textAlign: 'end'}}>
-                  <ClearRoundedIcon
-                    onClick={() => dispatch(deleteStandardImage({index: index}))}
-                    sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+          {standardImages.length > 0 &&
+            <Container
+              sx={{
+                border: '1.8px solid lightgrey',
+                borderRadius: 1,
+                mb: 2,
+                height: 300,
+                display: 'flex',
+                flexWrap: 'wrap',
+                overflow: 'auto',
+                alignItems: 'center'
+              }}>
+              {standardImages.map((file: { file: string, path: string }, index) => (
+                <Box key={index} sx={{width: '23%', m: 1}}>
+                  <Box sx={{textAlign: 'end'}}>
+                    <ClearRoundedIcon
+                      onClick={() => dispatch(deleteStandardImage({index: index}))}
+                      sx={{color: 'darkgreen', cursor: 'pointer'}}/>
+                  </Box>
+                  <img src={file.path} alt='규격 이미지' width='100%'/>
                 </Box>
-                <img src={file.path} alt='규격 이미지' width='100%'/>
-              </Box>
-            ))}
-          </Container>
+              ))}
+            </Container>
+          }
 
           <FormControl error={!!fileErrorMsg} sx={{width: '100%'}}>
             {/* 파일 업로드 (다운로드 가능한 자료) */}
@@ -435,7 +426,7 @@ export default function ProductForm({success, errorToast}: propsType) {
                   </Button>
                 </Stack>
               ))}
-              <FormHelperText>{fileErrorMsg}</FormHelperText>
+              <FormHelperText sx={{fontSize: 12}}>{fileErrorMsg}</FormHelperText>
 
               <Button
                 onClick={() => dispatch(addProductDocUploadButton())}

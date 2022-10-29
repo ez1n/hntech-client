@@ -35,14 +35,12 @@ export default function ArchiveItem() {
   // 자료 목록 받아오기
   useEffect(() => {
     archiveApi.getArchives(page - 1)
-      .then(res => {
-        dispatch(getAllArchives({
+      .then(res => dispatch(getAllArchives({
           archives: res.archives,
           totalPage: res.totalPages,
           currentPage: res.currentPage,
           totalElements: res.totalElements
-        }))
-      })
+        })))
       .catch(error => console.log(error))
   }, [currentPage]);
 
@@ -123,6 +121,12 @@ export default function ArchiveItem() {
 
           </Box>
         ))}
+
+        {notice.length + archives.length === 0 &&
+          <Box sx={{p: 2, textAlign: 'center'}}>
+            <Typography sx={{color: 'darkGrey'}}>자료가 존재하지 않습니다.</Typography>
+          </Box>
+        }
       </Box>
 
       <Spacing/>
