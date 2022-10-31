@@ -21,18 +21,19 @@ import {
   styled,
   Typography
 } from '@mui/material';
-import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
-import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import EditButton from "../editButton";
 import ProductCategoryList from "./productCategoryList";
 import ProductDeleteModal from "./productDeleteModal";
+import ProductButton from "./productButton";
 
 interface propsType {
-  successDelete: () => void
+  windowSize?: number,
+  successDelete: () => void,
+  openMiddleCategory?: () => void
 }
 
-export default function ProductCategories({successDelete}: propsType) {
+export default function ProductCategories({windowSize, successDelete, openMiddleCategory}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -43,13 +44,6 @@ export default function ProductCategories({successDelete}: propsType) {
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName)
   const [openDelete, setOpenDelete] = useState(false);
-  const [windowSize, setWindowSize] = useState(window.innerWidth);
-
-  const handleWindowResize = useCallback(() => {
-    setWindowSize(window.innerWidth);
-  }, []);
-
-  window.addEventListener("resize", handleWindowResize);
 
   useEffect(() => {
     // 카테고리 이미지 초기화
@@ -75,9 +69,7 @@ export default function ProductCategories({successDelete}: propsType) {
   };
 
   // 카테고리 삭제 확인 modal - close
-  const closeDeleteMessage = () => {
-    setOpenDelete(false);
-  };
+  const closeDeleteMessage = () => setOpenDelete(false);
 
   // 카테고리 선택
   const selectProductCategory = (categoryName: string) => {
@@ -101,41 +93,12 @@ export default function ProductCategories({successDelete}: propsType) {
           imageOriginalFilename: string,
           showInMain: string
         }) => (
-          <Grid item xs={1} key={value.id}>
-            <CategoryButton onClick={() => selectProductCategory(value.categoryName)}>
-              {/* 카테고리 */}
-              <Box sx={{height: 150}}>
-                <img
-                  className='categoryImage'
-                  src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`}
-                  alt={value.imageOriginalFilename}
-                  width='100%'
-                  height='100%'/>
-              </Box>
-              <CategoryNameTypography>
-                {value.categoryName}
-              </CategoryNameTypography>
-            </CategoryButton>
-
-            {/* 수정 버튼 */}
-            {managerMode &&
-              <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
-                <Button
-                  onClick={() => openDeleteMessage(value)}
-                  sx={{color: 'red'}}>
-                  <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
-                </Button>
-                <Button
-                  onClick={() => {
-                    dispatch(setCurrentProductCategory({category: value}));
-                    navigate('/productCategory/modify');
-                  }}
-                  sx={{color: 'darkgreen'}}>
-                  <CreateRoundedIcon sx={{fontSize: 30}}/>
-                </Button>
-              </Box>
-            }
-          </Grid>
+          <ProductButton
+            id={value.id}
+            imageServerFilename={value.imageServerFilename}
+            imageOriginalFilename={value.imageOriginalFilename}
+            categoryName={value.categoryName}
+          />
         ))}
       </Grid>
     )
@@ -237,9 +200,9 @@ export default function ProductCategories({successDelete}: propsType) {
   )
 };
 
-const Spacing = styled(Container)(() => ({
+const Spacing = styled(Box)(() => ({
   height: 60
-})) as typeof Container;
+})) as typeof Box;
 
 const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
@@ -270,7 +233,7 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   backgroundColor: 'rgba(79,79,79,0.78)'
 })) as typeof Typography;
 
-// Image 버튼
+// 카테고리 버튼
 const CategoryButton = styled(Button)(() => ({
   width: '100%',
   overflow: 'hidden',

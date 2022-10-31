@@ -15,6 +15,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ProductCategories from './productCategories';
 import CancelModal from '../cancelModal';
 import ProductItem from './productItem';
+import ProductMiddleCategory from "./productMiddleCategory";
 
 interface propsType {
   successDelete: () => void
@@ -31,6 +32,7 @@ export default function Products({successDelete}: propsType) {
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
+  const [middleCategory, setMiddleCategory] = useState(true);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const handleWindowResize = useCallback(() => {
@@ -47,6 +49,12 @@ export default function Products({successDelete}: propsType) {
         .then(res => dispatch(getProductList({productList: res})))
     }
   }, [currentProductCategoryName]);
+
+  // 중분류 카테고리 open
+  const openMiddleCategory = () => setMiddleCategory(middleCategory => !middleCategory);
+
+  // 중분류 카테고리 close
+  const closeMiddleCategory = () => setMiddleCategory(false);
 
   // 제품 삭제
   const deleteProduct = (productId: number) => {
@@ -110,7 +118,7 @@ export default function Products({successDelete}: propsType) {
           </Box>
 
           <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-            <ProductCategories successDelete={successDelete}/>
+            <ProductCategories windowSize={windowSize} successDelete={successDelete} openMiddleCategory={openMiddleCategory}/>
           </Box>
         </>
       }
@@ -179,6 +187,12 @@ export default function Products({successDelete}: propsType) {
         text2='삭제하시겠습니까?'
         yesAction={() => deleteProduct(currentProductData.id)}
         closeAction={() => dispatch(clickProductItemGoBack())}/>
+
+      {/* 중분류 카테고리 */}
+      <ProductMiddleCategory
+        windowSize={windowSize}
+        open={middleCategory}
+        onClose={closeMiddleCategory}/>
     </>
   )
 };
