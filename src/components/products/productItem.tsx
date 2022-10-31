@@ -40,7 +40,7 @@ export default function ProductItem({product, index}: propsType) {
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
-        navigate('/product/category=' + res.category + '&item=' + res.id);
+        navigate('/product/' + currentProductCategoryName + '/' + res.id);
       })
   };
 

@@ -17,34 +17,34 @@ interface propsType {
 export default function ProductDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {currentCategoryName, currentProductId} = useParams();
+  const {categoryName, index} = useParams();
 
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const productId = useAppSelector(state => state.product.productDetail.id);
   const productName = useAppSelector(state => state.product.productDetail.productName); // 제품 이름
+  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
-    navigate('/product/category=' + currentCategoryName + '&item=' + productId)
+    navigate('/product/' + currentProductCategoryName + '/' + productId);
   };
 
   useEffect(() => {
-    currentCategoryName &&
-    productApi.getAllProducts(currentCategoryName)
+    productApi.getAllProducts(categoryName)
       .then(res => dispatch(getProductList({productList: res})))
+      .catch(error => console.log(error))
 
     dispatch(resetProductForm());
   }, []);
 
   useEffect(() => {
-    currentProductId &&
-    productApi.getProduct(parseInt(currentProductId))
+    productApi.getProduct(parseInt(index))
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
       })
     dispatch(selectProductCategoryTrue());
-  }, [currentProductId]);
+  }, [index]);
 
   return (
     <TotalBox>

@@ -149,7 +149,7 @@ export default function App() {
                 <Products successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/product/category=:currentCategoryName&item=:currentProductId' element={
+              <Route path='/product/:categoryName/:index' element={
                 <ProductDetail successDelete={successDelete}/>
               }></Route>
 
@@ -165,13 +165,13 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/productCategory/form' element={
+              <Route path='/product/category/form' element={
                 <ProductCategoryForm
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/productCategory/modify' element={
+              <Route path='/product/category/modify' element={
                 <ProductCategoryModifyForm
                   successModify={successModify}
                   errorToast={errorToast}/>

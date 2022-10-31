@@ -130,7 +130,7 @@ export default function ProductCategoryForm({success, errorToast}: propsType) {
         <Stack direction='row' sx={{mt: 2, alignItems: 'center'}}>
           {/* 사진 추가 */}
           <Box sx={{pl: 1}}>
-            <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage} onClick={(e) => e.target.value = null}>
+            <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage} onClick={(e: any) => e.target.value = null}>
               사진 추가
               <input type='file' id='productCategoryInput' accept='image/*'/>
             </label>

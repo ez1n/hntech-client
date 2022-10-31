@@ -83,7 +83,7 @@ export default function ProductCategories({successDelete}: propsType) {
   const selectProductCategory = (categoryName: string) => {
     dispatch(selectProductCategoryTrue());
     dispatch(setCurrentProductCategoryName({category: categoryName}));
-  }
+  };
 
   // 카테고리 목록
   const CategoryGrid = () => {
@@ -128,7 +128,7 @@ export default function ProductCategories({successDelete}: propsType) {
                 <Button
                   onClick={() => {
                     dispatch(setCurrentProductCategory({category: value}));
-                    navigate('/productCategory/modify');
+                    navigate('/product/category/modify');
                   }}
                   sx={{color: 'darkgreen'}}>
                   <CreateRoundedIcon sx={{fontSize: 30}}/>
@@ -170,7 +170,7 @@ export default function ProductCategories({successDelete}: propsType) {
 
           {/* 추가 버튼 */}
           {managerMode &&
-            <AddButton onClick={() => navigate('/productCategory/form')}>
+            <AddButton onClick={() => navigate('/product/category/form')}>
               <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
             </AddButton>
           }

@@ -65,9 +65,9 @@ export default function ProductDeleteModal(props: PropsType) {
       .then(() => {
         categoryApi.getAllProductCategories()
           .then(res => {
+            closeDeleteModal();
             dispatch(setAllProductCategories({categories: res.categories}));
             props.successDelete();
-            props.onClose();
           })
           .catch(error => console.log(error))
       })
