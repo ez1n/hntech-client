@@ -6,14 +6,20 @@ class CategoryApi {
   /* 제품 카테고리 */
 
   // 메인 카테고리 조회
-  async getMainCategories() {
+  async getRepCategories() {
     const response = await axios.get(`/api/category/main`);
     return response.data.categories;
   };
 
-  // 제품 카테고리 목록 받아오기
-  async getAllProductCategories() {
-    const response = await axios.get(`/api/category/product`);
+  // 대분류 제품 카테고리 목록 받아오기
+  async getMainProductCategory() {
+    const response = await axios.get(`/api/category/product/parent`);
+    return response.data;
+  };
+
+  // 중분류 제품 카테고리 목록 받아오기
+  async getMiddleProductCategory(parentCategoryName: string) {
+    const response = await axios.get(`/api/category/product/${parentCategoryName}/children`);
     return response.data;
   };
 
