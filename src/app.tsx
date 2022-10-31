@@ -39,11 +39,11 @@ import AdminPanel from './components/adminPanel/adminPanel';
 import ProductModifyForm from './components/productModifyForm/productModifyForm';
 import QuestionModifyForm from './components/questionModifyForm/questionModifyForm';
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
-import ProductMainCategoryForm from './components/productCategoryForm/productMainCategoryForm';
-import ProductMainCategoryModifyForm from './components/productCategoryModifyForm/productMainCategoryModifyForm';
 import NotFound from './components/notFound/notFound';
-import ProductMiddleCategoryForm from "./components/productCategoryForm/productMiddleCategoryForm";
 import ProductMiddleCategoryModifyForm from "./components/productCategoryModifyForm/productMiddleCategoryModifyForm";
+import ProductMainCategoryForm from "./components/productCategoryForm/productMainCategoryForm";
+import ProductMiddleCategoryForm from "./components/productCategoryForm/productMiddleCategoryForm";
+import ProductMainCategoryModifyForm from "./components/productCategoryModifyForm/productMainCategoryModifyForm";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -167,18 +167,12 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
-<<<<<<< HEAD
               <Route path='/product/category/main/form' element={
                 <ProductMainCategoryForm
-=======
-              <Route path='/product/category/form' element={
-                <ProductCategoryForm
->>>>>>> main
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
-<<<<<<< HEAD
               <Route path='/product/category/main/modify' element={
                 <ProductMainCategoryModifyForm
                   successModify={successModify}
@@ -193,10 +187,6 @@ export default function App() {
 
               <Route path='/product/category/middle/modify' element={
                 <ProductMiddleCategoryModifyForm
-=======
-              <Route path='/product/category/modify' element={
-                <ProductCategoryModifyForm
->>>>>>> main
                   successModify={successModify}
                   errorToast={errorToast}/>
               }></Route>
