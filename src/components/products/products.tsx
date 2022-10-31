@@ -32,7 +32,7 @@ export default function Products({successDelete}: propsType) {
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
-  const [middleCategory, setMiddleCategory] = useState(true);
+  const [middleCategory, setMiddleCategory] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const handleWindowResize = useCallback(() => {
@@ -110,17 +110,10 @@ export default function Products({successDelete}: propsType) {
   return (
     <>
       {!productCategorySelected &&
-        <>
-          <Box sx={{m: 'auto', mt: 5, width: '70vw'}}>
-            <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
-              {[<Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>대분류 카테고리</Typography>]}
-            </Breadcrumbs>
-          </Box>
-
-          <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-            <ProductMainCategory windowSize={windowSize} successDelete={successDelete} openMiddleCategory={openMiddleCategory}/>
-          </Box>
-        </>
+        <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
+          <ProductMainCategory windowSize={windowSize} successDelete={successDelete}
+                               openMiddleCategory={openMiddleCategory}/>
+        </Box>
       }
 
       {/* category selected */}
@@ -140,7 +133,9 @@ export default function Products({successDelete}: propsType) {
             {/* 사이드 메뉴 */}
             <Box sx={{flex: 0.2}}>
               <CategoryBox>
-                <ProductMainCategory successDelete={successDelete}/>
+                <ProductMainCategory
+                  windowSize={windowSize}
+                  successDelete={successDelete}/>
               </CategoryBox>
             </Box>
 

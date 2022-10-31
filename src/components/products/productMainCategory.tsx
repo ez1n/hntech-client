@@ -27,9 +27,9 @@ import ProductDeleteModal from "./productDeleteModal";
 import ProductButton from "./productButton";
 
 interface propsType {
-  windowSize?: number,
+  windowSize: number,
   successDelete: () => void,
-  openMiddleCategory?: () => void
+  openMiddleCategory: () => void
 }
 
 export default function ProductMainCategory({windowSize, successDelete, openMiddleCategory}: propsType) {
@@ -50,7 +50,7 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
     dispatch(updateProductCategoryImage({categoryImage: ''}));
 
     // 카테고리 목록 받아오기
-    categoryApi.getAllProductCategories()
+    categoryApi.getMainProductCategory()
       .then(res => dispatch(setAllProductCategories({categories: res.categories})))
       .catch(error => console.log(error))
   }, []);
@@ -72,18 +72,19 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
 
   // 카테고리 선택
   const selectProductCategory = (categoryName: string) => {
-    dispatch(selectProductCategoryTrue());
     dispatch(setCurrentProductCategoryName({category: categoryName}));
+    openMiddleCategory();
+    categoryApi.getMiddleProductCategory(categoryName)
+      .then(res => console.log(res))
+      .catch(error => console.log(error))
   }
 
   // 카테고리 목록
   const CategoryGrid = () => {
     let categoryColumn = 4;
-    if (windowSize) {
-      if (windowSize < 1200) categoryColumn = 3;
-      if (windowSize < 900) categoryColumn = 2;
-      if (windowSize < 600) categoryColumn = 1;
-    }
+    if (windowSize < 1200) categoryColumn = 3;
+    if (windowSize < 900) categoryColumn = 2;
+    if (windowSize < 600) categoryColumn = 1;
 
     return (
       <Grid container columns={categoryColumn} spacing={3}>
@@ -94,12 +95,13 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
           imageOriginalFilename: string,
           showInMain: string
         }) => (
-          <ProductButton
-            id={value.id}
-            imageServerFilename={value.imageServerFilename}
-            imageOriginalFilename={value.imageOriginalFilename}
-            categoryName={value.categoryName}
-          />
+          <Grid item xs={1} key={value.id} onClick={() => selectProductCategory(value.categoryName)}>
+            <ProductButton
+              imageServerFilename={value.imageServerFilename}
+              imageOriginalFilename={value.imageOriginalFilename}
+              categoryName={value.categoryName}
+            />
+          </Grid>
         ))}
       </Grid>
     )

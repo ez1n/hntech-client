@@ -34,7 +34,7 @@ export default function Representation() {
 
   window.addEventListener("resize", handleWindowResize);
   useEffect(() => {
-    categoryApi.getMainCategories()
+    categoryApi.getRepCategories()
       .then(res => dispatch(setMainCategories({categories: res})))
   }, []);
 

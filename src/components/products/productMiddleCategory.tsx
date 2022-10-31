@@ -3,8 +3,9 @@ import {Breadcrumbs, Button, Dialog, DialogContent, DialogTitle, Grid, styled, T
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ProductButton from "./productButton";
-import {useAppSelector} from "../../app/hooks";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {useNavigate} from "react-router-dom";
+import {selectProductCategoryTrue} from "../../app/reducers/categorySlice";
 
 interface propsType {
   windowSize: number,
@@ -71,8 +72,14 @@ export default function ProductMiddleCategory({windowSize, open, onClose}: props
     },
   ]
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
+
+  const selectMiddleCategory = () => {
+    dispatch(selectProductCategoryTrue());
+    onClose();
+  };
 
   const CategoryGrid = () => {
     let categoryColumn = 4;
@@ -83,13 +90,14 @@ export default function ProductMiddleCategory({windowSize, open, onClose}: props
     return (
       <Grid container columns={categoryColumn} spacing={3}>
         {productMiddleCategories?.map((value) => (
-          <ProductButton
-            id={value.id}
-            imageServerFilename={value.imageServerFilename}
-            imageOriginalFilename={value.imageOriginalFilename}
-            categoryName={value.categoryName}
-          />
-        ))}
+          <Grid item xs={1} key={value.id} onClick={selectMiddleCategory}>
+            <ProductButton
+              imageServerFilename={value.imageServerFilename}
+              imageOriginalFilename={value.imageOriginalFilename}
+              categoryName={value.categoryName}
+              />
+          </Grid>
+          ))}
       </Grid>
     )
   };

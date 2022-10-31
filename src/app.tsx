@@ -40,9 +40,10 @@ import ProductModifyForm from './components/productModifyForm/productModifyForm'
 import QuestionModifyForm from './components/questionModifyForm/questionModifyForm';
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
 import ProductMainCategoryForm from './components/productCategoryForm/productMainCategoryForm';
-import ProductMiddleCategoryModifyForm from './components/productCategoryModifyForm/productMiddleCategoryModifyForm';
+import ProductMainCategoryModifyForm from './components/productCategoryModifyForm/productMainCategoryModifyForm';
 import NotFound from './components/notFound/notFound';
 import ProductMiddleCategoryForm from "./components/productCategoryForm/productMiddleCategoryForm";
+import ProductMiddleCategoryModifyForm from "./components/productCategoryModifyForm/productMiddleCategoryModifyForm";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -59,11 +60,11 @@ export default function App() {
   // data
   useEffect(() => {
     // 메인 카테고리 목록
-    categoryApi.getMainCategories()
+    categoryApi.getRepCategories()
       .then(res => dispatch(setMainCategories({categories: res})))
 
     // 제품 카테고리 목록
-    categoryApi.getAllProductCategories()
+    categoryApi.getMainProductCategory()
       .then(res => dispatch(setAllProductCategories({categories: res.categories})))
 
     // 홈페이지 하단 정보
@@ -166,13 +167,25 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/productCategory/form' element={
+              <Route path='/product/category/main/form' element={
                 <ProductMainCategoryForm
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/productCategory/modify' element={
+              <Route path='/product/category/main/modify' element={
+                <ProductMainCategoryModifyForm
+                  successModify={successModify}
+                  errorToast={errorToast}/>
+              }></Route>
+
+              <Route path='/product/category/middle/form' element={
+                <ProductMiddleCategoryForm
+                  success={success}
+                  errorToast={errorToast}/>
+              }></Route>
+
+              <Route path='/product/category/middle/modify' element={
                 <ProductMiddleCategoryModifyForm
                   successModify={successModify}
                   errorToast={errorToast}/>
@@ -226,11 +239,9 @@ export default function App() {
                 <ArchiveDetail successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/middleCategory/form' element={
-                <ProductMiddleCategoryForm success={success} errorToast={errorToast}/>
-              }></Route>
-
-              <Route path='*' element={<NotFound/>}></Route></Routes>
+              <Route path='*' element={
+                <NotFound/>
+              }></Route></Routes>
 
             <AdminPanel successModify={successModify}/>
           </Box>

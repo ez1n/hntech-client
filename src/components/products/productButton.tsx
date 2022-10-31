@@ -6,7 +6,6 @@ import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 
 interface propsType {
-  id: number,
   imageServerFilename: string,
   imageOriginalFilename: string,
   categoryName: string,
@@ -16,7 +15,7 @@ export default function ProductButton(props: propsType) {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
 
   return (
-    <Grid item xs={1} key={props.id}>
+   <>
       <CategoryButton onClick={() => console.log('카테고리 선택')}>
         {/* 카테고리 */}
         <Box sx={{height: 150}}>
@@ -47,7 +46,7 @@ export default function ProductButton(props: propsType) {
           </Button>
         </Box>
       }
-    </Grid>
+    </>
   );
 }
 
