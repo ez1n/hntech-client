@@ -1,7 +1,6 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {categoryApi} from '../../network/category';
-import {api} from '../../network/network';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
@@ -33,7 +32,7 @@ interface propsType {
   openMiddleCategory?: () => void
 }
 
-export default function ProductCategories({windowSize, successDelete, openMiddleCategory}: propsType) {
+export default function ProductMainCategory({windowSize, successDelete, openMiddleCategory}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -80,9 +79,11 @@ export default function ProductCategories({windowSize, successDelete, openMiddle
   // 카테고리 목록
   const CategoryGrid = () => {
     let categoryColumn = 4;
-    if (windowSize < 1200) categoryColumn = 3;
-    if (windowSize < 900) categoryColumn = 2;
-    if (windowSize < 600) categoryColumn = 1;
+    if (windowSize) {
+      if (windowSize < 1200) categoryColumn = 3;
+      if (windowSize < 900) categoryColumn = 2;
+      if (windowSize < 600) categoryColumn = 1;
+    }
 
     return (
       <Grid container columns={categoryColumn} spacing={3}>
@@ -217,38 +218,6 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   width: 'max-content',
   borderBottom: '3px solid #2E7D32',
 })) as typeof Typography;
-
-const CategoryNameTypography = styled(Typography)(({theme}) => ({
-  [theme.breakpoints.down('md')]: {
-    fontSize: 15
-  },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: 13
-  },
-  fontWeight: 'bold',
-  width: '100%',
-  paddingTop: 4,
-  paddingBottom: 4,
-  borderRadius: 8,
-  backgroundColor: 'rgba(79,79,79,0.78)'
-})) as typeof Typography;
-
-// 카테고리 버튼
-const CategoryButton = styled(Button)(() => ({
-  width: '100%',
-  overflow: 'hidden',
-  height: 200,
-  color: '#F0F0F0',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: 10,
-  border: '3px solid rgba(79,79,79,0.78)',
-  transition: '0.5s',
-  '&: hover': {
-    transform: 'scale(1.04)',
-    border: '3px solid rgba(79,79,79,0.78)',
-  }
-})) as typeof Button;
 
 // 추가 버튼
 const AddButton = styled(Button)(({theme}) => ({

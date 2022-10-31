@@ -12,7 +12,7 @@ import {selectProductCategoryTrue, setCurrentProductCategoryName} from '../../ap
 import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs, Container} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import ProductCategories from './productCategories';
+import ProductMainCategory from './productMainCategory';
 import CancelModal from '../cancelModal';
 import ProductItem from './productItem';
 import ProductMiddleCategory from "./productMiddleCategory";
@@ -118,7 +118,7 @@ export default function Products({successDelete}: propsType) {
           </Box>
 
           <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-            <ProductCategories windowSize={windowSize} successDelete={successDelete} openMiddleCategory={openMiddleCategory}/>
+            <ProductMainCategory windowSize={windowSize} successDelete={successDelete} openMiddleCategory={openMiddleCategory}/>
           </Box>
         </>
       }
@@ -140,7 +140,7 @@ export default function Products({successDelete}: propsType) {
             {/* 사이드 메뉴 */}
             <Box sx={{flex: 0.2}}>
               <CategoryBox>
-                <ProductCategories successDelete={successDelete}/>
+                <ProductMainCategory successDelete={successDelete}/>
               </CategoryBox>
             </Box>
 

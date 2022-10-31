@@ -105,7 +105,7 @@ text-decoration: none;
 }
 
 /* productCategoryForm */
-#productCategoryInput {
+#productCategoryInput, #middleCategoryInput {
   display: none;
 }
 

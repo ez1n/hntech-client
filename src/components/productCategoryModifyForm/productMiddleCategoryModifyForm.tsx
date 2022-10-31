@@ -29,7 +29,7 @@ interface propsType {
   errorToast: (message: string) => void
 }
 
-export default function ProductCategoryModifyForm({successModify, errorToast}: propsType) {
+export default function ProductMiddleCategoryModifyForm({successModify, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
