@@ -1,5 +1,5 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {
   clickChangeIntroduce,
@@ -14,8 +14,8 @@ import {Box, Button, Container, MenuItem, Select, Stack, Typography, styled} fro
 export default function CompanySideMenu() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const companyMode = useAppSelector(state => state.company.mode);
+  const location = useLocation();
+  const type = new URLSearchParams(location.search).get('type');
 
   return (
     <SideMenuBox>
@@ -32,13 +32,13 @@ export default function CompanySideMenu() {
         <MenuButton
           onClick={() => {
             dispatch(clickChangeIntroduce());
-            navigate('/company');
+            navigate('/company?type=introduce');
           }}
           sx={{
-            color: companyMode === 'INTRODUCE' ? '#F0F0F0' : '#0F0F0F',
-            backgroundColor: companyMode === 'INTRODUCE' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            color: type === 'introduce' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: type === 'introduce' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
             '&:hover': {
-              backgroundColor: companyMode === 'INTRODUCE' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+              backgroundColor: type === 'introduce' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
             }
           }}>
           인사말
@@ -46,13 +46,13 @@ export default function CompanySideMenu() {
         <MenuButton
           onClick={() => {
             dispatch(clickChangeHistory());
-            navigate('/company');
+            navigate('/company?type=history');
           }}
           sx={{
-            color: companyMode === 'HISTORY' ? '#F0F0F0' : '#0F0F0F',
-            backgroundColor: companyMode === 'HISTORY' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            color: type === 'history' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: type === 'history' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
             '&:hover': {
-              backgroundColor: companyMode === 'HISTORY' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+              backgroundColor: type === 'history' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
             }
           }}>
           회사 연혁
@@ -60,13 +60,13 @@ export default function CompanySideMenu() {
         <MenuButton
           onClick={() => {
             dispatch(clickChangeOrgChart());
-            navigate('/company');
+            navigate('/company?type=orgChart');
           }}
           sx={{
-            color: companyMode === 'CHART' ? '#F0F0F0' : '#0F0F0F',
-            backgroundColor: companyMode === 'CHART' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            color: type === 'orgChart' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: type === 'orgChart' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
             '&:hover': {
-              backgroundColor: companyMode === 'CHART' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+              backgroundColor: type === 'orgChart' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
             }
           }}>
           조직도
@@ -74,13 +74,13 @@ export default function CompanySideMenu() {
         <MenuButton
           onClick={() => {
             dispatch(clickChangeInfo());
-            navigate('/company');
+            navigate('/company?type=CI');
           }}
           sx={{
-            color: companyMode === 'INFORMATION' ? '#F0F0F0' : '#0F0F0F',
-            backgroundColor: companyMode === 'INFORMATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            color: type === 'CI' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: type === 'CI' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
             '&:hover': {
-              backgroundColor: companyMode === 'INFORMATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+              backgroundColor: type === 'CI' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
             }
           }}>
           CI 소개
@@ -88,13 +88,13 @@ export default function CompanySideMenu() {
         <MenuButton
           onClick={() => {
             dispatch(clickChangeLocation());
-            navigate('/company');
+            navigate('/company?type=location');
           }}
           sx={{
-            color: companyMode === 'LOCATION' ? '#F0F0F0' : '#0F0F0F',
-            backgroundColor: companyMode === 'LOCATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+            color: type === 'location' ? '#F0F0F0' : '#0F0F0F',
+            backgroundColor: type === 'location' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
             '&:hover': {
-              backgroundColor: companyMode === 'LOCATION' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+              backgroundColor: type === 'location' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
             }
           }}>
           찾아오시는 길
@@ -104,14 +104,14 @@ export default function CompanySideMenu() {
       {/* 900px 이하 */}
 
       <MenuSelect
-        defaultValue={companyMode}
+        defaultValue={type}
         onChange={(event: any) => dispatch(clickChangeMode({mode: event?.target.value}))}
         size='small'>
-        <MenuList value='INTRODUCE'>인사말</MenuList>
-        <MenuList value='HISTORY'>회사연혁</MenuList>
-        <MenuList value='CHART'> 조직도</MenuList>
-        <MenuList value='INFORMATION'>CI 소개</MenuList>
-        <MenuList value='LOCATION'>찾아오시는 길</MenuList>
+        <MenuList value='introduce'>인사말</MenuList>
+        <MenuList value='history'>회사연혁</MenuList>
+        <MenuList value='orgChart'> 조직도</MenuList>
+        <MenuList value='CI'>CI 소개</MenuList>
+        <MenuList value='location'>찾아오시는 길</MenuList>
       </MenuSelect>
     </SideMenuBox>
   )

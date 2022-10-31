@@ -132,7 +132,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           success();
           dispatch(resetArchiveState());
           dispatch(onLoading());
-          navigate('/archive/page/1');
+          navigate('/archive?page=1');
         })
         .catch(error => {
           dispatch(onLoading());

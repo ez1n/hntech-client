@@ -4,7 +4,7 @@ import {questionApi} from '../../network/question';
 import {commentApi} from '../../network/comment';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickCommentRemoveGoBack} from '../../app/reducers/dialogSlice';
-import {inputPassword, setDetailData, setFaqState, updateCommentData} from '../../app/reducers/questionSlice';
+import {setDetailData, updateCommentData} from '../../app/reducers/questionSlice';
 import {setCurrentQuestion} from '../../app/reducers/questionFormSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {resetAnchor} from '../../app/reducers/commentSlice';
@@ -23,7 +23,7 @@ interface propsType {
 export default function QuestionDetail({successAnswer, successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {currentId} = useParams();
+  const {index} = useParams();
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
@@ -31,7 +31,6 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보
   const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제
   const currentComment = useAppSelector(state => state.comment.currentComment); // 현재 댓글 정보
-  const pw = useAppSelector(state => state.question.pw); // 비밀번호 state (정보)
   const [deleteQuestionDetail, setDeleteQuestionDetail] = useState(false); // 게시글 삭제 취소
   const [onCompleteAnswer, setOnCompleteAnswer] = useState(false); // 게시글 답변 상태 변경
 
@@ -42,13 +41,13 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
 
   useEffect(() => {
     const mode = localStorage.getItem('login')
-    if (currentId && mode === 'true') {
-      questionApi.getQuestionByAdmin(parseInt(currentId))
+    if (index && mode === 'true') {
+      questionApi.getQuestionByAdmin(parseInt(index))
         .then(res => dispatch(setDetailData({detail: res})))
     }
-    else if (currentId) {
+    else if (index) {
       const password = localStorage.getItem('qnaPassword')
-      questionApi.postPassword(parseInt(currentId), {password: password})
+      questionApi.postPassword(parseInt(index), {password: password})
         .then(res => dispatch(setDetailData({detail: res})))
     }
   }, [managerMode]);
@@ -79,7 +78,7 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
       .then(res => {
         successDelete();
         closeDeleteQuestionDetail();
-        navigate('/question/page/1');
+        navigate('/question?page=1');
       });
   };
 
@@ -158,7 +157,7 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
       <Box sx={{mt: 1, display: 'flex', justifyContent: 'flex-end'}}>
         <Button
           size='small'
-          onClick={() => navigate('/question/page/1')}
+          onClick={() => navigate('/question?page=1')}
           sx={{
             color: 'white',
             backgroundColor: '#2E7D32',

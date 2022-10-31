@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
-import {getAllArchives, getNotice} from '../../app/reducers/archiveSlice';
+import {getAllArchives} from '../../app/reducers/archiveSlice';
 import {Box, Container, Stack, styled, Typography, TextField} from '@mui/material';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import ArchiveItem from './archiveItem';

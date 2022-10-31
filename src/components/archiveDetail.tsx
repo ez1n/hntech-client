@@ -25,7 +25,7 @@ interface propsType {
 export default function ArchiveDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {currentId} = useParams();
+  const {index} = useParams();
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
@@ -39,8 +39,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
   }, []);
 
   useEffect(() => {
-    currentId &&
-    archiveApi.getArchive(parseInt(currentId))
+    archiveApi.getArchive(parseInt(index))
       .then(res => dispatch(getDetailData({detail: res})))
       .catch(error => console.log(error))
   }, []);
@@ -61,7 +60,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
       .then(res => {
         successDelete();
         closeDeleteArchiveDetail();
-        navigate('/archive/page/1');
+        navigate('/archive?page=1');
       })
       .catch(error => {
         console.log(error);
@@ -174,7 +173,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
       <Box sx={{mt: 1, display: 'flex', justifyContent: 'flex-end'}}>
         <Button
           size='small'
-          onClick={() => navigate('/archive/page/1')}
+          onClick={() => navigate('/archive?page=1')}
           sx={{
             color: 'white',
             backgroundColor: '#2E7D32',

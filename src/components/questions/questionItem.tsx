@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {questionApi} from '../../network/question';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {setCurrentId, setDetailData, setFaqState} from '../../app/reducers/questionSlice';
 import {getAllQuestions, setPassword, inputPassword, getFaq} from '../../app/reducers/questionSlice';
@@ -23,8 +23,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 export default function QuestionItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {currentPage} = useParams();
-  let page = currentPage ? parseInt(currentPage) : 1;
+  const location = useLocation();
+  const page = new URLSearchParams(location.search).get('page')
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const passwordState = useAppSelector(state => state.question.passwordState); // 비밀번호 dialog state
@@ -55,7 +55,7 @@ export default function QuestionItem() {
         totalElements: res.totalElements
       })))
       .catch(error => console.log('error', error))
-  }, [currentPage]);
+  }, [page]);
 
   const validate = () => {
     let isValid = true;
@@ -90,7 +90,7 @@ export default function QuestionItem() {
           dispatch(setDetailData({detail: res}));
           localStorage.setItem('qnaPassword', pw.password);
           dispatch(setPassword({password: ''}));
-          navigate('/question/page/' + page + '/list/' + res.id);
+          navigate('/question/' + res.id);
         })
         .catch(error => setPasswordErrorMsg('비밀번호를 확인해 주세요'))
     }
@@ -109,7 +109,7 @@ export default function QuestionItem() {
         .then(res => {
           dispatch(setDetailData({detail: res}));
           dispatch(setFaqState({faq: false}));
-          navigate('/question/page/' + page + '/list/' + res.id);
+          navigate('/question/' + res.id);
         })
     } else {
       dispatch(inputPassword());
@@ -123,14 +123,14 @@ export default function QuestionItem() {
       .then(res => {
         dispatch(setDetailData({detail: res}));
         dispatch(setFaqState({faq: true}));
-        navigate('/question/page/' + page + '/list/' + res.id);
+        navigate('/question/' + res.id);
       })
       .catch(error => console.log(error))
   };
 
   // 페이지 전환
   const changePage = (value: number) => {
-    navigate('/question/page/' + value)
+    navigate('/question?page=' + value)
   };
 
   return (
