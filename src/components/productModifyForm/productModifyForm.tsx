@@ -62,8 +62,10 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
 
   // state
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
-  const {category, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
+  const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
+  const {description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
   const {docFiles, productImages, representativeImage, standardImages} = files;
+  const [category, setCategory] = useState(''); // 선택한 카테고리
   const [cancelProductModify, setCancelProductModify] = useState(false); // 제품 수정 취소
 
   // error message
@@ -84,6 +86,9 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
     })
     return isValid;
   };
+
+  // 카테고리 선택
+  const getCategory = (category: string) => setCategory(category);
 
   // 제품 수정 취소 modal - open
   const openCancelProductModify = () => {
@@ -321,7 +326,10 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
           </Box>
 
           {/* 카테고리 */}
-          <ProductCategorySelect defaultCategory={category}/>
+          <ProductCategorySelect
+            category={productCategories}
+            defaultCategory={category}
+            getCategory={getCategory}/>
         </Box>
 
         <List>

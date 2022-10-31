@@ -1,27 +1,29 @@
 import React from 'react';
-import {useAppDispatch, useAppSelector} from '../app/hooks';
-import {addProductCategory} from '../app/reducers/productFormSlice';
 import {Box, MenuItem, Select, styled} from '@mui/material';
 
 interface propsType {
-  defaultCategory: string
+  defaultCategory: string,
+  category: {
+    categoryName: string,
+    id: number,
+    imageServerFilename: string,
+    imageOriginalFilename: string,
+    showInMain: string
+  }[],
+  getCategory: (category: string) => void
 }
 
-export default function ProductCategorySelect({defaultCategory}: propsType) {
-  const dispatch = useAppDispatch();
-
-  const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
-
+export default function ProductCategorySelect({defaultCategory, category, getCategory}: propsType) {
   return (
     <TotalBox>
       <Select
         size={'small'}
         defaultValue={defaultCategory && defaultCategory}
-        onChange={event => dispatch(addProductCategory({category: event?.target.value}))}
+        onChange={event => getCategory(event?.target.value)}
         sx={{textAlign: 'center', width: '100%'}}
       >
-        {productCategories.map((item, index) => (
-          <MenuItem key={index} value={item.categoryName}>{item.categoryName}</MenuItem>
+        {category.map((item, index) => (
+          <MenuItem key={index} value={item.categoryName} sx={{justifyContent: 'center'}}>{item.categoryName}</MenuItem>
         ))}
       </Select>
     </TotalBox>

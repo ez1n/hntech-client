@@ -15,11 +15,11 @@ import {
   setManagerData
 } from './app/reducers/managerModeSlice';
 import {getCompanyImage} from './app/reducers/companyModifySlice';
-import {Box, Typography} from '@mui/material';
-import ReportProblemRoundedIcon from '@mui/icons-material/ReportProblemRounded';
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {ErrorBoundary} from 'react-error-boundary';
+import {Box, Typography} from '@mui/material';
+import ReportProblemRoundedIcon from '@mui/icons-material/ReportProblemRounded';
 import Header from './components/header';
 import SideMenu from './components/sideMenu';
 import Footer from './components/footer';
@@ -39,9 +39,11 @@ import AdminPanel from './components/adminPanel/adminPanel';
 import ProductModifyForm from './components/productModifyForm/productModifyForm';
 import QuestionModifyForm from './components/questionModifyForm/questionModifyForm';
 import ArchiveModifyForm from './components/archiveModifyForm/archiveModifyForm';
-import ProductCategoryForm from './components/productCategoryForm/productCategoryForm';
-import ProductCategoryModifyForm from './components/productCategoryModifyForm/productCategoryModifyForm';
+import ProductMainCategoryForm from './components/productCategoryForm/productMainCategoryForm';
+import ProductMainCategoryModifyForm from './components/productCategoryModifyForm/productMainCategoryModifyForm';
 import NotFound from './components/notFound/notFound';
+import ProductMiddleCategoryForm from "./components/productCategoryForm/productMiddleCategoryForm";
+import ProductMiddleCategoryModifyForm from "./components/productCategoryModifyForm/productMiddleCategoryModifyForm";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -58,11 +60,11 @@ export default function App() {
   // data
   useEffect(() => {
     // 메인 카테고리 목록
-    categoryApi.getMainCategories()
+    categoryApi.getRepCategories()
       .then(res => dispatch(setMainCategories({categories: res})))
 
     // 제품 카테고리 목록
-    categoryApi.getAllProductCategories()
+    categoryApi.getMainProductCategory()
       .then(res => dispatch(setAllProductCategories({categories: res.categories})))
 
     // 홈페이지 하단 정보
@@ -165,14 +167,36 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
+<<<<<<< HEAD
+              <Route path='/product/category/main/form' element={
+                <ProductMainCategoryForm
+=======
               <Route path='/product/category/form' element={
                 <ProductCategoryForm
+>>>>>>> main
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
+<<<<<<< HEAD
+              <Route path='/product/category/main/modify' element={
+                <ProductMainCategoryModifyForm
+                  successModify={successModify}
+                  errorToast={errorToast}/>
+              }></Route>
+
+              <Route path='/product/category/middle/form' element={
+                <ProductMiddleCategoryForm
+                  success={success}
+                  errorToast={errorToast}/>
+              }></Route>
+
+              <Route path='/product/category/middle/modify' element={
+                <ProductMiddleCategoryModifyForm
+=======
               <Route path='/product/category/modify' element={
                 <ProductCategoryModifyForm
+>>>>>>> main
                   successModify={successModify}
                   errorToast={errorToast}/>
               }></Route>
@@ -225,7 +249,9 @@ export default function App() {
                 <ArchiveDetail successDelete={successDelete}/>
               }></Route>
 
-              <Route path='*' element={<NotFound/>}></Route></Routes>
+              <Route path='*' element={
+                <NotFound/>
+              }></Route></Routes>
 
             <AdminPanel successModify={successModify}/>
           </Box>

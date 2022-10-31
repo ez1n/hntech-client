@@ -1,7 +1,6 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {categoryApi} from '../../network/category';
-import {api} from '../../network/network';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
@@ -21,18 +20,19 @@ import {
   styled,
   Typography
 } from '@mui/material';
-import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
-import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import EditButton from "../editButton";
 import ProductCategoryList from "./productCategoryList";
 import ProductDeleteModal from "./productDeleteModal";
+import ProductButton from "./productButton";
 
 interface propsType {
-  successDelete: () => void
+  windowSize: number,
+  successDelete: () => void,
+  openMiddleCategory: () => void
 }
 
-export default function ProductCategories({successDelete}: propsType) {
+export default function ProductMainCategory({windowSize, successDelete, openMiddleCategory}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -43,13 +43,6 @@ export default function ProductCategories({successDelete}: propsType) {
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName)
   const [openDelete, setOpenDelete] = useState(false);
-  const [windowSize, setWindowSize] = useState(window.innerWidth);
-
-  const handleWindowResize = useCallback(() => {
-    setWindowSize(window.innerWidth);
-  }, []);
-
-  window.addEventListener("resize", handleWindowResize);
 
   useEffect(() => {
     // 카테고리 이미지 초기화
@@ -57,7 +50,7 @@ export default function ProductCategories({successDelete}: propsType) {
     dispatch(updateProductCategoryImage({categoryImage: ''}));
 
     // 카테고리 목록 받아오기
-    categoryApi.getAllProductCategories()
+    categoryApi.getMainProductCategory()
       .then(res => dispatch(setAllProductCategories({categories: res.categories})))
       .catch(error => console.log(error))
   }, []);
@@ -75,15 +68,20 @@ export default function ProductCategories({successDelete}: propsType) {
   };
 
   // 카테고리 삭제 확인 modal - close
-  const closeDeleteMessage = () => {
-    setOpenDelete(false);
-  };
+  const closeDeleteMessage = () => setOpenDelete(false);
 
   // 카테고리 선택
   const selectProductCategory = (categoryName: string) => {
-    dispatch(selectProductCategoryTrue());
     dispatch(setCurrentProductCategoryName({category: categoryName}));
+<<<<<<< HEAD:src/components/products/productMainCategory.tsx
+    openMiddleCategory();
+    categoryApi.getMiddleProductCategory(categoryName)
+      .then(res => console.log(res))
+      .catch(error => console.log(error))
+  }
+=======
   };
+>>>>>>> main:src/components/products/productCategories.tsx
 
   // 카테고리 목록
   const CategoryGrid = () => {
@@ -101,6 +99,14 @@ export default function ProductCategories({successDelete}: propsType) {
           imageOriginalFilename: string,
           showInMain: string
         }) => (
+<<<<<<< HEAD:src/components/products/productMainCategory.tsx
+          <Grid item xs={1} key={value.id} onClick={() => selectProductCategory(value.categoryName)}>
+            <ProductButton
+              imageServerFilename={value.imageServerFilename}
+              imageOriginalFilename={value.imageOriginalFilename}
+              categoryName={value.categoryName}
+            />
+=======
           <Grid item xs={1} key={value.id}>
             <CategoryButton onClick={() => selectProductCategory(value.categoryName)}>
               {/* 카테고리 */}
@@ -135,6 +141,7 @@ export default function ProductCategories({successDelete}: propsType) {
                 </Button>
               </Box>
             }
+>>>>>>> main:src/components/products/productCategories.tsx
           </Grid>
         ))}
       </Grid>
@@ -237,9 +244,9 @@ export default function ProductCategories({successDelete}: propsType) {
   )
 };
 
-const Spacing = styled(Container)(() => ({
+const Spacing = styled(Box)(() => ({
   height: 60
-})) as typeof Container;
+})) as typeof Box;
 
 const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
@@ -254,38 +261,6 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   width: 'max-content',
   borderBottom: '3px solid #2E7D32',
 })) as typeof Typography;
-
-const CategoryNameTypography = styled(Typography)(({theme}) => ({
-  [theme.breakpoints.down('md')]: {
-    fontSize: 15
-  },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: 13
-  },
-  fontWeight: 'bold',
-  width: '100%',
-  paddingTop: 4,
-  paddingBottom: 4,
-  borderRadius: 8,
-  backgroundColor: 'rgba(79,79,79,0.78)'
-})) as typeof Typography;
-
-// Image 버튼
-const CategoryButton = styled(Button)(() => ({
-  width: '100%',
-  overflow: 'hidden',
-  height: 200,
-  color: '#F0F0F0',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: 10,
-  border: '3px solid rgba(79,79,79,0.78)',
-  transition: '0.5s',
-  '&: hover': {
-    transform: 'scale(1.04)',
-    border: '3px solid rgba(79,79,79,0.78)',
-  }
-})) as typeof Button;
 
 // 추가 버튼
 const AddButton = styled(Button)(({theme}) => ({

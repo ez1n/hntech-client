@@ -12,9 +12,10 @@ import {selectProductCategoryTrue, setCurrentProductCategoryName} from '../../ap
 import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs, Container} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import ProductCategories from './productCategories';
+import ProductMainCategory from './productMainCategory';
 import CancelModal from '../cancelModal';
 import ProductItem from './productItem';
+import ProductMiddleCategory from "./productMiddleCategory";
 
 interface propsType {
   successDelete: () => void
@@ -31,6 +32,7 @@ export default function Products({successDelete}: propsType) {
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
+  const [middleCategory, setMiddleCategory] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const handleWindowResize = useCallback(() => {
@@ -47,6 +49,12 @@ export default function Products({successDelete}: propsType) {
         .then(res => dispatch(getProductList({productList: res})))
     }
   }, [currentProductCategoryName]);
+
+  // 중분류 카테고리 open
+  const openMiddleCategory = () => setMiddleCategory(middleCategory => !middleCategory);
+
+  // 중분류 카테고리 close
+  const closeMiddleCategory = () => setMiddleCategory(false);
 
   // 제품 삭제
   const deleteProduct = (productId: number) => {
@@ -102,17 +110,10 @@ export default function Products({successDelete}: propsType) {
   return (
     <>
       {!productCategorySelected &&
-        <>
-          <Box sx={{m: 'auto', mt: 5, width: '70vw'}}>
-            <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
-              {[<Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>대분류 카테고리</Typography>]}
-            </Breadcrumbs>
-          </Box>
-
-          <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-            <ProductCategories successDelete={successDelete}/>
-          </Box>
-        </>
+        <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
+          <ProductMainCategory windowSize={windowSize} successDelete={successDelete}
+                               openMiddleCategory={openMiddleCategory}/>
+        </Box>
       }
 
       {/* category selected */}
@@ -132,7 +133,9 @@ export default function Products({successDelete}: propsType) {
             {/* 사이드 메뉴 */}
             <Box sx={{flex: 0.2}}>
               <CategoryBox>
-                <ProductCategories successDelete={successDelete}/>
+                <ProductMainCategory
+                  windowSize={windowSize}
+                  successDelete={successDelete}/>
               </CategoryBox>
             </Box>
 
@@ -179,6 +182,12 @@ export default function Products({successDelete}: propsType) {
         text2='삭제하시겠습니까?'
         yesAction={() => deleteProduct(currentProductData.id)}
         closeAction={() => dispatch(clickProductItemGoBack())}/>
+
+      {/* 중분류 카테고리 */}
+      <ProductMiddleCategory
+        windowSize={windowSize}
+        open={middleCategory}
+        onClose={closeMiddleCategory}/>
     </>
   )
 };

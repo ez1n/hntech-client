@@ -81,8 +81,8 @@ interface productInitialState {
     productName: string
   },
   activeStep: number,
-  targetProductId: number
-};
+  targetProductId: number,
+}
 
 const ProductInitialState: productInitialState = {
   productItems: [],

@@ -63,9 +63,13 @@ export default function ProductDeleteModal(props: PropsType) {
     validate() &&
     categoryApi.deleteProductCategory(categoryId)
       .then(() => {
-        categoryApi.getAllProductCategories()
+        categoryApi.getMainProductCategory()
           .then(res => {
+<<<<<<< HEAD
+            closeDeleteModal()
+=======
             closeDeleteModal();
+>>>>>>> main
             dispatch(setAllProductCategories({categories: res.categories}));
             props.successDelete();
           })
