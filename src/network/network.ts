@@ -10,7 +10,7 @@ class Api {
 
   // 로그인 확인
   async getCheckLogin() {
-    const response = await axios.get(`/check-login`);
+    const response = await axios.get(`/api/check-login`);
     return response.data.result;
   }
 };

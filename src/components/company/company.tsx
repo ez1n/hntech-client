@@ -1,5 +1,4 @@
 import React from 'react';
-import {useAppSelector} from '../../app/hooks';
 import {Box, Container, styled, Typography} from '@mui/material';
 import CompanySideMenu from './companySideMenu';
 import Introduce from './introduce';
@@ -7,13 +6,15 @@ import History from './history';
 import OrgChart from './orgChart';
 import CompanyInfo from './companyInfo';
 import Location from './location';
+import {useLocation} from "react-router-dom";
 
 interface propsType {
   success: () => void
 }
 
 export default function Company({success}: propsType) {
-  const mode = useAppSelector(state => state.company.mode);
+  const location = useLocation();
+  const type = new URLSearchParams(location.search).get('type');
 
   return (
     <CompanyBox>
@@ -33,15 +34,15 @@ export default function Company({success}: propsType) {
         </Container>
 
         {/* 컴포넌트 (페이지) */}
-        {mode === 'INTRODUCE' && <Introduce success={success}/>}
+        {type === 'introduce' && <Introduce success={success}/>}
 
-        {mode === 'HISTORY' && <History success={success}/>}
+        {type === 'history' && <History success={success}/>}
 
-        {mode === 'CHART' && <OrgChart success={success}/>}
+        {type === 'orgChart' && <OrgChart success={success}/>}
 
-        {mode === 'INFORMATION' && <CompanyInfo success={success}/>}
+        {type === 'CI' && <CompanyInfo success={success}/>}
 
-        {mode === 'LOCATION' && <Location/>}
+        {type === 'location' && <Location/>}
 
       </ContentsBox>
     </CompanyBox>

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {archiveApi} from '../../network/archive';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getAllArchives, getDetailData, getNotice} from '../../app/reducers/archiveSlice';
 import {
@@ -16,8 +16,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 export default function ArchiveItem() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { currentPage } = useParams();
-  let page = currentPage ? parseInt(currentPage) : 1;
+  const location = useLocation();
+  const page = new URLSearchParams(location.search).get('page');
 
   const totalPage = useAppSelector(state => state.archive.totalPage); // 전체 페이지
   const totalElements = useAppSelector(state => state.archive.totalElements); // 전체 페이지
@@ -42,21 +42,21 @@ export default function ArchiveItem() {
           totalElements: res.totalElements
         })))
       .catch(error => console.log(error))
-  }, [currentPage]);
+  }, [page]);
 
   // 게시글 보기 (정보 받아오기)
   const openDetail = (archiveId: number) => {
     archiveApi.getArchive(archiveId)
       .then(res => {
         dispatch(getDetailData({detail: res}));
-        navigate('/archive/page/' + page + '/list/' + res.id);
+        navigate('/archive/' + res.id);
       })
       .catch(error => console.log(error))
   };
 
   // 페이지 전환
   const changePage = (value: number) => {
-    navigate('/archive/page/' + value);
+    navigate('/archive?page=' + value);
   };
 
   return (

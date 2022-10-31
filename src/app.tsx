@@ -151,7 +151,7 @@ export default function App() {
                 <Products successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/product/category=:currentCategoryName&item=:currentProductId' element={
+              <Route path='/product/:categoryName/:index' element={
                 <ProductDetail successDelete={successDelete}/>
               }></Route>
 
@@ -167,12 +167,18 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
+<<<<<<< HEAD
               <Route path='/product/category/main/form' element={
                 <ProductMainCategoryForm
+=======
+              <Route path='/product/category/form' element={
+                <ProductCategoryForm
+>>>>>>> main
                   success={success}
                   errorToast={errorToast}/>
               }></Route>
 
+<<<<<<< HEAD
               <Route path='/product/category/main/modify' element={
                 <ProductMainCategoryModifyForm
                   successModify={successModify}
@@ -187,6 +193,10 @@ export default function App() {
 
               <Route path='/product/category/middle/modify' element={
                 <ProductMiddleCategoryModifyForm
+=======
+              <Route path='/product/category/modify' element={
+                <ProductCategoryModifyForm
+>>>>>>> main
                   successModify={successModify}
                   errorToast={errorToast}/>
               }></Route>
@@ -195,7 +205,7 @@ export default function App() {
                 <MainData/>
               }></Route>
 
-              <Route path='/question/page/:currentPage' element={
+              <Route path='/question' element={
                 <Questions/>
               }></Route>
 
@@ -211,13 +221,13 @@ export default function App() {
                   errorToast={errorToast}/>
               }></Route>
 
-              <Route path='/question/page/:currentPage/list/:currentId' element={
+              <Route path='/question/:index' element={
                 <QuestionDetail
                   successAnswer={successAnswer}
                   successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/archive/page/:currentPage' element={
+              <Route path='/archive' element={
                 <Archives errorToast={errorToast}/>
               }></Route>
 
@@ -235,7 +245,7 @@ export default function App() {
                 />
               }></Route>
 
-              <Route path='/archive/page/:currentPage/list/:currentId' element={
+              <Route path='/archive/:index' element={
                 <ArchiveDetail successDelete={successDelete}/>
               }></Route>
 

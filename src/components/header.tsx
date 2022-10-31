@@ -93,7 +93,7 @@ export default function Header() {
         >
           <MainMenu
             onClick={() => {
-              navigate('/company');
+              navigate('/company?type=introduce');
               dispatch(clickChangeIntroduce());
             }}
           >
@@ -102,35 +102,35 @@ export default function Header() {
           <ListBox sx={{height: openCompany ? '200px' : '0px'}}>
             <DropdownMenu
               onClick={() => {
-                navigate('/company')
+                navigate('/company?type=introduce')
                 dispatch(clickChangeIntroduce())
               }}>
               인사말
             </DropdownMenu>
             <DropdownMenu
               onClick={() => {
-                navigate('/company')
+                navigate('/company?type=history')
                 dispatch(clickChangeHistory())
               }}>
               회사 연혁
             </DropdownMenu>
             <DropdownMenu
               onClick={() => {
-                navigate('/company')
+                navigate('/company?type=orgChart')
                 dispatch(clickChangeOrgChart())
               }}>
               조직도
             </DropdownMenu>
             <DropdownMenu
               onClick={() => {
-                navigate('/company')
+                navigate('/company?type=CI')
                 dispatch(clickChangeInfo())
               }}>
               CI 소개
             </DropdownMenu>
             <DropdownMenu
               onClick={() => {
-                navigate('/company')
+                navigate('/company?type=location')
                 dispatch(clickChangeLocation())
               }}>
               찾아오시는 길
@@ -180,11 +180,11 @@ export default function Header() {
           onMouseOver={() => dispatch(mouseOverArchive())}
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}
         >
-          <MainMenu onClick={() => navigate('/archive/page/1')}>
+          <MainMenu onClick={() => navigate('/archive?page=1')}>
             자료실
           </MainMenu>
           <ListBox sx={{height: openArchive ? '80px' : '0px'}}>
-            <DropdownMenu onClick={() => navigate('/archive/page/1')}>고객 자료실</DropdownMenu>
+            <DropdownMenu onClick={() => navigate('/archive?page=1')}>고객 자료실</DropdownMenu>
             <DropdownMenu onClick={() => navigate('/document')}>카다록 및 자재승인서</DropdownMenu>
           </ListBox>
         </Box>
@@ -196,11 +196,11 @@ export default function Header() {
           onMouseLeave={() => dispatch(mouseLeaveService())}
           onMouseOver={() => dispatch(mouseOverService())}
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}>
-          <MainMenu onClick={() => navigate('/question/page/1')}>
+          <MainMenu onClick={() => navigate('/question?page=1')}>
             고객지원
           </MainMenu>
           <ListBox sx={{height: openService ? '40px' : '0px'}}>
-            <DropdownMenu onClick={() => navigate('/question/page/1')}>고객문의</DropdownMenu>
+            <DropdownMenu onClick={() => navigate('/question?page=1')}>고객문의</DropdownMenu>
           </ListBox>
         </Box>
       </HeaderStack>
@@ -248,7 +248,7 @@ export default function Header() {
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
                 dispatch(clickChangeIntroduce());
-                navigate('/company');
+                navigate('/company?type=introduce');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='인사말'/>
@@ -256,7 +256,7 @@ export default function Header() {
 
               <ListItemButton onClick={() => {
                 dispatch(clickChangeHistory());
-                navigate('/company');
+                navigate('/company?type=history');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='회사연혁'/>
@@ -264,7 +264,7 @@ export default function Header() {
 
               <ListItemButton onClick={() => {
                 dispatch(clickChangeOrgChart());
-                navigate('/company');
+                navigate('/company?type=orgChart');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='조직도'/>
@@ -272,7 +272,7 @@ export default function Header() {
 
               <ListItemButton onClick={() => {
                 dispatch(clickChangeInfo());
-                navigate('/company');
+                navigate('/company?type=CI');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='CI 소개'/>
@@ -280,7 +280,7 @@ export default function Header() {
 
               <ListItemButton onClick={() => {
                 dispatch(clickChangeLocation());
-                navigate('/company');
+                navigate('/company?type=location');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='찾아오시는 길'/>
@@ -324,7 +324,7 @@ export default function Header() {
           <Collapse in={openArchive} timeout='auto' unmountOnExit>
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
-                navigate('/archive/page/1');
+                navigate('/archive?page=1');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='고객 자료실'/>
@@ -346,7 +346,7 @@ export default function Header() {
           <Collapse in={openService} timeout='auto' unmountOnExit>
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
-                navigate('/question/page/1');
+                navigate('/question?page=1');
                 clickCloseMenu();
               }}>
                 <DropdownMenuListItem primary='고객 문의'/>

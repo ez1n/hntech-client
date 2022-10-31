@@ -109,7 +109,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
     questionApi.postCreateQuestion(questionForm)
       .then(res => {
         success();
-        navigate('/question/page/1');
+        navigate('/question?page=1');
       })
       .catch(error => {
         errorToast(error.response.data.message);

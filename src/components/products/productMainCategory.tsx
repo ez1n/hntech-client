@@ -73,11 +73,15 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
   // 카테고리 선택
   const selectProductCategory = (categoryName: string) => {
     dispatch(setCurrentProductCategoryName({category: categoryName}));
+<<<<<<< HEAD:src/components/products/productMainCategory.tsx
     openMiddleCategory();
     categoryApi.getMiddleProductCategory(categoryName)
       .then(res => console.log(res))
       .catch(error => console.log(error))
   }
+=======
+  };
+>>>>>>> main:src/components/products/productCategories.tsx
 
   // 카테고리 목록
   const CategoryGrid = () => {
@@ -95,12 +99,49 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
           imageOriginalFilename: string,
           showInMain: string
         }) => (
+<<<<<<< HEAD:src/components/products/productMainCategory.tsx
           <Grid item xs={1} key={value.id} onClick={() => selectProductCategory(value.categoryName)}>
             <ProductButton
               imageServerFilename={value.imageServerFilename}
               imageOriginalFilename={value.imageOriginalFilename}
               categoryName={value.categoryName}
             />
+=======
+          <Grid item xs={1} key={value.id}>
+            <CategoryButton onClick={() => selectProductCategory(value.categoryName)}>
+              {/* 카테고리 */}
+              <Box sx={{height: 150}}>
+                <img
+                  className='categoryImage'
+                  src={`${api.baseUrl()}/files/category/${value.imageServerFilename}`}
+                  alt={value.imageOriginalFilename}
+                  width='100%'
+                  height='100%'/>
+              </Box>
+              <CategoryNameTypography>
+                {value.categoryName}
+              </CategoryNameTypography>
+            </CategoryButton>
+
+            {/* 수정 버튼 */}
+            {managerMode &&
+              <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+                <Button
+                  onClick={() => openDeleteMessage(value)}
+                  sx={{color: 'red'}}>
+                  <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
+                </Button>
+                <Button
+                  onClick={() => {
+                    dispatch(setCurrentProductCategory({category: value}));
+                    navigate('/product/category/modify');
+                  }}
+                  sx={{color: 'darkgreen'}}>
+                  <CreateRoundedIcon sx={{fontSize: 30}}/>
+                </Button>
+              </Box>
+            }
+>>>>>>> main:src/components/products/productCategories.tsx
           </Grid>
         ))}
       </Grid>
@@ -136,7 +177,7 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
 
           {/* 추가 버튼 */}
           {managerMode &&
-            <AddButton onClick={() => navigate('/productCategory/form')}>
+            <AddButton onClick={() => navigate('/product/category/form')}>
               <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
             </AddButton>
           }
