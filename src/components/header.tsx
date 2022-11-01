@@ -20,11 +20,7 @@ import {
   clickChangeInfo,
   clickChangeLocation
 } from '../app/reducers/companySlice';
-import {
-  selectProductCategoryTrue,
-  selectProductCategoryFalse,
-  setCurrentProductCategoryName
-} from '../app/reducers/categorySlice';
+import {setCurrentProductCategoryName} from '../app/reducers/categorySlice';
 import {
   Toolbar,
   Typography,
@@ -145,10 +141,7 @@ export default function Header() {
           onMouseOver={() => dispatch(mouseOverProduct())}
           onMouseLeave={() => dispatch(mouseLeaveProduct())}
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}>
-          <MainMenu onClick={() => {
-            navigate('/product/category ');
-            dispatch(selectProductCategoryFalse());
-          }}>
+          <MainMenu onClick={() => navigate('/product/category')}>
             제품소개
           </MainMenu>
           <ListBox sx={{height: openProduct ? `${productCategories.length * 40}px` : '0px'}}>
@@ -162,8 +155,7 @@ export default function Header() {
               <DropdownMenu
                 key={item.id}
                 onClick={() => {
-                  navigate('/product/category');
-                  dispatch(selectProductCategoryTrue());
+                  navigate(`/product/category?main=${item.categoryName}`);
                   dispatch(setCurrentProductCategoryName({category: item.categoryName}));
                 }}>
                 {item.categoryName}
@@ -240,7 +232,8 @@ export default function Header() {
         onClose={clickCloseMenu}
         sx={{zIndex: 990}}>
         <MenuList>
-          <ListItemButton onClick={openCompany ? () => dispatch(mouseLeaveCompany()) : () => dispatch(mouseOverCompany())}>
+          <ListItemButton
+            onClick={openCompany ? () => dispatch(mouseLeaveCompany()) : () => dispatch(mouseOverCompany())}>
             <ListItemText primary='회사소개'/>
           </ListItemButton>
 
@@ -290,7 +283,8 @@ export default function Header() {
 
           <Divider/>
 
-          <ListItemButton onClick={openProduct ? () => dispatch(mouseLeaveProduct()) : () => dispatch(mouseOverProduct())}>
+          <ListItemButton
+            onClick={openProduct ? () => dispatch(mouseLeaveProduct()) : () => dispatch(mouseOverProduct())}>
             <ListItemText primary='제품소개'/>
           </ListItemButton>
           <Collapse in={openProduct} timeout='auto' unmountOnExit>
@@ -305,9 +299,8 @@ export default function Header() {
                 <ListItemButton
                   key={item.id}
                   onClick={() => {
-                    navigate('/product/category');
+                    navigate(`/product/category?main=item.categoryName`);
                     dispatch(setCurrentProductCategoryName({category: item.categoryName}));
-                    dispatch(selectProductCategoryTrue());
                     clickCloseMenu();
                   }}>
                   <DropdownMenuListItem primary={item.categoryName}/>
@@ -318,7 +311,8 @@ export default function Header() {
 
           <Divider/>
 
-          <ListItemButton onClick={openArchive ? () => dispatch(mouseLeaveArchive()) : () => dispatch(mouseOverArchive())}>
+          <ListItemButton
+            onClick={openArchive ? () => dispatch(mouseLeaveArchive()) : () => dispatch(mouseOverArchive())}>
             <ListItemText primary='자료실'/>
           </ListItemButton>
           <Collapse in={openArchive} timeout='auto' unmountOnExit>
@@ -340,7 +334,9 @@ export default function Header() {
 
           <Divider/>
 
-          <ListItemButton onClick={openService ? () => dispatch(mouseLeaveService()) : () => dispatch(mouseOverService())} sx={{pb: 0}}>
+          <ListItemButton
+            onClick={openService ? () => dispatch(mouseLeaveService()) : () => dispatch(mouseOverService())}
+            sx={{pb: 0}}>
             <ListItemText primary='고객지원'/>
           </ListItemButton>
           <Collapse in={openService} timeout='auto' unmountOnExit>

@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {categoryApi} from '../../network/category';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {
   addProductCategoryImage,
-  selectProductCategoryTrue,
   setCurrentProductCategoryName,
   updateProductCategoryImage
 } from '../../app/reducers/categorySlice';
@@ -28,20 +27,19 @@ import ProductButton from "./productButton";
 
 interface propsType {
   windowSize: number,
-  successDelete: () => void,
-  openMiddleCategory: () => void
+  successDelete: () => void
 }
 
-export default function ProductMainCategory({windowSize, successDelete, openMiddleCategory}: propsType) {
+export default function ProductMainCategory({windowSize, successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const mainCategory = new URLSearchParams(location.search).get('main');
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
-  const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보
-  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName)
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
@@ -73,10 +71,7 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
   // 카테고리 선택
   const selectProductCategory = (categoryName: string) => {
     dispatch(setCurrentProductCategoryName({category: categoryName}));
-    openMiddleCategory();
-    categoryApi.getMiddleProductCategory(categoryName)
-      .then(res => console.log(res))
-      .catch(error => console.log(error))
+    navigate(`/product/category?main=${categoryName}`)
   };
 
   // 카테고리 목록
@@ -110,7 +105,7 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
   return (
     <Box sx={{width: '100%'}}>
       {/* default */}
-      {!productCategorySelected &&
+      {!mainCategory &&
         <>
           <Container sx={{
             display: 'flex',
@@ -144,7 +139,7 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
       }
 
       {/* category selected */}
-      {productCategorySelected &&
+      {mainCategory &&
         <>
           <Container sx={{display: 'flex'}}>
             <Typography
@@ -174,15 +169,12 @@ export default function ProductMainCategory({windowSize, successDelete, openMidd
             }) => (
               <MenuButton
                 key={value.id}
-                onClick={() => {
-                  dispatch(selectProductCategoryTrue());
-                  dispatch(setCurrentProductCategoryName({category: value.categoryName}));
-                }}
+                onClick={() => selectProductCategory(value.categoryName)}
                 sx={{
-                  color: currentProductCategoryName === value.categoryName ? '#F0F0F0' : '#0F0F0F',
-                  backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+                  color: mainCategory === value.categoryName ? '#F0F0F0' : '#0F0F0F',
+                  backgroundColor: mainCategory === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
                   '&:hover': {
-                    backgroundColor: currentProductCategoryName === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+                    backgroundColor: mainCategory === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
                   }
                 }}>
                 {value.categoryName}

@@ -5,7 +5,6 @@ import {setAllProductCategories} from "../../app/reducers/categorySlice";
 import {changeMode} from "../../app/reducers/managerModeSlice";
 import {
   Button,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,

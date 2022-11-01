@@ -5,7 +5,6 @@ import {fileApi} from "../../network/file";
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {
-  selectProductCategoryTrue, setCurrentProductCategory,
   setCurrentProductCategoryName,
   setMainCategories
 } from '../../app/reducers/categorySlice';
@@ -40,9 +39,8 @@ export default function Representation() {
 
   // 제품 버튼 클릭 이벤트 (페이지 이동)
   const onClickButton = (categoryName: string) => {
-    dispatch(selectProductCategoryTrue());
     dispatch(setCurrentProductCategoryName({category: categoryName}));
-    navigate('/product/category'); // 페이지 이동
+    navigate(`/product/category?main=${categoryName}`); // 페이지 이동
   };
 
   // 파일 다운로드

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {api} from '../../network/network';
 import {productApi} from '../../network/product';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {getProductContent} from '../../app/reducers/productFormSlice';
@@ -30,9 +30,18 @@ export default function ProductItem({product, index}: propsType) {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const middleCategory = new URLSearchParams(location.search).get('middle');
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
+
+  useEffect(() => {
+    middleCategory &&
+    productApi.getAllProducts(middleCategory)
+      .then(res => dispatch(getProductList({productList: res})))
+      .catch(error => console.log(error))
+  }, [middleCategory]);
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
@@ -40,7 +49,7 @@ export default function ProductItem({product, index}: propsType) {
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
-        navigate('/product/' + currentProductCategoryName + '/' + res.id);
+        navigate(`/product/${currentProductCategoryName}/${res.id}`);
       })
   };
 
