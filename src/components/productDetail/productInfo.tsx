@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {api} from '../../network/network';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {getProductList, nextImage, prevImage} from '../../app/reducers/productSlice';
+import {getCurrentProductData, getProductList, nextImage, prevImage} from '../../app/reducers/productSlice';
 import {getProductContent} from '../../app/reducers/productFormSlice';
 import {
   Box,
@@ -25,6 +25,9 @@ interface propsType {
 export default function ProductInfo({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const mainCategory = new URLSearchParams(location.search).get('main');
+  const middleCategory = new URLSearchParams(location.search).get('middle');
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
@@ -52,7 +55,7 @@ export default function ProductInfo({successDelete}: propsType) {
             successDelete();
             dispatch(getProductList({productList: res}));
             closeDeleteProductItem();
-            navigate('/product/category');
+            navigate(`/product?main=${mainCategory}&middle=${middleCategory}`);
           })
           .catch(error => console.log(error))
       })

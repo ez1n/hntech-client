@@ -101,7 +101,7 @@ export default function ProductForm({success, errorToast}: propsType) {
   const getMainCategory = (category: string) => setMainCategory(category);
 
   // 중분류 카테고리 선택
-  const getMiddleCategory = (category: string) => setMiddleCategory(category)
+  const getMiddleCategory = (category: string) => setMiddleCategory(category);
 
   // 제품 등록 취소 modal - open
   const openCancelProductForm = () => {

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {api} from '../../network/network';
 import {productApi} from '../../network/product';
@@ -63,14 +63,21 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   // state
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
-  const {description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
+  const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
+  const {parentCategory, childCategory, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
   const {docFiles, productImages, representativeImage, standardImages} = files;
-  const [category, setCategory] = useState(''); // 선택한 카테고리
+  const [mainCategory, setMainCategory] = useState(''); // 선택한 대분류 카테고리
+  const [middleCategory, setMiddleCategory] = useState(''); // 선택한 중분류 카테고리
   const [cancelProductModify, setCancelProductModify] = useState(false); // 제품 수정 취소
 
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
   const [fileErrorMsg, setFileErrorMsg] = useState(''); // 다운로드 파일 버튼
+
+  useEffect(() => {
+    setMainCategory(parentCategory);
+    setMiddleCategory(childCategory);
+  }, [])
 
   const validate = () => {
     let isValid = true;
@@ -88,7 +95,10 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   };
 
   // 카테고리 선택
-  const getCategory = (category: string) => setCategory(category);
+  const getMainCategory = (category: string) => setMainCategory(category);
+
+  // 중분류 카테고리 선택
+  const getMiddleCategory = (category: string) => setMiddleCategory(category)
 
   // 제품 수정 취소 modal - open
   const openCancelProductModify = () => {
@@ -197,7 +207,8 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   // 제품 정보 수정 
   const putProduct = (productId: number) => {
     const productForm = new FormData();
-    productForm.append('categoryName', category);
+    productForm.append('categoryName', mainCategory);
+    productForm.append('categoryName', middleCategory); // 중분류 카테고리
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
@@ -325,11 +336,17 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             <EditButton name='규격 이미지 추가' onClick={() => selectInput(standardInputRef)}/>
           </Box>
 
-          {/* 카테고리 */}
+          {/* 대분류 카테고리 */}
           <ProductCategorySelect
             category={productCategories}
-            defaultCategory={category}
-            getCategory={getCategory}/>
+            defaultCategory={mainCategory}
+            getCategory={getMainCategory}/>
+
+          {/* 중분류 카테고리 */}
+          <ProductCategorySelect
+            category={productMiddleCategories}
+            defaultCategory={middleCategory}
+            getCategory={getMiddleCategory}/>
         </Box>
 
         <List>

@@ -151,7 +151,7 @@ export default function App() {
                 <Products successDelete={successDelete}/>
               }></Route>
 
-              <Route path='/product/:categoryName/:index' element={
+              <Route path='/product' element={
                 <ProductDetail successDelete={successDelete}/>
               }></Route>
 

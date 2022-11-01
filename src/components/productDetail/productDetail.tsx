@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductDetail, getProductList} from '../../app/reducers/productSlice';
@@ -16,7 +16,10 @@ interface propsType {
 export default function ProductDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {categoryName, index} = useParams();
+  const location = useLocation();
+  const mainCategory = new URLSearchParams(location.search).get('main');
+  const middleCategory = new URLSearchParams(location.search).get('middle');
+  const id = new URLSearchParams(location.search).get('id');
 
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const productId = useAppSelector(state => state.product.productDetail.id);
@@ -25,12 +28,12 @@ export default function ProductDetail({successDelete}: propsType) {
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
-    navigate(`/product/${currentProductCategoryName}/${productId}`);
+    navigate(`/product?main=${currentProductCategoryName}&middle=${middleCategory}&id=${productId}`);
   };
 
   useEffect(() => {
-    categoryName &&
-    productApi.getAllProducts(categoryName)
+    (mainCategory && middleCategory) &&
+    productApi.getAllProducts(mainCategory)
       .then(res => dispatch(getProductList({productList: res})))
       .catch(error => console.log(error))
 
@@ -38,13 +41,13 @@ export default function ProductDetail({successDelete}: propsType) {
   }, []);
 
   useEffect(() => {
-    index &&
-    productApi.getProduct(parseInt(index))
+    id &&
+    productApi.getProduct(parseInt(id))
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
       })
-  }, [index]);
+  }, [id]);
 
   return (
     <TotalBox>
@@ -66,7 +69,7 @@ export default function ProductDetail({successDelete}: propsType) {
           }}>
 
             <MenuButton
-              onClick={() => navigate('/product/category')}
+              onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}
               sx={{
                 color: '#0F0F0F',
                 backgroundColor: 'rgba(166,166,166,0.25)',
