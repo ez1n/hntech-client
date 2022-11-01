@@ -44,7 +44,6 @@ import ProductMiddleCategoryModifyForm from "./components/productCategoryModifyF
 import ProductMainCategoryForm from "./components/productCategoryForm/productMainCategoryForm";
 import ProductMiddleCategoryForm from "./components/productCategoryForm/productMiddleCategoryForm";
 import ProductMainCategoryModifyForm from "./components/productCategoryModifyForm/productMainCategoryModifyForm";
-import ProductMiddleCategory from "./components/products/productMiddleCategory";
 
 export default function App() {
   const dispatch = useAppDispatch();

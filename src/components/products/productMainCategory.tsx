@@ -24,6 +24,8 @@ import EditButton from "../editButton";
 import ProductCategoryList from "./productCategoryList";
 import ProductDeleteModal from "./productDeleteModal";
 import ProductButton from "./productButton";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 
 interface propsType {
   windowSize: number,
@@ -90,12 +92,32 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
           imageOriginalFilename: string,
           showInMain: string
         }) => (
-          <Grid item xs={1} key={value.id} onClick={() => selectProductCategory(value.categoryName)}>
+          <Grid item xs={1} key={value.id}>
             <ProductButton
               imageServerFilename={value.imageServerFilename}
               imageOriginalFilename={value.imageOriginalFilename}
               categoryName={value.categoryName}
+              onClick={selectProductCategory}
             />
+
+            {/* 수정 버튼 */}
+            {managerMode &&
+              <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+                <Button
+                  onClick={() => openDeleteMessage(value)}
+                  sx={{color: 'red'}}>
+                  <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
+                </Button>
+                <Button
+                  onClick={() => {
+                    dispatch(setCurrentProductCategory({category: value}));
+                    navigate('/product/category/main/modify');
+                  }}
+                  sx={{color: 'darkgreen'}}>
+                  <CreateRoundedIcon sx={{fontSize: 30}}/>
+                </Button>
+              </Box>
+            }
           </Grid>
         ))}
       </Grid>
@@ -131,7 +153,7 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
 
           {/* 추가 버튼 */}
           {managerMode &&
-            <AddButton onClick={() => navigate('/product/category/form')}>
+            <AddButton onClick={() => navigate('/product/category/main/form')}>
               <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
             </AddButton>
           }

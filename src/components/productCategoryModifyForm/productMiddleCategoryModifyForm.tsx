@@ -27,6 +27,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
 
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
+  const currentProductMiddleCategory = useAppSelector(state => state.category.currentProductMiddleCategory); // 선택된 중분류 카테고리 state
   const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
   const [middleCategory, setMiddleCategory] = useState({
     id: 0,
@@ -44,7 +45,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
 
   useEffect(() => {
-
+    setMiddleCategory(currentProductMiddleCategory);
   }, []);
 
   const validate = () => {
@@ -88,11 +89,9 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
       categoryApi.putUpdateProductCategory(id, middleCategoryForm)
         .then(() => {
           successModify();
-          dispatch(onLoading());
           navigate(-1);
         })
         .catch(error => {
-          dispatch(onLoading());
           errorToast(error.response.data.message);
           if (error.response.status === 401) {
             localStorage.removeItem("login");
@@ -100,6 +99,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
             dispatch(changeMode({login: isLogin}));
           }
         })
+        .finally(() => dispatch(onLoading()))
     }
   };
 
@@ -129,6 +129,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
             placeholder='카테고리명'
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
+            value={categoryName}
             onChange={changeCategoryName}
             inputProps={{style: {fontSize: 18}}}
             sx={{width: '100%'}}
@@ -166,12 +167,12 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
               overflow: 'auto',
               alignItems: 'center'
             }}>
-            {!imageServerFilename ?
-              <Typography sx={{color: 'lightgrey', fontSize: 18}}>카테고리 이미지</Typography> :
-              <Box sx={{width: '23%', m: 1}}>
-                <img src={imageServerFilename} alt={imageOriginalFilename} width='100%'/>
-              </Box>
-            }
+            <Box sx={{width: '23%', m: 1}}>
+              {newImage.path === '' ?
+                <img src={imageServerFilename} alt={imageOriginalFilename} width='100%'/> :
+                <img src={newImage.path} alt={newImage.name} width='100%'/>
+              }
+            </Box>
           </Container>
         </Box>
       </Box>
@@ -194,7 +195,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
         text2='취소하시겠습니까?'
         yesAction={() => {
           dispatch(clickProductCategoryFormGoBack());
-          navigate('/product/category');
+          navigate(-1);
         }}
         closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
     </Container>
