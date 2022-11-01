@@ -31,6 +31,7 @@ export default function ProductItem({product, index}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const mainCategory = new URLSearchParams(location.search).get('main');
   const middleCategory = new URLSearchParams(location.search).get('middle');
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
@@ -49,7 +50,7 @@ export default function ProductItem({product, index}: propsType) {
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
-        navigate(`/product/${currentProductCategoryName}/${res.id}`);
+        navigate(`/product?main=${mainCategory}&middle=${middleCategory}&id=${res.id}`);
       })
   };
 
@@ -134,7 +135,7 @@ export default function ProductItem({product, index}: propsType) {
           <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-around'}}>
             <Button
               onClick={() => {
-                dispatch(getCurrentProductData({productData: product}))
+                dispatch(getCurrentProductData({productData: product}));
                 dispatch(clickProductItemGoBack());
               }}
               sx={{color: 'red'}}>
