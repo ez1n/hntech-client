@@ -199,7 +199,7 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
         text2='취소하시겠습니까?'
         yesAction={() => {
           dispatch(clickProductCategoryFormGoBack());
-          navigate('/product/category');
+          navigate(-1);
         }}
         closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
     </Container>

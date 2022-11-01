@@ -29,7 +29,8 @@ export default function Products({successDelete}: propsType) {
   const middleCategory = new URLSearchParams(location.search).get('middle');
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록 state
+  const productCategories = useAppSelector(state => state.category.productCategories); // 대분류 카테고리 목록 state
+  const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
@@ -161,10 +162,10 @@ export default function Products({successDelete}: propsType) {
 
           {/* 중분류 카테고리 */}
           <Box sx={{flex: 0.8, pt: 5}}>
-            <ProductMiddleCategory windowSize={windowSize}/>
+            <ProductMiddleCategory windowSize={windowSize} successDelete={successDelete}/>
             {/* 추가 버튼 */}
             {managerMode &&
-              <AddButton onClick={() => navigate('/middleCategory/form')}>
+              <AddButton onClick={() => navigate('/product/category/middle/form')}>
                 <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
               </AddButton>
             }
@@ -190,7 +191,7 @@ export default function Products({successDelete}: propsType) {
             {/* 사이드 메뉴 */}
             <Box sx={{flex: 0.2}}>
               <CategoryBox>
-                <ProductMiddleCategory windowSize={windowSize}/>
+                <ProductMiddleCategory windowSize={windowSize} successDelete={successDelete}/>
               </CategoryBox>
             </Box>
 
@@ -200,7 +201,7 @@ export default function Products({successDelete}: propsType) {
                 defaultValue={currentProductCategoryName}
                 onChange={(event: any) => dispatch(setCurrentProductCategoryName({category: event?.target.value}))}
                 size='small'>
-                {productCategories.map((item: {
+                {productMiddleCategories.map((item: {
                   categoryName: string;
                   id: number;
                   imageServerFilename: string;

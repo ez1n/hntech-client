@@ -59,17 +59,28 @@ interface categoryInitialState {
     imageOriginalFilename: string,
     showInMain: string
   },
-  productMiddleCategory: {
+  productMiddleCategories: {
     id: number,
     categoryName: string,
     imageServerFilename: string,
     imageOriginalFilename: string,
     showInMain: string,
     parent: string,
-    children: []
+    children: string[]
   }[],
+  currentProductMiddleCategory: {
+    id: number,
+    categoryName: string,
+    imageServerFilename: string,
+    imageOriginalFilename: string,
+    showInMain: string,
+    parent: string,
+    children: string[]
+  },
   updateCategoryImageState: boolean,
-  currentProductCategoryName: string
+  currentProductCategoryName: string,
+  currentProductMiddleCategoryName: string
+
 }
 
 const CategoryInitialState: categoryInitialState = {
@@ -88,9 +99,19 @@ const CategoryInitialState: categoryInitialState = {
     imageOriginalFilename: '',
     showInMain: ''
   },
-  productMiddleCategory: [],
+  productMiddleCategories: [],
+  currentProductMiddleCategory: {
+    id: 0,
+    categoryName: '',
+    imageServerFilename: '',
+    imageOriginalFilename: '',
+    showInMain: '',
+    parent: '',
+    children: []
+  },
   updateCategoryImageState: false,
-  currentProductCategoryName: ''
+  currentProductCategoryName: '',
+  currentProductMiddleCategoryName: ''
 };
 
 export const CategorySlice = createSlice({
@@ -193,18 +214,42 @@ export const CategorySlice = createSlice({
     },
     getMiddleProductCategory: (
       state,
-        action: PayloadAction<{category: {
-            id: number,
-            categoryName: string,
-            imageServerFilename: string,
-            imageOriginalFilename: string,
-            showInMain: string,
-            parent: string,
-            children: []
-          }[]}>
+      action: PayloadAction<{
+        category: {
+          id: number,
+          categoryName: string,
+          imageServerFilename: string,
+          imageOriginalFilename: string,
+          showInMain: string,
+          parent: string,
+          children: string[]
+        }[]
+      }>
     ) => {
-      state.productMiddleCategory = action.payload.category
-    }
+      state.productMiddleCategories = action.payload.category
+    },
+    setCurrentProductMiddleCategory: (
+      state,
+      action: PayloadAction<{
+        category: {
+          id: number,
+          categoryName: string,
+          imageServerFilename: string,
+          imageOriginalFilename: string,
+          showInMain: string,
+          parent: string,
+          children: string[]
+        }
+      }>
+    ) => {
+      state.currentProductMiddleCategory = action.payload.category
+    },
+    setCurrentProductMiddleCategoryName: (
+      state,
+      action: PayloadAction<{ category: string }>
+    ) => {
+      state.currentProductMiddleCategoryName = action.payload.category
+    },
   }
 });
 
@@ -220,6 +265,9 @@ export const {
   setCurrentProductCategory,
   updateCurrentProductCategoryName,
   updateCurrentProductCategoryShowInMain,
-  setCurrentProductCategoryName
+  setCurrentProductCategoryName,
+  getMiddleProductCategory,
+  setCurrentProductMiddleCategory,
+  setCurrentProductMiddleCategoryName
 } = CategorySlice.actions;
 export default CategorySlice.reducer;

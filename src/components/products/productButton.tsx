@@ -9,14 +9,13 @@ interface propsType {
   imageServerFilename: string,
   imageOriginalFilename: string,
   categoryName: string,
+  onClick: (name: string) => void
 }
 
 export default function ProductButton(props: propsType) {
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
-
   return (
-   <>
-      <CategoryButton onClick={() => console.log('카테고리 선택')}>
+    <>
+      <CategoryButton onClick={() => props.onClick(props.categoryName)}>
         {/* 카테고리 */}
         <Box sx={{height: 150}}>
           <img
@@ -30,22 +29,6 @@ export default function ProductButton(props: propsType) {
           {props.categoryName}
         </CategoryNameTypography>
       </CategoryButton>
-
-      {/* 수정 버튼 */}
-      {managerMode &&
-        <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
-          <Button
-            onClick={() => console.log('삭제')}
-            sx={{color: 'red'}}>
-            <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
-          </Button>
-          <Button
-            onClick={() => console.log('수정')}
-            sx={{color: 'darkgreen'}}>
-            <CreateRoundedIcon sx={{fontSize: 30}}/>
-          </Button>
-        </Box>
-      }
     </>
   );
 }

@@ -57,9 +57,13 @@ export default function ProductForm({success, errorToast}: propsType) {
   // state
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
+  const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName); // 현재 선택된 중분류 카테고리
+  const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
+
   const {description, productName, files} = useAppSelector(state => state.productForm.productContent); // 제품 등록 내용
   const {docFiles, productImages, representativeImage, standardImages} = files; // 첨부파일, 제품이미지, 대표이미지, 규격이미지
-  const [category, setCategory] = useState(''); // 선택한 카테고리
+  const [mainCategory, setMainCategory] = useState(''); // 선택한 대분류 카테고리
+  const [middleCategory, setMiddleCategory] = useState(''); // 선택한 중분류 카테고리
   const [cancelProductForm, setCancelProductForm] = useState(false); // 제품 등록 취소
 
   // error message state
@@ -70,6 +74,8 @@ export default function ProductForm({success, errorToast}: propsType) {
   useEffect(() => {
     dispatch(resetProductForm());
     dispatch(addProductCategory({category: currentProductCategoryName}));
+    setMainCategory(currentProductCategoryName);
+    setMiddleCategory(currentProductMiddleCategoryName);
   }, []);
 
   const validate = () => {
@@ -92,7 +98,10 @@ export default function ProductForm({success, errorToast}: propsType) {
   };
 
   // 카테고리 선택
-  const getCategory = (category: string) => setCategory(category);
+  const getMainCategory = (category: string) => setMainCategory(category);
+
+  // 중분류 카테고리 선택
+  const getMiddleCategory = (category: string) => setMiddleCategory(category)
 
   // 제품 등록 취소 modal - open
   const openCancelProductForm = () => {
@@ -178,10 +187,11 @@ export default function ProductForm({success, errorToast}: propsType) {
     })
   };
 
-  // 제품 등록
-  const postProduct = () => {
+  // 중분류 카테고리 등록
+  const postMiddleProductCategory = () => {
     const productForm = new FormData();
-    productForm.append('categoryName', category)
+    productForm.append('categoryName', mainCategory);
+    productForm.append('categoryName', middleCategory); // 중분류 카테고리
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
@@ -286,11 +296,17 @@ export default function ProductForm({success, errorToast}: propsType) {
             <EditButton name='규격 이미지 추가' onClick={() => selectInput(gradeInputRef)}/>
           </ButtonBox>
 
-          {/* 카테고리 */}
+          {/* 대분류 카테고리 */}
           <ProductCategorySelect
             category={productCategories}
             defaultCategory={currentProductCategoryName}
-            getCategory={getCategory}/>
+            getCategory={getMainCategory}/>
+
+          {/* 중분류 카테고리 */}
+          <ProductCategorySelect
+            category={productMiddleCategories}
+            defaultCategory={currentProductMiddleCategoryName}
+            getCategory={getMiddleCategory}/>
         </Box>
         <List>
           <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 대표 이미지는 필수입니다.</ListItem>
@@ -453,7 +469,7 @@ export default function ProductForm({success, errorToast}: propsType) {
 
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
-        <EditButton name='작성완료' onClick={postProduct}/>
+        <EditButton name='작성완료' onClick={postMiddleProductCategory}/>
         <EditButton name='취소' onClick={openCancelProductForm}/>
       </Spacing>
 
@@ -493,5 +509,5 @@ const ButtonBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'flex',
     flexDirection: 'column'
-  },
+  }
 })) as typeof Box;
