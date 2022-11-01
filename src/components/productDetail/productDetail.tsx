@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {selectProductCategoryTrue} from '../../app/reducers/categorySlice';
 import {getProductDetail, getProductList} from '../../app/reducers/productSlice';
 import {getProductContent, resetProductForm} from '../../app/reducers/productFormSlice';
 import {Box, Button, Container, MenuItem, Select, styled, Typography} from '@mui/material';
@@ -26,10 +25,11 @@ export default function ProductDetail({successDelete}: propsType) {
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
-    navigate('/product/' + currentProductCategoryName + '/' + productId);
+    navigate(`/product/${currentProductCategoryName}/${productId}`);
   };
 
   useEffect(() => {
+    categoryName &&
     productApi.getAllProducts(categoryName)
       .then(res => dispatch(getProductList({productList: res})))
       .catch(error => console.log(error))
@@ -38,12 +38,12 @@ export default function ProductDetail({successDelete}: propsType) {
   }, []);
 
   useEffect(() => {
+    index &&
     productApi.getProduct(parseInt(index))
       .then(res => {
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
       })
-    dispatch(selectProductCategoryTrue());
   }, [index]);
 
   return (

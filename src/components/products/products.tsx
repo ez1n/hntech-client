@@ -1,15 +1,15 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductList} from '../../app/reducers/productSlice';
 import {resetProductForm} from '../../app/reducers/productFormSlice';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
-import {selectProductCategoryTrue, setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
-import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs, Container} from '@mui/material';
+import {setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
+import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ProductMainCategory from './productMainCategory';
@@ -24,15 +24,16 @@ interface propsType {
 export default function Products({successDelete}: propsType) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const mainCategory = new URLSearchParams(location.search).get('main');
+  const middleCategory = new URLSearchParams(location.search).get('middle');
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const productCategorySelected = useAppSelector(state => state.category.productCategorySelected); // 카테고리 선택 state
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
-  const [middleCategory, setMiddleCategory] = useState(true);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const handleWindowResize = useCallback(() => {
@@ -44,17 +45,10 @@ export default function Products({successDelete}: propsType) {
   //제품 목록 받아오기
   useEffect(() => {
     dispatch(resetProductForm());
-    if (productCategorySelected) {
-      productApi.getAllProducts(currentProductCategoryName)
-        .then(res => dispatch(getProductList({productList: res})))
-    }
-  }, [currentProductCategoryName]);
-
-  // 중분류 카테고리 open
-  const openMiddleCategory = () => setMiddleCategory(middleCategory => !middleCategory);
-
-  // 중분류 카테고리 close
-  const closeMiddleCategory = () => setMiddleCategory(false);
+    middleCategory &&
+    productApi.getAllProducts(middleCategory)
+      .then(res => dispatch(getProductList({productList: res})))
+  }, [middleCategory]);
 
   // 제품 삭제
   const deleteProduct = (productId: number) => {
@@ -96,8 +90,8 @@ export default function Products({successDelete}: propsType) {
                 serverFilename: string
               },
               productName: string
-            }, index: number) => (
-              <ProductItem key={item.id} product={item} index={index}/>
+            }) => (
+              <ProductItem key={item.id} product={item} index={item.id}/>
             )) : // 제품 존재하지 않는 경우
             <Typography>
               해당 카테고리에 제품이 존재하지 않습니다.
@@ -107,24 +101,87 @@ export default function Products({successDelete}: propsType) {
     )
   }
 
-  return (
-    <>
-      {!productCategorySelected &&
-        <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
-          <ProductMainCategory windowSize={windowSize} successDelete={successDelete}
-                               openMiddleCategory={openMiddleCategory}/>
+  if (!mainCategory) {
+    return (
+      <>
+        <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
+          <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
+            {[
+              <Typography sx={{fontSize: 'large'}}>카테고리</Typography>
+            ]}
+          </Breadcrumbs>
         </Box>
-      }
 
-      {/* category selected */}
-      {productCategorySelected &&
+        <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
+          <ProductMainCategory windowSize={windowSize} successDelete={successDelete}/>
+        </Box>
+      </>
+    )
+  } else if (mainCategory && !middleCategory) {
+    return (
+      <Box>
+        <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
+          <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
+            {[
+              <Typography sx={{fontSize: 'large'}}>카테고리</Typography>,
+              <Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>{mainCategory}</Typography>,
+            ]}
+          </Breadcrumbs>
+        </Box>
+
+        <TotalBox>
+          {/* 사이드 메뉴 */}
+          <Box sx={{flex: 0.2}}>
+            <CategoryBox>
+              <ProductMainCategory
+                windowSize={windowSize}
+                successDelete={successDelete}/>
+            </CategoryBox>
+          </Box>
+
+          {/* 900px 이하 사이드 메뉴 */}
+          <SelectBox>
+            <MenuSelect
+              defaultValue={currentProductCategoryName}
+              onChange={(event: any) => {
+                dispatch(setCurrentProductCategoryName({category: event?.target.value}));
+              }}
+              size='small'>
+              {productCategories.map((item: {
+                categoryName: string;
+                id: number;
+                imageServerFilename: string;
+                imageOriginalFilename: string;
+                showInMain: string;
+              }) => (
+                <MenuList key={item.id} value={item.categoryName}>{item.categoryName}</MenuList>
+              ))}
+            </MenuSelect>
+          </SelectBox>
+
+          {/* 중분류 카테고리 */}
+          <Box sx={{flex: 0.8, pt: 5}}>
+            <ProductMiddleCategory windowSize={windowSize}/>
+            {/* 추가 버튼 */}
+            {managerMode &&
+              <AddButton onClick={() => navigate('/middleCategory/form')}>
+                <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
+              </AddButton>
+            }
+          </Box>
+        </TotalBox>
+      </Box>
+    )
+  } else {
+    return (
+      <>
         <Box>
-          <Box sx={{m: 'auto', mt: 5, width: '70vw'}}>
+          <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
             <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
               {[
-                <Typography sx={{fontSize: 'large'}} key="1">대분류 카테고리</Typography>,
-                <Typography sx={{fontSize: 'large'}} key="1">중분류 카테고리</Typography>,
-                <Typography sx={{fontSize: 'large', fontWeight: 'bold'}} key="2">제품 목록</Typography>
+                <Typography sx={{fontSize: 'large'}}>카테고리</Typography>,
+                <Typography sx={{fontSize: 'large'}}>{mainCategory}</Typography>,
+                <Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>{middleCategory}</Typography>
               ]}
             </Breadcrumbs>
           </Box>
@@ -133,9 +190,7 @@ export default function Products({successDelete}: propsType) {
             {/* 사이드 메뉴 */}
             <Box sx={{flex: 0.2}}>
               <CategoryBox>
-                <ProductMainCategory
-                  windowSize={windowSize}
-                  successDelete={successDelete}/>
+                <ProductMiddleCategory windowSize={windowSize}/>
               </CategoryBox>
             </Box>
 
@@ -143,10 +198,7 @@ export default function Products({successDelete}: propsType) {
             <SelectBox>
               <MenuSelect
                 defaultValue={currentProductCategoryName}
-                onChange={(event: any) => {
-                  dispatch(selectProductCategoryTrue());
-                  dispatch(setCurrentProductCategoryName({category: event?.target.value}));
-                }}
+                onChange={(event: any) => dispatch(setCurrentProductCategoryName({category: event?.target.value}))}
                 size='small'>
                 {productCategories.map((item: {
                   categoryName: string;
@@ -172,24 +224,18 @@ export default function Products({successDelete}: propsType) {
             </Box>
           </TotalBox>
         </Box>
-      }
 
-      {/* 삭제 버튼 Dialog */}
-      <CancelModal
-        openState={productItemState}
-        title='제품 삭제'
-        text1='해당 제품이 삭제됩니다.'
-        text2='삭제하시겠습니까?'
-        yesAction={() => deleteProduct(currentProductData.id)}
-        closeAction={() => dispatch(clickProductItemGoBack())}/>
-
-      {/* 중분류 카테고리 */}
-      <ProductMiddleCategory
-        windowSize={windowSize}
-        open={middleCategory}
-        onClose={closeMiddleCategory}/>
-    </>
-  )
+        {/* 삭제 버튼 Dialog */}
+        <CancelModal
+          openState={productItemState}
+          title='제품 삭제'
+          text1='해당 제품이 삭제됩니다.'
+          text2='삭제하시겠습니까?'
+          yesAction={() => deleteProduct(currentProductData.id)}
+          closeAction={() => dispatch(clickProductItemGoBack())}/>
+      </>
+    )
+  }
 };
 
 // 추가 버튼

@@ -1,21 +1,24 @@
-import React from 'react';
-import {Breadcrumbs, Button, Dialog, DialogContent, DialogTitle, Grid, styled, Typography} from "@mui/material";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import React, {useEffect} from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  styled,
+  Typography
+} from "@mui/material";
 import ProductButton from "./productButton";
-import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {useNavigate} from "react-router-dom";
-import {selectProductCategoryTrue} from "../../app/reducers/categorySlice";
+import {useAppDispatch} from "../../app/hooks";
+import {useLocation, useNavigate} from "react-router-dom";
+import {categoryApi} from "../../network/category";
 
 interface propsType {
-  windowSize: number,
-  open: boolean,
-  onClose: () => void
+  windowSize: number
 }
 
-export default function ProductMiddleCategory({windowSize, open, onClose}: propsType) {
+export default function ProductMiddleCategory({windowSize}: propsType) {
   // 임시데이터
-  const productMiddleCategories = [
+  const productMiddleCategory = [
     {
       id: 1,
       categoryName: '중분류1',
@@ -72,13 +75,21 @@ export default function ProductMiddleCategory({windowSize, open, onClose}: props
     },
   ]
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const location = useLocation();
+  const mainCategory = new URLSearchParams(location.search).get('main');
+  const middleCategory = new URLSearchParams(location.search).get('middle');
 
-  const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
+  useEffect(() => {
+    mainCategory &&
+    categoryApi.getMiddleProductCategory(mainCategory)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(error => console.log(error))
+  }, [mainCategory])
 
-  const selectMiddleCategory = () => {
-    dispatch(selectProductCategoryTrue());
-    onClose();
+  const selectMiddleCategory = (middleCategory: string) => {
+    navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)
   };
 
   const CategoryGrid = () => {
@@ -88,44 +99,75 @@ export default function ProductMiddleCategory({windowSize, open, onClose}: props
     if (windowSize < 600) categoryColumn = 1;
 
     return (
-      <Grid container columns={categoryColumn} spacing={3}>
-        {productMiddleCategories?.map((value) => (
-          <Grid item xs={1} key={value.id} onClick={selectMiddleCategory}>
-            <ProductButton
-              imageServerFilename={value.imageServerFilename}
-              imageOriginalFilename={value.imageOriginalFilename}
-              categoryName={value.categoryName}
-              />
+      <Box sx={{width: '100%'}}>
+        {!middleCategory &&
+          <Grid container columns={categoryColumn} spacing={2}>
+            {productMiddleCategory.length > 0 ?
+              productMiddleCategory?.map((value) => (
+                <Grid item xs={1} key={value.id} onClick={() => selectMiddleCategory(value.categoryName)}>
+                  <ProductButton
+                    imageServerFilename={value.imageServerFilename}
+                    imageOriginalFilename={value.imageOriginalFilename}
+                    categoryName={value.categoryName}
+                  />
+                </Grid>
+              )) :
+              <Typography>
+                해당 카테고리에 제품이 존재하지 않습니다.
+              </Typography>
+            }
           </Grid>
-          ))}
-      </Grid>
+        }
+
+        {middleCategory &&
+          <>
+            <Container sx={{display: 'flex'}}>
+              <Typography
+                variant='h5'
+                sx={{
+                  p: 1,
+                  userSelect: 'none',
+                  fontWeight: 'bold'
+                }}>
+                제품 소개
+              </Typography>
+            </Container>
+            <Box sx={{
+              pt: 1,
+              pb: 1,
+              pl: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              width: 'max-content'
+            }}>
+              {productMiddleCategory.map((value) => (
+                <MenuButton
+                  key={value.id}
+                  onClick={() => selectMiddleCategory(value.categoryName)}
+                  sx={{
+                    color: middleCategory === value.categoryName ? '#F0F0F0' : '#0F0F0F',
+                    backgroundColor: middleCategory === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+                    '&:hover': {
+                      backgroundColor: middleCategory === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+                    }
+                  }}>
+                  {value.categoryName}
+                </MenuButton>
+              ))}
+            </Box>
+          </>
+        }
+      </Box>
     )
   };
 
   return (
-    <Dialog fullWidth maxWidth='lg' open={open} onClose={onClose}>
-      <DialogTitle>카테고리 선택</DialogTitle>
-
-      <DialogContent>
-        <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
-          {[
-            <Typography sx={{fontSize: 'large'}}>대분류 카테고리</Typography>,
-            <Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>중분류 카테고리</Typography>
-          ]}
-        </Breadcrumbs>
-      </DialogContent>
-
-      <DialogContent>
+    <Grid item xs={1}>
+      <ProductBox>
+        {/* 카테고리 */}
         <CategoryGrid/>
-
-        {/* 추가 버튼 */}
-        {managerMode &&
-          <AddButton onClick={() => navigate('/middleCategory/form')}>
-            <AddRoundedIcon sx={{color: '#042709', fontSize: 100, opacity: 0.6}}/>
-          </AddButton>
-        }
-      </DialogContent>
-    </Dialog>
+      </ProductBox>
+    </Grid>
   );
 }
 
@@ -149,5 +191,30 @@ const AddButton = styled(Button)(({theme}) => ({
   '&: hover': {
     transform: 'scale(1.02)',
     backgroundColor: 'rgba(57, 150, 82, 0.2)',
+  }
+})) as typeof Button;
+
+const ProductBox = styled(Box)(() => ({
+  margin: 3,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  borderRadius: 10,
+})) as typeof Box;
+
+// Text 버튼
+const MenuButton = styled(Button)(() => ({
+  padding: 10,
+  paddingLeft: 10,
+  paddingRight: 20,
+  marginLeft: 10,
+  fontSize: 15,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  borderRadius: 5,
+  justifyContent: 'flex-start',
+  transition: '0.5s',
+  '&:hover': {
+    transform: 'scale(1.02)'
   }
 })) as typeof Button;

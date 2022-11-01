@@ -59,10 +59,18 @@ interface categoryInitialState {
     imageOriginalFilename: string,
     showInMain: string
   },
+  productMiddleCategory: {
+    id: number,
+    categoryName: string,
+    imageServerFilename: string,
+    imageOriginalFilename: string,
+    showInMain: string,
+    parent: string,
+    children: []
+  }[],
   updateCategoryImageState: boolean,
-  productCategorySelected: boolean,
   currentProductCategoryName: string
-};
+}
 
 const CategoryInitialState: categoryInitialState = {
   archiveCategory: [{id: 0, categoryName: '', showInMain: ''},],
@@ -80,8 +88,8 @@ const CategoryInitialState: categoryInitialState = {
     imageOriginalFilename: '',
     showInMain: ''
   },
+  productMiddleCategory: [],
   updateCategoryImageState: false,
-  productCategorySelected: false,
   currentProductCategoryName: ''
 };
 
@@ -177,17 +185,25 @@ export const CategorySlice = createSlice({
     ) => {
       state.productCurrentCategory.showInMain = String(action.payload.showInMain)
     },
-    selectProductCategoryTrue: (state) => {
-      state.productCategorySelected = true
-    },
-    selectProductCategoryFalse: (state) => {
-      state.productCategorySelected = false
-    },
     setCurrentProductCategoryName: (
       state,
       action: PayloadAction<{ category: string }>
     ) => {
       state.currentProductCategoryName = action.payload.category
+    },
+    getMiddleProductCategory: (
+      state,
+        action: PayloadAction<{category: {
+            id: number,
+            categoryName: string,
+            imageServerFilename: string,
+            imageOriginalFilename: string,
+            showInMain: string,
+            parent: string,
+            children: []
+          }[]}>
+    ) => {
+      state.productMiddleCategory = action.payload.category
     }
   }
 });
@@ -204,8 +220,6 @@ export const {
   setCurrentProductCategory,
   updateCurrentProductCategoryName,
   updateCurrentProductCategoryShowInMain,
-  selectProductCategoryTrue,
-  selectProductCategoryFalse,
   setCurrentProductCategoryName
 } = CategorySlice.actions;
 export default CategorySlice.reducer;
