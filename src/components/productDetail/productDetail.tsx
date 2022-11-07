@@ -3,7 +3,6 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductDetail, getProductList} from '../../app/reducers/productSlice';
-import {getProductContent, resetProductForm} from '../../app/reducers/productFormSlice';
 import {Box, Button, Container, MenuItem, Select, styled, Typography} from '@mui/material';
 import ProductInfo from './productInfo';
 import Files from './files';
@@ -36,8 +35,6 @@ export default function ProductDetail({successDelete}: propsType) {
     productApi.getAllProducts(middleCategory)
       .then(res => dispatch(getProductList({productList: res})))
       .catch(error => console.log(error))
-
-    dispatch(resetProductForm());
   }, []);
 
   useEffect(() => {
@@ -45,7 +42,6 @@ export default function ProductDetail({successDelete}: propsType) {
     productApi.getProduct(parseInt(id))
       .then(res => {
         dispatch(getProductDetail({detail: res}));
-        dispatch(getProductContent({detail: res}));
       })
   }, [id]);
 

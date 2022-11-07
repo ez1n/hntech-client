@@ -4,7 +4,6 @@ import {productApi} from '../../network/product';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
-import {getProductContent} from '../../app/reducers/productFormSlice';
 import {getCurrentProductData, getProductDetail, getProductList} from '../../app/reducers/productSlice';
 import {Box, Button, styled, Typography, Grid} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
@@ -42,21 +41,20 @@ export default function ProductItem({product, index}: propsType) {
   const getProduct = (productId: number) => {
     productApi.getProduct(productId)
       .then(res => {
-        console.log(res)
         dispatch(getProductDetail({detail: res}));
-        dispatch(getProductContent({detail: res}));
         navigate(`/product?main=${mainCategory}&middle=${middleCategory}&id=${res.id}`);
       })
+      .catch(error => console.log(error))
   };
 
   //제품 수정
   const putProduct = () => {
-    productApi.getProduct(product.id)
+    productApi.getProduct(id)
       .then(res => {
         dispatch(getProductDetail({detail: res}));
-        dispatch(getProductContent({detail: res}));
         navigate('/product/modify');
       })
+      .catch(error => console.log(error))
   };
 
   // 순서변경

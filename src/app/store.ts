@@ -7,7 +7,6 @@ import dialogSlice from './reducers/dialogSlice';
 import questionSlice from './reducers/questionSlice';
 import commentSlice from './reducers/commentSlice';
 import productSlice from './reducers/productSlice';
-import productFormSlice from './reducers/productFormSlice';
 import questionFormSlice from './reducers/questionFormSlice';
 import archiveSlice from './reducers/archiveSlice';
 import archiveFormSlice from './reducers/archiveFormSlice';
@@ -23,7 +22,6 @@ export const store = configureStore({
     question: questionSlice,
     comment: commentSlice,
     product: productSlice,
-    productForm: productFormSlice,
     archive: archiveSlice,
     archiveForm: archiveFormSlice,
     questionForm: questionFormSlice,

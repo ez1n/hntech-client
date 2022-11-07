@@ -5,7 +5,6 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductList} from '../../app/reducers/productSlice';
-import {resetProductForm} from '../../app/reducers/productFormSlice';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
@@ -45,7 +44,6 @@ export default function Products({successDelete}: propsType) {
 
   //제품 목록 받아오기
   useEffect(() => {
-    dispatch(resetProductForm());
     middleCategory &&
     productApi.getAllProducts(middleCategory)
       .then(res => dispatch(getProductList({productList: res})))

@@ -39,6 +39,7 @@ export default function ArchiveDetail({successDelete}: propsType) {
   }, []);
 
   useEffect(() => {
+    index &&
     archiveApi.getArchive(parseInt(index))
       .then(res => dispatch(getDetailData({detail: res})))
       .catch(error => console.log(error))
@@ -102,10 +103,10 @@ export default function ArchiveDetail({successDelete}: propsType) {
 
       <Spacing>
         {managerMode &&
-            <Box sx={{textAlign: 'end'}}>
-                <EditButton name='수정' onClick={() => navigate('/archive/modify')}/>
-                <EditButton name='삭제' onClick={openDeleteArchiveDetail}/>
-            </Box>
+          <Box sx={{textAlign: 'end'}}>
+            <EditButton name='수정' onClick={() => navigate('/archive/modify')}/>
+            <EditButton name='삭제' onClick={openDeleteArchiveDetail}/>
+          </Box>
         }
       </Spacing>
 
@@ -135,7 +136,8 @@ export default function ArchiveDetail({successDelete}: propsType) {
               savedPath: string,
               serverFilename: string
             }) => (
-              <img key={item.id} src={`${api.baseUrl()}/files/archive/${item.serverFilename}`} width={'30%'} alt={item.originalFilename}/>
+              <img key={item.id} src={`${api.baseUrl()}/files/archive/${item.serverFilename}`} width={'30%'}
+                   alt={item.originalFilename}/>
             ))}
           </Stack>
 

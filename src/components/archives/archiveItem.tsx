@@ -31,16 +31,17 @@ export default function ArchiveItem() {
         dispatch(getNotice({notice: res.notices}))
       })
   }, []);
-  
+
   // 자료 목록 받아오기
   useEffect(() => {
-    archiveApi.getArchives(page - 1)
+    page &&
+    archiveApi.getArchives(parseInt(page) - 1)
       .then(res => dispatch(getAllArchives({
-          archives: res.archives,
-          totalPage: res.totalPages,
-          currentPage: res.currentPage,
-          totalElements: res.totalElements
-        })))
+        archives: res.archives,
+        totalPage: res.totalPages,
+        currentPage: res.currentPage,
+        totalElements: res.totalElements
+      })))
       .catch(error => console.log(error))
   }, [page]);
 
@@ -107,7 +108,7 @@ export default function ArchiveItem() {
               p: 1.5,
               borderBottom: '1px solid #3B6C46'
             }}>
-            <List sx={{flex: 0.1}}>{totalElements - 15 * (page - 1) - index}</List>
+            <List sx={{flex: 0.1}}>{page && totalElements - 15 * (parseInt(page) - 1) - index}</List>
             <List sx={{flex: 0.2}}>{item.categoryName}</List>
             <TitleList onClick={() => openDetail(item.id)}>
               <TitleTypography>
@@ -135,7 +136,7 @@ export default function ArchiveItem() {
         <Pagination
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
           count={totalPage === 0 ? 1 : totalPage}
-          page={page}
+          page={page ? parseInt(page) : 1}
           sx={{m: '0 auto'}}/>
       </Stack>
     </>

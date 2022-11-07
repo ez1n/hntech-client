@@ -47,7 +47,7 @@ export default function QuestionItem() {
 
   // 문의 목록 받아오기
   useEffect(() => {
-    questionApi.getAllQuestions(page - 1)
+    questionApi.getAllQuestions(page ? parseInt(page) - 1 : 0)
       .then(res => dispatch(getAllQuestions({
         questions: res.questions,
         totalPage: res.totalPages,
@@ -178,7 +178,7 @@ export default function QuestionItem() {
         {/* 목록 */}
         {questions.map((item, index: number) => (
           <Box key={item.id} sx={{display: 'flex', flex: 1, p: 1.5, borderBottom: '1px solid #3B6C46'}}>
-            <List sx={{flex: 0.1}}>{totalElements - 15 * (page - 1) - index}</List>
+            <List sx={{flex: 0.1}}>{page && totalElements - 15 * (parseInt(page) - 1) - index}</List>
             <TitleList onClick={() => getQuestionByAdmin(item.id)}>
               <List sx={{
                 overflow: 'hidden',
@@ -210,7 +210,7 @@ export default function QuestionItem() {
         <Pagination
           onChange={(event: React.ChangeEvent<unknown>, value: number) => changePage(value)}
           count={totalPage === 0 ? 1 : totalPage}
-          page={page}
+          page={page ? parseInt(page) : 1}
           sx={{m: '0 auto'}}/>
       </Stack>
 

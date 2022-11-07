@@ -3,8 +3,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {api} from '../../network/network';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {getCurrentProductData, getProductList, nextImage, prevImage} from '../../app/reducers/productSlice';
-import {getProductContent} from '../../app/reducers/productFormSlice';
+import {getProductList, nextImage, prevImage} from '../../app/reducers/productSlice';
 import {
   Box,
   Button,
@@ -63,13 +62,7 @@ export default function ProductInfo({successDelete}: propsType) {
   };
 
   // 수정 요청
-  const modifyProduct = () => {
-    productApi.getProduct(id)
-      .then(res => {
-        dispatch(getProductContent({detail: res}));
-        navigate('/product/modify');
-      })
-  };
+  const modifyProduct = () => navigate('/product/modify');
 
   return (
     <Container

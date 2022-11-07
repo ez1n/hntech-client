@@ -5,22 +5,6 @@ import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {onLoading} from "../../app/reducers/dialogSlice";
 import {
-  addProductCategory,
-  addProductDescription,
-  addProductDoc,
-  addProductDocType,
-  addProductDocUploadButton,
-  addProductImage,
-  addProductName,
-  addRepProductImage,
-  addStandardImage,
-  deleteProductDoc,
-  deleteProductDocUploadButton,
-  deleteProductImage,
-  deleteStandardImage,
-  resetProductForm
-} from '../../app/reducers/productFormSlice';
-import {
   Container,
   styled,
   Typography,
@@ -55,27 +39,24 @@ export default function ProductForm({success, errorToast}: propsType) {
   const gradeInputRef: any = useRef();
 
   // state
-  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
-  const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
   const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName); // 현재 선택된 중분류 카테고리
   const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
-
-  const {description, productName, files} = useAppSelector(state => state.productForm.productContent); // 제품 등록 내용
-  const {docFiles, productImages, representativeImage, standardImages} = files; // 첨부파일, 제품이미지, 대표이미지, 규격이미지
-  const [mainCategory, setMainCategory] = useState(''); // 선택한 대분류 카테고리
-  const [middleCategory, setMiddleCategory] = useState(''); // 선택한 중분류 카테고리
   const [cancelProductForm, setCancelProductForm] = useState(false); // 제품 등록 취소
+  const [content, setContent] = useState({category: '', description: '', productName: ''});
+  const [docFiles, setDocFiles] = useState<{ id: number, file: string, originalFilename: string, type: string }[]>([]);
+  const [productImages, setProductImages] = useState<{ file: string, path: string }[]>([]);
+  const [representativeImage, setRepresentativeImage] = useState({file: '', path: ''});
+  const [standardImages, setStandardImages] = useState<{ file: string, path: string }[]>([]);
+  const {category, description, productName} = content;
 
   // error message state
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
   const [repImgErrorMsg, setRepImgErrorMsg] = useState(''); // 대표제품 이미지
   const [fileErrorMsg, setFileErrorMsg] = useState(''); // 다운로드 파일 버튼
 
+  // 중간 카테고리 불러오기
   useEffect(() => {
-    dispatch(resetProductForm());
-    dispatch(addProductCategory({category: currentProductCategoryName}));
-    setMainCategory(currentProductCategoryName);
-    setMiddleCategory(currentProductMiddleCategoryName);
+    setContent({...content, category: currentProductMiddleCategoryName});
   }, []);
 
   const validate = () => {
@@ -89,7 +70,7 @@ export default function ProductForm({success, errorToast}: propsType) {
       isValid = false;
     } else setRepImgErrorMsg('');
     docFiles.map(item => {
-      if (item.type === '' || item.file === '') {
+      if (!item.type || !item.file) {
         setFileErrorMsg('파일 정보를 확인해 주세요');
         isValid = false;
       } else setFileErrorMsg('');
@@ -97,67 +78,112 @@ export default function ProductForm({success, errorToast}: propsType) {
     return isValid;
   };
 
-  // 카테고리 선택
-  const getMainCategory = (category: string) => setMainCategory(category);
-
   // 중분류 카테고리 선택
-  const getMiddleCategory = (category: string) => setMiddleCategory(category);
+  const getMiddleCategory = (category: string) => setContent({...content, category: category});
 
   // 제품 등록 취소 modal - open
-  const openCancelProductForm = () => {
-    setCancelProductForm(cancelProductForm => !cancelProductForm);
-  };
+  const openCancelProductForm = () => setCancelProductForm(cancelProductForm => !cancelProductForm);
 
   // 제품 등록 취소 modal - close
-  const closeCancelProductForm = () => {
-    setCancelProductForm(false);
-  };
+  const closeCancelProductForm = () => setCancelProductForm(false);
 
   // input - button 연결(input 숨기기)
-  const selectInput = (item: any) => {
-    item.current?.click();
-  };
+  const selectInput = (item: any) => item.current?.click();
+
+  // 제품 이름
+  const getProductName = (event: any) => setContent({...content, productName: event.target.value});
+
+  // 제품 설명
+  const getDescription = (event: any) => setContent({...content, description: event.target.value});
 
   // 대표 제품 이미지 추가
-  const selectRepProductImage = (event: any) => {
-    dispatch(addRepProductImage({
-      repProduct: {
-        file: event.target.files[0],
-        path: URL.createObjectURL(event.target.files[0])
-      }
-    }));
+  const getRepProductImage = (event: any) => {
+    URL.revokeObjectURL(representativeImage.path);
+    setRepresentativeImage({file: event.target.files[0], path: URL.createObjectURL(event.target.files[0])});
   };
 
   // 제품 이미지 추가
-  const selectProductImage = (event: any) => {
+  const getProductImage = (event: any) => {
+    let newProductImage = productImages;
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addProductImage({
-        product: {file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])}
-      }));
+      newProductImage = newProductImage.concat({
+        file: event.target.files[i],
+        path: URL.createObjectURL(event.target.files[i])
+      })
     }
+    setProductImages(newProductImage);
+  };
+
+  // 제품 이미지 삭제
+  const deleteProductImage = (num: number) => {
+    URL.revokeObjectURL(productImages[num].path);
+    const newProductImage = productImages.filter((item, index: number) => index !== num);
+    setProductImages(newProductImage);
   };
 
   // 규격 이미지 추가
-  const selectStandardImage = (event: any) => {
+  const getStandardImage = (event: any) => {
+    let newStandardImage = standardImages;
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addStandardImage({
-        standard: {
-          file: event.target.files[i],
-          path: URL.createObjectURL(event.target.files[i])
-        }
-      }))
+      newStandardImage = newStandardImage.concat({
+        file: event.target.files[i],
+        path: URL.createObjectURL(event.target.files[i])
+      })
+    }
+    setStandardImages(newStandardImage);
+  };
+
+  // 규격 이미지 삭제
+  const deleteStandardImage = (num: number) => {
+    URL.revokeObjectURL(standardImages[num].path);
+    const newStandardImage = standardImages.filter((item, index: number) => index !== num);
+    setStandardImages(newStandardImage);
+  };
+
+  // 첨부파일 버튼 추가
+  const addProductDocUploadButton = () => {
+    if (docFiles.length === 0) {
+      setDocFiles([...docFiles, {id: 0, file: '', originalFilename: '', type: ''}]);
+    } else {
+      setDocFiles([
+        ...docFiles,
+        {id: docFiles[docFiles.length - 1].id + 1, file: '', originalFilename: '', type: ''}
+      ]);
     }
   };
 
+  // 첨부파일 버튼 삭제
+  const deleteProductDocUploadButton = (num: number) => {
+    const newDocFile = docFiles.filter((item, index) => index !== num);
+    setDocFiles(newDocFile);
+  };
+
   // 첨부파일 추가
-  const selectProductDoc = (id: number, event: any) => {
-    dispatch(addProductDoc({
+  const getProductDoc = (id: number, event: any) => {
+    let newDocFile = docFiles;
+    newDocFile = newDocFile.concat({
       id: id,
-      productDoc: {
-        file: event.target.files[0],
-        originalFilename: event.target.files[0].name
-      }
-    }));
+      file: event.target.files[0],
+      originalFilename: event.target.files[0].name,
+      type: ''
+    });
+    setDocFiles(newDocFile);
+  };
+
+  // 첨부파일 이름 변경
+  const getProductDocType = (id: number, type: string) => {
+    const newDocFile = docFiles.map(item => (
+      item.id === id ? {...item, type: type} : item
+    ));
+    setDocFiles(newDocFile);
+  };
+
+  // 파일 삭제
+  const deleteProductDoc = (id: number) => {
+    const newDocFile = docFiles.map(item => (
+      item.id === id ? {...item, originalFilename: '', file: ''} : item
+    ));
+    setDocFiles(newDocFile);
   };
 
   // 파일 이름 추출
@@ -170,42 +196,35 @@ export default function ProductForm({success, errorToast}: propsType) {
       type: string
     },
     productId: number) => {
-    docFiles.map((item: {
-      id: number,
-      file: string,
-      originalFilename: string,
-      type: string
-    }, index: number) => {
+    docFiles.map((item, index: number) => {
       item.originalFilename === productData.originalFilename &&
       productApi.putUpdateProductDocFiles(productId, productData.id, {filename: item.type})
-        .then(res => {
+        .then(() => {
           navigate(-1);
-          dispatch(onLoading());
-          if (index === docFiles.length - 1) success();
+          index === docFiles.length - 1 && success();
         })
         .catch(error => errorToast(error.response.data.message))
+        .finally(() => dispatch(onLoading()))
     })
   };
 
   // 중분류 카테고리 등록
   const postMiddleProductCategory = () => {
     const productForm = new FormData();
-    productForm.append('categoryName', middleCategory);
+    productForm.append('categoryName', category);
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
     productForm.append('productName', productName);
-    productForm.append('representativeImage', representativeImage.file[0]);
+    productForm.append('representativeImage', representativeImage.file);
     standardImages.map(item => productForm.append('standardImages', item.file));
 
-    console.log(mainCategory, middleCategory)
     if (validate()) {
       dispatch(onLoading());
       productApi.postCreateProduct(productForm)
         .then(res => {
           if (docFiles.length === 0) {
             success();
-            dispatch(onLoading());
             navigate(-1);
           } else {
             res.files.docFiles.map((item: {
@@ -219,14 +238,15 @@ export default function ProductForm({success, errorToast}: propsType) {
         })
         .catch(error => {
           console.log(error);
-          dispatch(onLoading());
           errorToast(error.response.data.message);
+
           if (error.response.status === 401) {
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
         })
+        .finally(() => dispatch(onLoading()))
     }
   };
 
@@ -254,9 +274,10 @@ export default function ProductForm({success, errorToast}: propsType) {
             required={true}
             autoFocus={true}
             placeholder='제품명'
+            value={productName}
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
-            onChange={event => dispatch(addProductName({productName: event?.target.value}))}
+            onChange={getProductName}
             inputProps={{style: {fontSize: 18}, maxLength: 20}}
             sx={{width: '100%'}}
           />
@@ -275,19 +296,19 @@ export default function ProductForm({success, errorToast}: propsType) {
         }}>
           <ButtonBox>
             {/* 숨김 input */}
-            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={selectRepProductImage}
-                   onClick={(e: any) => e.target.value = null}>
-              <input className='productInput' type='file' id='inputRepPhoto' accept='image/*'/>
+            <label ref={repPhotoInputRef} htmlFor='inputRepPhoto' onChange={getRepProductImage}>
+              <input className='productInput' type='file' id='inputRepPhoto' accept='image/*'
+                     onClick={(e: any) => e.target.value = null}/>
             </label>
 
-            <label ref={photoInputRef} htmlFor='inputPhoto' onChange={selectProductImage}
-                   onClick={(e: any) => e.target.value = null}>
-              <input className='productInput' type='file' id='inputPhoto' multiple accept='image/*'/>
+            <label ref={photoInputRef} htmlFor='inputPhoto' onChange={getProductImage}>
+              <input className='productInput' type='file' id='inputPhoto' multiple accept='image/*'
+                     onClick={(e: any) => e.target.value = null}/>
             </label>
 
-            <label ref={gradeInputRef} htmlFor='inputGrade' onChange={selectStandardImage}
-                   onClick={(e: any) => e.target.value = null}>
-              <input className='productInput' type='file' id='inputGrade' multiple accept='image/*'/>
+            <label ref={gradeInputRef} htmlFor='inputGrade' onChange={getStandardImage}>
+              <input className='productInput' type='file' id='inputGrade' multiple accept='image/*'
+                     onClick={(e: any) => e.target.value = null}/>
             </label>
 
             {/* 보여지는 button */}
@@ -320,7 +341,8 @@ export default function ProductForm({success, errorToast}: propsType) {
             multiline
             rows={5}
             autoComplete='off'
-            onChange={event => dispatch(addProductDescription({description: event.target.value}))}
+            value={description}
+            onChange={getDescription}
             inputProps={{style: {fontSize: 18}}}
             sx={{width: '100%', mb: 2, overflow: 'auto'}}
           />
@@ -360,11 +382,11 @@ export default function ProductForm({success, errorToast}: propsType) {
                 overflow: 'auto',
                 alignItems: 'center'
               }}>
-              {productImages.map((item: { file: string, path: string }, index: number) => (
+              {productImages.map((item, index: number) => (
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => dispatch(deleteProductImage({index: index}))}
+                      onClick={() => deleteProductImage(index)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
                   <img src={item.path} alt='제품 이미지' width='100%'/>
@@ -391,7 +413,7 @@ export default function ProductForm({success, errorToast}: propsType) {
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => dispatch(deleteStandardImage({index: index}))}
+                      onClick={() => deleteStandardImage(index)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
                   <img src={file.path} alt='규격 이미지' width='100%'/>
@@ -403,18 +425,14 @@ export default function ProductForm({success, errorToast}: propsType) {
           <FormControl error={!!fileErrorMsg} sx={{width: '100%'}}>
             {/* 파일 업로드 (다운로드 가능한 자료) */}
             <Stack direction='column' spacing={2}>
-              {docFiles.map((item: {
-                id: number,
-                file: string,
-                originalFilename: string,
-                type: string
-              }, index) => (
+              {docFiles.map((item, index: number) => (
                 <Stack key={item.id} direction='row' spacing={1} sx={{alignItems: 'center'}}>
                   <TextField
                     size='small'
                     placeholder='파일 이름'
-                    autoComplete={'off'}
-                    onChange={event => dispatch(addProductDocType({id: item.id, type: event.target.value}))}
+                    autoComplete='off'
+                    value={item.type}
+                    onChange={event => getProductDocType(item.id, event.target.value)}
                     inputProps={{style: {fontSize: 16}}}/>
                   <Typography sx={{
                     pl: 2,
@@ -427,24 +445,26 @@ export default function ProductForm({success, errorToast}: propsType) {
                     alignItems: 'center'
                   }}>
                     {item.originalFilename}
-                    {item.originalFilename ?
-                      <ClearRoundedIcon
-                        onClick={() => dispatch(deleteProductDoc({id: item.id}))}
-                        fontSize='small'
-                        sx={{ml: 1, cursor: 'pointer'}}/> :
-                      '파일'}
+                    {
+                      item.originalFilename ?
+                        <ClearRoundedIcon
+                          onClick={() => deleteProductDoc(item.id)}
+                          fontSize='small'
+                          sx={{ml: 1, cursor: 'pointer'}}/> :
+                        '파일'
+                    }
                   </Typography>
                   <label
                     className='fileUploadButton'
                     htmlFor={`inputFile${item.id}`}
-                    onChange={event => selectProductDoc(item.id, event)}
+                    onChange={event => getProductDoc(item.id, event)}
                     onClick={(e: any) => e.target.value = null}>
                     업로드
                     <input className='productInput' type='file' id={`inputFile${item.id}`}/>
                   </label>
 
                   <Button
-                    onClick={() => dispatch(deleteProductDocUploadButton({index: index}))}
+                    onClick={() => deleteProductDocUploadButton(index)}
                     sx={{color: 'darkgreen'}}>
                     <DeleteIcon/>
                   </Button>
@@ -453,11 +473,9 @@ export default function ProductForm({success, errorToast}: propsType) {
               <FormHelperText sx={{fontSize: 12}}>{fileErrorMsg}</FormHelperText>
 
               <Button
-                onClick={() => dispatch(addProductDocUploadButton())}
-                sx={{
-                  color: 'rgba(46, 125, 50, 0.5)',
-                  '&: hover': {backgroundColor: 'rgba(46, 125, 50, 0.1)'}
-                }}>
+                onClick={addProductDocUploadButton}
+                sx={{color: 'rgba(46, 125, 50, 0.5)', '&: hover': {backgroundColor: 'rgba(46, 125, 50, 0.1)'}}}
+              >
                 파일 추가
               </Button>
             </Stack>
