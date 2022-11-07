@@ -5,7 +5,7 @@ axios.defaults.withCredentials = true;
 class Api {
   // url
   baseUrl() {
-    return 'http://13.124.84.147'
+    return 'https://7550-117-17-163-69.jp.ngrok.io'
   };
 
   // 로그인 확인

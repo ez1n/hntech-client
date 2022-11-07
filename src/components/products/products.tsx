@@ -49,6 +49,7 @@ export default function Products({successDelete}: propsType) {
     middleCategory &&
     productApi.getAllProducts(middleCategory)
       .then(res => dispatch(getProductList({productList: res})))
+      .catch(error => console.log(error))
   }, [middleCategory]);
 
   // 제품 삭제

@@ -6,7 +6,7 @@ import {categoryApi} from "../../network/category";
 import {changeMode} from "../../app/reducers/managerModeSlice";
 import {
   Box,
-  Container,
+  Container, MenuItem, Select,
   Stack, styled,
   TextField,
   Typography
@@ -14,7 +14,7 @@ import {
 import EditButton from "../editButton";
 import Loading from "../loading";
 import CancelModal from "../cancelModal";
-import ProductCategorySelect from "../productCategorySelect";
+import {api} from "../../network/network";
 
 interface propsType {
   successModify: () => void,
@@ -36,7 +36,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
     imageOriginalFilename: '',
     showInMain: 'false',
     parent: '',
-    children: []
+    children: ['']
   });
   const [newImage, setNewImage] = useState({file: '', path: '', name: ''});
   const {id, categoryName, imageServerFilename, imageOriginalFilename, parent} = middleCategory;
@@ -148,10 +148,9 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
           </Box>
 
           {/* 카테고리 */}
-          <ProductCategorySelect
-            category={productCategories}
-            defaultCategory={currentProductCategoryName}
-            getCategory={getCategory}/>
+          <Select size={'small'} defaultValue={currentProductCategoryName}>
+            <MenuItem value={currentProductCategoryName} sx={{justifyContent: 'center'}}>{currentProductCategoryName}</MenuItem>
+          </Select>
         </Stack>
 
         {/* 제품 사진 미리보기 */}
@@ -169,7 +168,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
             }}>
             <Box sx={{width: '23%', m: 1}}>
               {newImage.path === '' ?
-                <img src={imageServerFilename} alt={imageOriginalFilename} width='100%'/> :
+                <img src={`${api.baseUrl()}/files/category/${imageServerFilename}`} alt={imageOriginalFilename} width='100%'/> :
                 <img src={newImage.path} alt={newImage.name} width='100%'/>
               }
             </Box>

@@ -71,7 +71,7 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
     productCategoryForm.append('categoryName', productCategoryName);
     productCategoryForm.append('showInMain', productCategoryShowInMain);
     productCategoryForm.append('type', 'product');
-    productCategoryForm.append('parentName', '')
+    productCategoryForm.append('role', 'parent');
 
     if (validate()) {
       dispatch(onLoading());

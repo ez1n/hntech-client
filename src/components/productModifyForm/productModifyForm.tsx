@@ -64,7 +64,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
   const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
-  const {parentCategory, childCategory, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
+  const {category, description, productName, files} = useAppSelector(state => state.productForm.productContent); // 추가한 제품 내용
   const {docFiles, productImages, representativeImage, standardImages} = files;
   const [mainCategory, setMainCategory] = useState(''); // 선택한 대분류 카테고리
   const [middleCategory, setMiddleCategory] = useState(''); // 선택한 중분류 카테고리
@@ -75,8 +75,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   const [fileErrorMsg, setFileErrorMsg] = useState(''); // 다운로드 파일 버튼
 
   useEffect(() => {
-    setMainCategory(parentCategory);
-    setMiddleCategory(childCategory);
+    setMiddleCategory(category);
   }, [])
 
   const validate = () => {
@@ -207,8 +206,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   // 제품 정보 수정 
   const putProduct = (productId: number) => {
     const productForm = new FormData();
-    productForm.append('categoryName', mainCategory);
-    productForm.append('categoryName', middleCategory); // 중분류 카테고리
+    productForm.append('categoryName', middleCategory);
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
@@ -336,16 +334,16 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             <EditButton name='규격 이미지 추가' onClick={() => selectInput(standardInputRef)}/>
           </Box>
 
-          {/* 대분류 카테고리 */}
-          <ProductCategorySelect
-            category={productCategories}
-            defaultCategory={mainCategory}
-            getCategory={getMainCategory}/>
+          <List>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
+              ※ 중분류 카테고리를 선택해 주세요.
+            </ListItem>
+          </List>
 
           {/* 중분류 카테고리 */}
           <ProductCategorySelect
             category={productMiddleCategories}
-            defaultCategory={middleCategory}
+            defaultCategory={category}
             getCategory={getMiddleCategory}/>
         </Box>
 

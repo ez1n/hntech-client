@@ -32,8 +32,8 @@ export default function ProductDetail({successDelete}: propsType) {
   };
 
   useEffect(() => {
-    (mainCategory && middleCategory) &&
-    productApi.getAllProducts(mainCategory)
+    middleCategory &&
+    productApi.getAllProducts(middleCategory)
       .then(res => dispatch(getProductList({productList: res})))
       .catch(error => console.log(error))
 

@@ -37,17 +37,12 @@ export default function ProductItem({product, index}: propsType) {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
 
-  useEffect(() => {
-    middleCategory &&
-    productApi.getAllProducts(middleCategory)
-      .then(res => dispatch(getProductList({productList: res})))
-      .catch(error => console.log(error))
-  }, [middleCategory]);
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
     productApi.getProduct(productId)
       .then(res => {
+        console.log(res)
         dispatch(getProductDetail({detail: res}));
         dispatch(getProductContent({detail: res}));
         navigate(`/product?main=${mainCategory}&middle=${middleCategory}&id=${res.id}`);

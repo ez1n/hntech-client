@@ -42,7 +42,7 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
   const [imageErrorMsg, setImageErrorMsg] = useState('');
 
   useEffect(() => {
-    setMiddleCategory({...middleCategory, categoryName: currentProductCategoryName})
+    setMiddleCategory({...middleCategory, parentName: currentProductCategoryName})
   }, []);
 
   const validate = () => {
@@ -84,6 +84,7 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
     middleCategoryForm.append('showInMain', 'false');
     middleCategoryForm.append('type', 'product');
     middleCategoryForm.append('parentName', parentName);
+    middleCategoryForm.append('role', 'child');
 
     if (validate()) {
       dispatch(onLoading());

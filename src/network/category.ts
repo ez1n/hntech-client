@@ -44,8 +44,8 @@ class CategoryApi {
   };
 
   // 제품 카테고리 삭제
-  async deleteProductCategory(categoryId: number) {
-    const response = await axios.delete(`/api/category/${categoryId}`);
+  async deleteProductCategory(categoryId: number, categoryName: string) {
+    const response = await axios.delete(`/api/category/${categoryId}/${categoryName}`);
     return response.data;
   };
 

@@ -190,8 +190,7 @@ export default function ProductForm({success, errorToast}: propsType) {
   // 중분류 카테고리 등록
   const postMiddleProductCategory = () => {
     const productForm = new FormData();
-    productForm.append('categoryName', mainCategory);
-    productForm.append('categoryName', middleCategory); // 중분류 카테고리
+    productForm.append('categoryName', middleCategory);
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
@@ -199,6 +198,7 @@ export default function ProductForm({success, errorToast}: propsType) {
     productForm.append('representativeImage', representativeImage.file[0]);
     standardImages.map(item => productForm.append('standardImages', item.file));
 
+    console.log(mainCategory, middleCategory)
     if (validate()) {
       dispatch(onLoading());
       productApi.postCreateProduct(productForm)
@@ -296,11 +296,11 @@ export default function ProductForm({success, errorToast}: propsType) {
             <EditButton name='규격 이미지 추가' onClick={() => selectInput(gradeInputRef)}/>
           </ButtonBox>
 
-          {/* 대분류 카테고리 */}
-          <ProductCategorySelect
-            category={productCategories}
-            defaultCategory={currentProductCategoryName}
-            getCategory={getMainCategory}/>
+          <List>
+            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
+              ※ 중분류 카테고리를 선택해 주세요.
+            </ListItem>
+          </List>
 
           {/* 중분류 카테고리 */}
           <ProductCategorySelect
