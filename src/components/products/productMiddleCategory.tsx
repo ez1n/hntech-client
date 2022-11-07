@@ -4,7 +4,8 @@ import {categoryApi} from "../../network/category";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {
   getMiddleProductCategory,
-  setCurrentProductMiddleCategory, setCurrentProductMiddleCategoryName
+  setCurrentProductMiddleCategory,
+  setCurrentProductMiddleCategoryName
 } from "../../app/reducers/categorySlice";
 import {
   Box,
@@ -41,11 +42,11 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
     categoryApi.getMiddleProductCategory(mainCategory)
       .then(res => dispatch(getMiddleProductCategory({category: res.categories})))
       .catch(error => console.log(error))
-  }, []);
+  }, [mainCategory]);
 
-  const selectMiddleCategory = (middleCategory: string) => {
-    dispatch(setCurrentProductMiddleCategoryName({category: middleCategory}));
-    navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`);
+  const selectMiddleCategory = (categoryName: string) => {
+    dispatch(setCurrentProductMiddleCategoryName({category: categoryName}));
+    navigate(`/product/category?main=${mainCategory}&middle=${categoryName}`);
   };
 
   // 카테고리 삭제 확인 modal - open
@@ -73,6 +74,7 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
 
     return (
       <Box sx={{width: '100%'}}>
+
         {!middleCategory &&
           <Grid container columns={categoryColumn} spacing={2}>
             {productMiddleCategories.length > 0 ?
@@ -90,7 +92,7 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
                     imageServerFilename={value.imageServerFilename}
                     imageOriginalFilename={value.imageOriginalFilename}
                     categoryName={value.categoryName}
-                    onClick={selectMiddleCategory}
+                    onClick={() => selectMiddleCategory(value.categoryName)}
                   />
 
                   {/* 수정 버튼 */}
@@ -123,15 +125,9 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
         {middleCategory &&
           <>
             <Container sx={{display: 'flex'}}>
-              <Typography
-                variant='h5'
-                sx={{
-                  p: 1,
-                  userSelect: 'none',
-                  fontWeight: 'bold'
-                }}>
+              <TitleTypography variant='h5'>
                 제품 소개
-              </Typography>
+              </TitleTypography>
             </Container>
             <Box sx={{
               pt: 1,
@@ -141,6 +137,17 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
               flexDirection: 'column',
               width: 'max-content'
             }}>
+              <MenuButton
+                onClick={() => navigate(`/product/category?main=${mainCategory}`)}
+                sx={{
+                  color: '#0F0F0F',
+                  backgroundColor: 'rgba(166,166,166,0.25)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(166,166,166,0.25)'
+                  }
+                }}>
+                전체
+              </MenuButton>
               {productMiddleCategories.map((value: {
                 id: number,
                 categoryName: string,
@@ -214,3 +221,12 @@ const MenuButton = styled(Button)(() => ({
     transform: 'scale(1.02)'
   }
 })) as typeof Button;
+
+const TitleTypography = styled(Typography)(({theme}) => ({
+  [theme.breakpoints.down('lg')]: {
+    fontSize: 18
+  },
+  padding: 1,
+  userSelect: 'none',
+  fontWeight: 'bold'
+})) as typeof Typography;

@@ -52,7 +52,7 @@ class CategoryApi {
   // 제품 카테고리 순서 변경
   async putUpdateCategorySequence(categorySequence: { currentCategoryId: number, targetCategoryId: number }) {
     const response = await axios.put(`/api/category/sequence`, categorySequence);
-    return response.data.categories;
+    return response;
   }
 
   /* 자료실 카테고리 */

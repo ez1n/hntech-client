@@ -57,7 +57,6 @@ export default function ProductCategoryList() {
           {categoryList.map((item: { categoryName: string, id: number }, index: number) => (
             <ProductCategoryListItem
               key={item.id}
-              moveCategoryItem={moveCategoryItem}
               category={item}
               id={item.id}
               index={index}/>

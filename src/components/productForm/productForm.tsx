@@ -160,13 +160,13 @@ export default function ProductForm({success, errorToast}: propsType) {
 
   // 첨부파일 추가
   const getProductDoc = (id: number, event: any) => {
-    let newDocFile = docFiles;
-    newDocFile = newDocFile.concat({
-      id: id,
-      file: event.target.files[0],
-      originalFilename: event.target.files[0].name,
-      type: ''
-    });
+    const newDocFile = docFiles.map(item => (
+      item.id === id ? {
+        ...item,
+        file: event.target.files[0],
+        originalFilename: event.target.files[0].name
+      } : item
+    ))
     setDocFiles(newDocFile);
   };
 
@@ -226,6 +226,7 @@ export default function ProductForm({success, errorToast}: propsType) {
           if (docFiles.length === 0) {
             success();
             navigate(-1);
+            dispatch(onLoading());
           } else {
             res.files.docFiles.map((item: {
               id: number,
@@ -238,6 +239,7 @@ export default function ProductForm({success, errorToast}: propsType) {
         })
         .catch(error => {
           console.log(error);
+          dispatch(onLoading());
           errorToast(error.response.data.message);
 
           if (error.response.status === 401) {
@@ -246,7 +248,6 @@ export default function ProductForm({success, errorToast}: propsType) {
             dispatch(changeMode({login: isLogin}));
           }
         })
-        .finally(() => dispatch(onLoading()))
     }
   };
 

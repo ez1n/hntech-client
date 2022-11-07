@@ -48,13 +48,13 @@ export default function ProductInfo({successDelete}: propsType) {
   // 제품 삭제
   const deleteProduct = (productId: number) => {
     productApi.deleteProduct(productId)
-      .then(res => {
+      .then(() => {
         productApi.getAllProducts(category)
           .then(res => {
             successDelete();
             dispatch(getProductList({productList: res}));
             closeDeleteProductItem();
-            navigate(`/product?main=${mainCategory}&middle=${middleCategory}`);
+            navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`);
           })
           .catch(error => console.log(error))
       })
@@ -77,10 +77,10 @@ export default function ProductInfo({successDelete}: propsType) {
 
       <Spacing sx={{textAlign: 'end'}}>
         {managerMode &&
-            <>
-                <EditButton name='수정' onClick={modifyProduct}/>
-                <EditButton name='삭제' onClick={openDeleteProductItem}/>
-            </>
+          <>
+            <EditButton name='수정' onClick={modifyProduct}/>
+            <EditButton name='삭제' onClick={openDeleteProductItem}/>
+          </>
         }
       </Spacing>
 
@@ -96,11 +96,11 @@ export default function ProductInfo({successDelete}: propsType) {
             borderBottom: '2px solid rgba(158,183,152,0.25)',
           }}>
           {files.productImages.length !== 0 &&
-              <img
-                  src={`${api.baseUrl()}/files/product/${files.productImages[activeStep].serverFilename}`}
-                  alt={files.productImages[activeStep].originalFilename}
-                  width={'100%'}
-                  height={'100%'}/>
+            <img
+              src={`${api.baseUrl()}/files/product/${files.productImages[activeStep].serverFilename}`}
+              alt={files.productImages[activeStep].originalFilename}
+              width={'100%'}
+              height={'100%'}/>
           }
         </Box>
         <MobileStepper

@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductList} from '../../app/reducers/productSlice';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
-import {setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
+import {setCurrentProductCategoryName, setCurrentProductMiddleCategoryName} from '../../app/reducers/categorySlice';
 import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -32,6 +32,7 @@ export default function Products({successDelete}: propsType) {
   const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
+  const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName);
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -53,16 +54,18 @@ export default function Products({successDelete}: propsType) {
   // 제품 삭제
   const deleteProduct = (productId: number) => {
     productApi.deleteProduct(productId)
-      .then(res => {
-        productApi.getAllProducts(currentProductCategoryName)
+      .then(() => {
+        middleCategory &&
+        productApi.getAllProducts(middleCategory)
           .then(res => {
             successDelete();
             dispatch(getProductList({productList: res}));
+            dispatch(clickProductItemGoBack());
           })
           .catch(error => console.log(error))
-        dispatch(clickProductItemGoBack());
       })
       .catch(error => {
+        console.log(error);
         if (error.response.status === 401) {
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
@@ -107,7 +110,7 @@ export default function Products({successDelete}: propsType) {
         <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
             {[
-              <Typography sx={{fontSize: 'large'}}>카테고리</Typography>
+              <Typography sx={{fontSize: 'large', userSelect: 'none'}}>전체 카테고리</Typography>
             ]}
           </Breadcrumbs>
         </Box>
@@ -123,8 +126,19 @@ export default function Products({successDelete}: propsType) {
         <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
             {[
-              <Typography sx={{fontSize: 'large'}}>카테고리</Typography>,
-              <Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>{mainCategory}</Typography>,
+              <Typography
+                onClick={() => navigate('/product/category')}
+                sx={{
+                  fontSize: 'large',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+                }}>
+                전체 카테고리
+              </Typography>,
+              <Typography sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>
+                {mainCategory}
+              </Typography>,
             ]}
           </Breadcrumbs>
         </Box>
@@ -145,6 +159,7 @@ export default function Products({successDelete}: propsType) {
               defaultValue={currentProductCategoryName}
               onChange={(event: any) => {
                 dispatch(setCurrentProductCategoryName({category: event?.target.value}));
+                navigate(`/product/category?main=${event?.target.value}`);
               }}
               size='small'>
               {productCategories.map((item: {
@@ -179,9 +194,28 @@ export default function Products({successDelete}: propsType) {
           <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
             <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
               {[
-                <Typography sx={{fontSize: 'large'}}>카테고리</Typography>,
-                <Typography sx={{fontSize: 'large'}}>{mainCategory}</Typography>,
-                <Typography sx={{fontSize: 'large', fontWeight: 'bold'}}>{middleCategory}</Typography>
+                <Typography
+                  onClick={() => navigate('/product/category')}
+                  sx={{
+                    fontSize: 'large',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+                  }}>
+                  전체 카테고리
+                </Typography>,
+                <Typography
+                  onClick={() => navigate(`/product/category?main=${mainCategory}`)}
+                  sx={{
+                    fontSize: 'large',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+                  }}>
+                  {mainCategory}
+                </Typography>,
+                <Typography
+                  sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>{middleCategory}</Typography>
               ]}
             </Breadcrumbs>
           </Box>
@@ -197,8 +231,11 @@ export default function Products({successDelete}: propsType) {
             {/* 900px 이하 사이드 메뉴 */}
             <SelectBox>
               <MenuSelect
-                defaultValue={currentProductCategoryName}
-                onChange={(event: any) => dispatch(setCurrentProductCategoryName({category: event?.target.value}))}
+                defaultValue={currentProductMiddleCategoryName}
+                onChange={(event: any) => {
+                  dispatch(setCurrentProductMiddleCategoryName({category: event?.target.value}));
+                  navigate(`/product/category?main=${mainCategory}&middle=${event?.target.value}`);
+                }}
                 size='small'>
                 {productMiddleCategories.map((item: {
                   categoryName: string;

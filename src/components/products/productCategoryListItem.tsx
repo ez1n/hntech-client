@@ -6,21 +6,24 @@ import {setAllProductCategories} from "../../app/reducers/categorySlice";
 import {Box, Stack, Typography} from "@mui/material";
 
 interface propsType {
-  moveCategoryItem: (id: number, targetIndex: number) => void,
   category: { categoryName: string, id: number },
   id: number,
   index: number
 }
 
-export default function ProductCategoryListItem({moveCategoryItem, category, id, index}: propsType) {
+export default function ProductCategoryListItem({category, id, index}: propsType) {
   const dispatch = useAppDispatch();
 
   // 순서변경
   const putUpdateCategorySequence = (draggedId: number, targetId: number) => {
     categoryApi.putUpdateCategorySequence({currentCategoryId: draggedId, targetCategoryId: targetId})
       .then(res => {
+        console.log(res)
         categoryApi.getMainProductCategory()
-          .then(res => dispatch(setAllProductCategories({categories: res.categories})))
+          .then(res => {
+            dispatch(setAllProductCategories({categories: res.categories}));
+            console.log(res)
+          })
           .catch(error => console.log(error))
       })
       .catch(error => console.log(error))

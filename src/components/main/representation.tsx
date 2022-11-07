@@ -67,10 +67,11 @@ export default function Representation() {
   // 카테고리 목록
   const MainCategoryGrid = () => {
     let categoryColumn = productMainCategories.length;
-    if (windowSize < 1200) categoryColumn = 4;
-    if (windowSize < 900) categoryColumn = 3;
-    if (windowSize < 600) categoryColumn = 2;
-    if (windowSize < 400) categoryColumn = 1;
+    if (productMainCategories.length > 2) {
+      if (windowSize < 1200) categoryColumn = 3;
+      if (windowSize < 900) categoryColumn = 2;
+    }
+    if (windowSize < 600) categoryColumn = 1;
 
     return (
       <Grid container columns={categoryColumn} spacing={3}>

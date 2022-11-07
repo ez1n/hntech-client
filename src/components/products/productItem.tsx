@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {api} from '../../network/network';
 import {productApi} from '../../network/product';
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -60,9 +60,11 @@ export default function ProductItem({product, index}: propsType) {
   // 순서변경
   const putUpdateCategorySequence = (draggedId: number, targetId: number) => {
     productApi.putUpdateProductSequence({currentProductId: draggedId, targetProductId: targetId})
-      .then(res => {
-        productApi.getAllProducts(currentProductCategoryName)
+      .then(() => {
+        middleCategory &&
+        productApi.getAllProducts(middleCategory)
           .then(res => dispatch(getProductList({productList: res})))
+          .catch(error => console.log(error))
       })
       .catch(error => console.log(error))
   };

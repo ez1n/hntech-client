@@ -3,10 +3,11 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductDetail, getProductList} from '../../app/reducers/productSlice';
-import {Box, Button, Container, MenuItem, Select, styled, Typography} from '@mui/material';
+import {Box, Breadcrumbs, Button, Container, MenuItem, Select, styled, Typography} from '@mui/material';
 import ProductInfo from './productInfo';
 import Files from './files';
 import Specification from './specification';
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 interface propsType {
   successDelete: () => void
@@ -40,41 +41,111 @@ export default function ProductDetail({successDelete}: propsType) {
   useEffect(() => {
     id &&
     productApi.getProduct(parseInt(id))
-      .then(res => {
-        dispatch(getProductDetail({detail: res}));
-      })
+      .then(res => dispatch(getProductDetail({detail: res})))
+      .catch(error => console.log(error))
   }, [id]);
 
   return (
-    <TotalBox>
-      {/* 제품목록 */}
-      <CategoryTotalBox>
-        <CategoryBox>
-          <Container sx={{display: 'flex'}}>
-            <Typography variant='h5' sx={{p: 1, userSelect: 'none', fontWeight: 'bold'}}>
-              제품 목록
-            </Typography>
-          </Container>
-          <Box sx={{
-            pt: 1,
-            pb: 1,
-            pl: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            width: 'max-content'
-          }}>
-
-            <MenuButton
+    <Box>
+      <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
+        <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
+          {[
+            <Typography
+              onClick={() => navigate('/product/category')}
+              sx={{
+                fontSize: 'large',
+                cursor: 'pointer',
+                userSelect: 'none',
+                '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+              }}>
+              전체 카테고리
+            </Typography>,
+            <Typography
+              onClick={() => navigate(`/product/category?main=${mainCategory}`)}
+              sx={{
+                fontSize: 'large',
+                cursor: 'pointer',
+                userSelect: 'none',
+                '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+              }}>
+              {mainCategory}
+            </Typography>,
+            <Typography
               onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}
               sx={{
-                color: '#0F0F0F',
-                backgroundColor: 'rgba(166,166,166,0.25)',
-                '&:hover': {
-                  backgroundColor: 'rgba(166,166,166,0.25)'
-                }
-              }}>
-              전체
-            </MenuButton>
+              fontSize: 'large',
+              cursor: 'pointer',
+              userSelect: 'none',
+              '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+            }}>
+              {middleCategory}
+            </Typography>,
+            <Typography sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>{productName}</Typography>
+          ]}
+        </Breadcrumbs>
+      </Box>
+
+      <TotalBox>
+        {/* 제품목록 */}
+        <CategoryTotalBox>
+          <CategoryBox>
+            <Container sx={{display: 'flex'}}>
+              <Typography variant='h5' sx={{p: 1, userSelect: 'none', fontWeight: 'bold'}}>
+                제품 목록
+              </Typography>
+            </Container>
+            <Box sx={{
+              pt: 1,
+              pb: 1,
+              pl: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              width: 'max-content'
+            }}>
+              <MenuButton
+                onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}
+                sx={{
+                  color: '#0F0F0F',
+                  backgroundColor: 'rgba(166,166,166,0.25)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(166,166,166,0.25)'
+                  }
+                }}>
+                전체
+              </MenuButton>
+              {productList.map((item: {
+                id: number,
+                image: {
+                  id: number,
+                  originalFilename: string,
+                  savedPath: string,
+                  serverFilename: string,
+                },
+                productName: string
+              }) => (
+                <MenuButton
+                  key={item.id}
+                  onClick={() => getProduct(item.id)}
+                  sx={{
+                    color: item.productName === productName ? '#F0F0F0' : '#0F0F0F',
+                    backgroundColor: item.productName === productName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
+                    '&:hover': {
+                      backgroundColor: item.productName === productName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
+                    }
+                  }}>
+                  {item.productName}
+                </MenuButton>
+              ))}
+            </Box>
+          </CategoryBox>
+        </CategoryTotalBox>
+
+        {/* 900px 이하 사이드 메뉴 */}
+        <SelectBox>
+          <MenuSelect
+            defaultValue={productId}
+            onChange={(event: any) => getProduct(event?.target.value)}
+            size='small'>
             {productList.map((item: {
               id: number,
               image: {
@@ -85,59 +156,27 @@ export default function ProductDetail({successDelete}: propsType) {
               },
               productName: string
             }) => (
-              <MenuButton
-                key={item.id}
-                onClick={() => getProduct(item.id)}
-                sx={{
-                  color: item.productName === productName ? '#F0F0F0' : '#0F0F0F',
-                  backgroundColor: item.productName === productName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
-                  '&:hover': {
-                    backgroundColor: item.productName === productName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)'
-                  }
-                }}>
-                {item.productName}
-              </MenuButton>
+              <MenuList key={item.id} value={item.id}>{item.productName}</MenuList>
             ))}
-          </Box>
-        </CategoryBox>
-      </CategoryTotalBox>
+          </MenuSelect>
+        </SelectBox>
 
-      {/* 900px 이하 사이드 메뉴 */}
-      <SelectBox>
-        <MenuSelect
-          defaultValue={productId}
-          onChange={(event: any) => getProduct(event?.target.value)}
-          size='small'>
-          {productList.map((item: {
-            id: number,
-            image: {
-              id: number,
-              originalFilename: string,
-              savedPath: string,
-              serverFilename: string,
-            },
-            productName: string
-          }) => (
-            <MenuList key={item.id} value={item.id}>{item.productName}</MenuList>
-          ))}
-        </MenuSelect>
-      </SelectBox>
+        {/* 제품 정보 */}
+        <Box sx={{flex: 0.8, pt: 5, textAlign: 'center'}}>
+          <ProductInfo successDelete={successDelete}/>
 
-      {/* 제품 정보 */}
-      <Box sx={{flex: 0.8, pt: 5, textAlign: 'center'}}>
-        <ProductInfo successDelete={successDelete}/>
+          <Spacing/>
 
-        <Spacing/>
+          {/* 다운로드 자료 */}
+          <Files/>
 
-        {/* 다운로드 자료 */}
-        <Files/>
+          <Spacing/>
 
-        <Spacing/>
-
-        {/* 상세 정보 */}
-        <Specification/>
-      </Box>
-    </TotalBox>
+          {/* 상세 정보 */}
+          <Specification/>
+        </Box>
+      </TotalBox>
+    </Box>
   )
 };
 

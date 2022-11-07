@@ -144,8 +144,6 @@ export default function AdminPanel({successModify}: propsType) {
         dispatch(setFooter({footer: res.footer}));
         dispatch(copyManagerData({panelData: res}));
         dispatch(setManagerData({panelData: res}));
-        console.log('new', newPanelData);
-        console.log('res', res)
       })
       .catch(error => {
         console.log(error);

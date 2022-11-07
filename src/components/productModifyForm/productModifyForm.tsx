@@ -24,6 +24,7 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
 import Loading from '../loading';
+import {setCurrentProductMiddleCategoryName} from "../../app/reducers/categorySlice";
 
 interface propsType {
   successModify: () => void,
@@ -44,6 +45,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   // state
   const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
+  const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName);
   const [cancelProductModify, setCancelProductModify] = useState(false); // 제품 수정 취소
 
   const [content, setContent] = useState({category: '', description: '', productName: ''});
@@ -52,7 +54,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   const [productImages, setProductImages] = useState<{ file: string, path: string }[]>([]);
   const [representativeImage, setRepresentativeImage] = useState({file: '', path: ''});
   const [standardImages, setStandardImages] = useState<{ file: string, path: string }[]>([]);
-  const {category, description, productName} = content;
+  const {description, productName} = content;
   // 기존 파일
   const [originData, setOriginData] = useState({
     category: '',
@@ -94,7 +96,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
 
   useEffect(() => {
     setContent({
-      category: productDetail.category,
+      category: currentProductMiddleCategoryName,
       description: productDetail.description,
       productName: productDetail.productName
     })
@@ -117,7 +119,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   };
 
   // 중분류 카테고리 선택
-  const getMiddleCategory = (category: string) => setContent({...content, category: category});
+  const getMiddleCategory = (category: string) => dispatch(setCurrentProductMiddleCategoryName({category: category}));
 
   // 제품 수정 취소 modal - open
   const openCancelProductModify = () => setCancelProductModify(cancelProductModify => !cancelProductModify);
@@ -198,13 +200,13 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
 
   // 첨부파일 추가
   const getProductDoc = (id: number, event: any) => {
-    let newDocFile = docFiles;
-    newDocFile = newDocFile.concat({
-      id: id,
-      file: event.target.files[0],
-      originalFilename: event.target.files[0].name,
-      type: ''
-    });
+    const newDocFile = docFiles.map(item => (
+      item.id === id ? {
+        ...item,
+        file: event.target.files[0],
+        originalFilename: event.target.files[0].name
+      } : item
+    ))
     setDocFiles(newDocFile);
   };
 
@@ -268,7 +270,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
           if (index === docFiles.length - 1) successModify();
         })
         .catch(error => {
-          errorToast(error.response.data.message)
+          errorToast(error.response.data.message);
         })
         .finally(() => dispatch(onLoading()))
     })
@@ -277,18 +279,19 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   // 제품 정보 수정 
   const putProduct = (productId: number) => {
     const productForm = new FormData();
-    productForm.append('categoryName', category);
+    productForm.append('categoryName', currentProductMiddleCategoryName);
     productForm.append('description', description);
     docFiles.map(item => productForm.append('docFiles', item.file));
     productImages.map(item => productForm.append('productImages', item.file));
     productForm.append('productName', productName);
-    productForm.append('representativeImage', representativeImage.file);
+    representativeImage.file === '' ?
+      productForm.append('representativeImage', new Blob()) :
+      productForm.append('representativeImage', representativeImage.file);
     standardImages.map(item => productForm.append('standardImages', item.file));
 
     deleteDocId.map((item: { productId: number, fileId: number }) => (
       productApi.deleteProductFile(item.productId, item.fileId)
-        .then()
-        .catch(error => console.log(error))
+        .then().catch(error => console.log(error))
     ));
 
     if (validate()) {
@@ -296,6 +299,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
       productApi.putUpdateProduct(productId, productForm)
         .then(res => {
           if (docFiles.length === 0) {
+            dispatch(onLoading());
             successModify();
             navigate(-1);
           } else {
@@ -306,19 +310,20 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
               serverFilename: string,
               type: string
             }) => {
-              putUpdateProductDocFiles(item, productId)
+              putUpdateProductDocFiles(item, productId);
             })
           }
         })
         .catch(error => {
           errorToast(error.response.data.message);
+          dispatch(onLoading());
+          console.log(error);
           if (error.response.status === 401) {
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
         })
-        .finally(() => dispatch(onLoading()))
     }
   };
 
@@ -413,7 +418,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
           {/* 중분류 카테고리 */}
           <ProductCategorySelect
             category={productMiddleCategories}
-            defaultCategory={category}
+            defaultCategory={currentProductMiddleCategoryName}
             getCategory={getMiddleCategory}/>
         </Box>
 

@@ -38,10 +38,7 @@ export default function Files() {
       }) =>
         <FileButton
           key={item.id}
-          onClick={() => {
-            console.log(item.serverFilename, item.originalFilename)
-            downloadFile(item.serverFilename, item.originalFilename)
-          }}>
+          onClick={() => downloadFile(item.serverFilename, item.originalFilename)}>
           {item.type}
         </FileButton>)}
     </Box>

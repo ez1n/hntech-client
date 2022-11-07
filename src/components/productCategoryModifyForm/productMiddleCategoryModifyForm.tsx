@@ -136,20 +136,22 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
           />
         </Box>
 
-        {/* 사진 추가 */}
-        <Stack direction='row' sx={{mt: 2, alignItems: 'center'}}>
-          {/* 사진 추가 */}
+        {/* 사진 변경 */}
+        <Stack direction='row' spacing={2} sx={{mt: 2, alignItems: 'center'}}>
+          {/* 사진 변경 */}
           <Box sx={{pl: 1}}>
             <label className='categoryUploadButton' htmlFor='middleCategoryInput' onChange={selectCategoryImage}
                    onClick={(e: any) => e.target.value = null}>
-              사진 추가
+              사진 변경
               <input type='file' id='middleCategoryInput' accept='image/*'/>
             </label>
           </Box>
 
           {/* 카테고리 */}
-          <Select size={'small'} defaultValue={currentProductCategoryName}>
-            <MenuItem value={currentProductCategoryName} sx={{justifyContent: 'center'}}>{currentProductCategoryName}</MenuItem>
+          <Select size={'small'} defaultValue={currentProductCategoryName} disabled>
+            <MenuItem value={currentProductCategoryName} sx={{justifyContent: 'center'}}>
+              {currentProductCategoryName}
+            </MenuItem>
           </Select>
         </Stack>
 

@@ -97,7 +97,7 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
               imageServerFilename={value.imageServerFilename}
               imageOriginalFilename={value.imageOriginalFilename}
               categoryName={value.categoryName}
-              onClick={selectProductCategory}
+              onClick={() => selectProductCategory(value.categoryName)}
             />
 
             {/* 수정 버튼 */}
@@ -182,6 +182,17 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
             flexDirection: 'column',
             width: 'max-content'
           }}>
+            <MenuButton
+              onClick={() => navigate(`/product/category`)}
+              sx={{
+                color: '#0F0F0F',
+                backgroundColor: 'rgba(166,166,166,0.25)',
+                '&:hover': {
+                  backgroundColor: 'rgba(166,166,166,0.25)'
+                }
+              }}>
+              전체
+            </MenuButton>
             {productCategories.map((value: {
               categoryName: string;
               id: number;
@@ -222,11 +233,8 @@ const Spacing = styled(Box)(() => ({
 })) as typeof Box;
 
 const TitleTypography = styled(Typography)(({theme}) => ({
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('lg')]: {
     fontSize: 18
-  },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: 14
   },
   fontWeight: 'bold',
   userSelect: 'none',
@@ -274,3 +282,4 @@ const MenuButton = styled(Button)(() => ({
     transform: 'scale(1.02)'
   }
 })) as typeof Button;
+

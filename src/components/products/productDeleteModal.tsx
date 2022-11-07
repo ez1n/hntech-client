@@ -122,8 +122,8 @@ export default function ProductDeleteModal(props: PropsType) {
           </DialogContentText>
 
           <TextField value={deleteCategoryName} onChange={changeValue} error={!!categoryNameErrorMessage}
-                     helperText={categoryNameErrorMessage}
-                     autoComplete='off' autoFocus fullWidth placeholder='정확한 명칭을 입력해 주세요'/>
+                     helperText={categoryNameErrorMessage} autoFocus={true}
+                     autoComplete='off' fullWidth placeholder='정확한 명칭을 입력해 주세요'/>
         </DialogContent>
 
         <DialogActions>
