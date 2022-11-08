@@ -1,16 +1,14 @@
 import React from 'react';
-import {useAppDispatch, useAppSelector} from '../app/hooks';
-import {updateArchiveCategory} from '../app/reducers/archiveFormSlice';
+import {useAppSelector} from '../app/hooks';
 import {MenuItem, Select, FormControl, FormHelperText, styled} from '@mui/material';
 
 interface propsType {
   defaultCategory: string | null,
-  categoryErrorMsg: string | undefined
+  categoryErrorMsg?: string,
+  getCategory: (e: any) => void
 }
 
-export default function ArchiveCategorySelect({defaultCategory, categoryErrorMsg}: propsType) {
-  const dispatch = useAppDispatch();
-
+export default function ArchiveCategorySelect({defaultCategory, categoryErrorMsg, getCategory}: propsType) {
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
 
   return (
@@ -18,7 +16,7 @@ export default function ArchiveCategorySelect({defaultCategory, categoryErrorMsg
       <Select
         size={'small'}
         defaultValue={defaultCategory ? defaultCategory : undefined}
-        onChange={event => dispatch(updateArchiveCategory({categoryName: event?.target.value}))}
+        onChange={getCategory}
         sx={{textAlign: 'center'}}
         MenuProps={{style: {maxHeight: 300}}}
       >

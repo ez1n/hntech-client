@@ -4,7 +4,6 @@ import {archiveApi} from '../network/archive';
 import {fileApi} from '../network/file';
 import {useAppSelector, useAppDispatch} from '../app/hooks';
 import {changeMode} from '../app/reducers/managerModeSlice';
-import {copyArchiveDetailData, resetArchiveFile} from '../app/reducers/archiveFormSlice';
 import {
   Box,
   Button,
@@ -31,12 +30,6 @@ export default function ArchiveDetail({successDelete}: propsType) {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
   const [deleteArchiveDetail, setDeleteArchiveDetail] = useState(false); // 게시글 삭제
-
-  // 수정 정보 만들기
-  useEffect(() => {
-    dispatch(copyArchiveDetailData({detail: detail}));
-    dispatch(resetArchiveFile());
-  }, []);
 
   useEffect(() => {
     index &&

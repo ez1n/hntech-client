@@ -5,22 +5,8 @@ import {api} from "../../network/network";
 import {archiveApi} from '../../network/archive';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {getDetailData} from '../../app/reducers/archiveSlice';
+import {onLoading} from "../../app/reducers/dialogSlice";
 import {changeMode} from '../../app/reducers/managerModeSlice';
-import {
-  addArchiveFile,
-  deleteArchiveFile,
-  deleteArchiveFileData,
-  updateArchiveFileData,
-  resetArchiveState,
-  modifyArchiveTitle,
-  modifyArchiveContent,
-  modifyArchiveNoticeChecked,
-  deleteArchiveOriginFile,
-  updateArchiveCategory,
-  addArchiveContentFile,
-  deleteArchiveContentFile,
-  deleteOriginalArchiveContentFile, resetArchiveFile
-} from '../../app/reducers/archiveFormSlice';
 import {
   Container,
   styled,
@@ -46,12 +32,33 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
   const dispatch = useAppDispatch();
 
   // state
-  const archiveModifyContent = useAppSelector(state => state.archiveForm.archiveModifyContent); // 자료실 글쓰기 수정 내용
-  const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName);
+  const detail = useAppSelector(state => state.archive.detail); // 게시글 상세정보
   const archiveId = useAppSelector(state => state.archive.detail.id); // 자료실 글 id
-  const attachedFileData = useAppSelector(state => state.archiveForm.attachedFiles.data); // 첨부파일 목록
-  const attachedFileName = useAppSelector(state => state.archiveForm.attachedFiles.name); // 첨부파일 이름 목록
-  const contentImageFiles = useAppSelector(state => state.archiveForm.contentImageFiles);
+  const [content, setContent] = useState<{
+    categoryName: string,
+    content: string,
+    notice: string,
+    title: string
+  }>({
+    categoryName: '',
+    content: '',
+    notice: '',
+    title: ''
+  });
+  const [originFiles, setOriginFiles] = useState<{
+    id: number,
+    originalFilename: string,
+    savedPath: string,
+    serverFilename: string
+  }[]>([]);
+  const [originImages, setOriginImages] = useState<{
+    id: number,
+    originalFilename: string,
+    savedPath: string,
+    serverFilename: string
+  }[]>([]);
+  const [file, setFile] = useState<{ name: string, file: string }[]>([]); // 첨부파일
+  const [image, setImage] = useState<{ file: string, path: string }[]>([]); // 첨부 사진
   const [cancelArchiveModify, setCancelArchiveModify] = useState(false); // 자료실 글 수정
   const [deleteArchiveId, setDeleteArchiveId] = useState<{ archiveId: number, fileId: number }[]>([]); // 삭제할 첨부파일
 
@@ -59,13 +66,19 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
 
   useEffect(() => {
-    dispatch(updateArchiveCategory({categoryName: archiveModifyContent.categoryName}))
-    dispatch(resetArchiveFile());
+    setContent({
+      categoryName: detail.categoryName,
+      content: detail.content,
+      title: detail.title,
+      notice: detail.notice
+    })
+    setOriginFiles(detail.attachedFiles);
+    setOriginImages(detail.contentImageFiles);
   }, []);
 
   const validate = () => {
     let isValid = true;
-    if (archiveModifyContent.title === null || archiveModifyContent.title === '') {
+    if (!content.title) {
       setTitleErrorMsg('제목을 입력해 주세요.');
       isValid = false;
     } else setTitleErrorMsg('');
@@ -82,82 +95,107 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
     setCancelArchiveModify(false);
   };
 
-  // 파일 선택 이벤트
-  const selectFile = (event: any) => {
-    // 파일 이름 미리보기
-    for (let i = 0; i < event?.target.files.length; i++) {
-      dispatch(addArchiveFile({item: event?.target.files[i].name}));
-    }
-
-    // 전송할 파일 데이터
-    for (let i = 0; i < event?.target.files.length; i++) {
-      dispatch(updateArchiveFileData({file: event?.target.files[i]}));
-    }
+  // 제목, 내용 입력
+  const changeValue = (event: any) => {
+    const {name, value} = event.target;
+    setContent({...content, [name]: value})
   };
 
   // 파일 선택 이벤트
-  const selectContentFile = (event: any) => {
+  const getFile = (event: any) => {
+    let newFile = file;
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addArchiveContentFile({
-        file: {
-          file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
-        }
-      }))
+      newFile = newFile.concat({name: event.target.files[i].name, file: event.target.files[i]})
     }
+    setFile(newFile);
+  };
+
+  // 이미지 선택 이벤트
+  const getImage = (event: any) => {
+    for (let i = 0; i < event.target.files.length; i++) {
+      let newImage = image;
+      for (let i = 0; i < event.target.files.length; i++) {
+        newImage = newImage.concat({file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])})
+      }
+      setImage(newImage);
+    }
+  };
+
+  // 이미지 삭제
+  const deleteImage = (num: number) => {
+    const newImage = image.filter((item, index) => index !== num)
+    setImage(newImage);
   };
 
   // 파일 선택 취소
-  const deleteFile = (index: number) => {
-    // 파일 이름 삭제
-    dispatch(deleteArchiveFile({num: index}));
+  const deleteFile = (num: number) => {
+    const newFile = file.filter((item, index) => index !== num);
+    setFile(newFile);
+  };
 
-    // 전송할 파일 데이터 삭제
-    dispatch(deleteArchiveFileData({num: index}));
+  // 카테고리 선택
+  const getCategory = (event: any) => {
+    setContent({...content, categoryName: event.target.value})
+  };
+
+  // 공지사항 선택
+  const getNotice = (event: any) => {
+    setContent({...content, notice: String(event.target.checked)});
   };
 
   // 기존 이미지 삭제
-  const deleteOriginArchiveContentFile = (index: number, archiveId: number, fileId: number) => {
-    dispatch(deleteOriginalArchiveContentFile({index: index}));
-    setDeleteArchiveId([...deleteArchiveId, {archiveId: archiveId, fileId: fileId}])
+  const deleteOriginImage = (num: number, archiveId: number, fileId: number) => {
+    const newImage = originImages.filter((item, index) => index !== num);
+    setOriginImages(newImage);
+    setDeleteArchiveId([...deleteArchiveId, {archiveId: archiveId, fileId: fileId}]);
   };
 
   // 기존 파일 삭제
-  const deleteOriginalFile = (index: number, archiveId: number, fileId: number) => {
-    dispatch(deleteArchiveOriginFile({num: index}));
+  const deleteOriginalFile = (num: number, archiveId: number, fileId: number) => {
+    const newFile = originFiles.filter((item, index) => index !== num);
+    setOriginFiles(newFile);
     setDeleteArchiveId([...deleteArchiveId, {archiveId: archiveId, fileId: fileId}])
+  };
+
+  // 파일 삭제
+  const deleteArchiveFile = () => {
+    deleteArchiveId.map((item: { archiveId: number, fileId: number }) => (
+      archiveApi.deleteArchiveFile(item.archiveId, item.fileId)
+        .then(() => setDeleteArchiveId([])).catch(error => console.log(error))
+    ))
   };
 
   // 자료실 글 변경
   const putArchiveForm = (archiveId: number) => {
-    const archiveData = new FormData();
-    attachedFileData.map((item: string) => archiveData.append('attachedFiles', item));
-    archiveData.append('categoryName', categoryName);
-    archiveData.append('content', archiveModifyContent.content);
-    contentImageFiles.map((item: { file: string, path: string }) => archiveData.append('contentImageFiles', item.file));
-    archiveData.append('notice', archiveModifyContent.notice);
-    archiveData.append('title', archiveModifyContent.title);
+    const archiveForm = new FormData();
+    file.map((item: { file: string, name: string }) => archiveForm.append('attachedFiles', item.file));
+    archiveForm.append('categoryName', content.categoryName);
+    archiveForm.append('content', content.content);
+    image.map((item: { file: string, path: string }) => archiveForm.append('contentImageFiles', item.file));
+    archiveForm.append('notice', content.notice);
+    archiveForm.append('title', content.title);
 
-    deleteArchiveId.map((item: { archiveId: number, fileId: number }) => (
-      archiveApi.deleteArchiveFile(item.archiveId, item.fileId)
-        .then()
-        .catch(error => console.log(error))
-    ))
+    deleteArchiveFile();
 
-    validate() &&
-    archiveApi.putUpdateArchive(archiveId, archiveData)
-      .then(res => {
-        successModify();
-        dispatch(getDetailData({detail: res}));
-        navigate(-1);
-      })
-      .catch(error => {
-        errorToast(error.response.data.message);
-        if (error.response.status === 401) {
-          localStorage.removeItem("login");
-          const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({login: isLogin}));
-        }
-      })
+    if (validate()) {
+      dispatch(onLoading());
+      archiveApi.putUpdateArchive(archiveId, archiveForm)
+        .then(res => {
+          successModify();
+          dispatch(getDetailData({detail: res}));
+          navigate(-1);
+        })
+        .catch(error => {
+          errorToast(error.response.data.message);
+          console.log(error);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({login: isLogin}));
+          }
+        })
+        .finally(() => dispatch(onLoading()))
+    }
   };
 
   return (
@@ -167,7 +205,6 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
 
       <Spacing/>
 
-      {/* 공지사항 글쓰기 폼 */}
       <Box sx={{
         borderTop: '3px solid #2E7D32',
         borderBottom: '3px solid #2E7D32',
@@ -181,11 +218,12 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
         }}>
           <TextField
             type='text'
-            value={archiveModifyContent.title}
+            name='title'
+            onChange={changeValue}
+            value={content.title}
             required
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
-            onChange={event => dispatch(modifyArchiveTitle({title: event?.target.value}))}
             placeholder='제목을 입력해 주세요'
             inputProps={{style: {fontSize: 18}}}
             sx={{width: '100%'}}
@@ -200,11 +238,13 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           p: 1,
           pl: 2
         }}>
-          <ArchiveCategorySelect defaultCategory={archiveModifyContent.categoryName} categoryErrorMsg={undefined}/>
+          <ArchiveCategorySelect getCategory={getCategory} defaultCategory={detail.categoryName}/>
+
+          {/* 공지사항 표시 */}
           <FormControlLabel
             control={<Checkbox
-              defaultChecked={archiveModifyContent.notice === 'true'}
-              onChange={event => dispatch(modifyArchiveNoticeChecked({isNotice: event?.target.checked}))}
+              defaultChecked={detail.notice === 'true'}
+              onChange={getNotice}
               sx={{
                 color: 'darkgrey',
                 '&.Mui-checked': {
@@ -222,7 +262,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
             <label
               className='uploadButton'
               htmlFor='inputArchivePhoto'
-              onChange={selectContentFile}
+              onChange={getImage}
               onClick={(e: any) => e.target.value = null}>
               사진 첨부
               <input id='inputArchivePhoto' type='file' accept={'image/*'} multiple/>
@@ -230,7 +270,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           </Box>
 
           {/* 첨부파일 */}
-          {archiveModifyContent.contentImageFiles.length + contentImageFiles.length > 0 &&
+          {originImages.length + image.length > 0 &&
             <Container
               sx={{
                 border: '1.8px solid lightgrey',
@@ -243,16 +283,11 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
                 alignItems: 'center'
               }}>
               {/* 기존 이미지 */}
-              {archiveModifyContent.contentImageFiles.map((item: {
-                id: number,
-                originalFilename: string,
-                savedPath: string,
-                serverFilename: string
-              }, index: number) => (
+              {originImages.map((item, index) => (
                 <Box key={item.id} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => deleteOriginArchiveContentFile(index, archiveId, item.id)}
+                      onClick={() => deleteOriginImage(index, archiveId, item.id)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
                   <img src={`${api.baseUrl()}/files/archive/${item.serverFilename}`} alt={item.originalFilename}
@@ -261,25 +296,26 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
               ))}
 
               {/* 새로 추가한 이미지 */}
-              {contentImageFiles.map((item: { file: string, path: string }, index: number) => (
+              {image.map((item, index) => (
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => dispatch(deleteArchiveContentFile({index: index}))}
+                      onClick={() => deleteImage(index)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
-                  <img src={item.path} alt='이미지' width='100%'/>
+                  <img src={item.path} alt='첨부 이미지' width='100%'/>
                 </Box>
               ))}
             </Container>
           }
 
           <TextField
-            defaultValue={archiveModifyContent.content}
+            name='content'
+            value={content.content}
+            onChange={changeValue}
             placeholder='내용을 입력하세요'
             multiline
             minRows={15}
-            onChange={event => dispatch(modifyArchiveContent({content: event.target.value}))}
             sx={{width: '100%', overflow: 'auto'}}/>
         </Stack>
 
@@ -296,12 +332,12 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           }}>
             <Stack>
               {/* 파일이 없는 경우 */}
-              {(attachedFileName.length === 0 && archiveModifyContent.attachedFiles.length === 0) &&
+              {(originFiles.length + file.length === 0) &&
                 <UploadFileTypography>업로드할 파일</UploadFileTypography>
               }
 
               {/* 기존 파일 */}
-              {archiveModifyContent.attachedFiles.map((item, index) => (
+              {originFiles.map((item, index) => (
                 <Stack direction='row' key={item.id}>
                   <UploadFileTypography>{item.originalFilename}</UploadFileTypography>
                   <ClearRoundedIcon
@@ -312,9 +348,9 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
               ))}
 
               {/* 새로 추가되는 파일 */}
-              {attachedFileName.map((item, index) => (
+              {file.map((item, index) => (
                 <Stack direction='row' key={index}>
-                  <UploadFileTypography>{item}</UploadFileTypography>
+                  <UploadFileTypography>{item.name}</UploadFileTypography>
                   <ClearRoundedIcon
                     onClick={() => deleteFile(index)}
                     fontSize='small'
@@ -326,7 +362,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           <label
             className='fileUploadButton'
             htmlFor='archiveFile'
-            onChange={event => selectFile(event)}
+            onChange={getFile}
             onClick={(e: any) => e.target.value = null}>
             업로드
             <input type='file' id='archiveFile' multiple style={{display: 'none'}}/>
@@ -349,7 +385,6 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
         text1={'변경중인 내용이 사라집니다.'}
         text2={'취소하시겠습니까?'}
         yesAction={() => {
-          dispatch(resetArchiveState());
           closeCancelArchiveModify()
           navigate(-1);
         }}

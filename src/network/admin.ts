@@ -31,7 +31,7 @@ class AdminApi {
 
   // 배너 삭제하기
   async deleteBanner(bannerName: string) {
-    const response = await axios.delete(`/file/image/${bannerName}`);
+    const response = await axios.delete(`/api/file/image/${bannerName}`);
     return response.data;
   };
 

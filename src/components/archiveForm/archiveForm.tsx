@@ -1,24 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import '../style.css';
 import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
-import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {useAppDispatch} from '../../app/hooks';
 import {onLoading} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
-import {
-  addArchiveFile,
-  deleteArchiveFile,
-  updateArchiveFileData,
-  deleteArchiveFileData,
-  updateArchiveTitle,
-  updateArchiveContent,
-  updateArchiveNoticeChecked,
-  resetArchiveState,
-  resetArchiveFile,
-  updateArchiveCategory,
-  addArchiveContentFile,
-  deleteArchiveContentFile
-} from '../../app/reducers/archiveFormSlice';
 import {
   Container,
   styled,
@@ -45,29 +31,22 @@ export default function ArchiveForm({success, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   // state
-  const archiveContent = useAppSelector(state => state.archiveForm.archiveContent); // 자료실 글쓰기 내용
-  const attachedFileData = useAppSelector(state => state.archiveForm.attachedFiles.data); // 첨부파일 이름 목록
-  const attachedFileName = useAppSelector(state => state.archiveForm.attachedFiles.name); // 첨부파일 이름 목록
-  const contentImageFiles = useAppSelector(state => state.archiveForm.contentImageFiles);
+  const [content, setContent] = useState({categoryName: '', content: '', notice: 'false', title: ''});
+  const [file, setFile] = useState<{ name: string, file: string }[]>([]); // 첨부파일
+  const [image, setImage] = useState<{ file: string, path: string }[]>([]); // 첨부 사진
   const [cancelArchive, setCancelArchive] = useState(false); // 자료실 글쓰기 취소
 
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
   const [categoryErrorMsg, setCategoryErrorMsg] = useState(''); // 카테고리
 
-  useEffect(() => {
-    dispatch(resetArchiveFile());
-    dispatch(updateArchiveCategory({categoryName: ''}));
-    dispatch(updateArchiveNoticeChecked({isNotice: false}));
-  }, []);
-
   const validate = () => {
     let isValid = true;
-    if (archiveContent.title === '') {
+    if (content.title === '') {
       setTitleErrorMsg('제목을 입력해 주세요.');
       isValid = false;
     } else setTitleErrorMsg('');
-    if (archiveContent.categoryName === '') {
+    if (content.categoryName === '') {
       setCategoryErrorMsg('카테고리를 선택해 주세요.');
       isValid = false;
     } else setCategoryErrorMsg('');
@@ -85,64 +64,78 @@ export default function ArchiveForm({success, errorToast}: propsType) {
   };
 
   // 파일 선택 이벤트
-  const selectFile = (event: any) => {
-    // 파일 이름 미리보기
+  const getFile = (event: any) => {
+    let newFile = file;
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addArchiveFile({item: event.target.files[i].name}))
+      newFile = newFile.concat({name: event.target.files[i].name, file: event.target.files[i]})
     }
-
-    // 전송할 파일 데이터
-    for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(updateArchiveFileData({file: event.target.files[i]}))
-    }
+    setFile(newFile);
   };
 
-  // 파일 선택 이벤트
-  const selectContentFile = (event: any) => {
+  // 이미지 선택 이벤트
+  const getImage = (event: any) => {
+    let newImage = image;
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addArchiveContentFile({
-        file: {
-          file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
-        }
-      }))
+      newImage = newImage.concat({file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])})
     }
+    setImage(newImage);
+  };
+
+  // 이미지 삭제
+  const deleteImage = (num: number) => {
+    const newImage = image.filter((item, index) => index !== num)
+    setImage(newImage);
   };
 
   // 파일 선택 취소
-  const deleteFile = (index: number) => {
-    dispatch(deleteArchiveFile({num: index}));
-    dispatch(deleteArchiveFileData({num: index}));
+  const deleteFile = (num: number) => {
+    const newFile = file.filter((item, index) => index !== num);
+    setFile(newFile);
+  };
+
+  // 제목, 내용 입력
+  const changeValue = (event: any) => {
+    const {name, value} = event.target;
+    setContent({...content, [name]: value})
+  };
+
+  // 카테고리 선택
+  const getCategory = (event: any) => {
+    setContent({...content, categoryName: event.target.value})
+  };
+
+  // 공지사항 선택
+  const getNotice = (event: any) => {
+    setContent({...content, notice: String(event.target.checked)});
   };
 
   // 자료실 글쓰기
   const postArchiveForm = () => {
     const archiveData = new FormData();
-    attachedFileData.map(item => archiveData.append('attachedFiles', item));
-    archiveData.append('categoryName', archiveContent.categoryName);
-    archiveData.append('content', archiveContent.content);
-    contentImageFiles.map((item: { file: string, path: string }) => archiveData.append('contentImageFiles', item.file));
-    archiveData.append('notice', archiveContent.notice);
-    archiveData.append('title', archiveContent.title);
+    file.map((item: { file: string, name: string }) => archiveData.append('attachedFiles', item.file));
+    archiveData.append('categoryName', content.categoryName);
+    archiveData.append('content', content.content);
+    image.map((item: { file: string, path: string }) => archiveData.append('contentImageFiles', item.file));
+    archiveData.append('notice', content.notice);
+    archiveData.append('title', content.title);
 
-    // 게시글 내용 보내기
     if (validate()) {
       dispatch(onLoading());
       archiveApi.postCreateArchive(archiveData)
-        .then(res => {
+        .then(() => {
           success();
-          dispatch(resetArchiveState());
-          dispatch(onLoading());
           navigate('/archive?page=1');
         })
         .catch(error => {
-          dispatch(onLoading());
           errorToast(error.response.data.message);
+          console.log(error)
           if (error.response.status === 401) {
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
         })
+        .finally(() => dispatch(onLoading()))
     }
   };
 
@@ -153,7 +146,6 @@ export default function ArchiveForm({success, errorToast}: propsType) {
 
       <Spacing/>
 
-      {/* 자료실 글쓰기 폼 */}
       <Box sx={{
         borderTop: '3px solid #2E7D32',
         borderBottom: '3px solid #2E7D32',
@@ -167,13 +159,14 @@ export default function ArchiveForm({success, errorToast}: propsType) {
         }}>
           <TextField
             type='text'
+            name='title'
+            onChange={changeValue}
             required
             autoFocus
             autoComplete='off'
             placeholder='제목을 입력해 주세요'
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
-            onChange={event => dispatch(updateArchiveTitle({title: event.target.value}))}
             inputProps={{style: {fontSize: 18}}}
             sx={{width: '100%'}}
           />
@@ -188,12 +181,12 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           pl: 2
         }}>
           {/* 카테고리 선택 */}
-          <ArchiveCategorySelect defaultCategory={null} categoryErrorMsg={categoryErrorMsg}/>
+          <ArchiveCategorySelect getCategory={getCategory} defaultCategory={null} categoryErrorMsg={categoryErrorMsg}/>
 
           {/* 공지사항 표시 */}
           <FormControlLabel
             control={<Checkbox
-              onChange={event => dispatch(updateArchiveNoticeChecked({isNotice: event.target.checked}))}
+              onChange={getNotice}
               sx={{
                 color: 'darkgrey',
                 '&.Mui-checked': {
@@ -211,7 +204,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             <label
               className='uploadButton'
               htmlFor='inputArchivePhoto'
-              onChange={selectContentFile}
+              onChange={getImage}
               onClick={(e: any) => e.target.value = null}>
               사진 첨부
               <input id='inputArchivePhoto' type='file' accept={'image/*'} multiple/>
@@ -219,7 +212,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           </Box>
 
           {/* 첨부파일 */}
-          {contentImageFiles.length > 0 &&
+          {image.length > 0 &&
             <Container
               sx={{
                 border: '1.8px solid lightgrey',
@@ -231,26 +224,27 @@ export default function ArchiveForm({success, errorToast}: propsType) {
                 overflow: 'auto',
                 alignItems: 'center'
               }}>
-              {contentImageFiles.map((item: { file: string, path: string }, index: number) => (
+              {image.map((item, index) => (
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => dispatch(deleteArchiveContentFile({index: index}))}
+                      onClick={() => deleteImage(index)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
-                  <img src={item.path} alt='이미지' width='100%'/>
+                  <img src={item.path} alt='첨부 이미지' width='100%'/>
                 </Box>
               ))}
             </Container>
           }
 
-
           <TextField
+            name='content'
+            value={content.content}
+            onChange={changeValue}
             autoComplete='off'
             placeholder='내용을 입력하세요'
             multiline
             minRows={15}
-            onChange={event => dispatch(updateArchiveContent({content: event.target.value}))}
             sx={{width: '100%', overflow: 'auto'}}/>
         </Stack>
 
@@ -266,14 +260,14 @@ export default function ArchiveForm({success, errorToast}: propsType) {
             alignItems: 'center'
           }}>
             <Stack>
-              {attachedFileName.length === 0 &&
+              {file.length === 0 &&
                 <UploadFileTypography>
                   업로드할 파일
                 </UploadFileTypography>
               }
-              {attachedFileName.map((item, index) => (
+              {file.map((item, index) => (
                 <Stack direction='row' key={index}>
-                  <UploadFileTypography>{item}</UploadFileTypography>
+                  <UploadFileTypography>{item.name}</UploadFileTypography>
                   <ClearRoundedIcon
                     onClick={() => deleteFile(index)}
                     fontSize='small'
@@ -285,7 +279,7 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           <label
             className='fileUploadButton'
             htmlFor='archiveFile'
-            onChange={event => selectFile(event)}
+            onChange={getFile}
             onClick={(e: any) => e.target.value = null}>
             업로드
             <input type='file' id='archiveFile' multiple style={{display: 'none'}}/>

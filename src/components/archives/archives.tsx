@@ -20,12 +20,16 @@ export default function Archives({errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const categoryName = useAppSelector(state => state.archiveForm.archiveContent.categoryName); // 선택한 카테고리
-  const [searchContent, setSearchContent] = useState<string>('');
+  const [category, setCategory] = useState('전체');
+  const [searchContent, setSearchContent] = useState('');
+
+  const getCategory = (event: any) => {
+    setCategory(event.target.value);
+  };
 
   // 자료 검색
   const getSearchArchive = () => {
-    archiveApi.getSearchArchive(categoryName === '전체' ? null : categoryName, searchContent, 0)
+    archiveApi.getSearchArchive(category === '전체' ? null : category, searchContent, 0)
       .then(res => dispatch(getAllArchives({
         archives: res.archives,
         totalPage: res.totalPages,
@@ -53,7 +57,7 @@ export default function Archives({errorToast}: propsType) {
         {/* 자료 검색 */}
         <SearchTotalStack direction='row' spacing={1}>
           {/* 카테고리 */}
-          <ArchiveCategorySelect defaultCategory={'전체'} categoryErrorMsg={undefined}/>
+          <ArchiveCategorySelect getCategory={getCategory} defaultCategory={category}/>
 
           <SearchStack direction='row' spacing={1}>
             <TextField

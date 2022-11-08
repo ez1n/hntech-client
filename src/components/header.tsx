@@ -154,7 +154,7 @@ export default function Header() {
             }) => (
               <DropdownMenu
                 key={item.id}
-                onClick={() => {categoryName
+                onClick={() => {
                   navigate(`/product/category?main=${item.categoryName}`);
                   dispatch(setCurrentProductCategoryName({category: item.categoryName}));
                 }}>

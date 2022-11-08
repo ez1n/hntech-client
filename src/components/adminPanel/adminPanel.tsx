@@ -120,6 +120,7 @@ export default function AdminPanel({successModify}: propsType) {
   const deleteOriginBannerImage = (index: number, bannerName: string) => {
     setDeleteBannerName([...deleteBannerName, {name: bannerName}]);
     dispatch(deleteOriginBanner({num: index}));
+    console.log(deleteBannerName)
   };
 
   // 관리자, 회사 정보 변경 요청
@@ -186,6 +187,7 @@ export default function AdminPanel({successModify}: propsType) {
         })
         .catch(error => {
           console.log(error);
+
           if (error.response.status === 401) {
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
