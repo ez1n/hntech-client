@@ -38,7 +38,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
   const [deleteCategory, setDeleteCategory] = useState(false); // 자료실 카테고리 삭제
-  const [selectedCategory, setSelectedCategory] = useState({name: '', id: 0});
+  const [selectedCategory, setSelectedCategory] = useState<{name: string, id: number | null}>({name: '', id: 0});
 
   // 카테고리 목록 받아오기
   useEffect(() => {
@@ -54,6 +54,12 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   // 자료실 카테고리 삭제 modal - close
   const closeDeleteArchiveCategory = () => {
     setDeleteCategory(false);
+  };
+
+  // 수정폼 나가기
+  const onClose = () => {
+    dispatch(clickArchivesGoBack());
+    setSelectedCategory({name: '', id: null});
   };
 
   // 카테고리 목록에 추가
@@ -115,7 +121,11 @@ export default function EditArchiveCategory({errorToast}: propsType) {
     categoryApi.putUpdateArchiveCategory(categoryId, categoryForm)
       .then(() => {
         categoryApi.getAllCategories()
-          .then(res => dispatch(getArchiveCategory({categories: res.categories})))
+          .then(res => {
+            dispatch(getArchiveCategory({categories: res.categories}));
+            setSelectedCategory({name: '', id: null});
+          })
+          .catch(error => console.log(error))
       })
       .catch(error => {
         errorToast(error.response.data.message);
@@ -164,7 +174,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
                     inputRef={categoryNameRef}
                     size='small'
                     autoComplete='off'
-                    autoFocus={true}
+                    autoFocus
                     sx={{flex: 0.7}}
                   />
                   <CheckCircleRoundedIcon
@@ -212,7 +222,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       </DialogContent>
 
       <DialogActions sx={{justifyContent: 'center'}}>
-        <EditButton name='나가기' onClick={() => dispatch(clickArchivesGoBack())}/>
+        <EditButton name='나가기' onClick={onClose}/>
       </DialogActions>
 
       <CancelModal

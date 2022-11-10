@@ -32,7 +32,7 @@ export default function Products({successDelete}: propsType) {
   const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
-  const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName);
+  const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName); // 현재 선택된 중분류 카테고리 state
   const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -228,10 +228,10 @@ export default function Products({successDelete}: propsType) {
               </CategoryBox>
             </Box>
 
-            {/* 900px 이하 사이드 메뉴 */}
+            {/* 900px 이하 메뉴 */}
             <SelectBox>
               <MenuSelect
-                defaultValue={currentProductMiddleCategoryName}
+                defaultValue={middleCategory}
                 onChange={(event: any) => {
                   dispatch(setCurrentProductMiddleCategoryName({category: event?.target.value}));
                   navigate(`/product/category?main=${mainCategory}&middle=${event?.target.value}`);

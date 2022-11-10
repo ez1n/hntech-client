@@ -3,7 +3,11 @@ import {categoryApi} from "../../network/category";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDrag, useDrop} from "react-dnd";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {getMiddleProductCategory, setCurrentProductMiddleCategory} from "../../app/reducers/categorySlice";
+import {
+  getMiddleProductCategory,
+  setCurrentProductMiddleCategory,
+  setCurrentProductMiddleCategoryName
+} from "../../app/reducers/categorySlice";
 import {Box, Button, Grid, styled} from "@mui/material";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
@@ -110,7 +114,7 @@ export default function ProductMiddleCategoryItem(props: propsType) {
             imageServerFilename={imageServerFilename}
             imageOriginalFilename={imageOriginalFilename}
             categoryName={categoryName}
-            onClick={() => selectMiddleCategory(categoryName)}
+            onClick={selectMiddleCategory}
           />
 
           {/* 수정 버튼 */}
