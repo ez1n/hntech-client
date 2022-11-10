@@ -47,7 +47,7 @@ export default function ProductDetail({successDelete}: propsType) {
 
   return (
     <Box>
-      <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
+      <BreadcrumbsBox>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
           {[
             <Typography
@@ -83,7 +83,7 @@ export default function ProductDetail({successDelete}: propsType) {
             <Typography sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>{productName}</Typography>
           ]}
         </Breadcrumbs>
-      </Box>
+      </BreadcrumbsBox>
 
       <TotalBox>
         {/* 제품목록 */}
@@ -180,7 +180,7 @@ export default function ProductDetail({successDelete}: propsType) {
   )
 };
 
-const Spacing = styled(Container)(({theme}) => ({
+const Spacing = styled(Container)(() => ({
   height: 50
 })) as typeof Container;
 
@@ -208,7 +208,7 @@ const CategoryTotalBox = styled(Box)(({theme}) => ({
   flex: 0.2
 })) as typeof Box;
 
-const CategoryBox = styled(Box)(({theme}) => ({
+const CategoryBox = styled(Box)(() => ({
   paddingTop: 10,
   paddingBottom: 10,
   marginTop: 20,
@@ -242,3 +242,12 @@ const MenuSelect = styled(Select)(() => ({
 const MenuList = styled(MenuItem)(() => ({
   justifyContent: 'center'
 })) as typeof MenuItem;
+
+const BreadcrumbsBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
+  },
+  margin: 'auto',
+  marginTop: 5,
+  width: '80vw'
+})) as typeof Box;

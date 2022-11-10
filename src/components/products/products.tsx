@@ -107,13 +107,13 @@ export default function Products({successDelete}: propsType) {
   if (!mainCategory) {
     return (
       <>
-        <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
+        <BreadcrumbsBox sx={{m: 'auto', mt: 5, width: '80vw'}}>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
             {[
               <Typography sx={{fontSize: 'large', userSelect: 'none'}}>전체 카테고리</Typography>
             ]}
           </Breadcrumbs>
-        </Box>
+        </BreadcrumbsBox>
 
         <Box sx={{p: 5, m: 'auto', width: '70vw', display: 'flex', justifyContent: 'center'}}>
           <ProductMainCategory windowSize={windowSize} successDelete={successDelete}/>
@@ -123,7 +123,7 @@ export default function Products({successDelete}: propsType) {
   } else if (mainCategory && !middleCategory) {
     return (
       <Box>
-        <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
+        <BreadcrumbsBox>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
             {[
               <Typography
@@ -141,7 +141,7 @@ export default function Products({successDelete}: propsType) {
               </Typography>,
             ]}
           </Breadcrumbs>
-        </Box>
+        </BreadcrumbsBox>
 
         <TotalBox>
           {/* 사이드 메뉴 */}
@@ -191,7 +191,7 @@ export default function Products({successDelete}: propsType) {
     return (
       <>
         <Box>
-          <Box sx={{m: 'auto', mt: 5, width: '80vw'}}>
+          <BreadcrumbsBox>
             <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
               {[
                 <Typography
@@ -218,7 +218,7 @@ export default function Products({successDelete}: propsType) {
                   sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>{middleCategory}</Typography>
               ]}
             </Breadcrumbs>
-          </Box>
+          </BreadcrumbsBox>
 
           <TotalBox>
             {/* 사이드 메뉴 */}
@@ -335,4 +335,13 @@ const TotalBox = styled(Box)(({theme}) => ({
   width: '80vw',
   margin: 'auto',
   marginTop: 50
-})) as typeof Box
+})) as typeof Box;
+
+const BreadcrumbsBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
+  },
+  margin: 'auto',
+  marginTop: 5,
+  width: '80vw'
+})) as typeof Box;

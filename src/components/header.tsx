@@ -373,21 +373,6 @@ const HeaderToolbar = styled(Toolbar)(({theme}) => ({
   paddingBottom: 10,
 })) as typeof Toolbar;
 
-const CompanyName = styled(Typography)(({theme}) => ({
-  [theme.breakpoints.down('md')]: {
-    fontSize: '1.4em'
-  },
-  [theme.breakpoints.down('sm')]: {
-    display: 'none'
-  },
-  display: 'flex',
-  alignItems: 'center',
-  marginLeft: 20,
-  fontSize: '1.8em',
-  fontWeight: 'bold',
-  color: '#0F0F0F'
-})) as typeof Typography;
-
 const AdminMode = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     top: '3em',

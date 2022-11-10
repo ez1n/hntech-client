@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {categoryApi} from '../../network/category';
 import {DndProvider} from 'react-dnd';
@@ -9,8 +9,7 @@ import {
   setCurrentProductCategoryName,
   updateProductCategoryImage
 } from '../../app/reducers/categorySlice';
-import {clickProductCategoryListGoBack} from '../../app/reducers/dialogSlice';
-import {setAllProductCategories, setCurrentProductCategory} from '../../app/reducers/categorySlice';
+import {setAllProductCategories} from '../../app/reducers/categorySlice';
 import {
   Box,
   Button,
@@ -20,12 +19,7 @@ import {
   Typography
 } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import EditButton from "../editButton";
-import ProductCategoryList from "./productCategoryList";
-import ProductDeleteModal from "./productDeleteModal";
-import ProductButton from "./productButton";
-import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+import ProductMainCategoryItem from "./productMainCategoryItem";
 
 interface propsType {
   windowSize: number,
@@ -41,8 +35,6 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
-  const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보
-  const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
     // 카테고리 이미지 초기화
@@ -51,29 +43,14 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
 
     // 카테고리 목록 받아오기
     categoryApi.getMainProductCategory()
-      .then(res => dispatch(setAllProductCategories({categories: res.categories})))
+      .then(res => dispatch(setAllProductCategories({categories: res})))
       .catch(error => console.log(error))
   }, []);
 
-  // 카테고리 삭제 확인 modal - open
-  const openDeleteMessage = (category: {
-    categoryName: string,
-    id: number,
-    imageServerFilename: string,
-    imageOriginalFilename: string,
-    showInMain: string
-  }) => {
-    dispatch(setCurrentProductCategory({category: category}));
-    setOpenDelete(openDelete => !openDelete);
-  };
-
-  // 카테고리 삭제 확인 modal - close
-  const closeDeleteMessage = () => setOpenDelete(false);
-
   // 카테고리 선택
-  const selectProductCategory = (categoryName: string) => {
+  const selectMainCategory = (categoryName: string) => {
     dispatch(setCurrentProductCategoryName({category: categoryName}));
-    navigate(`/product/category?main=${categoryName}`)
+    navigate(`/product/category?main=${categoryName}`);
   };
 
   // 카테고리 목록
@@ -84,43 +61,20 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
     if (windowSize < 600) categoryColumn = 1;
 
     return (
-      <Grid container columns={categoryColumn} spacing={3}>
-        {productCategories?.map((value: {
-          categoryName: string,
-          id: number,
-          imageServerFilename: string,
-          imageOriginalFilename: string,
-          showInMain: string
-        }) => (
-          <Grid item xs={1} key={value.id}>
-            <ProductButton
-              imageServerFilename={value.imageServerFilename}
-              imageOriginalFilename={value.imageOriginalFilename}
-              categoryName={value.categoryName}
-              onClick={() => selectProductCategory(value.categoryName)}
-            />
-
-            {/* 수정 버튼 */}
-            {managerMode &&
-              <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
-                <Button
-                  onClick={() => openDeleteMessage(value)}
-                  sx={{color: 'red'}}>
-                  <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
-                </Button>
-                <Button
-                  onClick={() => {
-                    dispatch(setCurrentProductCategory({category: value}));
-                    navigate('/product/category/main/modify');
-                  }}
-                  sx={{color: 'darkgreen'}}>
-                  <CreateRoundedIcon sx={{fontSize: 30}}/>
-                </Button>
-              </Box>
-            }
-          </Grid>
-        ))}
-      </Grid>
+      <DndProvider backend={HTML5Backend}>
+        <Grid container columns={categoryColumn} spacing={3}>
+          {productCategories?.map((value: {
+            categoryName: string,
+            id: number,
+            imageServerFilename: string,
+            imageOriginalFilename: string,
+            showInMain: string
+          }, index: number) => (
+            <ProductMainCategoryItem category={value} index={index} selectMainCategory={selectMainCategory}
+                                     successDelete={successDelete}/>
+          ))}
+        </Grid>
+      </DndProvider>
     )
   };
 
@@ -138,15 +92,6 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
               제품 소개
             </TitleTypography>
           </Container>
-          {managerMode &&
-            <Spacing sx={{textAlign: 'end'}}>
-              <EditButton name={'카테고리 목록'} onClick={() => dispatch(clickProductCategoryListGoBack())}/>
-
-              <DndProvider backend={HTML5Backend}>
-                <ProductCategoryList/>
-              </DndProvider>
-            </Spacing>
-          }
 
           {/* 카테고리 목록 */}
           <CategoryGrid/>
@@ -197,7 +142,7 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
             }) => (
               <MenuButton
                 key={value.id}
-                onClick={() => selectProductCategory(value.categoryName)}
+                onClick={() => selectMainCategory(value.categoryName)}
                 sx={{
                   color: mainCategory === value.categoryName ? '#F0F0F0' : '#0F0F0F',
                   backgroundColor: mainCategory === value.categoryName ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
@@ -211,14 +156,6 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
           </Box>
         </>
       }
-
-      {/* 카테고리 삭제 경고 메시지 */}
-      <ProductDeleteModal
-        open={openDelete}
-        category={productCurrentCategory}
-        successDelete={successDelete}
-        onClose={closeDeleteMessage}
-      />
     </Box>
   )
 };

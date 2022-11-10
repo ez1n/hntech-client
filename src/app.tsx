@@ -1,9 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {categoryApi} from './network/category';
 import {adminApi} from './network/admin';
+import {fileApi} from "./network/file";
 import {api} from './network/network';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import {useAppDispatch} from './app/hooks';
+import {useAppDispatch, useAppSelector} from './app/hooks';
 import {setAllProductCategories, setMainCategories} from './app/reducers/categorySlice';
 import {
   changeMode,
@@ -47,6 +48,11 @@ import ProductMainCategoryModifyForm from "./components/productCategoryModifyFor
 
 export default function App() {
   const dispatch = useAppDispatch();
+  const [catalogPDF, setCatalogPDF] = useState('');
+  const [approvalPDF, setApprovalPDF] = useState('');
+  const [taxPDF, setTaxPDF] = useState('');
+
+  const documentFile = useAppSelector(state => state.manager.document); // 카다록, 자재승인서 정보
 
   // 관리자 패널 정보
   const getPanelInfo = () => {
@@ -65,7 +71,7 @@ export default function App() {
 
     // 제품 카테고리 목록
     categoryApi.getMainProductCategory()
-      .then(res => dispatch(setAllProductCategories({categories: res.categories})))
+      .then(res => dispatch(setAllProductCategories({categories: res})))
 
     // 홈페이지 하단 정보
     adminApi.getFooter()
@@ -87,6 +93,21 @@ export default function App() {
     adminApi.getCompany()
       .then(res => dispatch(getCompanyImage({data: res})))
   }, []);
+
+  // 카다록, 자재승인서, 시국세
+  useEffect(() => {
+    fileApi.downloadFile(documentFile.catalogServerFilename)
+      .then(res => setCatalogPDF(URL.createObjectURL(res)))
+      .catch(error => console.log(error))
+
+    fileApi.downloadFile(documentFile.materialServerFilename)
+      .then(res => setApprovalPDF(URL.createObjectURL(res)))
+      .catch(error => console.log(error))
+
+    fileApi.downloadFile(documentFile.taxServerFilename)
+      .then(res => setTaxPDF(URL.createObjectURL(res)))
+      .catch(error => console.log(error))
+  }, [documentFile]);
 
   // 로그인 여부 확인
   useEffect(() => {
@@ -123,7 +144,7 @@ export default function App() {
         <Typography sx={{fontSize: 18, mt: 8}}>{error.message ? error.message : '오류가 발생했습니다.'}</Typography>
       </Box>
     )
-  };
+  }
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -192,7 +213,10 @@ export default function App() {
               }></Route>
 
               <Route path='/document' element={
-                <MainData/>
+                <MainData
+                  catalogPDF={catalogPDF}
+                  approvalPDF={approvalPDF}
+                  taxPDF={taxPDF}/>
               }></Route>
 
               <Route path='/question' element={

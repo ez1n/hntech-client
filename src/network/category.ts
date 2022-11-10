@@ -14,7 +14,7 @@ class CategoryApi {
   // 대분류 제품 카테고리 목록 받아오기
   async getMainProductCategory() {
     const response = await axios.get(`/api/category/product/parent`);
-    return response.data;
+    return response.data.categories;
   };
 
   // 중분류 제품 카테고리 목록 받아오기

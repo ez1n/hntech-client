@@ -1,31 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {fileApi} from '../network/file';
-import {useAppSelector} from '../app/hooks';
 import {Document, Page, pdfjs} from 'react-pdf';
 import {Box, Button, Container, Stack, styled, Typography, Grid} from '@mui/material';
+import {useAppSelector} from "../app/hooks";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-export default function MainData() {
-  const [catalogPDF, setCatalogPDF] = useState<string>('');
-  const [approvalPDF, setApprovalPDF] = useState<string>('');
-  const [taxPDF, setTaxPDF] = useState<string>('');
+interface propsType {
+  catalogPDF: string,
+  approvalPDF: string,
+  taxPDF: string
+}
 
+export default function MainData({catalogPDF, approvalPDF, taxPDF}: propsType) {
   const documentFile = useAppSelector(state => state.manager.document); // 카다록, 자재승인서 정보
-
-  useEffect(() => {
-    fileApi.downloadFile(documentFile.catalogServerFilename)
-      .then(res => setCatalogPDF(URL.createObjectURL(res)))
-      .catch(error => console.log(error))
-
-    fileApi.downloadFile(documentFile.materialServerFilename)
-      .then(res => setApprovalPDF(URL.createObjectURL(res)))
-      .catch(error => console.log(error))
-
-    fileApi.downloadFile(documentFile.taxServerFilename)
-      .then(res => setTaxPDF(URL.createObjectURL(res)))
-      .catch(error => console.log(error))
-  }, [documentFile]);
 
   // 파일 다운로드
   const downloadFile = (serverFilename: string, originalFilename: string) => {
@@ -50,17 +38,14 @@ export default function MainData() {
 
   return (
     <Stack spacing={5} sx={{pt: 10, alignItems: 'center'}}>
-      <Container sx={{
-        display: 'flex',
-        justifyContent: 'center'
-      }}>
+      <Container sx={{display: 'flex', justifyContent: 'center'}}>
         <TitleTypography variant='h5'>
           카다록 및 자재 승인서
         </TitleTypography>
       </Container>
 
-      <ContentContainer container columns={5}>
-        <Grid item xs={1} wrap={'wrap'} sx={{minWidth: '300px', textAlign: 'center', margin: 2}}>
+      <ContentContainer container columns={6} spacing={2}>
+        <Grid item xs={1} style={{maxWidth: '100%'}} sx={{textAlign: 'center', margin: 2}}>
           <FileBox>
             <Document file={catalogPDF}>
               <Page pageNumber={1} height={450}/>
@@ -73,7 +58,7 @@ export default function MainData() {
           </FileButton>
         </Grid>
 
-        <Grid item xs={1} sx={{minWidth: '300px', textAlign: 'center', margin: 2}}>
+        <Grid item xs={1} style={{maxWidth: '100%'}} sx={{textAlign: 'center', margin: 2}}>
           <FileBox>
             <Document file={approvalPDF}>
               <Page pageNumber={1} height={450}/>
@@ -86,7 +71,7 @@ export default function MainData() {
           </FileButton>
         </Grid>
 
-        <Grid item xs={1} sx={{minWidth: '300px', textAlign: 'center', margin: 2}}>
+        <Grid item xs={1} style={{maxWidth: '100%'}} sx={{textAlign: 'center', margin: 2}}>
           <FileBox>
             <Document file={taxPDF}>
               <Page pageNumber={1} height={450}/>
@@ -103,6 +88,9 @@ export default function MainData() {
 };
 
 const ContentContainer = styled(Grid)(({theme}) => ({
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column'
+  },
   flexWrap: 'wrap',
   justifyContent: 'center',
   alignItems: 'center'
@@ -122,8 +110,9 @@ const TitleTypography = styled(Typography)(({theme}) => ({
 })) as typeof Typography;
 
 // 미리보기 스타일
-const FileBox = styled(Box)(({theme}) => ({
-  width: 'max-content',
+const FileBox = styled(Box)(() => ({
+  width: '100%',
+  height: 450,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
