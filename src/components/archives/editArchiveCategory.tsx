@@ -38,7 +38,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
   const [deleteCategory, setDeleteCategory] = useState(false); // 자료실 카테고리 삭제
-  const [selectedCategory, setSelectedCategory] = useState<{name: string, id: number | null}>({name: '', id: 0});
+  const [selectedCategory, setSelectedCategory] = useState<{ name: string, id: number | null }>({name: '', id: 0});
 
   // 카테고리 목록 받아오기
   useEffect(() => {
@@ -231,7 +231,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
         text1='해당 카테고리의 제품 및 게시글이 모두 삭제됩니다.'
         text2='삭제하시겠습니까?'
         yesAction={() => {
-          deleteArchiveCategory(selectedCategory.id, selectedCategory.name)
+          selectedCategory.id && deleteArchiveCategory(selectedCategory.id, selectedCategory.name)
           closeDeleteArchiveCategory();
         }}
         closeAction={closeDeleteArchiveCategory}
