@@ -164,20 +164,15 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
       {mainCategory &&
         <>
           <Container sx={{display: 'flex'}}>
-            <Typography
-              variant='h5'
-              sx={{
-                p: 1,
-                userSelect: 'none',
-                fontWeight: 'bold'
-              }}>
+            <SelectedTitleTypography variant='h5'>
               제품 소개
-            </Typography>
+            </SelectedTitleTypography>
           </Container>
           <Box sx={{
             pt: 1,
             pb: 1,
             pl: 2,
+            pr: 2,
             display: 'flex',
             flexDirection: 'column',
             width: 'max-content'
@@ -241,6 +236,15 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   padding: 1,
   width: 'max-content',
   borderBottom: '3px solid #2E7D32',
+})) as typeof Typography;
+
+const SelectedTitleTypography = styled(Typography)(({theme}) => ({
+  [theme.breakpoints.down('lg')]: {
+    fontSize: 18
+  },
+  padding: 1,
+  userSelect: 'none',
+  fontWeight: 'bold'
 })) as typeof Typography;
 
 // 추가 버튼

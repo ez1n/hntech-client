@@ -18,12 +18,8 @@ export default function ProductCategoryListItem({category, id, index}: propsType
   const putUpdateCategorySequence = (draggedId: number, targetId: number) => {
     categoryApi.putUpdateCategorySequence({currentCategoryId: draggedId, targetCategoryId: targetId})
       .then(res => {
-        console.log(res)
         categoryApi.getMainProductCategory()
-          .then(res => {
-            dispatch(setAllProductCategories({categories: res.categories}));
-            console.log(res)
-          })
+          .then(res => dispatch(setAllProductCategories({categories: res.categories})))
           .catch(error => console.log(error))
       })
       .catch(error => console.log(error))

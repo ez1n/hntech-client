@@ -52,7 +52,7 @@ class CategoryApi {
   // 제품 카테고리 순서 변경
   async putUpdateCategorySequence(categorySequence: { currentCategoryId: number, targetCategoryId: number }) {
     const response = await axios.put(`/api/category/sequence`, categorySequence);
-    return response;
+    return response.data;
   }
 
   /* 자료실 카테고리 */
@@ -74,8 +74,8 @@ class CategoryApi {
   };
 
   // 자료실 카테고리 삭제
-  async deleteArchiveCategory(categoryId: number) {
-    const response = await axios.delete(`/api/category/${categoryId}`)
+  async deleteArchiveCategory(categoryId: number, categoryName: string) {
+    const response = await axios.delete(`/api/category/${categoryId}/${categoryName}`)
     return response.data;
   };
 

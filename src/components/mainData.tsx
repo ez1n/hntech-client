@@ -130,7 +130,8 @@ const FileBox = styled(Box)(({theme}) => ({
   alignItems: 'center',
   border: '3px solid lightgrey',
   boxShadow: '1px 1px 5px 5px lightgrey',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  margin: 'auto'
 })) as typeof Box;
 
 // 버튼 스타일

@@ -1,6 +1,7 @@
 import React from 'react';
 import {api} from '../../network/network';
 import {productApi} from '../../network/product';
+import {useDrag, useDrop} from "react-dnd";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
@@ -8,7 +9,6 @@ import {getCurrentProductData, getProductDetail, getProductList} from '../../app
 import {Box, Button, styled, Typography, Grid} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
-import {useDrag, useDrop} from "react-dnd";
 
 interface propsType {
   product: {
@@ -34,8 +34,6 @@ export default function ProductItem({product, index}: propsType) {
   const middleCategory = new URLSearchParams(location.search).get('middle');
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
-  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
-
 
   // 제품 정보 받아오기
   const getProduct = (productId: number) => {
@@ -73,7 +71,7 @@ export default function ProductItem({product, index}: propsType) {
 
   // drag
   const [{isDragging}, dragRef] = useDrag(() => ({
-      type: 'productCategory',
+      type: 'product',
       item: {id, index},
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -91,7 +89,7 @@ export default function ProductItem({product, index}: propsType) {
 
   // drop
   const [{isOver}, dropRef] = useDrop(() => ({
-      accept: 'productCategory',
+      accept: 'product',
       collect: monitor => ({
         isOver: monitor.isOver(),
       }),

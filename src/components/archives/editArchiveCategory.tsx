@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {categoryApi} from '../../network/category';
 import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
-import {getArchiveCategory, setSelectedArchiveCategoryId} from '../../app/reducers/categorySlice';
+import {getArchiveCategory} from '../../app/reducers/categorySlice';
 import {changeMode} from '../../app/reducers/managerModeSlice';
 import {
   Box,
@@ -37,8 +37,8 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   // state
   const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
-  const selectedArchiveCategoryId = useAppSelector(state => state.category.selectedArchiveCategoryId); // 선택한 카테고리 id
   const [deleteCategory, setDeleteCategory] = useState(false); // 자료실 카테고리 삭제
+  const [selectedCategory, setSelectedCategory] = useState({name: '', id: 0});
 
   // 카테고리 목록 받아오기
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
 
   // 자료실 카테고리 삭제 modal - open
   const openDeleteArchiveCategory = () => {
-    setDeleteCategory(deleteArchiveCategory => !deleteArchiveCategory);
+    setDeleteCategory(prev => !prev);
   };
 
   // 자료실 카테고리 삭제 modal - close
@@ -58,16 +58,14 @@ export default function EditArchiveCategory({errorToast}: propsType) {
 
   // 카테고리 목록에 추가
   const addCategory = () => {
-    if (inputRef.current.value === '') {
-      return;
-    }
+    if (inputRef.current.value === '') return;
 
     categoryForm.append('categoryName', inputRef.current.value);
     [].map(item => categoryForm.append('image', item));
     categoryForm.append('showInMain', 'false');
 
     categoryApi.createArchiveCategory(categoryForm)
-      .then(res => {
+      .then(() => {
         inputRef.current.value = '';
         categoryApi.getAllCategories()
           .then(res => {
@@ -81,7 +79,6 @@ export default function EditArchiveCategory({errorToast}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -92,17 +89,16 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   };
 
   // 카테고리 삭제
-  const deleteArchiveCategory = (categoryId: number) => {
-    categoryApi.deleteArchiveCategory(categoryId)
-      .then(res => {
+  const deleteArchiveCategory = (categoryId: number, categoryName: string) => {
+    categoryApi.deleteArchiveCategory(categoryId, categoryName)
+      .then(() => {
         categoryApi.getAllCategories()
-          .then(res => {
-            dispatch(getArchiveCategory({categories: res.categories}));
-            dispatch(setSelectedArchiveCategoryId({id: undefined}));
-          })
+          .then(res => dispatch(getArchiveCategory({categories: res.categories})))
       })
       .catch(error => {
         errorToast(error.response.data.message);
+        console.log(error);
+
         if (error.response.status === 401) {
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
@@ -112,19 +108,19 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   };
 
   // 카테고리 이름 수정
-  const editArchiveCategory = (categoryId: number, categoryName: string, showInMain: string) => {
+  const editArchiveCategory = (categoryId: number, categoryName: string) => {
     categoryForm.append('categoryName', categoryName);
     [].map(item => categoryForm.append('image', item));
-    categoryForm.append('showInMain', showInMain);
+    categoryForm.append('showInMain', 'false');
     categoryApi.putUpdateArchiveCategory(categoryId, categoryForm)
-      .then(res => {
-        dispatch(setSelectedArchiveCategoryId({id: undefined}));
-
+      .then(() => {
         categoryApi.getAllCategories()
           .then(res => dispatch(getArchiveCategory({categories: res.categories})))
       })
       .catch(error => {
         errorToast(error.response.data.message);
+        console.log(error);
+
         if (error.response.status === 401) {
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
@@ -138,7 +134,6 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       open={archivesState}
       onClose={() => {
         dispatch(clickArchivesGoBack());
-        dispatch(setSelectedArchiveCategoryId({id: undefined}))
       }}>
       <Title>카테고리 수정</Title>
 
@@ -153,7 +148,8 @@ export default function EditArchiveCategory({errorToast}: propsType) {
             height: 150,
             overflow: 'auto',
           }}>
-          {archiveCategory.map((item: { id: number, categoryName: string, showInMain: string }) => (
+          {archiveCategory.map((item: { id: number, categoryName: string, isArchiveCategory: boolean }) => (
+            item.isArchiveCategory &&
             <Stack
               key={item.id}
               direction='row'
@@ -161,34 +157,34 @@ export default function EditArchiveCategory({errorToast}: propsType) {
               sx={{alignItems: 'center', pl: 2, pr: 2}}>
 
               {/* 카테고리 수정폼 */}
-              {selectedArchiveCategoryId === item.id ?
-                <TextField
-                  defaultValue={item.categoryName}
-                  inputRef={categoryNameRef}
-                  size='small'
-                  autoComplete='off'
-                  autoFocus={true}
-                  sx={{flex: 0.7}}
-                /> :
-                <Typography sx={{flex: 0.7}}>{item.categoryName}</Typography>
-              }
-              {selectedArchiveCategoryId === item.id ?
-                // 카테고리 수정 중
-                <CheckCircleRoundedIcon
-                  fontSize='small'
-                  onClick={() => editArchiveCategory(item.id, categoryNameRef.current.value, item.showInMain)}
-                  sx={{color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15}}/> :
-                // 카테고리 수정 전
-                <BorderColorRoundedIcon
-                  fontSize='small'
-                  onClick={() => dispatch(setSelectedArchiveCategoryId({id: item.id}))}
-                  sx={{color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15}}/>
+              {selectedCategory.id === item.id ?
+                <>
+                  <TextField
+                    defaultValue={item.categoryName}
+                    inputRef={categoryNameRef}
+                    size='small'
+                    autoComplete='off'
+                    autoFocus={true}
+                    sx={{flex: 0.7}}
+                  />
+                  <CheckCircleRoundedIcon
+                    fontSize='small'
+                    onClick={() => editArchiveCategory(item.id, categoryNameRef.current.value)}
+                    sx={{color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15}}/>
+                </> :
+                <>
+                  <Typography sx={{flex: 0.7}}>{item.categoryName}</Typography>
+                  <BorderColorRoundedIcon
+                    fontSize='small'
+                    onClick={() => setSelectedCategory({name: item.categoryName, id: item.id})}
+                    sx={{color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15}}/>
+                </>
               }
 
               <CancelRoundedIcon
                 fontSize='small'
                 onClick={() => {
-                  dispatch(setSelectedArchiveCategoryId({id: item.id}));
+                  setSelectedCategory({name: item.categoryName, id: item.id});
                   openDeleteArchiveCategory();
                 }}
                 sx={{color: 'rgba(46, 125, 50, 0.5)', cursor: 'pointer', flex: 0.15}}/>
@@ -216,10 +212,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       </DialogContent>
 
       <DialogActions sx={{justifyContent: 'center'}}>
-        <EditButton name='나가기' onClick={() => {
-          dispatch(setSelectedArchiveCategoryId({id: undefined}));
-          dispatch(clickArchivesGoBack());
-        }}/>
+        <EditButton name='나가기' onClick={() => dispatch(clickArchivesGoBack())}/>
       </DialogActions>
 
       <CancelModal
@@ -228,7 +221,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
         text1='해당 카테고리의 제품 및 게시글이 모두 삭제됩니다.'
         text2='삭제하시겠습니까?'
         yesAction={() => {
-          selectedArchiveCategoryId && deleteArchiveCategory(selectedArchiveCategoryId)
+          deleteArchiveCategory(selectedCategory.id, selectedCategory.name)
           closeDeleteArchiveCategory();
         }}
         closeAction={closeDeleteArchiveCategory}

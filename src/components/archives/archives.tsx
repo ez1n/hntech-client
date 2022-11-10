@@ -23,9 +23,7 @@ export default function Archives({errorToast}: propsType) {
   const [category, setCategory] = useState('전체');
   const [searchContent, setSearchContent] = useState('');
 
-  const getCategory = (event: any) => {
-    setCategory(event.target.value);
-  };
+  const getCategory = (event: any) => setCategory(event.target.value);
 
   // 자료 검색
   const getSearchArchive = () => {

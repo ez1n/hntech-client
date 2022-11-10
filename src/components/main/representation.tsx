@@ -99,13 +99,14 @@ export default function Representation() {
   };
 
   return (
-    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+    <Box sx={{ display: 'flex', justifyContent: 'center'}}>
       <Box sx={{
         p: 2,
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '100%'
       }}>
         <DocumentStack direction={'row'} spacing={2}>
           <SideButton
@@ -143,19 +144,6 @@ const RepProductionButton = styled(ButtonBase)(() => ({
     },
   }
 })) as typeof ButtonBase;
-
-// 이미지 커버(배경)
-const ImageBackdrop = styled(Container)(({theme}) => ({
-  position: 'absolute',
-  left: 0,
-  right: 0,
-  top: 0,
-  bottom: 0,
-  backgroundColor: '#0F0F0F',
-  opacity: 0,
-  borderRadius: 10,
-  transition: theme.transitions.create('opacity')
-})) as typeof Container;
 
 const DocumentStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('md')]: {

@@ -4,7 +4,6 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 /**
  * archiveCategory : 자료실 카테고리 목록
- * selectedArchiveCategoryId : 선택한 자료실 카테고리 id
  * productCategoryImagePath : 제품 카테고리 이미지 미리보기 url
  * productCategoryName : 제품 카테고리 이름
  * productCategoryImage : 전송할 제품 카테고리 이미지 정보
@@ -34,8 +33,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
  */
 
 interface categoryInitialState {
-  archiveCategory: { id: number, categoryName: string, showInMain: string }[],
-  selectedArchiveCategoryId: number | undefined,
+  archiveCategory: { id: number, categoryName: string, isArchiveCategory: boolean }[],
   productCategoryImagePath: string | undefined,
   productCategoryName: string,
   productCategoryImage: string,
@@ -84,8 +82,7 @@ interface categoryInitialState {
 }
 
 const CategoryInitialState: categoryInitialState = {
-  archiveCategory: [{id: 0, categoryName: '', showInMain: ''},],
-  selectedArchiveCategoryId: undefined,
+  archiveCategory: [{id: 0, categoryName: '', isArchiveCategory: true},],
   productCategoryImagePath: undefined,
   productCategoryName: '',
   productCategoryImage: '',
@@ -120,15 +117,9 @@ export const CategorySlice = createSlice({
   reducers: {
     getArchiveCategory: (
       state,
-      action: PayloadAction<{ categories: { id: number, categoryName: string, showInMain: string }[] }>
+      action: PayloadAction<{ categories: { id: number, categoryName: string, isArchiveCategory: boolean }[] }>
     ) => {
       state.archiveCategory = action.payload.categories;
-    },
-    setSelectedArchiveCategoryId: (
-      state,
-      action: PayloadAction<{ id: number | undefined }>
-    ) => {
-      state.selectedArchiveCategoryId = action.payload.id
     },
     addProductCategoryImage: (
       state,
@@ -255,7 +246,6 @@ export const CategorySlice = createSlice({
 
 export const {
   getArchiveCategory,
-  setSelectedArchiveCategoryId,
   addProductCategoryImage,
   updateProductCategoryName,
   updateProductCategoryImage,
