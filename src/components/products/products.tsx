@@ -6,7 +6,7 @@ import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductList} from '../../app/reducers/productSlice';
 import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {setCurrentProductCategoryName, setCurrentProductMiddleCategoryName} from '../../app/reducers/categorySlice';
 import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -15,6 +15,7 @@ import ProductMainCategory from './productMainCategory';
 import CancelModal from '../cancelModal';
 import ProductItem from './productItem';
 import ProductMiddleCategory from "./productMiddleCategory";
+import ProductCategorySelect from "../productCategorySelect";
 
 interface propsType {
   successDelete: () => void
@@ -50,6 +51,18 @@ export default function Products({successDelete}: propsType) {
       .then(res => dispatch(getProductList({productList: res})))
       .catch(error => console.log(error))
   }, [middleCategory]);
+
+  // 대분류 카테고리 선택
+  const getMainCategory = (categoryName: string) => {
+    dispatch(setCurrentProductCategoryName({category: categoryName}));
+    navigate(`/product/category?main=${categoryName}`);
+  };
+
+  // 중분류 카테고리 선택
+  const getMiddleCategory = (categoryName: string) => {
+    dispatch(setCurrentProductMiddleCategoryName({category: categoryName}));
+    navigate(`/product/category?main=${mainCategory}&middle=${categoryName}`);
+  };
 
   // 제품 삭제
   const deleteProduct = (productId: number) => {
@@ -94,7 +107,9 @@ export default function Products({successDelete}: propsType) {
               },
               productName: string
             }) => (
-              <ProductItem key={item.id} product={item} index={item.id}/>
+              <Grid key={item.id} item xs={1}>
+                <ProductItem product={item} index={item.id}/>
+              </Grid>
             )) : // 제품 존재하지 않는 경우
             <Typography>
               해당 카테고리에 제품이 존재하지 않습니다.
@@ -107,10 +122,16 @@ export default function Products({successDelete}: propsType) {
   if (!mainCategory) {
     return (
       <>
-        <BreadcrumbsBox sx={{m: 'auto', mt: 5, width: '80vw'}}>
+        <BreadcrumbsBox>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
             {[
-              <Typography sx={{fontSize: 'large', userSelect: 'none'}}>전체 카테고리</Typography>
+              <Typography sx={{
+                fontSize: 'large',
+                userSelect: 'none',
+                borderRadius: '5px',
+                bgcolor: 'rgba(198,219,227,0.73)',
+                p: 1
+              }}>전체 카테고리</Typography>
             ]}
           </Breadcrumbs>
         </BreadcrumbsBox>
@@ -132,11 +153,21 @@ export default function Products({successDelete}: propsType) {
                   fontSize: 'large',
                   cursor: 'pointer',
                   userSelect: 'none',
+                  borderRadius: '5px',
+                  bgcolor: 'rgba(198,219,227,0.73)',
+                  p: 1,
                   '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
                 }}>
                 전체 카테고리
               </Typography>,
-              <Typography sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>
+              <Typography sx={{
+                fontSize: 'large',
+                fontWeight: 'bold',
+                userSelect: 'none',
+                borderRadius: '5px',
+                bgcolor: 'rgba(198,219,227,0.73)',
+                p: 1
+              }}>
                 {mainCategory}
               </Typography>,
             ]}
@@ -155,12 +186,10 @@ export default function Products({successDelete}: propsType) {
 
           {/* 900px 이하 사이드 메뉴 */}
           <SelectBox>
-            <MenuSelect
-              defaultValue={currentProductCategoryName}
-              onChange={(event: any) => {
-                dispatch(setCurrentProductCategoryName({category: event?.target.value}));
-                navigate(`/product/category?main=${event?.target.value}`);
-              }}
+            <Select
+              sx={{textAlign: 'center', width: '100%'}}
+              defaultValue={mainCategory ? mainCategory : currentProductCategoryName}
+              onChange={event => getMainCategory(event?.target.value)}
               size='small'>
               {productCategories.map((item: {
                 categoryName: string;
@@ -171,7 +200,7 @@ export default function Products({successDelete}: propsType) {
               }) => (
                 <MenuList key={item.id} value={item.categoryName}>{item.categoryName}</MenuList>
               ))}
-            </MenuSelect>
+            </Select>
           </SelectBox>
 
           {/* 중분류 카테고리 */}
@@ -200,6 +229,9 @@ export default function Products({successDelete}: propsType) {
                     fontSize: 'large',
                     cursor: 'pointer',
                     userSelect: 'none',
+                    borderRadius: '5px',
+                    bgcolor: 'rgba(198,219,227,0.73)',
+                    p: 1,
                     '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
                   }}>
                   전체 카테고리
@@ -210,12 +242,23 @@ export default function Products({successDelete}: propsType) {
                     fontSize: 'large',
                     cursor: 'pointer',
                     userSelect: 'none',
+                    borderRadius: '5px',
+                    bgcolor: 'rgba(198,219,227,0.73)',
+                    p: 1,
                     '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
                   }}>
                   {mainCategory}
                 </Typography>,
-                <Typography
-                  sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>{middleCategory}</Typography>
+                <Typography sx={{
+                  fontSize: 'large',
+                  fontWeight: 'bold',
+                  userSelect: 'none',
+                  borderRadius: '5px',
+                  bgcolor: 'rgba(198,219,227,0.73)',
+                  p: 1
+                }}>
+                  {middleCategory}
+                </Typography>
               ]}
             </Breadcrumbs>
           </BreadcrumbsBox>
@@ -230,23 +273,10 @@ export default function Products({successDelete}: propsType) {
 
             {/* 900px 이하 메뉴 */}
             <SelectBox>
-              <MenuSelect
-                defaultValue={middleCategory}
-                onChange={(event: any) => {
-                  dispatch(setCurrentProductMiddleCategoryName({category: event?.target.value}));
-                  navigate(`/product/category?main=${mainCategory}&middle=${event?.target.value}`);
-                }}
-                size='small'>
-                {productMiddleCategories.map((item: {
-                  categoryName: string;
-                  id: number;
-                  imageServerFilename: string;
-                  imageOriginalFilename: string;
-                  showInMain: string;
-                }) => (
-                  <MenuList key={item.id} value={item.categoryName}>{item.categoryName}</MenuList>
-                ))}
-              </MenuSelect>
+              <ProductCategorySelect
+                category={productMiddleCategories}
+                defaultCategory={middleCategory ? middleCategory : currentProductMiddleCategoryName}
+                getCategory={getMiddleCategory}/>
             </SelectBox>
 
             {/* 제품 목록 */}
@@ -300,15 +330,10 @@ const AddButton = styled(Button)(({theme}) => ({
 
 const SelectBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
-    display: 'block'
+    display: 'block',
+    marginTop: 50
   },
   display: 'none',
-}));
-
-const MenuSelect = styled(Select)(() => ({
-  textAlign: 'center',
-  marginTop: 20,
-  width: '100%'
 }));
 
 const MenuList = styled(MenuItem)(() => ({
@@ -342,6 +367,6 @@ const BreadcrumbsBox = styled(Box)(({theme}) => ({
     display: 'none'
   },
   margin: 'auto',
-  marginTop: 5,
+  marginTop: 50,
   width: '80vw'
 })) as typeof Box;

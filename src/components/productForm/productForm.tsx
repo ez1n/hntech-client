@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {onLoading} from "../../app/reducers/dialogSlice";
 import {
   Container,
@@ -224,9 +224,9 @@ export default function ProductForm({success, errorToast}: propsType) {
       productApi.postCreateProduct(productForm)
         .then(res => {
           if (docFiles.length === 0) {
+            dispatch(onLoading());
             success();
             navigate(-1);
-            dispatch(onLoading());
           } else {
             res.files.docFiles.map((item: {
               id: number,
@@ -238,15 +238,15 @@ export default function ProductForm({success, errorToast}: propsType) {
           }
         })
         .catch(error => {
-          console.log(error);
           dispatch(onLoading());
-          errorToast(error.response.data.message);
-
+          console.log(error);
           if (error.response.status === 401) {
+            errorToast('로그인이 필요합니다.');
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
+          errorToast(error.response.data.message);
         })
     }
   };
@@ -263,7 +263,6 @@ export default function ProductForm({success, errorToast}: propsType) {
         borderTop: '3px solid #2E7D32',
         borderBottom: '3px solid #2E7D32',
       }}>
-
         {/* 제목 */}
         <Box sx={{
           textAlign: 'center',
@@ -272,8 +271,8 @@ export default function ProductForm({success, errorToast}: propsType) {
         }}>
           <TextField
             type='text'
-            required={true}
-            autoFocus={true}
+            required
+            autoFocus
             placeholder='제품명'
             value={productName}
             error={!!titleErrorMsg}
@@ -318,18 +317,23 @@ export default function ProductForm({success, errorToast}: propsType) {
             <EditButton name='규격 이미지 추가' onClick={() => selectInput(gradeInputRef)}/>
           </ButtonBox>
 
-          <List>
-            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
-              ※ 중분류 카테고리를 선택해 주세요.
-            </ListItem>
-          </List>
+          <TotalBox>
+            <List sx={{maxWidth: '100%'}}>
+              <ListItem sx={{userSelect: 'none', color: 'darkgrey', width: '100%'}}>
+                ※ 중분류 카테고리를 선택해 주세요.
+              </ListItem>
+            </List>
 
-          {/* 중분류 카테고리 */}
-          <ProductCategorySelect
-            category={productMiddleCategories}
-            defaultCategory={currentProductMiddleCategoryName}
-            getCategory={getMiddleCategory}/>
+            {/* 중분류 카테고리 */}
+            <Box sx={{flex: 1}}>
+              <ProductCategorySelect
+                category={productMiddleCategories}
+                defaultCategory={currentProductMiddleCategoryName}
+                getCategory={getMiddleCategory}/>
+            </Box>
+          </TotalBox>
         </Box>
+
         <List>
           <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 대표 이미지는 필수입니다.</ListItem>
         </List>
@@ -395,7 +399,6 @@ export default function ProductForm({success, errorToast}: propsType) {
               ))}
             </Container>
           }
-
 
           {/* 규격 이미지 미리보기 */}
           {standardImages.length > 0 &&
@@ -528,5 +531,16 @@ const ButtonBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'flex',
     flexDirection: 'column'
-  }
+  },
+  flex: 0.5
+})) as typeof Box;
+
+const TotalBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    width: '40%'
+  },
+  display: 'flex',
+  flexWrap: 'wrap',
+  flex: 0.5,
+  margin: 10
 })) as typeof Box;

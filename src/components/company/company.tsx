@@ -9,10 +9,11 @@ import Location from './location';
 import {useLocation} from "react-router-dom";
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function Company({success}: propsType) {
+export default function Company({success, errorToast}: propsType) {
   const location = useLocation();
   const type = new URLSearchParams(location.search).get('type');
 
@@ -34,13 +35,13 @@ export default function Company({success}: propsType) {
         </Container>
 
         {/* 컴포넌트 (페이지) */}
-        {type === 'introduce' && <Introduce success={success}/>}
+        {type === 'introduce' && <Introduce success={success} errorToast={errorToast}/>}
 
-        {type === 'history' && <History success={success}/>}
+        {type === 'history' && <History success={success} errorToast={errorToast}/>}
 
-        {type === 'orgChart' && <OrgChart success={success}/>}
+        {type === 'orgChart' && <OrgChart success={success} errorToast={errorToast}/>}
 
-        {type === 'CI' && <CompanyInfo success={success}/>}
+        {type === 'CI' && <CompanyInfo success={success} errorToast={errorToast}/>}
 
         {type === 'location' && <Location/>}
 

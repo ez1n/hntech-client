@@ -14,8 +14,8 @@ import {
   setFooter,
   setLogo,
   setManagerData
-} from './app/reducers/managerModeSlice';
-import {getCompanyImage} from './app/reducers/companyModifySlice';
+} from './app/reducers/adminSlice';
+import {getCompanyImage, updateIntroduce} from './app/reducers/companyModifySlice';
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {ErrorBoundary} from 'react-error-boundary';
@@ -52,7 +52,7 @@ export default function App() {
   const [approvalPDF, setApprovalPDF] = useState('');
   const [taxPDF, setTaxPDF] = useState('');
 
-  const documentFile = useAppSelector(state => state.manager.document); // 카다록, 자재승인서 정보
+  const document = useAppSelector(state => state.manager.document); // 카다록, 자재승인서 정보
 
   // 관리자 패널 정보
   const getPanelInfo = () => {
@@ -62,52 +62,6 @@ export default function App() {
         dispatch(copyManagerData({panelData: res}));
       })
   };
-
-  // data
-  useEffect(() => {
-    // 메인 카테고리 목록
-    categoryApi.getRepCategories()
-      .then(res => dispatch(setMainCategories({categories: res})))
-
-    // 제품 카테고리 목록
-    categoryApi.getMainProductCategory()
-      .then(res => dispatch(setAllProductCategories({categories: res})))
-
-    // 홈페이지 하단 정보
-    adminApi.getFooter()
-      .then(res => dispatch(setFooter({footer: res})))
-
-    // Banner
-    adminApi.getBanner()
-      .then(res => dispatch(setBanner({banner: res})))
-
-    // Logo
-    adminApi.getLogo()
-      .then(res => dispatch(setLogo({logo: res})))
-
-    // 카다록, 자재승인서, 시국세
-    adminApi.getDocument()
-      .then(res => dispatch(setDocument({document: res})))
-
-    // 회사 소개 정보
-    adminApi.getCompany()
-      .then(res => dispatch(getCompanyImage({data: res})))
-  }, []);
-
-  // 카다록, 자재승인서, 시국세
-  useEffect(() => {
-    fileApi.downloadFile(documentFile.catalogServerFilename)
-      .then(res => setCatalogPDF(URL.createObjectURL(res)))
-      .catch(error => console.log(error))
-
-    fileApi.downloadFile(documentFile.materialServerFilename)
-      .then(res => setApprovalPDF(URL.createObjectURL(res)))
-      .catch(error => console.log(error))
-
-    fileApi.downloadFile(documentFile.taxServerFilename)
-      .then(res => setTaxPDF(URL.createObjectURL(res)))
-      .catch(error => console.log(error))
-  }, [documentFile]);
 
   // 로그인 여부 확인
   useEffect(() => {
@@ -122,6 +76,54 @@ export default function App() {
         }
       })
   }, []);
+
+  // data
+  useEffect(() => {
+    // 홈페이지 하단 정보
+    adminApi.getFooter()
+      .then(res => dispatch(setFooter({footer: res})))
+
+    // 메인 카테고리 목록
+    categoryApi.getRepCategories()
+      .then(res => dispatch(setMainCategories({categories: res})))
+
+    // 제품 카테고리 목록
+    categoryApi.getMainProductCategory()
+      .then(res => dispatch(setAllProductCategories({categories: res})))
+
+    // 카다록, 자재승인서, 시국세
+    adminApi.getDocument()
+      .then(res => dispatch(setDocument({document: res})))
+
+    // 회사 소개 정보, Banner, Logo
+    adminApi.getCompany()
+      .then(res => {
+        dispatch(getCompanyImage({data: res}));
+        dispatch(setBanner({banner: res.bannerImages}));
+        dispatch(setLogo({logo: res.logoImage}));
+      })
+
+    // 인사말
+    adminApi.getIntroduce()
+      .then(res => dispatch(updateIntroduce({newIntroduce: res.newIntroduce})))
+  }, []);
+
+  // 카다록, 자재승인서, 시국세
+  useEffect(() => {
+    if (!!document.catalogServerFilename) {
+      fileApi.downloadFile(document.catalogServerFilename)
+        .then(res => setCatalogPDF(URL.createObjectURL(res)))
+        .catch(error => console.log(error))
+
+      fileApi.downloadFile(document.materialServerFilename)
+        .then(res => setApprovalPDF(URL.createObjectURL(res)))
+        .catch(error => console.log(error))
+
+      fileApi.downloadFile(document.taxServerFilename)
+        .then(res => setTaxPDF(URL.createObjectURL(res)))
+        .catch(error => console.log(error))
+    }
+  }, [document.catalogServerFilename]);
 
   // toast
   const success = () => toast.success('등록되었습니다.');
@@ -165,7 +167,7 @@ export default function App() {
               }></Route>
 
               <Route path='/company' element={
-                <Company success={success}/>
+                <Company success={success} errorToast={errorToast}/>
               }></Route>
 
               <Route path='/product/category' element={
@@ -237,6 +239,7 @@ export default function App() {
 
               <Route path='/question/:index' element={
                 <QuestionDetail
+                  errorToast={errorToast}
                   successAnswer={successAnswer}
                   successDelete={successDelete}/>
               }></Route>

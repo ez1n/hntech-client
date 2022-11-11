@@ -15,9 +15,8 @@ interface propsType {
 
 export default function ProductCategorySelect({defaultCategory, category, getCategory}: propsType) {
   return (
-    <TotalBox>
       <Select
-        size={'small'}
+        size='small'
         defaultValue={defaultCategory && defaultCategory}
         onChange={event => getCategory(event?.target.value)}
         sx={{textAlign: 'center', width: '100%'}}
@@ -26,15 +25,5 @@ export default function ProductCategorySelect({defaultCategory, category, getCat
           <MenuItem key={index} value={item.categoryName} sx={{justifyContent: 'center'}}>{item.categoryName}</MenuItem>
         ))}
       </Select>
-    </TotalBox>
   )
 };
-
-const TotalBox = styled(Box)(({theme}) => ({
-  [theme.breakpoints.down('md')]: {
-    width: '40%'
-  },
-  width: '20%',
-  height: 'max-content',
-  margin: 10
-})) as typeof Box;

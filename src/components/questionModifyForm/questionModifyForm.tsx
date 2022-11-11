@@ -1,15 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {questionApi} from '../../network/question';
 import {api} from "../../network/network";
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {changeMode} from '../../app/reducers/managerModeSlice';
-import {
-  modifyQuestionTitle,
-  modifyQuestionContent,
-  addQuestionFile,
-  deleteQuestionFile, deleteOriginalQuestionFile
-} from '../../app/reducers/questionFormSlice';
+import {onLoading} from "../../app/reducers/dialogSlice";
+import {changeMode} from '../../app/reducers/adminSlice';
 import {
   setFaqState,
   setDetailData
@@ -42,90 +37,120 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const detail = useAppSelector(state => state.question.detail); // 문의 정보 (데이터)
-  const currentQuestion = useAppSelector(state => state.questionForm.currentQuestion); // 현재 문의사항 정보 (수정용)
   const faqState = useAppSelector(state => state.question.faqState); // FAQ
-  const questionFile = useAppSelector(state => state.questionForm.questionFile);
   const [cancelQuestionModify, setCancelQuestionModify] = useState(false); // 문의사항 변경 취소
   const [deleteQuestionId, setDeleteQuestionId] = useState<{ questionId: number, fileId: number }[]>([]);
+  const [questionContent, setQuestionContent] = useState({title: '', content: ''});
+  const [file, setFile] = useState<{ file: string, path: string }[]>([]);
+  const [originalFile, setOriginalFile] = useState<{
+    id: number,
+    originalFilename: string,
+    savedPath: string,
+    serverFilename: string
+  }[]>([])
 
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
+  const [contentErrorMsg, setContentErrorMsg] = useState(''); // 내용
+
+  useEffect(() => {
+    setQuestionContent({title: detail.title, content: detail.content});
+    setOriginalFile(detail.files);
+  }, [])
 
   const validate = () => {
     let isValid = true;
-    if (currentQuestion.title === '' || currentQuestion.title === null) {
+    if (!questionContent.title) {
       setTitleErrorMsg('제목을 작성해 주세요.');
       isValid = false;
     } else setTitleErrorMsg('');
+    if (!questionContent.content) {
+      setContentErrorMsg('문의 내용을 작성해 주세요.');
+      isValid = false;
+    } else setContentErrorMsg('');
     return isValid;
   };
 
-  // 문의사항 변경 취소 - open
-  const openCancelQuestionModify = () => {
-    setCancelQuestionModify(cancelQuestionModify => !cancelQuestionModify);
+  const changeValue = (event: any) => {
+    const {name, value} = event.target;
+    setQuestionContent({...questionContent, [name]: value});
   };
 
-  // 문의사항 변경 취소 - close
-  const closeCancelQuestionModify = () => {
-    setCancelQuestionModify(false);
-  };
-
-  // 파일 첨부
-  const selectFile = (event: any) => {
+  // 이미지 추가
+  const getFile = (event: any) => {
+    let newFile = file;
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addQuestionFile({
-        file: {
-          file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
-        }
-      }))
+      newFile = newFile.concat({file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])});
     }
+    setFile(newFile);
   };
 
   // 기존 이미지 삭제
-  const deleteOriginQuestionFile = (index: number, questionId: number, fileId: number) => {
-    dispatch(deleteOriginalQuestionFile({index: index}));
+  const deleteOriginalFile = (num: number, questionId: number, fileId: number) => {
+    const newFile = originalFile.filter((item, index) => index !== num);
+    setOriginalFile(newFile);
     setDeleteQuestionId([...deleteQuestionId, {questionId: questionId, fileId: fileId}]);
   };
+
+  // 추가한 이미지 삭제
+  const deleteFile = (num: number) => {
+    const newFile = file.filter((item, index) => index !== num);
+    setFile(newFile);
+  };
+
+  // 문의사항 변경 취소 - open
+  const openCancelQuestionModify = () => setCancelQuestionModify(cancelQuestionModify => !cancelQuestionModify);
+
+  // 문의사항 변경 취소 - close
+  const closeCancelQuestionModify = () => setCancelQuestionModify(false);
+
 
   // 문의사항 변경하기
   const putQuestion = (questionId: number) => {
     const questionForm = new FormData();
-    questionForm.append('title', currentQuestion.title);
-    questionForm.append('content', currentQuestion.content);
-    questionFile.map((item: { file: string, path: string }) => questionForm.append('files', item.file));
+    questionForm.append('title', questionContent.title);
+    questionForm.append('content', questionContent.content);
+    file.map((item: { file: string, path: string }) => questionForm.append('files', item.file));
 
     deleteQuestionId.map((item: { questionId: number, fileId: number }) => (
       questionApi.deleteQuestionFile(item.questionId, item.fileId)
-        .then()
-        .catch(error => console.log(error))
+        .then().catch(error => console.log(error))
     ));
 
     if (managerMode) {
       questionForm.append('FAQ', faqState)
-      validate() &&
-      questionApi.putUpdateFAQ(questionId, questionForm)
-        .then(res => {
-          successModify();
-          dispatch(setDetailData({detail: res}));
-          navigate(-1);
-        })
-        .catch(error => console.log(error))
+      if (validate()) {
+        dispatch(onLoading());
+        questionApi.putUpdateFAQ(questionId, questionForm)
+          .then(res => {
+            successModify();
+            dispatch(setDetailData({detail: res}));
+            navigate(-1);
+          })
+          .catch(error => console.log(error))
+          .finally(() => dispatch(onLoading()))
+      }
     } else {
-      validate() &&
-      questionApi.putQuestion(questionId, questionForm)
-        .then(res => {
-          successModify();
-          dispatch(setDetailData({detail: res}));
-          navigate(-1);
-        })
-        .catch(error => {
-          errorToast(error.response.data.message);
-          if (error.response.status === 401) {
-            localStorage.removeItem("login");
-            const isLogin = localStorage.getItem("login");
-            dispatch(changeMode({login: isLogin}));
-          }
-        })
+      if (validate()) {
+        dispatch(onLoading());
+        questionApi.putQuestion(questionId, questionForm)
+          .then(res => {
+            successModify();
+            dispatch(setDetailData({detail: res}));
+            navigate(-1);
+          })
+          .catch(error => {
+            console.log(error);
+            if (error.response.status === 401) {
+              errorToast('로그인이 필요합니다.');
+              localStorage.removeItem("login");
+              const isLogin = localStorage.getItem("login");
+              dispatch(changeMode({login: isLogin}));
+            }
+            errorToast(error.response.data.message);
+          })
+          .finally(() => dispatch(onLoading()))
+      }
     }
   };
 
@@ -149,9 +174,10 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
         }}>
           <TextField
             type='text'
-            value={currentQuestion.title}
-            required={true}
-            onChange={event => dispatch(modifyQuestionTitle({title: event?.target.value}))}
+            name={'title'}
+            value={questionContent.title}
+            required
+            onChange={changeValue}
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
             placeholder='제목을 입력해 주세요'
@@ -211,7 +237,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
             <label
               className='uploadButton'
               htmlFor='inputQuestionPhoto'
-              onChange={selectFile}
+              onChange={getFile}
               onClick={(e: any) => e.target.value = null}>
               사진 첨부
               <input className='questionInput' id='inputQuestionPhoto' type='file' accept={'image/*'} multiple/>
@@ -219,7 +245,7 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
           </Box>
 
           {/* 첨부파일 */}
-          {questionFile.length + currentQuestion.files.length > 0 &&
+          {file.length + originalFile.length > 0 &&
             <Container
               sx={{
                 border: '1.8px solid lightgrey',
@@ -232,11 +258,11 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
                 alignItems: 'center'
               }}>
               {/* 기존 이미지 */}
-              {currentQuestion.files.map((item: { id: number, originalFilename: string, savedPath: string, serverFilename: string }, index: number) => (
+              {originalFile.map((item, index) => (
                 <Box key={item.id} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => deleteOriginQuestionFile(index, detail.id, item.id)}
+                      onClick={() => deleteOriginalFile(index, detail.id, item.id)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
                   <img src={`${api.baseUrl()}/files/question/${item.serverFilename}`} alt={item.originalFilename}
@@ -245,14 +271,14 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
               ))}
 
               {/* 새로 추가한 이미지 */}
-              {questionFile.map((item: { file: string, path: string }, index: number) => (
+              {file.map((item, index) => (
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => dispatch(deleteQuestionFile({index: index}))}
+                      onClick={() => deleteFile(index)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
-                  <img src={item.path} alt='이미지' width='100%'/>
+                  <img src={item.path} alt='첨부 이미지' width='100%'/>
                 </Box>
               ))}
             </Container>
@@ -260,17 +286,16 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
 
           <TextField
             type='text'
-            value={currentQuestion.content}
+            name='content'
+            value={questionContent.content}
             multiline
             minRows={15}
-            required={true}
-            onChange={event => dispatch(modifyQuestionContent({content: event?.target.value}))}
+            required
+            onChange={changeValue}
             placeholder='문의사항을 작성해 주세요'
-            inputProps={{
-              style: {
-                fontSize: 20,
-              }
-            }}
+            error={!!contentErrorMsg}
+            helperText={contentErrorMsg}
+            inputProps={{style: {fontSize: 20}}}
             sx={{width: '100%'}}
           />
         </Stack>

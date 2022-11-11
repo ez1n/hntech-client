@@ -10,7 +10,7 @@ class AdminApi {
   // 로그아웃
   async getLogout() {
     const response = await axios.get(`/api/admin/logout`);
-    return response;
+    return response.data;
   };
 
   // 배너 받아오기
@@ -33,12 +33,6 @@ class AdminApi {
   async deleteBanner(bannerName: string) {
     const response = await axios.delete(`/api/file/image/${bannerName}`);
     return response.data;
-  };
-
-  // 로고 받아오기
-  async getLogo() {
-    const response = await axios.get(`/api/admin/images`);
-    return response.data.logoImage;
   };
 
   // 로고 수정하기
@@ -111,12 +105,6 @@ class AdminApi {
     return response.data;
   };
 
-  // 조직도 받아오기
-  async getOrgChart() {
-    const response = await axios.get(`/api/admin/images`);
-    return response.data.orgChartImage;
-  };
-
   // 조직도 변경
   async postOrgChart(orgChart: FormData) {
     const response = await axios.post(`/api/admin/image`, orgChart, {
@@ -127,12 +115,6 @@ class AdminApi {
     return response.data.orgChartImage;
   };
 
-  // 회사연혁 받아오기
-  async getHistory() {
-    const response = await axios.get(`/api/admin/images`);
-    return response.data.historyImage;
-  };
-
   // 회사 연혁 변경
   async postHistory(history: FormData) {
     const response = await axios.post(`/api/admin/image`, history, {
@@ -141,12 +123,6 @@ class AdminApi {
       }
     });
     return response.data.historyImage;
-  };
-
-  // CI 소개 받아오기
-  async getCompanyInfo() {
-    const response = await axios.get(`/api/admin/images`);
-    return response.data.compInfoImage;
   };
 
   // CI 소개 변경

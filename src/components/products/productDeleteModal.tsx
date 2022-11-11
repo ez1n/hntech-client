@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {categoryApi} from "../../network/category";
 import {useAppDispatch} from "../../app/hooks";
 import {getMiddleProductCategory, setAllProductCategories} from "../../app/reducers/categorySlice";
-import {changeMode} from "../../app/reducers/managerModeSlice";
+import {changeMode} from "../../app/reducers/adminSlice";
 import {
   Button,
   Dialog,
@@ -69,14 +69,14 @@ export default function ProductDeleteModal(props: PropsType) {
         categoryApi.getMainProductCategory()
           .then(res => {
             closeDeleteModal();
-            dispatch(setAllProductCategories({categories: res.categories}));
+            dispatch(setAllProductCategories({categories: res}));
             props.successDelete();
           })
           .catch(error => console.log(error))
 
         mainCategory &&
         categoryApi.getMiddleProductCategory(mainCategory)
-          .then(res => dispatch(getMiddleProductCategory({category: res.categories})))
+          .then(res => dispatch(getMiddleProductCategory({category: res})))
           .catch(error => console.log(error))
       })
       .catch(error => {

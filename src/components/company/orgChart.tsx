@@ -1,31 +1,25 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {adminApi} from '../../network/admin';
 import {api} from '../../network/network';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {onLoading} from "../../app/reducers/dialogSlice";
 import {getOrgChartImage, updateOrgChart} from '../../app/reducers/companyModifySlice';
 import {Box, Container, Typography, styled} from '@mui/material';
 import EditButton from '../editButton';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function OrgChart({success}: propsType) {
+export default function OrgChart({success, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   const orgChartForm = new FormData(); // 조직도 (전송 데이터)
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const orgChart = useAppSelector(state => state.companyModify.companyImage.orgChartImage); // 조직도 state (받아온 데이터)
-
-  // 조직도 받아오기
-  useEffect(() => {
-    adminApi.getOrgChart()
-      .then(res => dispatch(getOrgChartImage({orgChartImage: res})))
-      .catch(error => console.log(error))
-  }, []);
 
   // 조직도 사진 업로드 -> 됐는지 확인해야함
   const updateOrgChartImage = (event: any) => {
@@ -47,6 +41,7 @@ export default function OrgChart({success}: propsType) {
         dispatch(onLoading());
         console.log(error);
         if (error.response.status === 401) {
+          errorToast('로그인이 필요합니다.');
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));

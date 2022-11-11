@@ -3,7 +3,7 @@ import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {categoryApi} from '../../network/category';
 import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
 import {getArchiveCategory} from '../../app/reducers/categorySlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {
   Box,
   Dialog,
@@ -29,8 +29,6 @@ interface propsType {
 export default function EditArchiveCategory({errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
-  const categoryForm = new FormData();
-
   const inputRef: any = useRef(); // 카테고리 input ref
   const categoryNameRef: any = useRef(); // 카테고리 이름 ref
 
@@ -42,20 +40,16 @@ export default function EditArchiveCategory({errorToast}: propsType) {
 
   // 카테고리 목록 받아오기
   useEffect(() => {
-    categoryApi.getAllCategories()
-      .then(res => dispatch(getArchiveCategory({categories: res.categories})))
+    categoryApi.getArchiveCategories()
+      .then(res => dispatch(getArchiveCategory({categories: res})))
+      .catch(error => console.log(error))
   }, []);
 
   // 자료실 카테고리 삭제 modal - open
-  const openDeleteArchiveCategory = () => {
-    setDeleteCategory(prev => !prev);
-  };
+  const openDeleteArchiveCategory = () => setDeleteCategory(prev => !prev);
 
   // 자료실 카테고리 삭제 modal - close
-  const closeDeleteArchiveCategory = () => {
-    setDeleteCategory(false);
-  };
-
+  const closeDeleteArchiveCategory = () => setDeleteCategory(false);
   // 수정폼 나가기
   const onClose = () => {
     dispatch(clickArchivesGoBack());
@@ -66,6 +60,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   const addCategory = () => {
     if (inputRef.current.value === '') return;
 
+    const categoryForm = new FormData();
     categoryForm.append('categoryName', inputRef.current.value);
     [].map(item => categoryForm.append('image', item));
     categoryForm.append('showInMain', 'false');
@@ -73,33 +68,8 @@ export default function EditArchiveCategory({errorToast}: propsType) {
     categoryApi.createArchiveCategory(categoryForm)
       .then(() => {
         inputRef.current.value = '';
-        categoryApi.getAllCategories()
-          .then(res => {
-            dispatch(getArchiveCategory({categories: res.categories}));
-          })
-      })
-      .catch(error => {
-        errorToast(error.response.data.message);
-        if (error.response.status === 401) {
-          localStorage.removeItem("login");
-          const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({login: isLogin}));
-        }
-      })
-  };
-
-  const onAddCategoryKeyUp = (event: any) => {
-    if (event.key === 'Enter') {
-      addCategory()
-    }
-  };
-
-  // 카테고리 삭제
-  const deleteArchiveCategory = (categoryId: number, categoryName: string) => {
-    categoryApi.deleteArchiveCategory(categoryId, categoryName)
-      .then(() => {
-        categoryApi.getAllCategories()
-          .then(res => dispatch(getArchiveCategory({categories: res.categories})))
+        categoryApi.getArchiveCategories()
+          .then(res => dispatch(getArchiveCategory({categories: res})))
       })
       .catch(error => {
         errorToast(error.response.data.message);
@@ -113,8 +83,34 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       })
   };
 
+  const onAddCategoryKeyUp = (event: any) => {
+    if (event.key === 'Enter') {
+      addCategory();
+    }
+  };
+
+  // 카테고리 삭제
+  const deleteArchiveCategory = (categoryId: number, categoryName: string) => {
+    categoryApi.deleteArchiveCategory(categoryId, categoryName)
+      .then(() => {
+        categoryApi.getAllCategories()
+          .then(res => dispatch(getArchiveCategory({categories: res})))
+      })
+      .catch(error => {
+        errorToast('카테고리를 삭제할 수 없습니다.');
+        console.log(error);
+
+        if (error.response.status === 401) {
+          localStorage.removeItem("login");
+          const isLogin = localStorage.getItem("login");
+          dispatch(changeMode({login: isLogin}));
+        }
+      })
+  };
+
   // 카테고리 이름 수정
   const editArchiveCategory = (categoryId: number, categoryName: string) => {
+    const categoryForm = new FormData();
     categoryForm.append('categoryName', categoryName);
     [].map(item => categoryForm.append('image', item));
     categoryForm.append('showInMain', 'false');
@@ -122,7 +118,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       .then(() => {
         categoryApi.getAllCategories()
           .then(res => {
-            dispatch(getArchiveCategory({categories: res.categories}));
+            dispatch(getArchiveCategory({categories: res}));
             setSelectedCategory({name: '', id: null});
           })
           .catch(error => console.log(error))

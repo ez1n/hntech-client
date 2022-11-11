@@ -34,7 +34,7 @@ import {
   updateSiteButtonName,
   updateSiteLink,
   addTax, resetDocumentFile
-} from '../../app/reducers/managerModeSlice';
+} from '../../app/reducers/adminSlice';
 import {
   Drawer,
   Fab,
@@ -63,7 +63,7 @@ interface propsType {
 export default function AdminPanel({successModify}: propsType) {
   const dispatch = useAppDispatch();
 
-  const [deleteBannerName, setDeleteBannerName] = useState<{ name: string }[]>([])
+  const [deleteBannerName, setDeleteBannerName] = useState<{ name: string }[]>([]);
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
@@ -171,16 +171,14 @@ export default function AdminPanel({successModify}: propsType) {
     adminApi.postLogo(logoForm)
       .then(res => {
         dispatch(addLogoFile({logo: {file: '', name: ''}}));
-
-        adminApi.getLogo()
-          .then(res => dispatch(setLogo({logo: res})))
+        dispatch(setLogo({logo: res.logoImage}));
       })
       .catch(error => console.log(error))
 
     // 배너 삭제
     deleteBannerName.map((item: { name: string }) => (
       adminApi.deleteBanner(item.name)
-        .then(res => {
+        .then(() => {
           setDeleteBannerName([]);
           adminApi.getBanner()
             .then(res => dispatch(setBanner({banner: res})));
@@ -228,7 +226,7 @@ export default function AdminPanel({successModify}: propsType) {
       documentForm.append('taxFile', documentFile.tax.file);
 
     adminApi.postDocument(documentForm)
-      .then(res => {
+      .then(() => {
         adminApi.getDocument()
           .then(res => {
             dispatch(onLoading());

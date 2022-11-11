@@ -1,17 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {questionApi} from '../../network/question';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {changeMode} from '../../app/reducers/managerModeSlice';
-import {
-  updateQuestionTitle,
-  updateQuestionName,
-  updateQuestionPassword,
-  updateQuestionContent,
-  resetQuestionContent,
-  deleteQuestionFile,
-  addQuestionFile
-} from '../../app/reducers/questionFormSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {
   Container,
   styled,
@@ -20,13 +11,12 @@ import {
   List,
   ListItem,
   TextField,
-  Stack,
-  FormControl,
-  FormHelperText
+  Stack
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
+import {onLoading} from "../../app/reducers/dialogSlice";
 
 interface propsType {
   success: () => void,
@@ -39,19 +29,16 @@ export default function QuestionForm({success, errorToast}: propsType) {
 
   // state
   const questionFile = useAppSelector(state => state.questionForm.questionFile);
-  const questionContent = useAppSelector(state => state.questionForm.questionContent); // 문의사항 폼 정보
-  const {title, writer, password, content} = questionContent
   const [deleteQuestionForm, setDeleteQuestionForm] = useState(false); // 글쓰기 취소
+  const [questionContent, setQuestionContent] = useState({title: '', writer: '', password: '', content: ''});
+  const [file, setFile] = useState<{ file: string, path: string }[]>([]);
+  const {title, writer, password, content} = questionContent;
 
   // error message
   const [nameErrorMsg, setNameErrorMsg] = useState('');
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
   const [contentErrorMsg, setContentErrorMsg] = useState('');
-
-  useEffect(() => {
-    dispatch(resetQuestionContent());
-  }, []);
 
   const validate = () => {
     let isValid = true;
@@ -74,29 +61,35 @@ export default function QuestionForm({success, errorToast}: propsType) {
     return isValid;
   };
 
-  // 문의사항 작성 취소 - open
-  const openDeleteQuestionForm = () => {
-    setDeleteQuestionForm(deleteQuestionForm => !deleteQuestionForm);
+  const changeValue = (event: any) => {
+    const {name, value} = event.target;
+    setQuestionContent({...questionContent, [name]: value});
   };
+
+  // 파일 선택
+  const getFile = (event: any) => {
+    let newFile = file;
+    for (let i = 0; i < event.target.files.length; i++) {
+      newFile = newFile.concat({file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])})
+    }
+    setFile(newFile);
+  };
+
+  // 파일 삭제
+  const deleteFile = (num: number) => {
+    const newFile = file.filter((item, index) => index !== num);
+    setFile(newFile);
+  };
+
+  // 문의사항 작성 취소 - open
+  const openDeleteQuestionForm = () => setDeleteQuestionForm(deleteQuestionForm => !deleteQuestionForm);
 
   // 문의사항 작성 취소 - close
-  const closeDeleteQuestionForm = () => {
-    setDeleteQuestionForm(false);
-  };
-
-  // 파일 선택 이벤트
-  const selectFile = (event: any) => {
-    for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addQuestionFile({
-        file: {
-          file: event.target.files[i], path: URL.createObjectURL(event.target.files[i])
-        }
-      }))
-    }
-  };
+  const closeDeleteQuestionForm = () => setDeleteQuestionForm(false);
 
   // 문의사항 작성하기
   const postCreateQuestion = () => {
+    dispatch(onLoading())
     const questionForm = new FormData();
     questionForm.append('writer', writer);
     questionForm.append('password', password);
@@ -107,7 +100,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
 
     validate() &&
     questionApi.postCreateQuestion(questionForm)
-      .then(res => {
+      .then(() => {
         success();
         navigate('/question?page=1');
       })
@@ -119,6 +112,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
           dispatch(changeMode({login: isLogin}));
         }
       })
+      .finally(() => dispatch(onLoading()))
   };
 
   // 비밀번호 숫자 제한
@@ -149,9 +143,11 @@ export default function QuestionForm({success, errorToast}: propsType) {
         }}>
           <TextField
             type='text'
-            required={true}
-            autoFocus={true}
-            onChange={event => dispatch(updateQuestionTitle({title: event?.target.value}))}
+            name='title'
+            value={title}
+            required
+            autoFocus
+            onChange={changeValue}
             placeholder='제목을 입력해 주세요'
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
@@ -164,13 +160,18 @@ export default function QuestionForm({success, errorToast}: propsType) {
         <Box sx={{
           borderBottom: '1px solid rgba(46, 125, 50, 0.5)',
           p: 2,
-          pb: 0
+          pt: 0
         }}>
+          <List sx={{mb: 1}}>
+            <Precautions>※ 이름은 실명으로 기재해 주세요.</Precautions>
+            <Precautions>※ 비밀번호는 숫자 4자리를 입력해 주세요. 게시물 열람시 사용됩니다.</Precautions>
+          </List>
           <DataTextField
             type='text'
-            required={true}
+            name='writer'
+            required
             placeholder='이름'
-            onChange={event => dispatch(updateQuestionName({writer: event.target.value}))}
+            onChange={changeValue}
             size='small'
             error={!!nameErrorMsg}
             helperText={nameErrorMsg}
@@ -181,22 +182,15 @@ export default function QuestionForm({success, errorToast}: propsType) {
           />
           <DataTextField
             type='password'
-            required={true}
+            name='password'
+            required
             placeholder='비밀번호'
             error={!!passwordErrorMsg}
             helperText={passwordErrorMsg}
             onKeyDown={inputNumber}
-            onChange={event => dispatch(updateQuestionPassword({password: event.target.value}))}
+            onChange={changeValue}
             size='small'
-            inputProps={{
-              style: {fontSize: 15},
-              maxLength: 4
-            }}/>
-
-          <List sx={{mt: 1}}>
-            <Precautions>※ 이름은 꼭 실명으로 기재해 주세요.</Precautions>
-            <Precautions>※ 확인용 비밀번호는 숫자 4자리를 입력해 주세요. 답변을 확인할 때 사용됩니다.</Precautions>
-          </List>
+            inputProps={{style: {fontSize: 15}, maxLength: 4}}/>
         </Box>
 
         {/* 문의 내용 */}
@@ -205,7 +199,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
             <label
               className='uploadButton'
               htmlFor='inputQuestionPhoto'
-              onChange={selectFile}
+              onChange={getFile}
               onClick={(e: any) => e.target.value = null}>
               사진 첨부
               <input className='questionInput' id='inputQuestionPhoto' type='file' accept={'image/*'} multiple/>
@@ -213,7 +207,7 @@ export default function QuestionForm({success, errorToast}: propsType) {
           </Box>
 
           {/* 첨부파일 */}
-          {questionFile.length > 0 &&
+          {file.length > 0 &&
             <Container
               sx={{
                 border: '1.8px solid lightgrey',
@@ -225,26 +219,26 @@ export default function QuestionForm({success, errorToast}: propsType) {
                 overflow: 'auto',
                 alignItems: 'center'
               }}>
-              {questionFile.map((item: { file: string, path: string }, index: number) => (
+              {file.map((item: { file: string, path: string }, index: number) => (
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
-                      onClick={() => dispatch(deleteQuestionFile({index: index}))}
+                      onClick={() => deleteFile(index)}
                       sx={{color: 'darkgreen', cursor: 'pointer'}}/>
                   </Box>
-                  <img src={item.path} alt='이미지' width='100%'/>
+                  <img src={item.path} alt='첨부 이미지' width='100%'/>
                 </Box>
               ))}
             </Container>
           }
 
-
           <TextField
             type='text'
+            name='content'
             multiline
-            minRows={15}
+            rows={15}
             required={true}
-            onChange={event => dispatch(updateQuestionContent({content: event.target.value}))}
+            onChange={changeValue}
             error={!!contentErrorMsg}
             helperText={contentErrorMsg}
             placeholder='문의사항을 작성해 주세요'

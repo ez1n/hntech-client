@@ -1,31 +1,25 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {adminApi} from '../../network/admin';
 import {api} from '../../network/network';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getCompanyInfoImage, updateCompanyInfo} from '../../app/reducers/companyModifySlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {onLoading} from "../../app/reducers/dialogSlice";
 import {Box, Container, Typography, styled} from '@mui/material';
 import EditButton from '../editButton';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function CompanyInfo({success}: propsType) {
+export default function CompanyInfo({success, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   const ciForm = new FormData(); // CI 소개 (전송 데이터)
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const companyInfo = useAppSelector(state => state.companyModify.companyImage.compInfoImage); // CI 소개 state (받아온 데이터)
-
-  // CI 받아오기
-  useEffect(() => {
-    adminApi.getCompanyInfo()
-      .then(res => dispatch(getCompanyInfoImage({companyInfoImage: res})))
-      .catch(error => console.log(error))
-  }, []);
 
   // CI 사진 업로드
   const updateCompanyInfoImage = (event: any) => {
@@ -48,11 +42,11 @@ export default function CompanyInfo({success}: propsType) {
         dispatch(onLoading());
         console.log(error);
         if (error.response.status === 401) {
+          errorToast('로그인이 필요합니다.');
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 

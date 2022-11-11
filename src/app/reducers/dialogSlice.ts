@@ -18,7 +18,6 @@ import {createSlice} from "@reduxjs/toolkit";
  * clickPasswordStateGoBack : 비밀번호 변경
  * clickProductCategoryFormGoBack : 제품 카테고리 등록 / 수정
  * clickProductItemGoBack
- * clickProductCategoryListGoBack
  * clickCommentRemoveGoBack
  * clickArchivesGoBack
  * onLoading
@@ -62,9 +61,6 @@ export const DialogSlice = createSlice({
     clickProductCategoryFormGoBack: state => {
       state.productCategoryFormState = !state.productCategoryFormState
     },
-    clickProductCategoryListGoBack: state => {
-      state.productCategoryListState = !state.productCategoryListState
-    },
     clickCommentRemoveGoBack: state => {
       state.commentRemoveState = !state.commentRemoveState
     },
@@ -82,7 +78,6 @@ export const {
   clickPasswordStateGoBack,
   clickProductItemGoBack,
   clickProductCategoryFormGoBack,
-  clickProductCategoryListGoBack,
   clickCommentRemoveGoBack,
   clickArchivesGoBack,
   onLoading

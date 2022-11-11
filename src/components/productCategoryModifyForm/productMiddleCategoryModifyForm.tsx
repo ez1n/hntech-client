@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import {categoryApi} from "../../network/category"
+import {api} from "../../network/network";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {clickProductCategoryFormGoBack, onLoading} from "../../app/reducers/dialogSlice";
-import {categoryApi} from "../../network/category";
-import {changeMode} from "../../app/reducers/managerModeSlice";
+import {changeMode} from "../../app/reducers/adminSlice";
 import {
   Box,
   Container, MenuItem, Select,
@@ -14,7 +15,6 @@ import {
 import EditButton from "../editButton";
 import Loading from "../loading";
 import CancelModal from "../cancelModal";
-import {api} from "../../network/network";
 
 interface propsType {
   successModify: () => void,
@@ -25,7 +25,6 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
   const currentProductMiddleCategory = useAppSelector(state => state.category.currentProductMiddleCategory); // 선택된 중분류 카테고리 state
   const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
@@ -57,9 +56,6 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
     return isValid;
   };
 
-  // 카테고리 선택
-  const getCategory = (category: string) => setMiddleCategory({...middleCategory, parent: category});
-
   // 카테고리 이름
   const changeCategoryName = (e: any) => setMiddleCategory({...middleCategory, categoryName: e.target.value});
 
@@ -77,7 +73,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
   const putMiddleCategory = () => {
     const middleCategoryForm = new FormData();
     newImage.file === '' ?
-      middleCategoryForm.append('image', new Blob()) :
+      [].map(item => middleCategoryForm.append('image', item)) :
       middleCategoryForm.append('image', newImage.file);
     middleCategoryForm.append('categoryName', categoryName);
     middleCategoryForm.append('showInMain', 'false');
@@ -92,12 +88,14 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
           navigate(-1);
         })
         .catch(error => {
-          errorToast(error.response.data.message);
+          console.log(error);
           if (error.response.status === 401) {
+            errorToast('로그인이 필요합니다.');
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
+          errorToast(error.response.data.message);
         })
         .finally(() => dispatch(onLoading()))
     }
@@ -170,7 +168,8 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
             }}>
             <Box sx={{width: '23%', m: 1}}>
               {newImage.path === '' ?
-                <img src={`${api.baseUrl()}/files/category/${imageServerFilename}`} alt={imageOriginalFilename} width='100%'/> :
+                <img src={`${api.baseUrl()}/files/category/${imageServerFilename}`} alt={imageOriginalFilename}
+                     width='100%'/> :
                 <img src={newImage.path} alt={newImage.name} width='100%'/>
               }
             </Box>
@@ -216,4 +215,4 @@ const Title = styled(Typography)(({theme}) => ({
   },
   fontSize: 20,
   fontWeight: 'bold'
-})) as typeof Typography;
+})) as typeof Typography

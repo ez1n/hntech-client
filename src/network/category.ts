@@ -20,7 +20,7 @@ class CategoryApi {
   // 중분류 제품 카테고리 목록 받아오기
   async getMiddleProductCategory(parentCategoryName: string) {
     const response = await axios.get(`/api/category/product/${parentCategoryName}/children`);
-    return response.data;
+    return response.data.categories;
   };
 
   // 제품 카테고리 등록
@@ -57,10 +57,16 @@ class CategoryApi {
 
   /* 자료실 카테고리 */
 
+  // 자료실 카테고리 수정 목록 받아오기
+  async getArchiveCategories() {
+    const response = await axios.get(`/api/category/archive`);
+    return response.data.categories;
+  };
+
   // 자료실 카테고리 목록 받아오기
   async getAllCategories() {
     const response = await axios.get(`/api/category`);
-    return response.data;
+    return response.data.categories;
   };
 
   // 자료실 카테고리 추가

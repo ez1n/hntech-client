@@ -6,7 +6,7 @@ import {archiveApi} from '../../network/archive';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {getDetailData} from '../../app/reducers/archiveSlice';
 import {onLoading} from "../../app/reducers/dialogSlice";
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {
   Container,
   styled,
@@ -15,7 +15,7 @@ import {
   Checkbox,
   FormControlLabel,
   Stack,
-  TextField
+  TextField, FormHelperText, FormControl
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ArchiveCategorySelect from '../archiveCategorySelect';

@@ -66,20 +66,21 @@ export default function Representation() {
 
   // 카테고리 목록
   const MainCategoryGrid = () => {
-    let categoryColumn = productMainCategories.length;
+    let categoryColumn = 4;
     if (productMainCategories.length > 2) {
       if (windowSize < 1200) categoryColumn = 3;
       if (windowSize < 900) categoryColumn = 2;
     }
+    if (productMainCategories.length > 4) categoryColumn = 3;
     if (windowSize < 600) categoryColumn = 1;
 
     return (
-      <Grid container columns={categoryColumn} spacing={3}>
+      <Grid container columns={categoryColumn} spacing={3} sx={{justifyContent: 'center'}}>
         {productMainCategories?.map((item: { categoryName: string, id: number, imageServerFilename: string }) => (
           <Grid item xs={1} key={item.id}>
             <CategoryButton onClick={() => onClickButton(item.categoryName)}>
               {/* 카테고리 */}
-              <Box sx={{height: 150, minWidth: 214}}>
+              <Box sx={{height: 150, minWidth: '250px'}}>
                 <img
                   className='categoryImage'
                   src={`${api.baseUrl()}/files/category/${item.imageServerFilename}`}
@@ -99,7 +100,7 @@ export default function Representation() {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center'}}>
+    <Box sx={{display: 'flex', justifyContent: 'center'}}>
       <Box sx={{
         p: 2,
         display: 'flex',
@@ -123,27 +124,20 @@ export default function Representation() {
         </DocumentStack>
 
         {/* 메인 카테고리 */}
-        <MainCategoryGrid />
+        <CategoryBox>
+          <MainCategoryGrid/>
+        </CategoryBox>
       </Box>
     </Box>
   )
 };
 
-// 메인 버튼
-const RepProductionButton = styled(ButtonBase)(() => ({
-  margin: 5,
-  height: 200,
-  '&:hover': {
-    '& .MuiImageBackdrop-root': {
-      opacity: 0.3
-    },
-    '& .MuiTypography-root': {
-      border: '5px solid #FCFCFC',
-      borderRadius: 10,
-      display: 'block'
-    },
-  }
-})) as typeof ButtonBase;
+const CategoryBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('lg')]: {
+    width: '100%'
+  },
+  width: '80vw'
+})) as typeof Box;
 
 const DocumentStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('md')]: {

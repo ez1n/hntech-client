@@ -30,7 +30,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
  */
 
 // 관리자모드 state
-interface managerInitialState {
+interface adminInitialState {
   managerMode: boolean,
   password: { password: string },
   panelData: {
@@ -100,9 +100,9 @@ interface managerInitialState {
     approval: { file: string, name: string },
     tax: { file: string, name: string }
   }
-};
+}
 
-const ManagerInitialState: managerInitialState = {
+const AdminInitialState: adminInitialState = {
   managerMode: false,
   password: {password: ''},
   panelData: {
@@ -165,9 +165,9 @@ const ManagerInitialState: managerInitialState = {
 };
 
 // 관리자 모드 업데이트
-export const ManagerSlice = createSlice({
+export const AdminSlice = createSlice({
   name: 'manager',
-  initialState: ManagerInitialState,
+  initialState: AdminInitialState,
   reducers: {
     changeMode: (
       state,
@@ -491,5 +491,5 @@ export const {
   updateSiteButtonName,
   updateSiteLink,
   resetDocumentFile
-} = ManagerSlice.actions;
-export default ManagerSlice.reducer;
+} = AdminSlice.actions;
+export default AdminSlice.reducer;

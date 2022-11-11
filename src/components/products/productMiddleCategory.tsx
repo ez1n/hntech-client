@@ -35,7 +35,7 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
   useEffect(() => {
     mainCategory &&
     categoryApi.getMiddleProductCategory(mainCategory)
-      .then(res => dispatch(getMiddleProductCategory({category: res.categories})))
+      .then(res => dispatch(getMiddleProductCategory({category: res})))
       .catch(error => console.log(error))
   }, [mainCategory]);
 
@@ -54,7 +54,7 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
       <DndProvider backend={HTML5Backend}>
         <Grid container columns={categoryColumn} spacing={2}>
           {productMiddleCategories.length > 0 ?
-            productMiddleCategories?.map((value: {
+            productMiddleCategories?.map((item: {
               id: number,
               categoryName: string,
               imageServerFilename: string,
@@ -63,9 +63,11 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
               parent: string,
               children: string[]
             }, index: number) => (
-              <ProductMiddleCategoryItem key={value.id} category={value} index={index}
-                                         selectMiddleCategory={selectMiddleCategory}
-                                         successDelete={successDelete}/>
+              <Grid key={item.id} item xs={1}>
+                <ProductMiddleCategoryItem key={item.id} category={item} index={index}
+                                           selectMiddleCategory={selectMiddleCategory}
+                                           successDelete={successDelete}/>
+              </Grid>
             )) :
             <Typography>
               해당 카테고리에 제품이 존재하지 않습니다.

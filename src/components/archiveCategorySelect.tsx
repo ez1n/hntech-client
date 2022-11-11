@@ -1,23 +1,26 @@
-import React from 'react';
-import {useAppSelector} from '../app/hooks';
-import {MenuItem, Select, FormControl, FormHelperText, styled} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {MenuItem, Select} from '@mui/material';
+import {categoryApi} from "../network/category";
 
 interface propsType {
   defaultCategory: string | null,
-  categoryErrorMsg?: string,
   getCategory: (e: any) => void
 }
 
-export default function ArchiveCategorySelect({defaultCategory, categoryErrorMsg, getCategory}: propsType) {
-  const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
+export default function ArchiveCategorySelect({defaultCategory, getCategory}: propsType) {
+  const [archiveCategory, setArchiveCategory] = useState<{ id: number, categoryName: string, isArchiveCategory: boolean }[]>([]);
+
+  useEffect(() => {
+    categoryApi.getAllCategories()
+      .then(res => setArchiveCategory(res))
+  }, []);
 
   return (
-    <ArchiveCategoryFormControl error={!!categoryErrorMsg}>
       <Select
         size={'small'}
         defaultValue={defaultCategory ? defaultCategory : undefined}
         onChange={getCategory}
-        sx={{textAlign: 'center'}}
+        sx={{textAlign: 'center', width: '100%'}}
         MenuProps={{style: {maxHeight: 300}}}
       >
         {defaultCategory === '전체' && <MenuItem value={'전체'} sx={{justifyContent: 'center'}}>전체</MenuItem>}
@@ -27,15 +30,5 @@ export default function ArchiveCategorySelect({defaultCategory, categoryErrorMsg
           </MenuItem>
         ))}
       </Select>
-      <FormHelperText>{categoryErrorMsg}</FormHelperText>
-    </ArchiveCategoryFormControl>
   )
 };
-
-const ArchiveCategoryFormControl = styled(FormControl)(({theme}) => ({
-  [theme.breakpoints.down('sm')]: {
-    display: 'flex',
-    width: '50%'
-  },
-  width: '20%'
-})) as typeof FormControl;

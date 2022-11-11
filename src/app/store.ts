@@ -1,20 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import menuSlice from './reducers/menuSlice';
-import managerModeSlice from './reducers/managerModeSlice';
+import adminSlice from './reducers/adminSlice';
 import companySlice from './reducers/companySlice';
 import companyModifySlice from './reducers/companyModifySlice';
 import dialogSlice from './reducers/dialogSlice';
 import questionSlice from './reducers/questionSlice';
 import commentSlice from './reducers/commentSlice';
 import productSlice from './reducers/productSlice';
-import questionFormSlice from './reducers/questionFormSlice';
 import archiveSlice from './reducers/archiveSlice';
 import categorySlice from './reducers/categorySlice';
 
 export const store = configureStore({
   reducer: {
     menu: menuSlice,
-    manager: managerModeSlice,
+    manager: adminSlice,
     company: companySlice,
     companyModify: companyModifySlice,
     dialog: dialogSlice,
@@ -22,7 +21,6 @@ export const store = configureStore({
     comment: commentSlice,
     product: productSlice,
     archive: archiveSlice,
-    questionForm: questionFormSlice,
     category: categorySlice,
   },
   middleware: (getDefaultMiddleware) =>

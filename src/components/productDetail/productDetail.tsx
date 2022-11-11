@@ -56,6 +56,9 @@ export default function ProductDetail({successDelete}: propsType) {
                 fontSize: 'large',
                 cursor: 'pointer',
                 userSelect: 'none',
+                borderRadius: '5px',
+                bgcolor: 'rgba(198,219,227,0.73)',
+                p: 1,
                 '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
               }}>
               전체 카테고리
@@ -66,6 +69,9 @@ export default function ProductDetail({successDelete}: propsType) {
                 fontSize: 'large',
                 cursor: 'pointer',
                 userSelect: 'none',
+                borderRadius: '5px',
+                bgcolor: 'rgba(198,219,227,0.73)',
+                p: 1,
                 '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
               }}>
               {mainCategory}
@@ -73,14 +79,26 @@ export default function ProductDetail({successDelete}: propsType) {
             <Typography
               onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}
               sx={{
-              fontSize: 'large',
-              cursor: 'pointer',
-              userSelect: 'none',
-              '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
-            }}>
+                fontSize: 'large',
+                cursor: 'pointer',
+                userSelect: 'none',
+                borderRadius: '5px',
+                bgcolor: 'rgba(198,219,227,0.73)',
+                p: 1,
+                '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+              }}>
               {middleCategory}
             </Typography>,
-            <Typography sx={{fontSize: 'large', fontWeight: 'bold', userSelect: 'none'}}>{productName}</Typography>
+            <Typography sx={{
+              fontSize: 'large',
+              fontWeight: 'bold',
+              userSelect: 'none',
+              borderRadius: '5px',
+              bgcolor: 'rgba(198,219,227,0.73)',
+              p: 1,
+            }}>
+              {productName}
+            </Typography>
           ]}
         </Breadcrumbs>
       </BreadcrumbsBox>
@@ -142,10 +160,12 @@ export default function ProductDetail({successDelete}: propsType) {
 
         {/* 900px 이하 사이드 메뉴 */}
         <SelectBox>
-          <MenuSelect
-            defaultValue={productId}
+          <Select
+            defaultValue={id}
             onChange={(event: any) => getProduct(event?.target.value)}
-            size='small'>
+            size='small'
+            sx={{textAlign: 'center', width: '100%'}}
+          >
             {productList.map((item: {
               id: number,
               image: {
@@ -156,9 +176,9 @@ export default function ProductDetail({successDelete}: propsType) {
               },
               productName: string
             }) => (
-              <MenuList key={item.id} value={item.id}>{item.productName}</MenuList>
+              <MenuItem key={item.id} value={item.id} sx={{justifyContent: 'center'}}>{item.productName}</MenuItem>
             ))}
-          </MenuSelect>
+          </Select>
         </SelectBox>
 
         {/* 제품 정보 */}
@@ -233,21 +253,11 @@ const SelectBox = styled(Box)(({theme}) => ({
   display: 'none',
 }));
 
-const MenuSelect = styled(Select)(() => ({
-  textAlign: 'center',
-  marginTop: 20,
-  width: '100%'
-}));
-
-const MenuList = styled(MenuItem)(() => ({
-  justifyContent: 'center'
-})) as typeof MenuItem;
-
 const BreadcrumbsBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     display: 'none'
   },
   margin: 'auto',
-  marginTop: 5,
+  marginTop: 50,
   width: '80vw'
 })) as typeof Box;

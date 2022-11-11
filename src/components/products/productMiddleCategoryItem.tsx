@@ -5,8 +5,7 @@ import {useDrag, useDrop} from "react-dnd";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {
   getMiddleProductCategory,
-  setCurrentProductMiddleCategory,
-  setCurrentProductMiddleCategoryName
+  setCurrentProductMiddleCategory
 } from "../../app/reducers/categorySlice";
 import {Box, Button, Grid, styled} from "@mui/material";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
@@ -65,7 +64,7 @@ export default function ProductMiddleCategoryItem(props: propsType) {
       .then(() => {
         mainCategory &&
         categoryApi.getMiddleProductCategory(mainCategory)
-          .then(res => dispatch(getMiddleProductCategory({category: res.categories})))
+          .then(res => dispatch(getMiddleProductCategory({category: res})))
           .catch(error => console.log(error))
       })
       .catch(error => console.log(error))
@@ -107,7 +106,7 @@ export default function ProductMiddleCategoryItem(props: propsType) {
 
   return (
     <>
-      <Grid item xs={1} ref={dropRef}>
+      <Box ref={dropRef}>
         <ProductBox ref={dragRef} sx={{boxShadow: isOver ? '3px 3px 3px 3px lightgrey' : 'none'}}>
           <ProductButton
             imageServerFilename={imageServerFilename}
@@ -118,7 +117,7 @@ export default function ProductMiddleCategoryItem(props: propsType) {
 
           {/* 수정 버튼 */}
           {managerMode &&
-            <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+            <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-around'}}>
               <Button
                 onClick={() => openDeleteMessage(category)}
                 sx={{color: 'red'}}>
@@ -135,7 +134,7 @@ export default function ProductMiddleCategoryItem(props: propsType) {
             </Box>
           }
         </ProductBox>
-      </Grid>
+      </Box>
 
       {/* 카테고리 삭제 경고 메시지 */}
       <ProductDeleteModal

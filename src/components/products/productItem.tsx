@@ -103,7 +103,7 @@ export default function ProductItem({product, index}: propsType) {
   );
 
   return (
-    <Grid item xs={1} ref={dropRef}>
+    <Box ref={dropRef}>
       <ProductBox ref={dragRef} sx={{boxShadow: isOver ? '3px 3px 3px 3px lightgrey' : 'none'}}>
         {/* 제품 */}
         <ProductButton onClick={() => getProduct(id)}>
@@ -140,7 +140,7 @@ export default function ProductItem({product, index}: propsType) {
           </Box>
         }
       </ProductBox>
-    </Grid>
+    </Box>
   )
 };
 

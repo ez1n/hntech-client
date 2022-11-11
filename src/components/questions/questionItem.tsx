@@ -104,11 +104,11 @@ export default function QuestionItem() {
 
   // 게시글 자세히 보기
   const getQuestionByAdmin = (questionId: number) => {
+    dispatch(setFaqState({faq: false}));
     if (managerMode) {
       questionApi.getQuestionByAdmin(questionId)
         .then(res => {
           dispatch(setDetailData({detail: res}));
-          dispatch(setFaqState({faq: false}));
           navigate('/question/' + res.id);
         })
     } else {
@@ -137,7 +137,7 @@ export default function QuestionItem() {
     <>
       <Box sx={{borderTop: '3px solid #2E7D32', borderBottom: '3px solid #3B6C46'}}>
         {/* 분류 */}
-        <Box sx={{display: 'flex', flex: 1, p: 2, borderBottom: '3px solid #3B6C46'}}>
+        <Box sx={{display: 'flex', flex: 1, p: '12px', borderBottom: '3px solid #3B6C46'}}>
           <Title sx={{flex: 0.1}}>번호</Title>
           <Title sx={{flex: 0.5}}>제목</Title>
           <Title sx={{flex: 0.1}}>처리상태</Title>
@@ -245,7 +245,7 @@ export default function QuestionItem() {
 };
 
 const Spacing = styled(Container)(() => ({
-  height: 50
+  height: 30
 })) as typeof Container;
 
 const Title = styled(Typography)(({theme}) => ({

@@ -99,7 +99,7 @@ export default function ProductMainCategoryItem(props: propsType) {
 
   return (
     <>
-      <Grid item xs={1} ref={dropRef}>
+      <Box ref={dropRef}>
         <ProductBox ref={dragRef} sx={{boxShadow: isOver ? '3px 3px 3px 3px lightgrey' : 'none'}}>
           <ProductButton
             imageServerFilename={imageServerFilename}
@@ -110,7 +110,7 @@ export default function ProductMainCategoryItem(props: propsType) {
 
           {/* 수정 버튼 */}
           {managerMode &&
-            <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+            <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-around'}}>
               <Button
                 onClick={() => openDeleteMessage(category)}
                 sx={{color: 'red'}}>
@@ -127,7 +127,7 @@ export default function ProductMainCategoryItem(props: propsType) {
             </Box>
           }
         </ProductBox>
-      </Grid>
+      </Box>
 
       {/* 카테고리 삭제 경고 메시지 */}
       <ProductDeleteModal

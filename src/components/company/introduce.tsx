@@ -1,27 +1,21 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {adminApi} from '../../network/admin';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {updateIntroduce} from '../../app/reducers/companyModifySlice';
 import {Box, Container, TextField, Typography, styled} from '@mui/material';
 import EditButton from '../editButton';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 
 interface propsType {
-  success: () => void
+  success: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function Introduce({success}: propsType) {
+export default function Introduce({success, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const introduce = useAppSelector(state => state.companyModify.introduce); // 인사말 state
-
-  // 인사말 받아오기
-  useEffect(() => {
-    adminApi.getIntroduce()
-      .then(res => dispatch(updateIntroduce({newIntroduce: res.newIntroduce})))
-      .catch(error => console.log(error))
-  }, []);
 
   // 인사말 수정
   const putIntroduce = () => {
@@ -33,6 +27,7 @@ export default function Introduce({success}: propsType) {
       .catch(error => {
         console.log(error);
         if (error.response.status === 401) {
+          errorToast('로그인이 필요합니다.');
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
@@ -67,11 +62,9 @@ export default function Introduce({success}: propsType) {
             sx={{mt: 3, width: '100%'}}/>
         </Container> :
         <Container sx={{textAlign: 'center'}}>
-          {introduce.newIntroduce.split('\n').map((value, index) => (
-            <IntroduceContentTypography key={index}>
-              {value === '' ? <br/> : value}
-            </IntroduceContentTypography>
-          ))}
+          <IntroduceContentTypography>
+            {introduce.newIntroduce}
+          </IntroduceContentTypography>
         </Container>}
     </TotalBox>
   )
@@ -115,5 +108,6 @@ const IntroduceContentTypography = styled(Typography)(({theme}) => ({
   fontWeight: 'bold',
   color: 'rgb(43, 88, 53)',
   marginBottom: 20,
-  textAlign: 'center'
+  textAlign: 'center',
+  whiteSpace: 'pre-wrap'
 })) as typeof Typography;

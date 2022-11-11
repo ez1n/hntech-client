@@ -7,7 +7,7 @@ import {
   updateManagerPassword,
   updateNewPassword,
   updateNewPasswordCheck
-} from '../../app/reducers/managerModeSlice';
+} from '../../app/reducers/adminSlice';
 import {
   Dialog,
   DialogActions,

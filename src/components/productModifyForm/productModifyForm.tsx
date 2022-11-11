@@ -4,7 +4,7 @@ import {api} from '../../network/network';
 import {productApi} from '../../network/product';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {onLoading} from '../../app/reducers/dialogSlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {
   Container,
   styled,
@@ -315,14 +315,15 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
           }
         })
         .catch(error => {
-          errorToast(error.response.data.message);
           dispatch(onLoading());
           console.log(error);
           if (error.response.status === 401) {
+            errorToast('로그인이 필요합니다.');
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
+          errorToast(error.response.data.message);
         })
     }
   };
@@ -371,7 +372,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
           pr: 1,
           pl: 1
         }}>
-          <Box>
+          <ButtonBox>
             {/* 숨김 input */}
             <label
               ref={repPhotoInputRef}
@@ -407,24 +408,27 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             }}/>
             <EditButton name='제품 이미지 추가' onClick={() => selectInput(photoInputRef)}/>
             <EditButton name='규격 이미지 추가' onClick={() => selectInput(standardInputRef)}/>
-          </Box>
+          </ButtonBox>
 
-          <List>
-            <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
-              ※ 중분류 카테고리를 선택해 주세요.
-            </ListItem>
-          </List>
+          <TotalBox>
+            <List sx={{maxWidth: '100%'}}>
+              <ListItem sx={{userSelect: 'none', color: 'darkgrey', width: '100%'}}>
+                ※ 중분류 카테고리를 선택해 주세요.
+              </ListItem>
+            </List>
 
-          {/* 중분류 카테고리 */}
-          <ProductCategorySelect
-            category={productMiddleCategories}
-            defaultCategory={currentProductMiddleCategoryName}
-            getCategory={getMiddleCategory}/>
+            {/* 중분류 카테고리 */}
+            <Box sx={{flex: 1}}>
+              <ProductCategorySelect
+                category={productMiddleCategories}
+                defaultCategory={currentProductMiddleCategoryName}
+                getCategory={getMiddleCategory}/>
+            </Box>
+          </TotalBox>
         </Box>
 
         <List>
           <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 대표 이미지는 필수입니다.</ListItem>
-          <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>※ 제품 및 규격 이미지는 한 장 이상 필요합니다.</ListItem>
         </List>
 
         {/* 미리보기 */}
@@ -693,3 +697,21 @@ const Title = styled(Typography)(({theme}) => ({
   fontSize: 20,
   fontWeight: 'bold'
 })) as typeof Typography;
+
+const ButtonBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  flex: 0.5
+})) as typeof Box;
+
+const TotalBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    width: '40%'
+  },
+  display: 'flex',
+  flexWrap: 'wrap',
+  flex: 0.5,
+  margin: 10
+})) as typeof Box;

@@ -39,7 +39,7 @@ export default function Archives({errorToast}: propsType) {
 
   const onEnterKey = (event: any) => {
     if (event.key === 'Enter') {
-      getSearchArchive()
+      getSearchArchive();
     }
   };
 
@@ -55,7 +55,9 @@ export default function Archives({errorToast}: propsType) {
         {/* 자료 검색 */}
         <SearchTotalStack direction='row' spacing={1}>
           {/* 카테고리 */}
-          <ArchiveCategorySelect getCategory={getCategory} defaultCategory={category}/>
+          <SelectBox>
+            <ArchiveCategorySelect getCategory={getCategory} defaultCategory={category}/>
+          </SelectBox>
 
           <SearchStack direction='row' spacing={1}>
             <TextField
@@ -70,10 +72,10 @@ export default function Archives({errorToast}: propsType) {
         </SearchTotalStack>
 
         {managerMode &&
-            <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
-                <EditButton name='카테고리 수정' onClick={() => dispatch(clickArchivesGoBack())}/>
-                <EditButton name='글쓰기' onClick={() => navigate('/archive/form')}/>
-            </Box>
+          <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+            <EditButton name='카테고리 수정' onClick={() => dispatch(clickArchivesGoBack())}/>
+            <EditButton name='글쓰기' onClick={() => navigate('/archive/form')}/>
+          </Box>
         }
 
       </Spacing>
@@ -129,3 +131,13 @@ const SearchIcon = styled(SearchRoundedIcon)(({theme}) => ({
   fontSize: 35,
   cursor: 'pointer'
 }));
+
+const SelectBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('md')]: {
+    width: '40%'
+  },
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: 10
+  },
+  flex: 0.5
+})) as typeof Box;

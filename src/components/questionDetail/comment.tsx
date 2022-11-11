@@ -90,11 +90,9 @@ export default function Comment({item, questionId}: propsType) {
             width: '100%',
           }}>
           <Typography sx={{fontSize: 20}}>{item.writer}</Typography>
-          {item.content.split('\n').map((value, index) => (
-            <Typography key={index}>
-              {value}
-            </Typography>
-          ))}
+          <Typography sx={{whiteSpace: 'pre-wrap'}}>
+            {item.content}
+          </Typography>
         </Stack>
       }
 

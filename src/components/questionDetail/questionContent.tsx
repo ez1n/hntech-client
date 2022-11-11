@@ -47,11 +47,9 @@ export default function QuestionContent() {
           ))}
         </Stack>
 
-        {detail.content.split('\n').map((value, index) => (
-          <Typography key={index} sx={{fontSize: 18}}>
-            {value === '' ? <br/> : value}
-          </Typography>
-        ))}
+        <Typography sx={{fontSize: 18, whiteSpace: 'pre-wrap'}}>
+          {detail.content}
+        </Typography>
       </Box>
     </Box>
   )

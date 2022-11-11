@@ -63,15 +63,17 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
     return (
       <DndProvider backend={HTML5Backend}>
         <Grid container columns={categoryColumn} spacing={3}>
-          {productCategories?.map((value: {
+          {productCategories?.map((item: {
             categoryName: string,
             id: number,
             imageServerFilename: string,
             imageOriginalFilename: string,
             showInMain: string
           }, index: number) => (
-            <ProductMainCategoryItem category={value} index={index} selectMainCategory={selectMainCategory}
-                                     successDelete={successDelete}/>
+            <Grid key={item.id} item xs={1}>
+              <ProductMainCategoryItem category={item} index={index} selectMainCategory={selectMainCategory}
+                                       successDelete={successDelete}/>
+            </Grid>
           ))}
         </Grid>
       </DndProvider>
@@ -159,10 +161,6 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
     </Box>
   )
 };
-
-const Spacing = styled(Box)(() => ({
-  height: 60
-})) as typeof Box;
 
 const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('lg')]: {

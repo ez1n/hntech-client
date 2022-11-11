@@ -8,6 +8,6 @@ class FileApi {
     });
     return response.data;
   };
-};
+}
 
 export const fileApi = new FileApi();

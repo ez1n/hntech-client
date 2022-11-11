@@ -9,7 +9,7 @@ import {
   updateProductCategoryImage
 } from '../../app/reducers/categorySlice';
 import {addProductCategoryImage} from '../../app/reducers/categorySlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {clickProductCategoryFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
 import {
   Container,
@@ -62,26 +62,29 @@ export default function ProductMainCategoryModifyForm({successModify, errorToast
     dispatch(onLoading());
 
     const productCategoryForm = new FormData();
-    productCategoryImage === '' ? [].map(item => productCategoryForm.append('image', item)) : productCategoryForm.append('image', productCategoryImage);
+    productCategoryImage === '' ?
+      [].map(item => productCategoryForm.append('image', item)) :
+      productCategoryForm.append('image', productCategoryImage);
     productCategoryForm.append('categoryName', productCurrentCategory.categoryName);
     productCategoryForm.append('showInMain', productCurrentCategory.showInMain);
 
     validate() &&
     categoryApi.putUpdateProductCategory(categoryId, productCategoryForm)
-      .then(res => {
+      .then(() => {
         dispatch(onLoading());
         successModify();
         dispatch(updateProductCategoryImage({categoryImage: ''}));
         navigate(-1);
       })
       .catch(error => {
-        dispatch(onLoading());
-        errorToast(error.response.data.message);
         if (error.response.status === 401) {
+          errorToast('로그인이 필요합니다.');
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
+        dispatch(onLoading());
+        errorToast(error.response.data.message);
       })
   };
 
@@ -206,4 +209,4 @@ const Title = styled(Typography)(({theme}) => ({
   },
   fontSize: 20,
   fontWeight: 'bold'
-})) as typeof Typography;
+})) as typeof Typography

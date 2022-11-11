@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
 import {useAppDispatch} from '../../app/hooks';
 import {onLoading} from '../../app/reducers/dialogSlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {
   Container,
   styled,
@@ -13,7 +13,9 @@ import {
   Checkbox,
   FormControlLabel,
   Stack,
-  TextField
+  TextField,
+  FormControl,
+  FormHelperText
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
@@ -181,7 +183,10 @@ export default function ArchiveForm({success, errorToast}: propsType) {
           pl: 2
         }}>
           {/* 카테고리 선택 */}
-          <ArchiveCategorySelect getCategory={getCategory} defaultCategory={null} categoryErrorMsg={categoryErrorMsg}/>
+          <ArchiveCategoryFormControl error={!!categoryErrorMsg}>
+            <ArchiveCategorySelect getCategory={getCategory} defaultCategory={null}/>
+            <FormHelperText>{categoryErrorMsg}</FormHelperText>
+          </ArchiveCategoryFormControl>
 
           {/* 공지사항 표시 */}
           <FormControlLabel
@@ -334,3 +339,11 @@ const UploadFileTypography = styled(Typography)(({theme}) => ({
   color: 'lightgrey',
   fontSize: 18
 })) as typeof Typography;
+
+const ArchiveCategoryFormControl = styled(FormControl)(({theme}) => ({
+  [theme.breakpoints.down('sm')]: {
+    display: 'flex',
+    width: '50%'
+  },
+  width: '20%'
+})) as typeof FormControl;

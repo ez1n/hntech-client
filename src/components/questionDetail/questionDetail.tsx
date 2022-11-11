@@ -5,8 +5,7 @@ import {commentApi} from '../../network/comment';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clickCommentRemoveGoBack} from '../../app/reducers/dialogSlice';
 import {setDetailData, updateCommentData} from '../../app/reducers/questionSlice';
-import {setCurrentQuestion} from '../../app/reducers/questionFormSlice';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {resetAnchor} from '../../app/reducers/commentSlice';
 import {Box, Button, Container, styled, Typography} from '@mui/material';
 import EditButton from '../editButton';
@@ -17,10 +16,11 @@ import CancelModal from '../cancelModal';
 
 interface propsType {
   successAnswer: () => void,
-  successDelete: () => void
+  successDelete: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function QuestionDetail({successAnswer, successDelete}: propsType) {
+export default function QuestionDetail({successAnswer, successDelete, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {index} = useParams();
@@ -34,52 +34,45 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
   const [deleteQuestionDetail, setDeleteQuestionDetail] = useState(false); // 게시글 삭제 취소
   const [onCompleteAnswer, setOnCompleteAnswer] = useState(false); // 게시글 답변 상태 변경
 
-  // 수정 데이터 업데이트
   useEffect(() => {
-    dispatch(setCurrentQuestion({question: {content: detail.content, title: detail.title, files: detail.files}}));
-  }, []);
+    const mode = localStorage.getItem('login');
 
-  useEffect(() => {
-    const mode = localStorage.getItem('login')
     if (index && mode === 'true') {
       questionApi.getQuestionByAdmin(parseInt(index))
         .then(res => dispatch(setDetailData({detail: res})))
-    }
-    else if (index) {
+        .catch(error => console.log(error))
+    } else if (index) {
       const password = localStorage.getItem('qnaPassword')
       questionApi.postPassword(parseInt(index), {password: password})
         .then(res => dispatch(setDetailData({detail: res})))
+        .catch(error => console.log(error))
     }
   }, [managerMode]);
 
   // 게시글 삭제 modal - open
-  const openDeleteQuestionDetail = () => {
-    setDeleteQuestionDetail(deleteQuestionDetail => !deleteQuestionDetail);
-  };
+  const openDeleteQuestionDetail = () => setDeleteQuestionDetail(deleteQuestionDetail => !deleteQuestionDetail);
 
   // 게시글 삭제 modal - close
-  const closeDeleteQuestionDetail = () => {
-    setDeleteQuestionDetail(false);
-  };
+  const closeDeleteQuestionDetail = () => setDeleteQuestionDetail(false);
 
   // 답변 상태 변경 modal - open
-  const openCompleteAnswer = () => {
-    setOnCompleteAnswer(openCompleteAnswer => !openCompleteAnswer);
-  };
+  const openCompleteAnswer = () => setOnCompleteAnswer(openCompleteAnswer => !openCompleteAnswer);
 
   // 답변 상태 변경 modal - close
-  const closeCompleteAnswer = () => {
-    setOnCompleteAnswer(false);
-  };
+  const closeCompleteAnswer = () => setOnCompleteAnswer(false);
 
   // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
     questionApi.deleteQuestion(id)
-      .then(res => {
+      .then(() => {
         successDelete();
         closeDeleteQuestionDetail();
         navigate('/question?page=1');
-      });
+      })
+      .catch(error => {
+        errorToast('게시글을 삭제할 수 없습니다.');
+        console.log(error);
+      })
   };
 
   // 게시글 처리 완료 요청
@@ -90,6 +83,10 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
         successAnswer();
         dispatch(setDetailData({detail: res}));
         closeCompleteAnswer();
+      })
+      .catch(error => {
+        errorToast('답변완료 처리할 수 없습니다.');
+        console.log(error);
       });
   };
 
@@ -97,13 +94,17 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
   const deleteComment = (questionId: number, commentId: number) => {
     commentApi.deleteComment(questionId, commentId)
       .then(res => {
+        successDelete();
         dispatch(updateCommentData({comments: res.comments}));
         dispatch(clickCommentRemoveGoBack());
         dispatch(resetAnchor());
       })
       .catch(error => {
         console.log(error);
+        errorToast('댓글을 삭제할 수 없습니다.');
+
         if (error.response.status === 401) {
+          errorToast('로그인이 필요합니다.');
           localStorage.removeItem("login");
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
@@ -116,8 +117,8 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
       return (
         managerMode &&
         <>
-            <EditButton name='수정' onClick={() => navigate('/question/modify')}/>
-            <EditButton name='삭제' onClick={openDeleteQuestionDetail}/>
+          <EditButton name='수정' onClick={() => navigate('/question/modify')}/>
+          <EditButton name='삭제' onClick={openDeleteQuestionDetail}/>
         </>
       )
     } else {
@@ -141,9 +142,9 @@ export default function QuestionDetail({successAnswer, successDelete}: propsType
       <Spacing sx={{display: 'flex', justifyContent: 'flex-end'}}>
         <>
           {managerMode &&
-              <AnswerButton onClick={openCompleteAnswer} disabled={detail.status === '완료'}>
-                  답변완료
-              </AnswerButton>}
+            <AnswerButton onClick={openCompleteAnswer} disabled={detail.status === '완료'}>
+              답변완료
+            </AnswerButton>}
 
           {ModifyButtons(faqState)}
         </>

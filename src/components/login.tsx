@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {adminApi} from '../network/admin';
 import {useAppDispatch, useAppSelector} from '../app/hooks';
 import {clickManagerLogin} from '../app/reducers/dialogSlice';
-import {changeMode, copyManagerData, setManagerData, setPassword} from '../app/reducers/managerModeSlice';
+import {changeMode, copyManagerData, setManagerData, setPassword} from '../app/reducers/adminSlice';
 import {
   Button,
   Dialog,

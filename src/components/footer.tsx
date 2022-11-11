@@ -3,7 +3,7 @@ import './style.css';
 import {adminApi} from '../network/admin';
 import {api} from '../network/network';
 import {useAppDispatch, useAppSelector} from '../app/hooks';
-import {changeMode} from '../app/reducers/managerModeSlice';
+import {changeMode} from '../app/reducers/adminSlice';
 import {clickManagerLogin} from '../app/reducers/dialogSlice';
 import {
   Box,

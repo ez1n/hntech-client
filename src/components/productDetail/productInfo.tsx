@@ -99,8 +99,7 @@ export default function ProductInfo({successDelete}: propsType) {
             <img
               src={`${api.baseUrl()}/files/product/${files.productImages[activeStep].serverFilename}`}
               alt={files.productImages[activeStep].originalFilename}
-              width={'100%'}
-              height={'100%'}/>
+              style={{maxWidth: '100%', maxHeight: '100%'}}/>
           }
         </Box>
         <MobileStepper
@@ -127,9 +126,9 @@ export default function ProductInfo({successDelete}: propsType) {
 
       {/* 부가 설명 */}
       <Container>
-          <DescriptionTypography>
-            {description}
-          </DescriptionTypography>
+        <DescriptionTypography>
+          {description}
+        </DescriptionTypography>
       </Container>
 
       {/* 삭제 버튼 Dialog */}

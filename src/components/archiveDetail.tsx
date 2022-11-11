@@ -3,7 +3,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {archiveApi} from '../network/archive';
 import {fileApi} from '../network/file';
 import {useAppSelector, useAppDispatch} from '../app/hooks';
-import {changeMode} from '../app/reducers/managerModeSlice';
+import {changeMode} from '../app/reducers/adminSlice';
 import {
   Box,
   Button,
@@ -134,11 +134,9 @@ export default function ArchiveDetail({successDelete}: propsType) {
             ))}
           </Stack>
 
-          {detail.content.split('\n').map((value, index) => (
-            <Typography key={index}>
-              {value === '\r' ? <br/> : value}
-            </Typography>
-          ))}
+          <Typography sx={{whiteSpace: 'pre-wrap'}}>
+            {detail.content}
+          </Typography>
         </Box>
 
         {/* 첨부파일 */}

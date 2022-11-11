@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {categoryApi} from '../../network/category';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {changeMode} from '../../app/reducers/managerModeSlice';
+import {changeMode} from '../../app/reducers/adminSlice';
 import {clickProductCategoryFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
 import {updateProductCategoryImage, updateProductCategoryShowInMain} from '../../app/reducers/categorySlice';
 import {addProductCategoryImage, updateProductCategoryName} from '../../app/reducers/categorySlice';
@@ -84,12 +84,13 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
         })
         .catch(error => {
           dispatch(onLoading());
-          errorToast(error.response.data.message);
           if (error.response.status === 401) {
+            errorToast('로그인이 필요합니다.');
             localStorage.removeItem("login");
             const isLogin = localStorage.getItem("login");
             dispatch(changeMode({login: isLogin}));
           }
+          errorToast(error.response.data.message);
         })
     }
   };
@@ -215,4 +216,4 @@ const Title = styled(Typography)(({theme}) => ({
   },
   fontSize: 20,
   fontWeight: 'bold'
-})) as typeof Typography;
+})) as typeof Typography
