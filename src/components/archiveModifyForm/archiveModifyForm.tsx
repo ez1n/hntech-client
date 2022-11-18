@@ -15,7 +15,7 @@ import {
   Checkbox,
   FormControlLabel,
   Stack,
-  TextField, FormHelperText, FormControl
+  TextField
 } from '@mui/material';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ArchiveCategorySelect from '../archiveCategorySelect';
@@ -64,6 +64,20 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
 
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
+
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
 
   useEffect(() => {
     setContent({
@@ -123,7 +137,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
 
   // 이미지 삭제
   const deleteImage = (num: number) => {
-    const newImage = image.filter((item, index) => index !== num)
+    const newImage = image.filter((item, index) => index !== num);
     setImage(newImage);
   };
 
@@ -135,7 +149,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
 
   // 카테고리 선택
   const getCategory = (event: any) => {
-    setContent({...content, categoryName: event.target.value})
+    setContent({...content, categoryName: event.target.value});
   };
 
   // 공지사항 선택
@@ -154,7 +168,7 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
   const deleteOriginalFile = (num: number, archiveId: number, fileId: number) => {
     const newFile = originFiles.filter((item, index) => index !== num);
     setOriginFiles(newFile);
-    setDeleteArchiveId([...deleteArchiveId, {archiveId: archiveId, fileId: fileId}])
+    setDeleteArchiveId([...deleteArchiveId, {archiveId: archiveId, fileId: fileId}]);
   };
 
   // 파일 삭제
@@ -238,7 +252,9 @@ export default function ArchiveModifyForm({successModify, errorToast}: propsType
           p: 1,
           pl: 2
         }}>
-          <ArchiveCategorySelect getCategory={getCategory} defaultCategory={detail.categoryName}/>
+          <ArchiveCategorySelectBox>
+            <ArchiveCategorySelect getCategory={getCategory} defaultCategory={detail.categoryName}/>
+          </ArchiveCategorySelectBox>
 
           {/* 공지사항 표시 */}
           <FormControlLabel
@@ -415,3 +431,10 @@ const UploadFileTypography = styled(Typography)(({theme}) => ({
   color: 'lightgrey',
   fontSize: 18
 })) as typeof Typography;
+const ArchiveCategorySelectBox = styled(Box)(({theme}) => ({
+  [theme.breakpoints.down('sm')]: {
+    display: 'flex',
+    width: '50%'
+  },
+  width: '20%'
+})) as typeof Box;

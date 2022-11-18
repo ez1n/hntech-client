@@ -13,13 +13,6 @@ import {
   mouseLeaveArchive,
   mouseLeaveService
 } from '../app/reducers/menuSlice';
-import {
-  clickChangeIntroduce,
-  clickChangeHistory,
-  clickChangeOrgChart,
-  clickChangeInfo,
-  clickChangeLocation
-} from '../app/reducers/companySlice';
 import {setCurrentProductCategoryName} from '../app/reducers/categorySlice';
 import {
   Toolbar,
@@ -88,47 +81,29 @@ export default function Header() {
           sx={{width: '180px', height: '50px', lineHeight: '50px'}}
         >
           <MainMenu
-            onClick={() => {
-              navigate('/company?type=introduce');
-              dispatch(clickChangeIntroduce());
-            }}
+            onClick={() => navigate('/company?type=introduce')}
           >
             회사소개
           </MainMenu>
           <ListBox sx={{height: openCompany ? '200px' : '0px'}}>
             <DropdownMenu
-              onClick={() => {
-                navigate('/company?type=introduce')
-                dispatch(clickChangeIntroduce())
-              }}>
+              onClick={() => navigate('/company?type=introduce')}>
               인사말
             </DropdownMenu>
             <DropdownMenu
-              onClick={() => {
-                navigate('/company?type=history')
-                dispatch(clickChangeHistory())
-              }}>
+              onClick={() => navigate('/company?type=history')}>
               회사 연혁
             </DropdownMenu>
             <DropdownMenu
-              onClick={() => {
-                navigate('/company?type=orgChart')
-                dispatch(clickChangeOrgChart())
-              }}>
+              onClick={() => navigate('/company?type=orgChart')}>
               조직도
             </DropdownMenu>
             <DropdownMenu
-              onClick={() => {
-                navigate('/company?type=CI')
-                dispatch(clickChangeInfo())
-              }}>
+              onClick={() => navigate('/company?type=CI')}>
               CI 소개
             </DropdownMenu>
             <DropdownMenu
-              onClick={() => {
-                navigate('/company?type=location')
-                dispatch(clickChangeLocation())
-              }}>
+              onClick={() => navigate('/company?type=location')}>
               찾아오시는 길
             </DropdownMenu>
           </ListBox>
@@ -240,7 +215,6 @@ export default function Header() {
           <Collapse in={openCompany} timeout='auto' unmountOnExit>
             <List component='div' disablePadding>
               <ListItemButton onClick={() => {
-                dispatch(clickChangeIntroduce());
                 navigate('/company?type=introduce');
                 clickCloseMenu();
               }}>
@@ -248,7 +222,6 @@ export default function Header() {
               </ListItemButton>
 
               <ListItemButton onClick={() => {
-                dispatch(clickChangeHistory());
                 navigate('/company?type=history');
                 clickCloseMenu();
               }}>
@@ -256,7 +229,6 @@ export default function Header() {
               </ListItemButton>
 
               <ListItemButton onClick={() => {
-                dispatch(clickChangeOrgChart());
                 navigate('/company?type=orgChart');
                 clickCloseMenu();
               }}>
@@ -264,7 +236,6 @@ export default function Header() {
               </ListItemButton>
 
               <ListItemButton onClick={() => {
-                dispatch(clickChangeInfo());
                 navigate('/company?type=CI');
                 clickCloseMenu();
               }}>
@@ -272,7 +243,6 @@ export default function Header() {
               </ListItemButton>
 
               <ListItemButton onClick={() => {
-                dispatch(clickChangeLocation());
                 navigate('/company?type=location');
                 clickCloseMenu();
               }}>

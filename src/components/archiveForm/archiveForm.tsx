@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../style.css';
 import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
@@ -41,6 +41,20 @@ export default function ArchiveForm({success, errorToast}: propsType) {
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
   const [categoryErrorMsg, setCategoryErrorMsg] = useState(''); // 카테고리
+
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
 
   const validate = () => {
     let isValid = true;

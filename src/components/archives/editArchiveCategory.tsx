@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {categoryApi} from '../../network/category';
-import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
 import {getArchiveCategory} from '../../app/reducers/categorySlice';
 import {changeMode} from '../../app/reducers/adminSlice';
 import {
@@ -23,17 +22,18 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import CancelModal from '../cancelModal';
 
 interface propsType {
-  errorToast: (message: string) => void
+  errorToast: (message: string) => void,
+  open: boolean,
+  onClose: () => void
 }
 
-export default function EditArchiveCategory({errorToast}: propsType) {
+export default function EditArchiveCategory({errorToast, open, onClose}: propsType) {
   const dispatch = useAppDispatch();
 
   const inputRef: any = useRef(); // 카테고리 input ref
   const categoryNameRef: any = useRef(); // 카테고리 이름 ref
 
   // state
-  const archivesState = useAppSelector(state => state.dialog.archiveState); // dialog
   const archiveCategory = useAppSelector(state => state.category.archiveCategory); // 카테고리 목록
   const [deleteCategory, setDeleteCategory] = useState(false); // 자료실 카테고리 삭제
   const [selectedCategory, setSelectedCategory] = useState<{ name: string, id: number | null }>({name: '', id: 0});
@@ -51,8 +51,8 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   // 자료실 카테고리 삭제 modal - close
   const closeDeleteArchiveCategory = () => setDeleteCategory(false);
   // 수정폼 나가기
-  const onClose = () => {
-    dispatch(clickArchivesGoBack());
+  const onCloseEditForm = () => {
+    onClose();
     setSelectedCategory({name: '', id: null});
   };
 
@@ -136,11 +136,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
   };
 
   return (
-    <Dialog
-      open={archivesState}
-      onClose={() => {
-        dispatch(clickArchivesGoBack());
-      }}>
+    <Dialog open={open} onClose={onCloseEditForm}>
       <Title>카테고리 수정</Title>
 
       <DialogContent>
@@ -218,7 +214,7 @@ export default function EditArchiveCategory({errorToast}: propsType) {
       </DialogContent>
 
       <DialogActions sx={{justifyContent: 'center'}}>
-        <EditButton name='나가기' onClick={onClose}/>
+        <EditButton name='나가기' onClick={onCloseEditForm}/>
       </DialogActions>
 
       <CancelModal

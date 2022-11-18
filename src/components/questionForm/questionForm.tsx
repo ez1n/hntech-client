@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {questionApi} from '../../network/question';
-import {useAppSelector, useAppDispatch} from '../../app/hooks';
+import {useAppDispatch} from '../../app/hooks';
+import {onLoading} from "../../app/reducers/dialogSlice";
 import {changeMode} from '../../app/reducers/adminSlice';
 import {
   Container,
@@ -16,7 +17,6 @@ import {
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import {onLoading} from "../../app/reducers/dialogSlice";
 
 interface propsType {
   success: () => void,
@@ -28,7 +28,6 @@ export default function QuestionForm({success, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   // state
-  const questionFile = useAppSelector(state => state.questionForm.questionFile);
   const [deleteQuestionForm, setDeleteQuestionForm] = useState(false); // 글쓰기 취소
   const [questionContent, setQuestionContent] = useState({title: '', writer: '', password: '', content: ''});
   const [file, setFile] = useState<{ file: string, path: string }[]>([]);
@@ -39,6 +38,20 @@ export default function QuestionForm({success, errorToast}: propsType) {
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
   const [contentErrorMsg, setContentErrorMsg] = useState('');
+
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
 
   const validate = () => {
     let isValid = true;
@@ -89,36 +102,37 @@ export default function QuestionForm({success, errorToast}: propsType) {
 
   // 문의사항 작성하기
   const postCreateQuestion = () => {
-    dispatch(onLoading())
     const questionForm = new FormData();
     questionForm.append('writer', writer);
     questionForm.append('password', password);
     questionForm.append('title', title);
     questionForm.append('content', content);
-    questionFile.map((item: { file: string, path: string }) => questionForm.append('files', item.file));
+    file.map((item: { file: string, path: string }) => questionForm.append('files', item.file));
     questionForm.append('FAQ', 'false');
 
-    validate() &&
-    questionApi.postCreateQuestion(questionForm)
-      .then(() => {
-        success();
-        navigate('/question?page=1');
-      })
-      .catch(error => {
-        errorToast(error.response.data.message);
-        if (error.response.status === 401) {
-          localStorage.removeItem("login");
-          const isLogin = localStorage.getItem("login");
-          dispatch(changeMode({login: isLogin}));
-        }
-      })
-      .finally(() => dispatch(onLoading()))
+    if (validate()) {
+      dispatch(onLoading())
+      questionApi.postCreateQuestion(questionForm)
+        .then(() => {
+          success();
+          navigate('/question?page=1');
+        })
+        .catch(error => {
+          errorToast(error.response.data.message);
+          if (error.response.status === 401) {
+            localStorage.removeItem("login");
+            const isLogin = localStorage.getItem("login");
+            dispatch(changeMode({login: isLogin}));
+          }
+        })
+        .finally(() => dispatch(onLoading()))
+    }
   };
 
   // 비밀번호 숫자 제한
   const inputNumber = (event: any) => {
     if (!/^[0-9]+$/.test(event.key) && event.key.length === 1) {
-      event.preventDefault()
+      event.preventDefault();
     }
   };
 

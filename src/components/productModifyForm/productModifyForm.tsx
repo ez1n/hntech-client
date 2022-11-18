@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {api} from '../../network/network';
 import {productApi} from '../../network/product';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
@@ -24,7 +24,8 @@ import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
 import Loading from '../loading';
-import {setCurrentProductMiddleCategoryName} from "../../app/reducers/categorySlice";
+import {getMiddleProductCategory, setCurrentProductMiddleCategoryName} from "../../app/reducers/categorySlice";
+import {categoryApi} from "../../network/category";
 
 interface propsType {
   successModify: () => void,
@@ -34,6 +35,10 @@ interface propsType {
 export default function ProductModifyForm({successModify, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const productId = new URLSearchParams(location.search).get('id');
+  const mainCategory = new URLSearchParams(location.search).get('main');
+  const middleCategory = new URLSearchParams(location.search).get('middle');
 
   const [deleteDocId, setDeleteDocId] = useState<{ productId: number, fileId: number }[]>([]);
 
@@ -43,7 +48,6 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   const standardInputRef: any = useRef();
 
   // state
-  const productDetail = useAppSelector(state => state.product.productDetail); // 제품 정보
   const productMiddleCategories = useAppSelector(state => state.category.productMiddleCategories); // 중분류 카테고리 목록 state
   const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName);
   const [cancelProductModify, setCancelProductModify] = useState(false); // 제품 수정 취소
@@ -54,53 +58,78 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
   const [productImages, setProductImages] = useState<{ file: string, path: string }[]>([]);
   const [representativeImage, setRepresentativeImage] = useState({file: '', path: ''});
   const [standardImages, setStandardImages] = useState<{ file: string, path: string }[]>([]);
-  const {description, productName} = content;
+  const {category, description, productName} = content;
   // 기존 파일
   const [originData, setOriginData] = useState({
-    category: '',
-    description: '',
     id: 0,
-    productName: '',
-    files: {
-      docFiles: [{
-        id: 0,
-        originalFilename: '',
-        savedPath: '',
-        serverFilename: '',
-        type: ''
-      }],
-      productImages: [{
-        id: 0,
-        originalFilename: '',
-        savedPath: '',
-        serverFilename: ''
-      }],
-      representativeImage: {
-        id: 0,
-        originalFilename: '',
-        savedPath: '',
-        serverFilename: ''
-      },
-      standardImages: [{
-        id: 0,
-        originalFilename: '',
-        savedPath: '',
-        serverFilename: ''
-      }]
-    }
+    docFiles: [{
+      id: 0,
+      originalFilename: '',
+      savedPath: '',
+      serverFilename: '',
+      type: ''
+    }],
+    productImages: [{
+      id: 0,
+      originalFilename: '',
+      savedPath: '',
+      serverFilename: ''
+    }],
+    representativeImage: {
+      id: 0,
+      originalFilename: '',
+      savedPath: '',
+      serverFilename: ''
+    },
+    standardImages: [{
+      id: 0,
+      originalFilename: '',
+      savedPath: '',
+      serverFilename: ''
+    }]
   });
 
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
   const [fileErrorMsg, setFileErrorMsg] = useState(''); // 다운로드 파일 버튼
 
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
   useEffect(() => {
-    setContent({
-      category: currentProductMiddleCategoryName,
-      description: productDetail.description,
-      productName: productDetail.productName
-    })
-    setOriginData(productDetail);
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
+
+  useEffect(() => {
+    productId &&
+    productApi.getProduct(parseInt(productId))
+      .then(res => {
+        setContent({
+          category: res.category,
+          description: res.description,
+          productName: res.productName
+        })
+        setOriginData({
+          id: res.id,
+          docFiles: res.files.docFiles,
+          productImages: res.files.productImages,
+          representativeImage: res.files.representativeImage,
+          standardImages: res.files.standardImages
+        });
+      })
+      .catch(error => console.log(error))
+
+    mainCategory &&
+    categoryApi.getMiddleProductCategory(mainCategory)
+      .then(res => dispatch(getMiddleProductCategory({category: res})))
+      .catch(error => console.log(error))
   }, []);
 
   const validate = () => {
@@ -228,22 +257,22 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
 
   // 기존 첨부파일 버튼 삭제
   const deleteOriginDocFileButton = (num: number, productId: number, fileId: number) => {
-    const newDocFile = originData.files.docFiles.filter((item, index) => index !== num);
-    setOriginData({...originData, files: {...originData.files, docFiles: newDocFile}});
+    const newDocFile = originData.docFiles.filter((item, index) => index !== num);
+    setOriginData({...originData, docFiles: newDocFile});
     setDeleteDocId([...deleteDocId, {productId: productId, fileId: fileId}]);
   };
 
   // 기존 제품 이미지 삭제
   const deleteOriginProductFile = (num: number, productId: number, fileId: number) => {
-    const newProductImage = originData.files.productImages.filter((item, index) => index !== num);
-    setOriginData({...originData, files: {...originData.files, productImages: newProductImage}});
+    const newProductImage = originData.productImages.filter((item, index) => index !== num);
+    setOriginData({...originData, productImages: newProductImage});
     setDeleteDocId([...deleteDocId, {productId: productId, fileId: fileId}]);
   };
 
   // 기존 규격 이미지 삭제
   const deleteOriginStandardFile = (num: number, standardId: number, fileId: number) => {
-    const newStandardImage = originData.files.standardImages.filter((item, index) => index !== num);
-    setOriginData({...originData, files: {...originData.files, standardImages: newStandardImage}});
+    const newStandardImage = originData.standardImages.filter((item, index) => index !== num);
+    setOriginData({...originData, standardImages: newStandardImage});
     setDeleteDocId([...deleteDocId, {productId: standardId, fileId: fileId}]);
   };
 
@@ -403,7 +432,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
               selectInput(repPhotoInputRef);
               setDeleteDocId([...deleteDocId, {
                 productId: originData.id,
-                fileId: originData.files.representativeImage.id
+                fileId: originData.representativeImage.id
               }]);
             }}/>
             <EditButton name='제품 이미지 추가' onClick={() => selectInput(photoInputRef)}/>
@@ -421,7 +450,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             <Box sx={{flex: 1}}>
               <ProductCategorySelect
                 category={productMiddleCategories}
-                defaultCategory={currentProductMiddleCategoryName}
+                defaultCategory={middleCategory ? middleCategory : category}
                 getCategory={getMiddleCategory}/>
             </Box>
           </TotalBox>
@@ -460,14 +489,14 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             <Box sx={{width: '23%', m: 1}}>
               {representativeImage.path ?
                 <img src={representativeImage.path} alt={'대표 이미지'} width={'100%'}/> :
-                <img src={`${api.baseUrl()}/files/product/${originData.files.representativeImage.serverFilename}`}
-                     alt={originData.files.representativeImage.originalFilename} width='100%'/>
+                <img src={`${api.baseUrl()}/files/product/${originData.representativeImage.serverFilename}`}
+                     alt={originData.representativeImage.originalFilename} width='100%'/>
               }
             </Box>
           </Container>
 
           {/* 제품 이미지 미리보기 */}
-          {originData.files.productImages.length + productImages.length > 0 &&
+          {originData.productImages.length + productImages.length > 0 &&
             <Container
               sx={{
                 border: '1.8px solid lightgrey',
@@ -480,7 +509,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                 alignItems: 'center'
               }}>
               {/* 기존 제품이미지 */}
-              {originData.files.productImages.map((item, index) => (
+              {originData.productImages.map((item, index) => (
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
@@ -508,7 +537,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
           }
 
           {/* 규격 이미지 미리보기 */}
-          {originData.files.standardImages.length + standardImages.length > 0 &&
+          {originData.standardImages.length + standardImages.length > 0 &&
             <Container
               sx={{
                 border: '1.8px solid lightgrey',
@@ -521,7 +550,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
                 alignItems: 'center'
               }}>
               {/* 기존 규격 이미지 */}
-              {originData.files.standardImages.map((item, index) => (
+              {originData.standardImages.map((item, index) => (
                 <Box key={index} sx={{width: '23%', m: 1}}>
                   <Box sx={{textAlign: 'end'}}>
                     <ClearRoundedIcon
@@ -551,7 +580,7 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
             {/* 파일 업로드 (다운로드 가능한 자료) */}
             <Stack direction='column' spacing={2}>
               {/* 기존 파일 */}
-              {originData.files.docFiles.map((item: {
+              {originData.docFiles.map((item: {
                 id: number,
                 originalFilename: string,
                 savedPath: string,

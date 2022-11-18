@@ -4,40 +4,26 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 /**
  * archiveCategory : 자료실 카테고리 목록
- * productCategoryImagePath : 제품 카테고리 이미지 미리보기 url
- * productCategoryName : 제품 카테고리 이름
- * productCategoryImage : 전송할 제품 카테고리 이미지 정보
- * productCategoryShowInMain : 메인 카테고리 설정
  * productMainCategories : 메인 제품 카테고리 목록
  * productCategories : 제품 카테고리 목록
  * productCurrentCategory : 선택한 제품 카테고리 (삭제, 수정)
  * productCategorySelected : 제품 카테고리 선택 여부 (true, false) -> true 인경우 카테고리 목록 이미지 사라지고 제품 종류 나열
  * currentProductCategoryName : 현재 선택한 카테고리 이름
-
  */
 
 /**
  * getArchiveCategory : 자료실 카테고리 목록 받아오기
- * setSelectedArchiveCategoryId : 현재 선택한 자료실 카테고리 아이디 업데이트
- * addProductCategoryImage : 제품 카테고리 이미지 경로 추가
- * updateProductCategoryName : 제품 카테고리 이름 입력
- * updateProductCategoryImage : 제품 카테고리 이미지 입력
- * updateProductCategoryShowInMain : 메인 제품 카테고리 설정
  * setMainCategories : 제품 메인 카테고리 받아오기
- * setAllProductCategories : 제품 카테고리 목록 받아오기
- * setCurrentProductCategory : 선택된 제품 카테고리 정보
- * updateCurrentProductCategoryName : 제품 카테고리 수정시 선택된 카테고리 이름
- * selectProductCategoryTrue : 제품 카테고리 선택 true
- * selectProductCategoryFalse : 제품 카테고리 선택 false
- * setCurrentProductCategoryName : 선택한 카테고리 이름 업데이트
+ * setAllProductCategories : 대분류 제품 카테고리 목록 받아오기
+ * setCurrentProductCategory : 선택된 대분류 제품 카테고리 정보
+ * setCurrentProductCategoryName : 선택한 대분류 제품 카테고리 이름 업데이트
+ * getMiddleProductCategory  : 중분류 제품 카테고리 받아오기
+ * setCurrentProductMiddleCategory : 선택된 중분류 제품 카테고리 정보
+ * setCurrentProductMiddleCategoryName : 선택한 중분류 제품 카테고리 이름 업데이트
  */
 
 interface categoryInitialState {
   archiveCategory: { id: number, categoryName: string, isArchiveCategory: boolean }[],
-  productCategoryImagePath: string | undefined,
-  productCategoryName: string,
-  productCategoryImage: string,
-  productCategoryShowInMain: string,
   productMainCategories: {
     categoryName: string,
     id: number,
@@ -83,10 +69,6 @@ interface categoryInitialState {
 
 const CategoryInitialState: categoryInitialState = {
   archiveCategory: [{id: 0, categoryName: '', isArchiveCategory: true},],
-  productCategoryImagePath: undefined,
-  productCategoryName: '',
-  productCategoryImage: '',
-  productCategoryShowInMain: 'false',
   productMainCategories: [],
   productCategories: [],
   productCurrentCategory: {
@@ -120,30 +102,6 @@ export const CategorySlice = createSlice({
       action: PayloadAction<{ categories: { id: number, categoryName: string, isArchiveCategory: boolean }[] }>
     ) => {
       state.archiveCategory = action.payload.categories;
-    },
-    addProductCategoryImage: (
-      state,
-      action: PayloadAction<{ image: string | undefined }>
-    ) => {
-      state.productCategoryImagePath = action.payload.image
-    },
-    updateProductCategoryName: (
-      state,
-      action: PayloadAction<{ categoryName: string }>
-    ) => {
-      state.productCategoryName = action.payload.categoryName
-    },
-    updateProductCategoryImage: (
-      state,
-      action: PayloadAction<{ categoryImage: string }>
-    ) => {
-      state.productCategoryImage = action.payload.categoryImage
-    },
-    updateProductCategoryShowInMain: (
-      state,
-      action: PayloadAction<{ showInMain: boolean }>
-    ) => {
-      state.productCategoryShowInMain = String(action.payload.showInMain)
     },
     setMainCategories: (
       state,
@@ -184,18 +142,6 @@ export const CategorySlice = createSlice({
       }>
     ) => {
       state.productCurrentCategory = action.payload.category
-    },
-    updateCurrentProductCategoryName: (
-      state,
-      action: PayloadAction<{ categoryName: string }>
-    ) => {
-      state.productCurrentCategory.categoryName = action.payload.categoryName
-    },
-    updateCurrentProductCategoryShowInMain: (
-      state,
-      action: PayloadAction<{ showInMain: boolean }>
-    ) => {
-      state.productCurrentCategory.showInMain = String(action.payload.showInMain)
     },
     setCurrentProductCategoryName: (
       state,
@@ -246,15 +192,9 @@ export const CategorySlice = createSlice({
 
 export const {
   getArchiveCategory,
-  addProductCategoryImage,
-  updateProductCategoryName,
-  updateProductCategoryImage,
-  updateProductCategoryShowInMain,
   setMainCategories,
   setAllProductCategories,
   setCurrentProductCategory,
-  updateCurrentProductCategoryName,
-  updateCurrentProductCategoryShowInMain,
   setCurrentProductCategoryName,
   getMiddleProductCategory,
   setCurrentProductMiddleCategory,

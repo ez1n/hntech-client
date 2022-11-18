@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {archiveApi} from '../../network/archive';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {clickArchivesGoBack} from '../../app/reducers/dialogSlice';
 import {getAllArchives} from '../../app/reducers/archiveSlice';
 import {Box, Container, Stack, styled, Typography, TextField} from '@mui/material';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -20,6 +19,7 @@ export default function Archives({errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
+  const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('전체');
   const [searchContent, setSearchContent] = useState('');
 
@@ -42,6 +42,8 @@ export default function Archives({errorToast}: propsType) {
       getSearchArchive();
     }
   };
+
+  const onClose = () => setOpen(false)
 
   return (
     <Container sx={{mt: 5}}>
@@ -73,7 +75,7 @@ export default function Archives({errorToast}: propsType) {
 
         {managerMode &&
           <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
-            <EditButton name='카테고리 수정' onClick={() => dispatch(clickArchivesGoBack())}/>
+            <EditButton name='카테고리 수정' onClick={() => setOpen(true)}/>
             <EditButton name='글쓰기' onClick={() => navigate('/archive/form')}/>
           </Box>
         }
@@ -84,7 +86,7 @@ export default function Archives({errorToast}: propsType) {
       <ArchiveItem/>
 
       {/* 카테고리 수정 */}
-      <EditArchiveCategory errorToast={errorToast}/>
+      <EditArchiveCategory errorToast={errorToast} open={open} onClose={onClose}/>
     </Container>
   )
 };

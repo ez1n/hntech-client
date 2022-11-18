@@ -47,11 +47,25 @@ export default function QuestionModifyForm({successModify, errorToast}: propsTyp
     originalFilename: string,
     savedPath: string,
     serverFilename: string
-  }[]>([])
+  }[]>([]);
 
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState(''); // 제목
   const [contentErrorMsg, setContentErrorMsg] = useState(''); // 내용
+
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
 
   useEffect(() => {
     setQuestionContent({title: detail.title, content: detail.content});

@@ -3,7 +3,6 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {questionApi} from '../../network/question';
 import {commentApi} from '../../network/comment';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {clickCommentRemoveGoBack} from '../../app/reducers/dialogSlice';
 import {setDetailData, updateCommentData} from '../../app/reducers/questionSlice';
 import {changeMode} from '../../app/reducers/adminSlice';
 import {resetAnchor} from '../../app/reducers/commentSlice';
@@ -29,8 +28,8 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const faqState = useAppSelector(state => state.question.faqState); // FAQ
   const detail = useAppSelector(state => state.question.detail); // 게시글 정보
-  const commentRemoveState = useAppSelector(state => state.dialog.commentRemoveState); // 댓글 삭제
   const currentComment = useAppSelector(state => state.comment.currentComment); // 현재 댓글 정보
+  const [commentOpen, setCommentOpen] = useState(false);
   const [deleteQuestionDetail, setDeleteQuestionDetail] = useState(false); // 게시글 삭제 취소
   const [onCompleteAnswer, setOnCompleteAnswer] = useState(false); // 게시글 답변 상태 변경
 
@@ -60,6 +59,9 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
 
   // 답변 상태 변경 modal - close
   const closeCompleteAnswer = () => setOnCompleteAnswer(false);
+
+  // 댓글 삭제 modal
+  const deleteCommentModal = () => setCommentOpen(prev => !prev);
 
   // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
@@ -96,8 +98,8 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
       .then(res => {
         successDelete();
         dispatch(updateCommentData({comments: res.comments}));
-        dispatch(clickCommentRemoveGoBack());
         dispatch(resetAnchor());
+        deleteCommentModal();
       })
       .catch(error => {
         console.log(error);
@@ -179,7 +181,7 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
 
       {/* 댓글 */}
       {detail.comments.map((item) => (
-        <Comment key={item.id} item={item} questionId={detail.id}/>
+        <Comment key={item.id} item={item} questionId={detail.id} onClose={deleteCommentModal}/>
       ))}
 
       <Spacing/>
@@ -207,12 +209,12 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
 
       {/* 댓글 삭제 Dialog */}
       <CancelModal
-        openState={commentRemoveState}
+        openState={commentOpen}
         title={'댓글 삭제'}
         text1={'삭제된 댓글은 복구할 수 없습니다.'}
         text2={'삭제하시겠습니까?'}
         yesAction={() => deleteComment(detail.id, currentComment.id !== null ? currentComment.id : 0)}
-        closeAction={() => dispatch(clickCommentRemoveGoBack())}/>
+        closeAction={deleteCommentModal}/>
     </Container>
   )
 };

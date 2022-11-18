@@ -4,10 +4,10 @@ import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductDetail, getProductList} from '../../app/reducers/productSlice';
 import {Box, Breadcrumbs, Button, Container, MenuItem, Select, styled, Typography} from '@mui/material';
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ProductInfo from './productInfo';
 import Files from './files';
 import Specification from './specification';
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 interface propsType {
   successDelete: () => void
@@ -22,7 +22,6 @@ export default function ProductDetail({successDelete}: propsType) {
   const id = new URLSearchParams(location.search).get('id');
 
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
-  const productId = useAppSelector(state => state.product.productDetail.id);
   const productName = useAppSelector(state => state.product.productDetail.productName); // 제품 이름
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
 
@@ -50,51 +49,22 @@ export default function ProductDetail({successDelete}: propsType) {
       <BreadcrumbsBox>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
           {[
-            <Typography
-              onClick={() => navigate('/product/category')}
-              sx={{
-                fontSize: 'large',
-                cursor: 'pointer',
-                userSelect: 'none',
-                borderRadius: '5px',
-                bgcolor: 'rgba(198,219,227,0.73)',
-                p: 1,
-                '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
-              }}>
+            <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
               전체 카테고리
-            </Typography>,
-            <Typography
-              onClick={() => navigate(`/product/category?main=${mainCategory}`)}
-              sx={{
-                fontSize: 'large',
-                cursor: 'pointer',
-                userSelect: 'none',
-                borderRadius: '5px',
-                bgcolor: 'rgba(198,219,227,0.73)',
-                p: 1,
-                '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
-              }}>
+            </BreadcrumbsTypography>,
+            <BreadcrumbsTypography onClick={() => navigate(`/product/category?main=${mainCategory}`)}>
               {mainCategory}
-            </Typography>,
-            <Typography
-              onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}
-              sx={{
-                fontSize: 'large',
-                cursor: 'pointer',
-                userSelect: 'none',
-                borderRadius: '5px',
-                bgcolor: 'rgba(198,219,227,0.73)',
-                p: 1,
-                '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
-              }}>
+            </BreadcrumbsTypography>,
+            <BreadcrumbsTypography
+              onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}>
               {middleCategory}
-            </Typography>,
+            </BreadcrumbsTypography>,
             <Typography sx={{
               fontSize: 'large',
               fontWeight: 'bold',
               userSelect: 'none',
               borderRadius: '5px',
-              bgcolor: 'rgba(198,219,227,0.73)',
+              bgcolor: 'rgba(154,195,255,0.37)',
               p: 1,
             }}>
               {productName}
@@ -261,3 +231,13 @@ const BreadcrumbsBox = styled(Box)(({theme}) => ({
   marginTop: 50,
   width: '80vw'
 })) as typeof Box;
+
+const BreadcrumbsTypography = styled(Typography)(() => ({
+  fontSize: 'large',
+  cursor: 'pointer',
+  userSelect: 'none',
+  borderRadius: '5px',
+  backgroundColor: 'rgba(154,195,255,0.37)',
+  padding: 10,
+  '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+})) as typeof Typography;

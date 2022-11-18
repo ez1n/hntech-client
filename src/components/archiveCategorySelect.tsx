@@ -18,7 +18,7 @@ export default function ArchiveCategorySelect({defaultCategory, getCategory}: pr
   return (
       <Select
         size={'small'}
-        defaultValue={defaultCategory ? defaultCategory : undefined}
+        value={defaultCategory ? defaultCategory : undefined}
         onChange={getCategory}
         sx={{textAlign: 'center', width: '100%'}}
         MenuProps={{style: {maxHeight: 300}}}

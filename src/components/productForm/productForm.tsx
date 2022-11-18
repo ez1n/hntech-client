@@ -54,6 +54,20 @@ export default function ProductForm({success, errorToast}: propsType) {
   const [repImgErrorMsg, setRepImgErrorMsg] = useState(''); // 대표제품 이미지
   const [fileErrorMsg, setFileErrorMsg] = useState(''); // 다운로드 파일 버튼
 
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
+
   // 중간 카테고리 불러오기
   useEffect(() => {
     setContent({...content, category: currentProductMiddleCategoryName});

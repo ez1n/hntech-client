@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ProductButton from "./productButton";
 import {Box, Button, Grid, styled} from "@mui/material";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
@@ -36,6 +36,11 @@ export default function ProductMainCategoryItem(props: propsType) {
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
   const productCurrentCategory = useAppSelector(state => state.category.productCurrentCategory); // 선택된 카테고리 정보
   const [openDelete, setOpenDelete] = useState(false);
+
+  const putProductMainCategory = (category: { categoryName: string, id: number, imageServerFilename: string, imageOriginalFilename: string, showInMain: string }) => {
+    dispatch(setCurrentProductCategory({category: category}));
+    navigate(`/product/category/main/modify?name=${categoryName}`);
+  };
 
   // 카테고리 삭제 확인 modal - open
   const openDeleteMessage = (category: {
@@ -117,10 +122,7 @@ export default function ProductMainCategoryItem(props: propsType) {
                 <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
               </Button>
               <Button
-                onClick={() => {
-                  dispatch(setCurrentProductCategory({category: category}));
-                  navigate('/product/category/main/modify');
-                }}
+                onClick={() => putProductMainCategory(category)}
                 sx={{color: 'darkgreen'}}>
                 <CreateRoundedIcon sx={{fontSize: 30}}/>
               </Button>

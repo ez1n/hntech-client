@@ -7,7 +7,7 @@ import {
   getMiddleProductCategory,
   setCurrentProductMiddleCategory
 } from "../../app/reducers/categorySlice";
-import {Box, Button, Grid, styled} from "@mui/material";
+import {Box, Button, styled} from "@mui/material";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import ProductDeleteModal from "./productDeleteModal";
@@ -57,6 +57,12 @@ export default function ProductMiddleCategoryItem(props: propsType) {
 
   // 카테고리 삭제 확인 modal - close
   const closeDeleteMessage = () => setOpenDelete(false);
+
+  // 수정 요청
+  const putMiddleCategory = (category: any) => {
+    dispatch(setCurrentProductMiddleCategory({category: category}));
+    navigate(`/product/category/middle/modify?main=${mainCategory}&name=${categoryName}`);
+  }
 
   // 순서변경
   const putUpdateCategorySequence = (draggedId: number, targetId: number) => {
@@ -124,10 +130,7 @@ export default function ProductMiddleCategoryItem(props: propsType) {
                 <RemoveCircleRoundedIcon sx={{fontSize: 30}}/>
               </Button>
               <Button
-                onClick={() => {
-                  dispatch(setCurrentProductMiddleCategory({category: category}));
-                  navigate('/product/category/middle/modify');
-                }}
+                onClick={putMiddleCategory}
                 sx={{color: 'darkgreen'}}>
                 <CreateRoundedIcon sx={{fontSize: 30}}/>
               </Button>

@@ -1,19 +1,10 @@
 import React from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
-import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {
-  clickChangeIntroduce,
-  clickChangeHistory,
-  clickChangeOrgChart,
-  clickChangeInfo,
-  clickChangeLocation,
-  clickChangeMode
-} from '../../app/reducers/companySlice';
+import {useAppDispatch} from '../../app/hooks';
 import {Box, Button, Container, MenuItem, Select, Stack, Typography, styled} from '@mui/material';
 
 export default function CompanySideMenu() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const location = useLocation();
   const type = new URLSearchParams(location.search).get('type');
 
@@ -30,10 +21,7 @@ export default function CompanySideMenu() {
 
         {/* 하위 메뉴 */}
         <MenuButton
-          onClick={() => {
-            dispatch(clickChangeIntroduce());
-            navigate('/company?type=introduce');
-          }}
+          onClick={() => navigate('/company?type=introduce')}
           sx={{
             color: type === 'introduce' ? '#F0F0F0' : '#0F0F0F',
             backgroundColor: type === 'introduce' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
@@ -44,10 +32,7 @@ export default function CompanySideMenu() {
           인사말
         </MenuButton>
         <MenuButton
-          onClick={() => {
-            dispatch(clickChangeHistory());
-            navigate('/company?type=history');
-          }}
+          onClick={() => navigate('/company?type=history')}
           sx={{
             color: type === 'history' ? '#F0F0F0' : '#0F0F0F',
             backgroundColor: type === 'history' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
@@ -58,10 +43,7 @@ export default function CompanySideMenu() {
           회사 연혁
         </MenuButton>
         <MenuButton
-          onClick={() => {
-            dispatch(clickChangeOrgChart());
-            navigate('/company?type=orgChart');
-          }}
+          onClick={() => navigate('/company?type=orgChart')}
           sx={{
             color: type === 'orgChart' ? '#F0F0F0' : '#0F0F0F',
             backgroundColor: type === 'orgChart' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
@@ -72,10 +54,7 @@ export default function CompanySideMenu() {
           조직도
         </MenuButton>
         <MenuButton
-          onClick={() => {
-            dispatch(clickChangeInfo());
-            navigate('/company?type=CI');
-          }}
+          onClick={() => navigate('/company?type=CI')}
           sx={{
             color: type === 'CI' ? '#F0F0F0' : '#0F0F0F',
             backgroundColor: type === 'CI' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
@@ -86,10 +65,7 @@ export default function CompanySideMenu() {
           CI 소개
         </MenuButton>
         <MenuButton
-          onClick={() => {
-            dispatch(clickChangeLocation());
-            navigate('/company?type=location');
-          }}
+          onClick={() => navigate('/company?type=location')}
           sx={{
             color: type === 'location' ? '#F0F0F0' : '#0F0F0F',
             backgroundColor: type === 'location' ? 'rgb(81,131,94)' : 'rgba(166,166,166,0.25)',
@@ -104,8 +80,8 @@ export default function CompanySideMenu() {
       {/* 900px 이하 */}
 
       <MenuSelect
-        defaultValue={type}
-        onChange={(event: any) => dispatch(clickChangeMode({mode: event?.target.value}))}
+        value={type}
+        onChange={(event: any) => navigate(`/company?type=${event?.target.value}`)}
         size='small'>
         <MenuList value='introduce'>인사말</MenuList>
         <MenuList value='history'>회사연혁</MenuList>

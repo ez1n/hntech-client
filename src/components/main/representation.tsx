@@ -1,17 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {api} from '../../network/network';
 import {categoryApi} from '../../network/category';
 import {fileApi} from "../../network/file";
-import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {
-  setCurrentProductCategoryName,
-  setMainCategories
-} from '../../app/reducers/categorySlice';
+import {setCurrentProductCategoryName, setMainCategories} from '../../app/reducers/categorySlice';
 import {
   Box,
-  ButtonBase,
-  Container,
   Typography,
   styled,
   Button,

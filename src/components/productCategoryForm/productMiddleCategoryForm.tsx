@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {clickProductCategoryFormGoBack, onLoading} from "../../app/reducers/dialogSlice";
+import {onLoading} from "../../app/reducers/dialogSlice";
 import {categoryApi} from "../../network/category";
 import {changeMode} from "../../app/reducers/adminSlice";
 import {
@@ -29,7 +29,7 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
 
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
-  const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
+  const [open, setOpen] = useState(false);
   const [middleCategory, setMiddleCategory] = useState({
     categoryName: '',
     image: {file: '', path: '', originalName: ''},
@@ -41,8 +41,22 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
   const [imageErrorMsg, setImageErrorMsg] = useState('');
 
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
   useEffect(() => {
-    setMiddleCategory({...middleCategory, parentName: currentProductCategoryName})
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
+
+  useEffect(() => {
+    setMiddleCategory({...middleCategory, parentName: currentProductCategoryName});
   }, []);
 
   const validate = () => {
@@ -188,22 +202,22 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='등록완료' onClick={postMiddleCategory}/>
-        <EditButton name='취소' onClick={() => dispatch(clickProductCategoryFormGoBack())}/>
+        <EditButton name='취소' onClick={() => setOpen(true)}/>
       </Spacing>
 
       <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={productCategoryFormState}
+        openState={open}
         title='작성 취소'
         text1='작성중인 내용이 사라집니다.'
         text2='취소하시겠습니까?'
         yesAction={() => {
-          dispatch(clickProductCategoryFormGoBack());
+          setOpen(false);
           navigate(-1);
         }}
-        closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
+        closeAction={() => setOpen(false)}/>
     </Container>
   )
 };

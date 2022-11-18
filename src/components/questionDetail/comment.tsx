@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {commentApi} from '../../network/comment';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {clickCommentRemoveGoBack} from '../../app/reducers/dialogSlice';
 import {updateCommentData} from '../../app/reducers/questionSlice';
 import {
   resetAnchor,
@@ -28,10 +27,11 @@ interface propsType {
     sequence: number;
     writer: string;
   },
-  questionId: number
+  questionId: number,
+  onClose: () => void
 }
 
-export default function Comment({item, questionId}: propsType) {
+export default function Comment({item, questionId, onClose}: propsType) {
   const dispatch = useAppDispatch();
 
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자모드 state
@@ -121,7 +121,7 @@ export default function Comment({item, questionId}: propsType) {
               수정
             </MenuItem>
             <MenuItem onClick={() => {
-              dispatch(clickCommentRemoveGoBack());
+              onClose();
               dispatch(resetAnchor());
             }}>
               삭제
@@ -152,7 +152,7 @@ export default function Comment({item, questionId}: propsType) {
               수정
             </MenuItem>
             <MenuItem onClick={() => {
-              dispatch(clickCommentRemoveGoBack());
+              onClose();
               dispatch(resetAnchor());
             }}>
               삭제

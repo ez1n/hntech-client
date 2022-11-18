@@ -14,7 +14,6 @@ interface propsType {
 
 export default function ProductButton(props: propsType) {
   return (
-    <>
       <CategoryButton onClick={() => props.onClick(props.categoryName)}>
         {/* 카테고리 */}
         <Box sx={{height: 150}}>
@@ -29,7 +28,6 @@ export default function ProductButton(props: propsType) {
           {props.categoryName}
         </CategoryNameTypography>
       </CategoryButton>
-    </>
   );
 }
 
@@ -45,8 +43,7 @@ const CategoryButton = styled(Button)(() => ({
   border: '3px solid rgba(79,79,79,0.78)',
   transition: '0.5s',
   '&: hover': {
-    transform: 'scale(1.04)',
-    border: '3px solid rgba(79,79,79,0.78)',
+    transform: 'scale(1.04)'
   }
 })) as typeof Button;
 
@@ -61,6 +58,6 @@ const CategoryNameTypography = styled(Typography)(({theme}) => ({
   width: '100%',
   paddingTop: 4,
   paddingBottom: 4,
-  borderRadius: 8,
+  borderRadius: '8px',
   backgroundColor: 'rgba(79,79,79,0.78)'
 })) as typeof Typography;

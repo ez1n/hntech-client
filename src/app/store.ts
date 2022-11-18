@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import menuSlice from './reducers/menuSlice';
 import adminSlice from './reducers/adminSlice';
-import companySlice from './reducers/companySlice';
 import companyModifySlice from './reducers/companyModifySlice';
 import dialogSlice from './reducers/dialogSlice';
 import questionSlice from './reducers/questionSlice';
@@ -14,7 +13,6 @@ export const store = configureStore({
   reducer: {
     menu: menuSlice,
     manager: adminSlice,
-    company: companySlice,
     companyModify: companyModifySlice,
     dialog: dialogSlice,
     question: questionSlice,

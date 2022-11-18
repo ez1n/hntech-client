@@ -1,4 +1,5 @@
 import React from 'react';
+import {useLocation} from "react-router-dom";
 import {Box, Container, styled, Typography} from '@mui/material';
 import CompanySideMenu from './companySideMenu';
 import Introduce from './introduce';
@@ -6,7 +7,6 @@ import History from './history';
 import OrgChart from './orgChart';
 import CompanyInfo from './companyInfo';
 import Location from './location';
-import {useLocation} from "react-router-dom";
 
 interface propsType {
   success: () => void,

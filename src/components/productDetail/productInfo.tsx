@@ -62,7 +62,7 @@ export default function ProductInfo({successDelete}: propsType) {
   };
 
   // 수정 요청
-  const modifyProduct = () => navigate('/product/modify');
+  const modifyProduct = (productId: number) => navigate(`/product/modify?main=${mainCategory}&middle=${middleCategory}&id=${productId}`);
 
   return (
     <Container
@@ -78,7 +78,7 @@ export default function ProductInfo({successDelete}: propsType) {
       <Spacing sx={{textAlign: 'end'}}>
         {managerMode &&
           <>
-            <EditButton name='수정' onClick={modifyProduct}/>
+            <EditButton name='수정' onClick={() =>modifyProduct(id)}/>
             <EditButton name='삭제' onClick={openDeleteProductItem}/>
           </>
         }

@@ -17,7 +17,7 @@ export default function ProductCategorySelect({defaultCategory, category, getCat
   return (
       <Select
         size='small'
-        defaultValue={defaultCategory && defaultCategory}
+        value={defaultCategory && defaultCategory}
         onChange={event => getCategory(event?.target.value)}
         sx={{textAlign: 'center', width: '100%'}}
       >

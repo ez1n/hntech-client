@@ -37,15 +37,15 @@ export default function MainData({catalogPDF, approvalPDF, taxPDF}: propsType) {
   };
 
   return (
-    <Stack spacing={5} sx={{pt: 10, alignItems: 'center'}}>
+    <Stack spacing={5} sx={{pt: 5, alignItems: 'center'}}>
       <Container sx={{display: 'flex', justifyContent: 'center'}}>
         <TitleTypography variant='h5'>
           카다록 및 자재 승인서
         </TitleTypography>
       </Container>
 
-      <ContentContainer container columns={6} spacing={2}>
-        <Grid item xs={1} style={{maxWidth: '100%'}} sx={{textAlign: 'center', margin: 2}}>
+      <ContentContainer container columns={6} spacing={2} style={{width: '100%'}}>
+        <Grid item xs={1} style={{maxWidth: '100%', padding: 0}} sx={{textAlign: 'center', m: 2}}>
           <FileBox>
             <Document file={catalogPDF}>
               <Page pageNumber={1} height={450}/>
@@ -58,7 +58,7 @@ export default function MainData({catalogPDF, approvalPDF, taxPDF}: propsType) {
           </FileButton>
         </Grid>
 
-        <Grid item xs={1} style={{maxWidth: '100%'}} sx={{textAlign: 'center', margin: 2}}>
+        <Grid item xs={1} style={{maxWidth: '100%', padding: 0}} sx={{textAlign: 'center', m: 2}}>
           <FileBox>
             <Document file={approvalPDF}>
               <Page pageNumber={1} height={450}/>
@@ -71,7 +71,7 @@ export default function MainData({catalogPDF, approvalPDF, taxPDF}: propsType) {
           </FileButton>
         </Grid>
 
-        <Grid item xs={1} style={{maxWidth: '100%'}} sx={{textAlign: 'center', margin: 2}}>
+        <Grid item xs={1} style={{maxWidth: '100%', padding: 0}} sx={{textAlign: 'center', m: 2}}>
           <FileBox>
             <Document file={taxPDF}>
               <Page pageNumber={1} height={450}/>

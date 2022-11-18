@@ -4,11 +4,7 @@ import {categoryApi} from '../../network/category';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useAppSelector, useAppDispatch} from '../../app/hooks';
-import {
-  addProductCategoryImage,
-  setCurrentProductCategoryName,
-  updateProductCategoryImage
-} from '../../app/reducers/categorySlice';
+import {setCurrentProductCategoryName} from '../../app/reducers/categorySlice';
 import {setAllProductCategories} from '../../app/reducers/categorySlice';
 import {
   Box,
@@ -37,10 +33,6 @@ export default function ProductMainCategory({windowSize, successDelete}: propsTy
   const productCategories = useAppSelector(state => state.category.productCategories); // 카테고리 목록
 
   useEffect(() => {
-    // 카테고리 이미지 초기화
-    dispatch(addProductCategoryImage({image: undefined}));
-    dispatch(updateProductCategoryImage({categoryImage: ''}));
-
     // 카테고리 목록 받아오기
     categoryApi.getMainProductCategory()
       .then(res => dispatch(setAllProductCategories({categories: res})))

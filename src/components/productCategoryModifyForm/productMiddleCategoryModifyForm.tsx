@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {categoryApi} from "../../network/category"
 import {api} from "../../network/network";
-import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {clickProductCategoryFormGoBack, onLoading} from "../../app/reducers/dialogSlice";
+import {useAppDispatch} from "../../app/hooks";
+import {onLoading} from "../../app/reducers/dialogSlice";
 import {changeMode} from "../../app/reducers/adminSlice";
 import {
   Box,
@@ -24,10 +24,11 @@ interface propsType {
 export default function ProductMiddleCategoryModifyForm({successModify, errorToast}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const mainCategory = new URLSearchParams(location.search).get('main');
+  const category = new URLSearchParams(location.search).get('name');
 
-  const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리
-  const currentProductMiddleCategory = useAppSelector(state => state.category.currentProductMiddleCategory); // 선택된 중분류 카테고리 state
-  const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
+  const [open, setOpen] = useState(false);
   const [middleCategory, setMiddleCategory] = useState({
     id: 0,
     categoryName: '',
@@ -43,8 +44,35 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
   // error message
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
 
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
   useEffect(() => {
-    setMiddleCategory(currentProductMiddleCategory);
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
+  }, []);
+
+  useEffect(() => {
+    mainCategory &&
+    categoryApi.getMiddleProductCategory(mainCategory)
+      .then(res => {
+        res.map((item: {
+          categoryName: string,
+          children: string[],
+          id: number,
+          imageOriginalFilename: string,
+          imageServerFilename: string,
+          parent: string,
+          showInMain: string
+        }) => item.categoryName === category && setMiddleCategory(item))
+      })
+      .catch(error => console.log(error))
   }, []);
 
   const validate = () => {
@@ -146,9 +174,9 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
           </Box>
 
           {/* 카테고리 */}
-          <Select size={'small'} defaultValue={currentProductCategoryName} disabled>
-            <MenuItem value={currentProductCategoryName} sx={{justifyContent: 'center'}}>
-              {currentProductCategoryName}
+          <Select size={'small'} defaultValue={category} disabled>
+            <MenuItem value={category ? category : ''} sx={{justifyContent: 'center'}}>
+              {category}
             </MenuItem>
           </Select>
         </Stack>
@@ -182,22 +210,22 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='수정' onClick={putMiddleCategory}/>
-        <EditButton name='취소' onClick={() => dispatch(clickProductCategoryFormGoBack())}/>
+        <EditButton name='취소' onClick={() => setOpen(true)}/>
       </Spacing>
 
       <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={productCategoryFormState}
+        openState={open}
         title='작성 취소'
         text1='작성중인 내용이 사라집니다.'
         text2='취소하시겠습니까?'
         yesAction={() => {
-          dispatch(clickProductCategoryFormGoBack());
+          setOpen(false);
           navigate(-1);
         }}
-        closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
+        closeAction={() => setOpen(false)}/>
     </Container>
   )
 };

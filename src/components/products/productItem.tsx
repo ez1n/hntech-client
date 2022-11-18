@@ -4,9 +4,8 @@ import {productApi} from '../../network/product';
 import {useDrag, useDrop} from "react-dnd";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {getCurrentProductData, getProductDetail, getProductList} from '../../app/reducers/productSlice';
-import {Box, Button, styled, Typography, Grid} from '@mui/material';
+import {Box, Button, styled, Typography} from '@mui/material';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 
@@ -21,10 +20,11 @@ interface propsType {
     },
     productName: string
   },
-  index: number
+  index: number,
+  deleteProductItem: () => void
 }
 
-export default function ProductItem({product, index}: propsType) {
+export default function ProductItem({product, index, deleteProductItem}: propsType) {
   const {id, image, productName} = product;
 
   const navigate = useNavigate();
@@ -46,11 +46,11 @@ export default function ProductItem({product, index}: propsType) {
   };
 
   //제품 수정
-  const putProduct = () => {
+  const putProduct = (productId: number) => {
     productApi.getProduct(id)
       .then(res => {
         dispatch(getProductDetail({detail: res}));
-        navigate('/product/modify');
+        navigate(`/product/modify?main=${mainCategory}&middle=${middleCategory}&id=${productId}`);
       })
       .catch(error => console.log(error))
   };
@@ -129,12 +129,12 @@ export default function ProductItem({product, index}: propsType) {
             <Button
               onClick={() => {
                 dispatch(getCurrentProductData({productData: product}));
-                dispatch(clickProductItemGoBack());
+                deleteProductItem();
               }}
               sx={{color: 'red'}}>
               <RemoveCircleRoundedIcon sx={{fontSize: 25}}/>
             </Button>
-            <Button onClick={putProduct} sx={{color: 'green', padding: 0}}>
+            <Button onClick={() => putProduct(id)} sx={{color: 'green', padding: 0}}>
               <CreateRoundedIcon sx={{fontSize: 25}}/>
             </Button>
           </Box>

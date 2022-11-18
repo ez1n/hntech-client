@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {categoryApi} from '../../network/category';
 import {useNavigate} from 'react-router-dom';
-import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {useAppDispatch} from '../../app/hooks';
 import {changeMode} from '../../app/reducers/adminSlice';
-import {clickProductCategoryFormGoBack, onLoading} from '../../app/reducers/dialogSlice';
-import {updateProductCategoryImage, updateProductCategoryShowInMain} from '../../app/reducers/categorySlice';
-import {addProductCategoryImage, updateProductCategoryName} from '../../app/reducers/categorySlice';
+import {onLoading} from '../../app/reducers/dialogSlice';
 import {
   Container,
   styled,
@@ -31,45 +29,70 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const productCategoryFormState = useAppSelector(state => state.dialog.productCategoryFormState); // 카테고리 등록 취소 dialog
-  const productCategoryName = useAppSelector(state => state.category.productCategoryName); // 카테고리 이름 state
-  const productCategoryImage = useAppSelector(state => state.category.productCategoryImage); // 카테고리 이미지 state
-  const productCategoryImagePath = useAppSelector(state => state.category.productCategoryImagePath); // 카테고리 이미지 미리보기 state
-  const productCategoryShowInMain = useAppSelector(state => state.category.productCategoryShowInMain); // 메인 카테고리 설정 state
+  const [content, setContent] = useState({
+    categoryName: '',
+    image: {file: '', path: '', name: ''},
+    showInMain: 'false'
+  });
+  const [open, setOpen] = useState(false);
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
   const [imageErrorMsg, setImageErrorMsg] = useState('');
 
+  const preventReset = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome
+  };
+
   useEffect(() => {
-    dispatch(updateProductCategoryName({categoryName: ''}));
-    dispatch(updateProductCategoryImage({categoryImage: ''}));
-    dispatch(updateProductCategoryShowInMain({showInMain: false}));
+    (() => {
+      window.addEventListener("beforeunload", preventReset);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventReset);
+    };
   }, []);
 
   const validate = () => {
     let isValid = true;
-    if (productCategoryName === '') {
+    if (content.categoryName === '') {
       setTitleErrorMsg('카테고리 이름을 작성해 주세요.');
       isValid = false;
     } else setTitleErrorMsg('');
-    if (productCategoryImage === '') {
+    if (content.image.file === '') {
       setImageErrorMsg('사진을 등록해 주세요');
       isValid = false;
     } else setImageErrorMsg('');
     return isValid;
   };
 
-  // 제품 사진
+  // 카테고리 이름
+  const getCategoryName = (event: any) => {
+    setContent({...content, categoryName: event.target.value});
+  };
+
+  // 카테고리 사진
   const selectCategoryImage = (event: any) => {
-    dispatch(addProductCategoryImage({image: URL.createObjectURL(event.target.files[0])}));
-    dispatch(updateProductCategoryImage({categoryImage: event.target.files[0]}));
+    URL.revokeObjectURL(content.image.path);
+    setContent({
+      ...content, image: {
+        file: event.target.files[0],
+        path: URL.createObjectURL(event.target.files[0]),
+        name: event.target.files[0].name
+      }
+    })
+  };
+
+  // 메인 카테고리 등록
+  const getShowInMain = (event: any) => {
+    setContent({...content, showInMain: event.target.checked.toString()});
   };
 
   // 카테고리 등록
   const postProductCategory = () => {
     const productCategoryForm = new FormData();
-    productCategoryForm.append('image', productCategoryImage);
-    productCategoryForm.append('categoryName', productCategoryName);
-    productCategoryForm.append('showInMain', productCategoryShowInMain);
+    productCategoryForm.append('image', content.image.file);
+    productCategoryForm.append('categoryName', content.categoryName);
+    productCategoryForm.append('showInMain', content.showInMain);
     productCategoryForm.append('type', 'product');
     productCategoryForm.append('role', 'parent');
 
@@ -78,12 +101,9 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
       categoryApi.postCreateCategory(productCategoryForm)
         .then(() => {
           success();
-          dispatch(addProductCategoryImage({image: undefined}));
-          dispatch(onLoading());
           navigate('/product/category');
         })
         .catch(error => {
-          dispatch(onLoading());
           if (error.response.status === 401) {
             errorToast('로그인이 필요합니다.');
             localStorage.removeItem("login");
@@ -92,6 +112,7 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
           }
           errorToast(error.response.data.message);
         })
+        .finally(() => dispatch(onLoading()))
     }
   };
 
@@ -116,12 +137,13 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
         }}>
           <TextField
             type='text'
-            required={true}
-            autoFocus={true}
+            name='categoryName'
+            required
+            autoFocus
             placeholder='카테고리명'
             error={!!titleErrorMsg}
             helperText={titleErrorMsg}
-            onChange={event => dispatch(updateProductCategoryName({categoryName: event?.target.value}))}
+            onChange={getCategoryName}
             inputProps={{style: {fontSize: 18}}}
             sx={{
               width: '100%'
@@ -132,7 +154,8 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
         <Stack direction='row' sx={{mt: 2, alignItems: 'center'}}>
           {/* 사진 추가 */}
           <Box sx={{pl: 1}}>
-            <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage} onClick={(e: any) => e.target.value = null}>
+            <label className='categoryUploadButton' htmlFor='productCategoryInput' onChange={selectCategoryImage}
+                   onClick={(e: any) => e.target.value = null}>
               사진 추가
               <input type='file' id='productCategoryInput' accept='image/*'/>
             </label>
@@ -140,7 +163,7 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
 
           <FormControlLabel
             control={<Checkbox
-              onChange={event => dispatch(updateProductCategoryShowInMain({showInMain: event?.target.checked}))}
+              onChange={getShowInMain}
               sx={{
                 color: 'darkgrey',
                 '&.Mui-checked': {
@@ -167,10 +190,10 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
                 overflow: 'auto',
                 alignItems: 'center'
               }}>
-              {!productCategoryImagePath ?
+              {!content.image.path ?
                 <Typography sx={{color: 'lightgrey', fontSize: 18}}>카테고리 이미지</Typography> :
                 <Box sx={{width: '23%', m: 1}}>
-                  <img src={productCategoryImagePath} alt='제품 사진' width='100%'/>
+                  <img src={content.image.path} alt={content.image.name} width='100%'/>
                 </Box>
               }
             </Container>
@@ -183,22 +206,22 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
       {/* 버튼 */}
       <Spacing sx={{textAlign: 'center'}}>
         <EditButton name='등록완료' onClick={postProductCategory}/>
-        <EditButton name='취소' onClick={() => dispatch(clickProductCategoryFormGoBack())}/>
+        <EditButton name='취소' onClick={() => setOpen(true)}/>
       </Spacing>
 
       <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal
-        openState={productCategoryFormState}
+        openState={open}
         title='작성 취소'
         text1='작성중인 내용이 사라집니다.'
         text2='취소하시겠습니까?'
         yesAction={() => {
-          dispatch(clickProductCategoryFormGoBack());
+          setOpen(false);
           navigate('/product/category');
         }}
-        closeAction={() => dispatch(clickProductCategoryFormGoBack())}/>
+        closeAction={() => setOpen(false)}/>
     </Container>
   )
 };

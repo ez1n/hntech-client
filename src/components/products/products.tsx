@@ -5,7 +5,6 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductList} from '../../app/reducers/productSlice';
-import {clickProductItemGoBack} from '../../app/reducers/dialogSlice';
 import {changeMode} from '../../app/reducers/adminSlice';
 import {setCurrentProductCategoryName, setCurrentProductMiddleCategoryName} from '../../app/reducers/categorySlice';
 import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs} from '@mui/material';
@@ -34,8 +33,8 @@ export default function Products({successDelete}: propsType) {
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
   const currentProductMiddleCategoryName = useAppSelector(state => state.category.currentProductMiddleCategoryName); // 현재 선택된 중분류 카테고리 state
-  const productItemState = useAppSelector(state => state.dialog.productItemState); // 제품 삭제 dialog
   const currentProductData = useAppSelector(state => state.product.currentProductData); // 선택된 제품 정보
+  const [open, setOpen] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const handleWindowResize = useCallback(() => {
@@ -51,6 +50,9 @@ export default function Products({successDelete}: propsType) {
       .then(res => dispatch(getProductList({productList: res})))
       .catch(error => console.log(error))
   }, [middleCategory]);
+
+  // 제품 삭제 modal
+  const deleteProductItem = () => setOpen(prev => !prev);
 
   // 대분류 카테고리 선택
   const getMainCategory = (categoryName: string) => {
@@ -73,7 +75,7 @@ export default function Products({successDelete}: propsType) {
           .then(res => {
             successDelete();
             dispatch(getProductList({productList: res}));
-            dispatch(clickProductItemGoBack());
+            deleteProductItem();
           })
           .catch(error => console.log(error))
       })
@@ -108,7 +110,7 @@ export default function Products({successDelete}: propsType) {
               productName: string
             }) => (
               <Grid key={item.id} item xs={1}>
-                <ProductItem product={item} index={item.id}/>
+                <ProductItem product={item} index={item.id} deleteProductItem={deleteProductItem}/>
               </Grid>
             )) : // 제품 존재하지 않는 경우
             <Typography>
@@ -125,13 +127,7 @@ export default function Products({successDelete}: propsType) {
         <BreadcrumbsBox>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
             {[
-              <Typography sx={{
-                fontSize: 'large',
-                userSelect: 'none',
-                borderRadius: '5px',
-                bgcolor: 'rgba(198,219,227,0.73)',
-                p: 1
-              }}>전체 카테고리</Typography>
+              <BreadcrumbsCurrentTypography>전체 카테고리</BreadcrumbsCurrentTypography>
             ]}
           </Breadcrumbs>
         </BreadcrumbsBox>
@@ -147,29 +143,12 @@ export default function Products({successDelete}: propsType) {
         <BreadcrumbsBox>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
             {[
-              <Typography
-                onClick={() => navigate('/product/category')}
-                sx={{
-                  fontSize: 'large',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                  borderRadius: '5px',
-                  bgcolor: 'rgba(198,219,227,0.73)',
-                  p: 1,
-                  '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
-                }}>
+              <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
                 전체 카테고리
-              </Typography>,
-              <Typography sx={{
-                fontSize: 'large',
-                fontWeight: 'bold',
-                userSelect: 'none',
-                borderRadius: '5px',
-                bgcolor: 'rgba(198,219,227,0.73)',
-                p: 1
-              }}>
+              </BreadcrumbsTypography>,
+              <BreadcrumbsCurrentTypography>
                 {mainCategory}
-              </Typography>,
+              </BreadcrumbsCurrentTypography>,
             ]}
           </Breadcrumbs>
         </BreadcrumbsBox>
@@ -188,7 +167,7 @@ export default function Products({successDelete}: propsType) {
           <SelectBox>
             <Select
               sx={{textAlign: 'center', width: '100%'}}
-              defaultValue={mainCategory ? mainCategory : currentProductCategoryName}
+              value={mainCategory ? mainCategory : currentProductCategoryName}
               onChange={event => getMainCategory(event?.target.value)}
               size='small'>
               {productCategories.map((item: {
@@ -223,42 +202,15 @@ export default function Products({successDelete}: propsType) {
           <BreadcrumbsBox>
             <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
               {[
-                <Typography
-                  onClick={() => navigate('/product/category')}
-                  sx={{
-                    fontSize: 'large',
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    borderRadius: '5px',
-                    bgcolor: 'rgba(198,219,227,0.73)',
-                    p: 1,
-                    '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
-                  }}>
+                <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
                   전체 카테고리
-                </Typography>,
-                <Typography
-                  onClick={() => navigate(`/product/category?main=${mainCategory}`)}
-                  sx={{
-                    fontSize: 'large',
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    borderRadius: '5px',
-                    bgcolor: 'rgba(198,219,227,0.73)',
-                    p: 1,
-                    '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
-                  }}>
+                </BreadcrumbsTypography>,
+                <BreadcrumbsTypography onClick={() => navigate(`/product/category?main=${mainCategory}`)}>
                   {mainCategory}
-                </Typography>,
-                <Typography sx={{
-                  fontSize: 'large',
-                  fontWeight: 'bold',
-                  userSelect: 'none',
-                  borderRadius: '5px',
-                  bgcolor: 'rgba(198,219,227,0.73)',
-                  p: 1
-                }}>
+                </BreadcrumbsTypography>,
+                <BreadcrumbsCurrentTypography>
                   {middleCategory}
-                </Typography>
+                </BreadcrumbsCurrentTypography>
               ]}
             </Breadcrumbs>
           </BreadcrumbsBox>
@@ -294,12 +246,12 @@ export default function Products({successDelete}: propsType) {
 
         {/* 삭제 버튼 Dialog */}
         <CancelModal
-          openState={productItemState}
+          openState={open}
           title='제품 삭제'
           text1='해당 제품이 삭제됩니다.'
           text2='삭제하시겠습니까?'
           yesAction={() => deleteProduct(currentProductData.id)}
-          closeAction={() => dispatch(clickProductItemGoBack())}/>
+          closeAction={deleteProductItem}/>
       </>
     )
   }
@@ -370,3 +322,22 @@ const BreadcrumbsBox = styled(Box)(({theme}) => ({
   marginTop: 50,
   width: '80vw'
 })) as typeof Box;
+
+const BreadcrumbsTypography = styled(Typography)(() => ({
+  fontSize: 'large',
+  cursor: 'pointer',
+  userSelect: 'none',
+  borderRadius: '5px',
+  backgroundColor: 'rgba(154,195,255,0.37)',
+  padding: 10,
+  '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+})) as typeof Typography;
+
+const BreadcrumbsCurrentTypography = styled(Typography)(() => ({
+  fontSize: 'large',
+  fontWeight: 'bold',
+  userSelect: 'none',
+  borderRadius: '5px',
+  backgroundColor: 'rgba(154,195,255,0.37)',
+  padding: 10,
+})) as typeof Typography;

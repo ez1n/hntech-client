@@ -64,9 +64,12 @@ export default function ProductMiddleCategory({windowSize, successDelete}: props
               children: string[]
             }, index: number) => (
               <Grid key={item.id} item xs={1}>
-                <ProductMiddleCategoryItem key={item.id} category={item} index={index}
-                                           selectMiddleCategory={selectMiddleCategory}
-                                           successDelete={successDelete}/>
+                <ProductMiddleCategoryItem
+                  category={item}
+                  index={index}
+                  selectMiddleCategory={selectMiddleCategory}
+                  successDelete={successDelete}
+                />
               </Grid>
             )) :
             <Typography>
