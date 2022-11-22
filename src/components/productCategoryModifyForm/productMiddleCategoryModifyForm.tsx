@@ -6,7 +6,7 @@ import {useAppDispatch} from "../../app/hooks";
 import {onLoading} from "../../app/reducers/dialogSlice";
 import {changeMode} from "../../app/reducers/adminSlice";
 import {
-  Box,
+  Box, Button,
   Container, MenuItem, Select,
   Stack, styled,
   TextField,
@@ -174,11 +174,7 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
           </Box>
 
           {/* 카테고리 */}
-          <Select size={'small'} defaultValue={category} disabled>
-            <MenuItem value={category ? category : ''} sx={{justifyContent: 'center'}}>
-              {category}
-            </MenuItem>
-          </Select>
+          <Button disabled sx={{fontSize: 'large', fontWeight: 'bold'}}>{mainCategory}</Button>
         </Stack>
 
         {/* 제품 사진 미리보기 */}

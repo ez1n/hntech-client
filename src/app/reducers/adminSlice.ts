@@ -86,7 +86,7 @@ interface adminInitialState {
     savedPath: string,
     serverFilename: string
   }[],
-  bannerFile: { file: string, name: string }[],
+  bannerFile: {id: number, file: string, name: string }[],
   document: {
     catalogOriginalFilename: string,
     catalogServerFilename: string,
@@ -355,7 +355,7 @@ export const AdminSlice = createSlice({
     },
     addBannerFile: (
       state,
-      action: PayloadAction<{ banner: { file: string, name: string } }>
+      action: PayloadAction<{ banner: {id: number, file: string, name: string } }>
     ) => {
       state.bannerFile = [...state.bannerFile, action.payload.banner];
     },
@@ -415,16 +415,11 @@ export const AdminSlice = createSlice({
       state.documentFile.tax = action.payload.tax
     },
     addSitesUploadButton: state => {
-      const siteLen = state.newPanelData.sites['length'];
-      if (siteLen === 0) {
-        state.newPanelData.sites = [{id: 0, buttonName: '', link: ''}];
-      } else {
-        state.newPanelData.sites = [...state.newPanelData.sites, {
-          id: state.newPanelData.sites[siteLen - 1].id + 1,
-          buttonName: '',
-          link: ''
-        }];
-      }
+      state.newPanelData.sites = [...state.newPanelData.sites, {
+        id: Date.now(),
+        buttonName: '',
+        link: ''
+      }];
     },
     deleteSitesUploadButton: (
       state,

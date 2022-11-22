@@ -16,8 +16,6 @@ interface propsType {
 export default function CompanyInfo({success, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
-  const ciForm = new FormData(); // CI 소개 (전송 데이터)
-
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const companyInfo = useAppSelector(state => state.companyModify.companyImage.compInfoImage); // CI 소개 state (받아온 데이터)
 
@@ -29,6 +27,8 @@ export default function CompanyInfo({success, errorToast}: propsType) {
   // CI 변경 요청
   const postCompanyInfo = () => {
     dispatch(onLoading());
+    const ciForm = new FormData();
+
     ciForm.append('file', companyInfo.file);
     ciForm.append('where', 'ci');
 
@@ -54,7 +54,7 @@ export default function CompanyInfo({success, errorToast}: propsType) {
     <TotalBox>
       {/* 소제목 */}
       <Container sx={{display: 'flex', justifyContent: 'center'}}>
-        <TitleTypography variant='h5'>
+        <TitleTypography>
           CI 소개
         </TitleTypography>
       </Container>
@@ -117,6 +117,9 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 14
   },
+  fontSize: 22,
+  fontWeight: 'bold',
+  color: '#2b2b2b',
   padding: 1,
   width: 'max-content',
   borderBottom: '3px solid #2E7D32',

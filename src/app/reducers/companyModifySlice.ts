@@ -28,7 +28,7 @@ interface modeInitialState {
   introduce: { newIntroduce: string },
   companyImage: {
     compInfoImage: { file: string, path: string, serverFilename: string },
-    historyImage: { file: string, path: string, serverFilename: string },
+    historyImage: { id: number, savedPath: string, originalFilename: string, serverFilename: string }[],
     orgChartImage: { file: string, path: string, serverFilename: string }
   }
 }
@@ -37,7 +37,7 @@ const CompanyModifyInitialState: modeInitialState = {
   introduce: {newIntroduce: ''},
   companyImage: {
     compInfoImage: {file: '', path: '', serverFilename: ''},
-    historyImage: {file: '', path: '', serverFilename: ''},
+    historyImage: [],
     orgChartImage: {file: '', path: '', serverFilename: ''}
   }
 };
@@ -59,7 +59,12 @@ export const ModeSlice = createSlice({
             }
           ],
           compInfoImage: string,
-          historyImage: string,
+          historyImage: {
+            id: number,
+            originalFilename: string,
+            savedPath: string,
+            serverFilename: string
+          }[],
           logoImage: {
             id: 0,
             originalFilename: string,
@@ -72,15 +77,15 @@ export const ModeSlice = createSlice({
     ) => {
       state.companyImage = {
         compInfoImage: {file: '', path: '', serverFilename: action.payload.data.compInfoImage},
-        historyImage: {file: '', path: '', serverFilename: action.payload.data.historyImage},
+        historyImage: action.payload.data.historyImage,
         orgChartImage: {file: '', path: '', serverFilename: action.payload.data.orgChartImage}
       };
     },
     getHistoryImage: (
       state,
-      action: PayloadAction<{ historyImage: string }>
+      action: PayloadAction<{ historyImage: { id: number, savedPath: string, originalFilename: string, serverFilename: string }[] }>
     ) => {
-      state.companyImage.historyImage = {file: '', path: '', serverFilename: action.payload.historyImage};
+      state.companyImage.historyImage = action.payload.historyImage;
     },
     getCompanyInfoImage: (
       state,
@@ -100,22 +105,12 @@ export const ModeSlice = createSlice({
     ) => {
       state.introduce.newIntroduce = action.payload.newIntroduce
     },
-    updateHistory: (
-      state,
-      action: PayloadAction<{ file: string, path: string }>
-    ) => {
-      state.companyImage.historyImage = {
-        ...state.companyImage.compInfoImage,
-        file: action.payload.file,
-        path: action.payload.path
-      };
-    },
     updateOrgChart: (
       state,
       action: PayloadAction<{ file: string, path: string }>
     ) => {
       state.companyImage.orgChartImage = {
-        ...state.companyImage.historyImage,
+        ...state.companyImage.orgChartImage,
         file: action.payload.file,
         path: action.payload.path
       };
@@ -129,6 +124,12 @@ export const ModeSlice = createSlice({
         file: action.payload.file,
         path: action.payload.path
       };
+    },
+    deleteHistory: (
+      state,
+        action: PayloadAction<{ num: number }>
+    ) => {
+      state.companyImage.historyImage = state.companyImage.historyImage.filter((item, index) => index !== action.payload.num);
     }
   }
 });
@@ -139,8 +140,8 @@ export const {
   getCompanyInfoImage,
   getOrgChartImage,
   updateIntroduce,
-  updateHistory,
   updateOrgChart,
-  updateCompanyInfo
+  updateCompanyInfo,
+  deleteHistory
 } = ModeSlice.actions;
 export default ModeSlice.reducer;

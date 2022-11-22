@@ -7,7 +7,7 @@ export default function Location() {
     <TotalBox>
       {/* 소제목 */}
       <Container sx={{display: 'flex', justifyContent: 'center'}}>
-        <TitleTypography variant='h5'>
+        <TitleTypography>
           찾아오시는 길
         </TitleTypography>
       </Container>
@@ -44,6 +44,9 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 14
   },
+  fontSize: 22,
+  fontWeight: 'bold',
+  color: '#2b2b2b',
   padding: 1,
   width: 'max-content',
   borderBottom: '3px solid #2E7D32',

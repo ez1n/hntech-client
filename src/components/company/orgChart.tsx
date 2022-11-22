@@ -16,8 +16,6 @@ interface propsType {
 export default function OrgChart({success, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
-  const orgChartForm = new FormData(); // 조직도 (전송 데이터)
-
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드 state
   const orgChart = useAppSelector(state => state.companyModify.companyImage.orgChartImage); // 조직도 state (받아온 데이터)
 
@@ -29,6 +27,8 @@ export default function OrgChart({success, errorToast}: propsType) {
   // 조직도 변경 요청
   const postOrgChart = () => {
     dispatch(onLoading());
+    const orgChartForm = new FormData();
+
     orgChartForm.append('file', orgChart.file);
     orgChartForm.append('where', 'orgChart');
     adminApi.postOrgChart(orgChartForm)
@@ -46,7 +46,6 @@ export default function OrgChart({success, errorToast}: propsType) {
           const isLogin = localStorage.getItem("login");
           dispatch(changeMode({login: isLogin}));
         }
-        ;
       })
   };
 
@@ -54,7 +53,7 @@ export default function OrgChart({success, errorToast}: propsType) {
     <TotalBox>
       {/* 소제목 */}
       <Container sx={{display: 'flex', justifyContent: 'center'}}>
-        <TitleTypography variant='h5'>
+        <TitleTypography>
           조직도
         </TitleTypography>
       </Container>
@@ -117,6 +116,9 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 14
   },
+  fontSize: 22,
+  fontWeight: 'bold',
+  color: '#2b2b2b',
   padding: 1,
   width: 'max-content',
   borderBottom: '3px solid #2E7D32',

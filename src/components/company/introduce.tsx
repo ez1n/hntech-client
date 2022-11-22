@@ -39,7 +39,7 @@ export default function Introduce({success, errorToast}: propsType) {
     <TotalBox>
       {/* 소제목 */}
       <Container sx={{display: 'flex', justifyContent: 'center'}}>
-        <TitleTypography variant='h5'>
+        <TitleTypography>
           인사말
         </TitleTypography>
       </Container>
@@ -92,9 +92,12 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: 14
   },
+  fontSize: 22,
+  fontWeight: 'bold',
   padding: 1,
   width: 'max-content',
   borderBottom: '3px solid #2E7D32',
+  color: '#2b2b2b'
 })) as typeof Typography;
 
 const IntroduceContentTypography = styled(Typography)(({theme}) => ({

@@ -17,6 +17,7 @@ import EditButton from "../editButton";
 import Loading from "../loading";
 import CancelModal from "../cancelModal";
 import ProductCategorySelect from "../productCategorySelect";
+import {setCurrentProductCategoryName} from "../../app/reducers/categorySlice";
 
 interface propsType {
   success: () => void,
@@ -73,13 +74,17 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
   };
 
   // 카테고리 선택
-  const getCategory = (category: string) => setMiddleCategory({...middleCategory, parentName: category});
+  const getCategory = (category: string) => {
+    setMiddleCategory({...middleCategory, parentName: category});
+    dispatch(setCurrentProductCategoryName({category: category}));
+  };
 
   // 카테고리 이름
   const changeCategoryName = (e: any) => setMiddleCategory({...middleCategory, categoryName: e.target.value});
 
   // 이미지 업로드
   const selectCategoryImage = (e: any) => {
+    URL.revokeObjectURL(image.path);
     setMiddleCategory({
       ...middleCategory,
       image: {
@@ -165,10 +170,12 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
           </Box>
 
           {/* 카테고리 */}
-          <ProductCategorySelect
-            category={productCategories}
-            defaultCategory={currentProductCategoryName}
-            getCategory={getCategory}/>
+          <Box>
+            <ProductCategorySelect
+              category={productCategories}
+              defaultCategory={currentProductCategoryName}
+              getCategory={getCategory}/>
+          </Box>
         </Stack>
 
         {/* 제품 사진 미리보기 */}
@@ -189,7 +196,7 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
               {!image.path ?
                 <Typography sx={{color: 'lightgrey', fontSize: 18}}>카테고리 이미지</Typography> :
                 <Box sx={{width: '23%', m: 1}}>
-                  <img src={image.path} alt='제품 사진' width='100%'/>
+                  <img src={image.path} alt={image.originalName} width='100%'/>
                 </Box>
               }
             </Container>

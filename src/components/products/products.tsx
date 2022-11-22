@@ -1,20 +1,18 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {DndProvider} from "react-dnd";
-import {HTML5Backend} from "react-dnd-html5-backend";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {productApi} from '../../network/product';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {getProductList} from '../../app/reducers/productSlice';
 import {changeMode} from '../../app/reducers/adminSlice';
 import {setCurrentProductCategoryName, setCurrentProductMiddleCategoryName} from '../../app/reducers/categorySlice';
-import {Box, Button, styled, Select, MenuItem, Typography, Grid, Breadcrumbs} from '@mui/material';
+import {Box, Button, styled, Select, MenuItem, Typography, Breadcrumbs} from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ProductMainCategory from './productMainCategory';
 import CancelModal from '../cancelModal';
-import ProductItem from './productItem';
 import ProductMiddleCategory from "./productMiddleCategory";
 import ProductCategorySelect from "../productCategorySelect";
+import ProductList from "./productList";
 
 interface propsType {
   successDelete: () => void
@@ -37,12 +35,6 @@ export default function Products({successDelete}: propsType) {
   const [open, setOpen] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
-  const handleWindowResize = useCallback(() => {
-    setWindowSize(window.innerWidth);
-  }, []);
-
-  window.addEventListener("resize", handleWindowResize);
-
   //제품 목록 받아오기
   useEffect(() => {
     middleCategory &&
@@ -50,6 +42,12 @@ export default function Products({successDelete}: propsType) {
       .then(res => dispatch(getProductList({productList: res})))
       .catch(error => console.log(error))
   }, [middleCategory]);
+
+  const handleWindowResize = useCallback(() => {
+    setWindowSize(window.innerWidth);
+  }, []);
+
+  window.addEventListener("resize", handleWindowResize);
 
   // 제품 삭제 modal
   const deleteProductItem = () => setOpen(prev => !prev);
@@ -89,46 +87,12 @@ export default function Products({successDelete}: propsType) {
       })
   };
 
-  function ProductGrid() {
-    let productColumn = 4;
-    if (windowSize < 1200) productColumn = 3;
-    if (windowSize < 900) productColumn = 2;
-    if (windowSize < 600) productColumn = 1;
-
-    return (
-      <DndProvider backend={HTML5Backend}>
-        <Grid container columns={productColumn} spacing={1}>
-          {productList.length !== 0 ? // 제품 존재하는 경우
-            productList.map((item: {
-              id: number,
-              image: {
-                id: number,
-                originalFilename: string,
-                savedPath: string,
-                serverFilename: string
-              },
-              productName: string
-            }) => (
-              <Grid key={item.id} item xs={1}>
-                <ProductItem product={item} index={item.id} deleteProductItem={deleteProductItem}/>
-              </Grid>
-            )) : // 제품 존재하지 않는 경우
-            <Typography>
-              해당 카테고리에 제품이 존재하지 않습니다.
-            </Typography>}
-        </Grid>
-      </DndProvider>
-    )
-  }
-
   if (!mainCategory) {
     return (
       <>
         <BreadcrumbsBox>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
-            {[
-              <BreadcrumbsCurrentTypography>전체 카테고리</BreadcrumbsCurrentTypography>
-            ]}
+            <BreadcrumbsCurrentTypography>전체 카테고리</BreadcrumbsCurrentTypography>
           </Breadcrumbs>
         </BreadcrumbsBox>
 
@@ -142,14 +106,12 @@ export default function Products({successDelete}: propsType) {
       <Box>
         <BreadcrumbsBox>
           <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
-            {[
-              <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
-                전체 카테고리
-              </BreadcrumbsTypography>,
-              <BreadcrumbsCurrentTypography>
-                {mainCategory}
-              </BreadcrumbsCurrentTypography>,
-            ]}
+            <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
+              전체 카테고리
+            </BreadcrumbsTypography>
+            <BreadcrumbsCurrentTypography>
+              {mainCategory}
+            </BreadcrumbsCurrentTypography>
           </Breadcrumbs>
         </BreadcrumbsBox>
 
@@ -157,9 +119,7 @@ export default function Products({successDelete}: propsType) {
           {/* 사이드 메뉴 */}
           <Box sx={{flex: 0.2}}>
             <CategoryBox>
-              <ProductMainCategory
-                windowSize={windowSize}
-                successDelete={successDelete}/>
+              <ProductMainCategory windowSize={windowSize} successDelete={successDelete}/>
             </CategoryBox>
           </Box>
 
@@ -201,17 +161,15 @@ export default function Products({successDelete}: propsType) {
         <Box>
           <BreadcrumbsBox>
             <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
-              {[
-                <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
-                  전체 카테고리
-                </BreadcrumbsTypography>,
-                <BreadcrumbsTypography onClick={() => navigate(`/product/category?main=${mainCategory}`)}>
-                  {mainCategory}
-                </BreadcrumbsTypography>,
-                <BreadcrumbsCurrentTypography>
-                  {middleCategory}
-                </BreadcrumbsCurrentTypography>
-              ]}
+              <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
+                전체 카테고리
+              </BreadcrumbsTypography>
+              <BreadcrumbsTypography onClick={() => navigate(`/product/category?main=${mainCategory}`)}>
+                {mainCategory}
+              </BreadcrumbsTypography>
+              <BreadcrumbsCurrentTypography>
+                {middleCategory}
+              </BreadcrumbsCurrentTypography>
             </Breadcrumbs>
           </BreadcrumbsBox>
 
@@ -234,7 +192,7 @@ export default function Products({successDelete}: propsType) {
             {/* 제품 목록 */}
             <Box sx={{flex: 0.8, pt: 5}}>
               <Box sx={{p: 1, display: 'flex', flexWrap: 'wrap'}}>
-                <ProductGrid/>
+                <ProductList windowSize={windowSize} productList={productList} deleteProductItem={deleteProductItem}/>
               </Box>
               {managerMode &&
                 <AddButton onClick={() => navigate('/product/form')}>
@@ -324,20 +282,21 @@ const BreadcrumbsBox = styled(Box)(({theme}) => ({
 })) as typeof Box;
 
 const BreadcrumbsTypography = styled(Typography)(() => ({
-  fontSize: 'large',
+  fontSize: 'medium',
   cursor: 'pointer',
   userSelect: 'none',
   borderRadius: '5px',
-  backgroundColor: 'rgba(154,195,255,0.37)',
-  padding: 10,
+  backgroundColor: 'rgba(166,166,166,0.25)',
+  padding: 5,
   '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
 })) as typeof Typography;
 
 const BreadcrumbsCurrentTypography = styled(Typography)(() => ({
-  fontSize: 'large',
+  fontSize: 'medium',
   fontWeight: 'bold',
   userSelect: 'none',
   borderRadius: '5px',
-  backgroundColor: 'rgba(154,195,255,0.37)',
-  padding: 10,
+  backgroundColor: 'rgba(79,79,79,0.78)',
+  color: '#F0F0F0',
+  padding: 5,
 })) as typeof Typography;

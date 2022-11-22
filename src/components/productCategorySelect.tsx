@@ -1,5 +1,5 @@
 import React from 'react';
-import {Box, MenuItem, Select, styled} from '@mui/material';
+import {MenuItem, Select} from '@mui/material';
 
 interface propsType {
   defaultCategory: string,
@@ -17,7 +17,7 @@ export default function ProductCategorySelect({defaultCategory, category, getCat
   return (
       <Select
         size='small'
-        value={defaultCategory && defaultCategory}
+        value={defaultCategory}
         onChange={event => getCategory(event?.target.value)}
         sx={{textAlign: 'center', width: '100%'}}
       >

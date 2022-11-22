@@ -13,10 +13,10 @@ class AdminApi {
     return response.data;
   };
 
-  // 배너 받아오기
-  async getBanner() {
+  // 이미지 받아오기
+  async getImages() {
     const response = await axios.get(`/api/admin/images`);
-    return response.data.bannerImages;
+    return response.data;
   };
 
   // 배너 수정하기
@@ -29,8 +29,8 @@ class AdminApi {
     return response.data.bannerImages;
   };
 
-  // 배너 삭제하기
-  async deleteBanner(bannerName: string) {
+  // 배너, 회사연혁 삭제하기
+  async deleteImage(bannerName: string) {
     const response = await axios.delete(`/api/file/image/${bannerName}`);
     return response.data;
   };
@@ -117,7 +117,7 @@ class AdminApi {
 
   // 회사 연혁 변경
   async postHistory(history: FormData) {
-    const response = await axios.post(`/api/admin/image`, history, {
+    const response = await axios.post(`/api/admin/history`, history, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -134,6 +134,6 @@ class AdminApi {
     });
     return response.data.compInfoImage;
   };
-};
+}
 
 export const adminApi = new AdminApi();

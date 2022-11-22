@@ -1,9 +1,6 @@
 import React from 'react';
-import {useAppSelector} from "../../app/hooks";
 import {api} from "../../network/network";
-import {Box, Button, Grid, styled, Typography} from "@mui/material";
-import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+import {Box, Button, styled, Typography} from "@mui/material";
 
 interface propsType {
   imageServerFilename: string,

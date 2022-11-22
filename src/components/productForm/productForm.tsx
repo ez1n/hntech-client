@@ -156,14 +156,7 @@ export default function ProductForm({success, errorToast}: propsType) {
 
   // 첨부파일 버튼 추가
   const addProductDocUploadButton = () => {
-    if (docFiles.length === 0) {
-      setDocFiles([...docFiles, {id: 0, file: '', originalFilename: '', type: ''}]);
-    } else {
-      setDocFiles([
-        ...docFiles,
-        {id: docFiles[docFiles.length - 1].id + 1, file: '', originalFilename: '', type: ''}
-      ]);
-    }
+    setDocFiles([...docFiles, {id: Date.now(), file: '', originalFilename: '', type: ''}]);
   };
 
   // 첨부파일 버튼 삭제

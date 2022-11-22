@@ -33,7 +33,8 @@ import {
   deleteSitesUploadButton,
   updateSiteButtonName,
   updateSiteLink,
-  addTax, resetDocumentFile
+  addTax,
+  resetDocumentFile
 } from '../../app/reducers/adminSlice';
 import {
   Drawer,
@@ -107,7 +108,7 @@ export default function AdminPanel({successModify}: propsType) {
   // 배너 사진 추가
   const addBannerImage = (event: any) => {
     for (let i = 0; i < event.target.files.length; i++) {
-      dispatch(addBannerFile({banner: {file: event?.target.files[i], name: event?.target.files[i].name}}))
+      dispatch(addBannerFile({banner: {id: Date.now(), file: event?.target.files[i], name: event?.target.files[i].name}}))
     }
   };
 
@@ -165,24 +166,24 @@ export default function AdminPanel({successModify}: propsType) {
 
     // 배너 사진
     const bannerForm = new FormData();
-    bannerFile.map((item: { file: string, name: string }) => bannerForm.append('files', item.file))
+    bannerFile.map((item: {id: number, file: string, name: string }) => bannerForm.append('files', item.file))
 
     // 로고 정보 변경 요청
     adminApi.postLogo(logoForm)
-      .then(res => {
-        dispatch(addLogoFile({logo: {file: '', name: ''}}));
-        dispatch(setLogo({logo: res.logoImage}));
+      .then(() => {
+        adminApi.getImages()
+          .then(res => {
+            dispatch(addLogoFile({logo: {file: '', name: ''}}));
+            dispatch(setLogo({logo: res.logoImage}));
+          })
+          .catch(error => console.log(error))
       })
       .catch(error => console.log(error))
 
     // 배너 삭제
     deleteBannerName.map((item: { name: string }) => (
-      adminApi.deleteBanner(item.name)
-        .then(() => {
-          setDeleteBannerName([]);
-          adminApi.getBanner()
-            .then(res => dispatch(setBanner({banner: res})));
-        })
+      adminApi.deleteImage(item.name)
+        .then(() => setDeleteBannerName([]))
         .catch(error => {
           console.log(error);
 
@@ -196,10 +197,14 @@ export default function AdminPanel({successModify}: propsType) {
 
     // 배너 정보 변경 요청
     adminApi.postBanner(bannerForm)
-      .then(res => {
-        successModify();
-        dispatch(setBanner({banner: res}));
-        dispatch(resetBannerFile());
+      .then(() => {
+        adminApi.getImages()
+          .then(res => {
+            successModify();
+            dispatch(setBanner({banner: res.bannerImages}));
+            dispatch(resetBannerFile());
+          })
+          .catch(error => console.log(error))
       })
       .catch(error => {
         console.log(error);
@@ -495,8 +500,8 @@ export default function AdminPanel({successModify}: propsType) {
               ))}
 
               {/* 추가한 배너 사진 */}
-              {bannerFile?.map((item: { file: string, name: string }, index: number) => (
-                <Stack key={index} direction='row' sx={{alignItems: 'center'}}>
+              {bannerFile?.map((item: {id: number, file: string, name: string }, index: number) => (
+                <Stack key={item.id} direction='row' sx={{alignItems: 'center'}}>
                   <Typography sx={{color: 'darkgrey'}}>
                     {item.name}
                   </Typography>
@@ -658,12 +663,11 @@ const MenuList = styled(MenuItem)(() => ({
 
 const ExitStack = styled(Stack)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
-    display: 'flex',
-    position: 'fixed'
+    display: 'inline',
+    position: 'fixed',
+    bottom: 20,
+    right: 20
   },
-  display: 'none',
-  justifyContent: 'flex-end',
-  bottom: 20,
-  right: 20
+  display: 'none'
 })) as typeof Stack;
 

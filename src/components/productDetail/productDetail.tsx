@@ -17,15 +17,17 @@ export default function ProductDetail({successDelete}: propsType) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const mainCategory = new URLSearchParams(location.search).get('main');
-  const middleCategory = new URLSearchParams(location.search).get('middle');
-  const id = new URLSearchParams(location.search).get('id');
+  const searchParams = new URLSearchParams(location.search)
+  const mainCategory = searchParams.get('main');
+  const middleCategory = searchParams.get('middle');
+  const productId = searchParams.get('id');
+  const id = productId && parseInt(productId);
 
   const productList = useAppSelector(state => state.product.productList); // 제품 목록
   const productName = useAppSelector(state => state.product.productDetail.productName); // 제품 이름
   const currentProductCategoryName = useAppSelector(state => state.category.currentProductCategoryName); // 현재 선택된 카테고리 state
 
-  // 제품 정보 받아오기
+  // 제품 페이지 이동
   const getProduct = (productId: number) => {
     navigate(`/product?main=${currentProductCategoryName}&middle=${middleCategory}&id=${productId}`);
   };
@@ -39,37 +41,28 @@ export default function ProductDetail({successDelete}: propsType) {
 
   useEffect(() => {
     id &&
-    productApi.getProduct(parseInt(id))
+    productApi.getProduct(id)
       .then(res => dispatch(getProductDetail({detail: res})))
       .catch(error => console.log(error))
   }, [id]);
 
   return (
-    <Box>
+    <>
       <BreadcrumbsBox>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small'/>}>
-          {[
-            <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
-              전체 카테고리
-            </BreadcrumbsTypography>,
-            <BreadcrumbsTypography onClick={() => navigate(`/product/category?main=${mainCategory}`)}>
-              {mainCategory}
-            </BreadcrumbsTypography>,
-            <BreadcrumbsTypography
-              onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}>
-              {middleCategory}
-            </BreadcrumbsTypography>,
-            <Typography sx={{
-              fontSize: 'large',
-              fontWeight: 'bold',
-              userSelect: 'none',
-              borderRadius: '5px',
-              bgcolor: 'rgba(154,195,255,0.37)',
-              p: 1,
-            }}>
-              {productName}
-            </Typography>
-          ]}
+          <BreadcrumbsTypography onClick={() => navigate('/product/category')}>
+            전체 카테고리
+          </BreadcrumbsTypography>
+          <BreadcrumbsTypography onClick={() => navigate(`/product/category?main=${mainCategory}`)}>
+            {mainCategory}
+          </BreadcrumbsTypography>
+          <BreadcrumbsTypography
+            onClick={() => navigate(`/product/category?main=${mainCategory}&middle=${middleCategory}`)}>
+            {middleCategory}
+          </BreadcrumbsTypography>
+          <BreadcrumbsCurrentTypography>
+            {productName}
+          </BreadcrumbsCurrentTypography>
         </Breadcrumbs>
       </BreadcrumbsBox>
 
@@ -131,11 +124,12 @@ export default function ProductDetail({successDelete}: propsType) {
         {/* 900px 이하 사이드 메뉴 */}
         <SelectBox>
           <Select
-            defaultValue={id}
+            value={id}
             onChange={(event: any) => getProduct(event?.target.value)}
             size='small'
             sx={{textAlign: 'center', width: '100%'}}
           >
+            <MenuItem disabled value='33' sx={{display: "none"}}> </MenuItem>
             {productList.map((item: {
               id: number,
               image: {
@@ -166,7 +160,7 @@ export default function ProductDetail({successDelete}: propsType) {
           <Specification/>
         </Box>
       </TotalBox>
-    </Box>
+    </>
   )
 };
 
@@ -233,11 +227,21 @@ const BreadcrumbsBox = styled(Box)(({theme}) => ({
 })) as typeof Box;
 
 const BreadcrumbsTypography = styled(Typography)(() => ({
-  fontSize: 'large',
+  fontSize: 'medium',
   cursor: 'pointer',
   userSelect: 'none',
   borderRadius: '5px',
-  backgroundColor: 'rgba(154,195,255,0.37)',
-  padding: 10,
+  backgroundColor: 'rgba(166,166,166,0.25)',
+  padding: 5,
   '&:hover': {fontWeight: 'bold', textDecoration: 'underline'}
+})) as typeof Typography;
+
+const BreadcrumbsCurrentTypography = styled(Typography)(() => ({
+  fontSize: 'medium',
+  fontWeight: 'bold',
+  userSelect: 'none',
+  borderRadius: '5px',
+  backgroundColor: 'rgba(79,79,79,0.78)',
+  color: '#F0F0F0',
+  padding: 5,
 })) as typeof Typography;
