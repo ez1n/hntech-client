@@ -4,6 +4,8 @@
 
 >소방 관련 제품을 판매하는 에이치앤테크 웹 어플리케이션
 
+<a href="http://hntec.co.kr/">HNTECH 홈페이지 바로가기</a>
+
 ## Functions
 
 * 회사 정보 및 소방 제품 정보 확인
