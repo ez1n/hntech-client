@@ -62,17 +62,17 @@ export default function CompanyInfo({success, errorToast}: propsType) {
       {/* 수정 버튼 */}
       <Spacing>
         {managerMode &&
-            <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
-                <label className='imageUploadButton' htmlFor='orgChartInput'>
-                    이미지 가져오기
-                    <input
-                        type='file'
-                        accept='image/*'
-                        id='orgChartInput'
-                        onChange={updateCompanyInfoImage}/>
-                </label>
-                <EditButton name='수정' onClick={postCompanyInfo}/>
-            </Box>}
+          <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+            <label className='imageUploadButton' htmlFor='orgChartInput'>
+              이미지 가져오기
+              <input
+                type='file'
+                accept='image/*'
+                id='orgChartInput'
+                onChange={updateCompanyInfoImage}/>
+            </label>
+            <EditButton name='수정' onClick={postCompanyInfo}/>
+          </Box>}
       </Spacing>
 
       {/* CI */}
@@ -90,8 +90,10 @@ export default function CompanyInfo({success, errorToast}: propsType) {
               src={companyInfo.path === '' ? `${api.baseUrl()}/files/admin/${companyInfo.serverFilename}` : companyInfo.path}
               alt='Company Info' width={'80%'}/>
           </Container> :
-          <img className='companyImage' src={`${api.baseUrl()}/files/admin/${companyInfo.serverFilename}`}
-               alt='Company Info'/>
+          <Box sx={{width: '60vw', m: 'auto'}}>
+            <img src={`${api.baseUrl()}/files/admin/${companyInfo.serverFilename}`}
+                 alt='Company Info' style={{maxWidth: '100%'}}/>
+          </Box>
         }
       </Box>
     </TotalBox>
@@ -122,5 +124,5 @@ const TitleTypography = styled(Typography)(({theme}) => ({
   color: '#2b2b2b',
   padding: 1,
   width: 'max-content',
-  borderBottom: '3px solid #2E7D32',
+  borderBottom: '3px solid #2E7D32'
 })) as typeof Typography;

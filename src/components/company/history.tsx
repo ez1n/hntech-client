@@ -155,7 +155,10 @@ export default function History({success, errorToast}: propsType) {
             ))}
           </Container> :
           history.map(item => (
-            <img className='companyImage' key={item.id} src={`${api.baseUrl()}/files/admin/${item.serverFilename}`} alt={item.originalFilename}/>
+            <Box key={item.id} sx={{width: '60vw', m: 'auto'}}>
+              <img src={`${api.baseUrl()}/files/admin/${item.serverFilename}`}
+                   alt={item.originalFilename} style={{maxWidth: '100%'}}/>
+            </Box>
           ))
         }
       </Box>

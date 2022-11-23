@@ -61,19 +61,19 @@ export default function OrgChart({success, errorToast}: propsType) {
       {/* 수정 버튼 */}
       <Spacing>
         {managerMode &&
-            <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
-                <label
-                    className='imageUploadButton'
-                    htmlFor='orgChartInput'
-                    onChange={updateOrgChartImage}>
-                    이미지 가져오기
-                    <input
-                        type='file'
-                        accept='image/*'
-                        id='orgChartInput'/>
-                </label>
-                <EditButton name='수정' onClick={postOrgChart}/>
-            </Box>}
+          <Box sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+            <label
+              className='imageUploadButton'
+              htmlFor='orgChartInput'
+              onChange={updateOrgChartImage}>
+              이미지 가져오기
+              <input
+                type='file'
+                accept='image/*'
+                id='orgChartInput'/>
+            </label>
+            <EditButton name='수정' onClick={postOrgChart}/>
+          </Box>}
       </Spacing>
 
       {/* 조직도 */}
@@ -90,7 +90,9 @@ export default function OrgChart({success, errorToast}: propsType) {
             <img src={orgChart.path === '' ? `${api.baseUrl()}/files/admin/${orgChart.serverFilename}` : orgChart.path}
                  alt='조직도' width={'80%'}/>
           </Container> :
-          <img className='companyImage' src={`${api.baseUrl()}/files/admin/${orgChart.serverFilename}`} alt='조직도'/>
+          <Box sx={{width: '60vw', m: 'auto'}}>
+            <img src={`${api.baseUrl()}/files/admin/${orgChart.serverFilename}`} alt='조직도' style={{maxWidth: '100%'}}/>
+          </Box>
         }
       </Box>
     </TotalBox>
