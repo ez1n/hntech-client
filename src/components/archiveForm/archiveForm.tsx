@@ -21,7 +21,6 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ArchiveCategorySelect from '../archiveCategorySelect';
-import Loading from '../loading';
 
 interface propsType {
   success: () => void,
@@ -313,8 +312,6 @@ export default function ArchiveForm({success, errorToast}: propsType) {
         <EditButton name='작성완료' onClick={postArchiveForm}/>
         <EditButton name='취소' onClick={openCancelArchive}/>
       </Spacing>
-
-      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal

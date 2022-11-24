@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
-import Loading from '../loading';
 
 interface propsType {
   success: () => void,
@@ -208,8 +207,6 @@ export default function ProductMainCategoryForm({success, errorToast}: propsType
         <EditButton name='등록완료' onClick={postProductCategory}/>
         <EditButton name='취소' onClick={() => setOpen(true)}/>
       </Spacing>
-
-      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal

@@ -78,7 +78,7 @@ class AdminApi {
   // 관리자 비밀번호 변경
   async putUpdatePassword(updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string }) {
     const response = await axios.put(`/api/admin/password`, updatePassword);
-    return response.data
+    return response.data.newPassword
   };
 
   // 관리자 패널 정보 변경

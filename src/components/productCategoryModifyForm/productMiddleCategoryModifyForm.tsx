@@ -13,7 +13,6 @@ import {
   Typography
 } from "@mui/material";
 import EditButton from "../editButton";
-import Loading from "../loading";
 import CancelModal from "../cancelModal";
 
 interface propsType {
@@ -208,8 +207,6 @@ export default function ProductMiddleCategoryModifyForm({successModify, errorToa
         <EditButton name='수정' onClick={putMiddleCategory}/>
         <EditButton name='취소' onClick={() => setOpen(true)}/>
       </Spacing>
-
-      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal

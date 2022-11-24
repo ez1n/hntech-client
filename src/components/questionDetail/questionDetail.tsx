@@ -12,6 +12,7 @@ import QuestionContent from './questionContent';
 import Comment from './comment';
 import CommentForm from './commentForm';
 import CancelModal from '../cancelModal';
+import {onLoading} from "../../app/reducers/dialogSlice";
 
 interface propsType {
   successAnswer: () => void,
@@ -48,14 +49,14 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
     }
   }, [managerMode]);
 
-  // 게시글 삭제 modal - open
-  const openDeleteQuestionDetail = () => setDeleteQuestionDetail(deleteQuestionDetail => !deleteQuestionDetail);
+  // 게시글 삭제 modal
+  const openDeleteQuestionDetail = () => setDeleteQuestionDetail(prev => !prev);
 
   // 게시글 삭제 modal - close
   const closeDeleteQuestionDetail = () => setDeleteQuestionDetail(false);
 
-  // 답변 상태 변경 modal - open
-  const openCompleteAnswer = () => setOnCompleteAnswer(openCompleteAnswer => !openCompleteAnswer);
+  // 답변 상태 변경 modal
+  const openCompleteAnswer = () => setOnCompleteAnswer(prev => !prev);
 
   // 답변 상태 변경 modal - close
   const closeCompleteAnswer = () => setOnCompleteAnswer(false);
@@ -65,6 +66,7 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
 
   // 게시글 삭제 요청
   const deleteQuestion = (id: number) => {
+    dispatch(onLoading());
     questionApi.deleteQuestion(id)
       .then(() => {
         successDelete();
@@ -75,6 +77,7 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
         errorToast('게시글을 삭제할 수 없습니다.');
         console.log(error);
       })
+      .finally(() => dispatch(onLoading()))
   };
 
   // 게시글 처리 완료 요청
@@ -94,6 +97,7 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
 
   // 댓글 삭제
   const deleteComment = (questionId: number, commentId: number) => {
+    dispatch(onLoading());
     commentApi.deleteComment(questionId, commentId)
       .then(res => {
         successDelete();
@@ -112,6 +116,7 @@ export default function QuestionDetail({successAnswer, successDelete, errorToast
           dispatch(changeMode({login: isLogin}));
         }
       })
+      .finally(() => dispatch(onLoading()))
   };
 
   const ModifyButtons = (faqState: string) => {

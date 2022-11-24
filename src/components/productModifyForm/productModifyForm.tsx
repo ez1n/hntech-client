@@ -23,7 +23,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
-import Loading from '../loading';
 import {getMiddleProductCategory, setCurrentProductMiddleCategoryName} from "../../app/reducers/categorySlice";
 import {categoryApi} from "../../network/category";
 
@@ -694,8 +693,6 @@ export default function ProductModifyForm({successModify, errorToast}: propsType
         <EditButton name='수정' onClick={() => putProduct(originData.id)}/>
         <EditButton name='취소' onClick={openCancelProductModify}/>
       </Spacing>
-
-      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal

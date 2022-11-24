@@ -22,7 +22,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditButton from '../editButton';
 import CancelModal from '../cancelModal';
 import ProductCategorySelect from '../productCategorySelect';
-import Loading from '../loading';
 
 interface propsType {
   success: () => void,
@@ -501,8 +500,6 @@ export default function ProductForm({success, errorToast}: propsType) {
         <EditButton name='작성완료' onClick={postMiddleProductCategory}/>
         <EditButton name='취소' onClick={openCancelProductForm}/>
       </Spacing>
-
-      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {adminApi} from '../network/admin';
 import {useAppDispatch, useAppSelector} from '../app/hooks';
 import {clickManagerLogin} from '../app/reducers/dialogSlice';
-import {changeMode, copyManagerData, setManagerData, setPassword} from '../app/reducers/adminSlice';
+import {changeMode, copyManagerData, setManagerData} from '../app/reducers/adminSlice';
 import {
   Button,
   Dialog,
@@ -17,8 +17,17 @@ export default function Login() {
   const dispatch = useAppDispatch();
 
   const loginState = useAppSelector(state => state.dialog.loginState); // 로그인 dialog state
-  const password = useAppSelector(state => state.manager.password); // 관리자 비밀번호 state
+  const [password, setPassword] = useState('');
   const [loginErrorMsg, setLoginErrorMsg] = useState('');
+
+  // 비밀번호 입력
+  const getPassword = (e: any) => setPassword(e.target.value);
+
+  // 다이얼로그 - close
+  const onClose = () => {
+    dispatch(clickManagerLogin());
+    setLoginErrorMsg('');
+  };
 
   // 관리자 패널 정보
   const getPanelInfo = () => {
@@ -31,20 +40,18 @@ export default function Login() {
 
   // 로그인
   const postLogin = () => {
-    adminApi.postLogin(password)
+    adminApi.postLogin({password: password})
       .then(res => {
         setLoginErrorMsg('');
+        setPassword('');
         dispatch(clickManagerLogin());
-        dispatch(setPassword({password: ''}));
         localStorage.setItem("login", res.result);
         const isLogin = localStorage.getItem("login");
         dispatch(changeMode({login: isLogin}));
 
         getPanelInfo();
       })
-      .catch(error => {
-        setLoginErrorMsg(error.response.data.message);
-      })
+      .catch(error => setLoginErrorMsg(error.response.data.message))
   };
 
   const onLoginEnterKey = (event: any) => {
@@ -54,15 +61,9 @@ export default function Login() {
   };
 
   return (
-    < Dialog
-      open={loginState}
-      onClose={() => {
-        dispatch(clickManagerLogin());
-        setLoginErrorMsg('');
-      }
-      }>
+    <Dialog open={loginState} onClose={onClose}>
       <DialogTitle>
-        관리자 모드 로그인
+        관리자 로그인
       </DialogTitle>
 
       <DialogContent>
@@ -71,24 +72,16 @@ export default function Login() {
           error={!!loginErrorMsg}
           helperText={loginErrorMsg}
           required
-          autoFocus={true}
+          autoFocus
           autoComplete='off'
           type={'password'}
-          onChange={event => dispatch(setPassword({password: event?.target.value}))}
+          onChange={getPassword}
           onKeyUp={onLoginEnterKey}/>
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={postLogin}>
-          로그인
-        </Button>
-        <Button
-          onClick={() => {
-            dispatch(clickManagerLogin());
-            setLoginErrorMsg('');
-          }}>
-          취소
-        </Button>
+        <Button onClick={postLogin}> 로그인 </Button>
+        <Button onClick={onClose}> 취소 </Button>
       </DialogActions>
     </Dialog>
   )

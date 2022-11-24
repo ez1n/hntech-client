@@ -14,7 +14,6 @@ import {
   Typography
 } from "@mui/material";
 import EditButton from "../editButton";
-import Loading from "../loading";
 import CancelModal from "../cancelModal";
 import ProductCategorySelect from "../productCategorySelect";
 import {setCurrentProductCategoryName} from "../../app/reducers/categorySlice";
@@ -211,8 +210,6 @@ export default function ProductMiddleCategoryForm({success, errorToast}: propsTy
         <EditButton name='등록완료' onClick={postMiddleCategory}/>
         <EditButton name='취소' onClick={() => setOpen(true)}/>
       </Spacing>
-
-      <Loading/>
 
       {/* 취소 버튼 Dialog */}
       <CancelModal

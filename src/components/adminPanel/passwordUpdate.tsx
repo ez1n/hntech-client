@@ -1,13 +1,7 @@
 import React, {useState} from 'react';
 import {adminApi} from '../../network/admin';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {clickPasswordStateGoBack} from '../../app/reducers/dialogSlice';
-import {
-  updateCurPassword,
-  updateManagerPassword,
-  updateNewPassword,
-  updateNewPasswordCheck
-} from '../../app/reducers/adminSlice';
+import {updateManagerPassword} from '../../app/reducers/adminSlice';
 import {
   Dialog,
   DialogActions,
@@ -19,44 +13,48 @@ import {
 import EditButton from '../editButton';
 
 interface propsType {
+  open: boolean,
+  onClose: () => void,
   successModify: () => void
 }
 
-export default function PasswordUpdate({successModify}: propsType) {
+export default function PasswordUpdate({open, onClose, successModify}: propsType) {
   const dispatch = useAppDispatch();
 
   const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보 state
-  const passwordState = useAppSelector(state => state.dialog.passwordState); // 비밀번호 변경 dialog state
-  const updatePassword = useAppSelector(state => state.manager.updatePassword); // 변경할 비밀번호 state
-  const [curPasswordErrorMsg, setCurPasswordErrorMsg] = useState('');
-  const [newPasswordErrorMsg, setNewPasswordErrorMsg] = useState('');
-  const [newPasswordCheckErrorMsg, setNewPasswordCheckErrorMsg] = useState('');
+  const [password, setPassword] = useState({curPassword: '', newPassword: '', newPasswordCheck: ''});
+  const [errorMessage, setErrorMessage] = useState({current: '', new: '', checked: ''});
 
   const validate = () => {
     let isValid = true;
-    if (updatePassword.curPassword === '' || updatePassword.curPassword !== adminPassword) {
-      setCurPasswordErrorMsg('비밀번호를 정확히 입력해 주세요.');
+    if (password.curPassword === '' || password.curPassword !== adminPassword) {
+      setErrorMessage(prev => ({...prev, current: '비밀번호를 정확히 입력해 주세요.'}));
       isValid = false;
-    } else setCurPasswordErrorMsg('');
-    if (updatePassword.newPassword === '') {
-      setNewPasswordErrorMsg('새 비밀번호를 입력해 주세요.');
+    } else setErrorMessage(prev => ({...prev, current: ''}));
+    if (password.newPassword === '') {
+      setErrorMessage(prev => ({...prev, new: '새 비밀번호를 입력해 주세요.'}));
       isValid = false;
-    } else setNewPasswordErrorMsg('');
-    if (updatePassword.newPasswordCheck === '' || updatePassword.newPasswordCheck !== updatePassword.newPassword) {
-      setNewPasswordCheckErrorMsg('비밀번호가 다릅니다.');
+    } else setErrorMessage(prev => ({...prev, new: ''}));
+    if (password.newPasswordCheck === '' || password.newPassword !== password.newPasswordCheck) {
+      setErrorMessage(prev => ({...prev, checked: '비밀번호가 다릅니다.'}));
       isValid = false;
-    } else setNewPasswordCheckErrorMsg('');
+    } else setErrorMessage(prev => ({...prev, checked: ''}));
     return isValid;
+  };
+
+  const changeValue = (e: any) => {
+    const {name, value} = e.target;
+    setPassword({...password, [name]: value});
   };
 
   // 관리자 비밀번호 변경
   const putUpdatePassword = () => {
     validate() &&
-    adminApi.putUpdatePassword(updatePassword)
+    adminApi.putUpdatePassword(password)
       .then(res => {
         successModify();
-        dispatch(clickPasswordStateGoBack());
-        dispatch(updateManagerPassword({adminPassword: res.newPassword}));
+        onClose();
+        dispatch(updateManagerPassword({adminPassword: res}));
       })
       .catch(error => console.log(error))
   };
@@ -67,46 +65,47 @@ export default function PasswordUpdate({successModify}: propsType) {
     }
   };
 
-  // 다이얼로그 닫기 이벤트
+  // 다이얼로그 닫기
   const closeDialog = () => {
-    setCurPasswordErrorMsg('');
-    setNewPasswordErrorMsg('');
-    setNewPasswordCheckErrorMsg('');
-    dispatch(clickPasswordStateGoBack());
+    setErrorMessage({current: '', new: '', checked: ''});
+    onClose();
   };
 
   return (
-    <Dialog
-      open={passwordState}
-      onClose={closeDialog}>
+    <Dialog open={open} onClose={closeDialog}>
       <DialogTitle sx={{textAlign: 'center'}}>
         비밀번호 변경
       </DialogTitle>
+
       <DialogContent>
         <Stack spacing={1}>
           <TextField
             type={'password'}
-            onChange={event => dispatch(updateCurPassword({curPassword: event?.target.value}))}
+            name={'curPassword'}
+            onChange={changeValue}
             placeholder={'현재 비밀번호'}
-            error={!!curPasswordErrorMsg}
-            helperText={curPasswordErrorMsg}/>
+            error={!!errorMessage.current}
+            helperText={errorMessage.current}/>
 
           <TextField
             type={'password'}
-            onChange={event => dispatch(updateNewPassword({newPassword: event?.target.value}))}
+            name={'newPassword'}
+            onChange={changeValue}
             placeholder={'새 비밀번호'}
-            error={!!newPasswordErrorMsg}
-            helperText={newPasswordErrorMsg}/>
+            error={!!errorMessage.new}
+            helperText={errorMessage.new}/>
 
           <TextField
             type={'password'}
-            onChange={event => dispatch(updateNewPasswordCheck({newPasswordCheck: event?.target.value}))}
+            name={'newPasswordCheck'}
+            onChange={changeValue}
             onKeyUp={onPutUpdatePasswordKeyUp}
             placeholder={'새 비밀번호 확인'}
-            error={!!newPasswordCheckErrorMsg}
-            helperText={newPasswordCheckErrorMsg}/>
+            error={!!errorMessage.checked}
+            helperText={errorMessage.checked}/>
         </Stack>
       </DialogContent>
+
       <DialogActions sx={{justifyContent: 'center'}}>
         <EditButton name='변경' onClick={putUpdatePassword}/>
         <EditButton name='취소' onClick={closeDialog}/>

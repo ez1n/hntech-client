@@ -4,7 +4,6 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 /**
  * managerLogin : 관리자 로그인 dialog
- * password : 관리자 비밀번호 (로그인)
  * panelData : 관리자 패널 정보
  * newPanelData : 관리자 패널 정보 변경
  * updatePassword: 관리자 비밀번호 (변경)
@@ -12,13 +11,9 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 /**
  * ChangeMode : 관리자모드 state (boolean)
- * setPassword : 비밀번호 입력(관리자 로그인)
  * setManagerData : 관리자 정보 받아오기
  * copyManagerData : 관리자 정보 copy (변경용)
  * setFooter : footer 정보 받아오기
- * updateCurPassword : 관리자 현재 비밀번호 수정
- * updateNewPassword : 관리자 새 비밀번호
- * updateNewPasswordCheck : 관리자 새 비밀번호 확인
  * updateManagerPassword : 비밀번호 업데이트
  * updateManagerSentMail : 수신 메일 업데이트
  * updateManagerReceivedMail : 발신 메일 업데이트
@@ -32,7 +27,6 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 // 관리자모드 state
 interface adminInitialState {
   managerMode: boolean,
-  password: { password: string },
   panelData: {
     adminPassword: string,
     emailSendingTime: string,
@@ -66,7 +60,6 @@ interface adminInitialState {
     phone: string,
     sites: { id: number, buttonName: string, link: string }[]
   },
-  updatePassword: { curPassword: string, newPassword: string, newPasswordCheck: string },
   logo: {
     id: number,
     originalFilename: string,
@@ -86,7 +79,7 @@ interface adminInitialState {
     savedPath: string,
     serverFilename: string
   }[],
-  bannerFile: {id: number, file: string, name: string }[],
+  bannerFile: { id: number, file: string, name: string }[],
   document: {
     catalogOriginalFilename: string,
     catalogServerFilename: string,
@@ -104,7 +97,6 @@ interface adminInitialState {
 
 const AdminInitialState: adminInitialState = {
   managerMode: false,
-  password: {password: ''},
   panelData: {
     adminPassword: '',
     emailSendingTime: '',
@@ -138,7 +130,6 @@ const AdminInitialState: adminInitialState = {
     phone: '',
     sites: []
   },
-  updatePassword: {curPassword: '', newPassword: '', newPasswordCheck: ''},
   logo: {
     id: 0,
     originalFilename: '',
@@ -174,12 +165,6 @@ export const AdminSlice = createSlice({
       action: PayloadAction<{ login: string | null }>
     ) => {
       state.managerMode = Boolean(action.payload.login);
-    },
-    setPassword: (
-      state,
-      action: PayloadAction<{ password: string }>
-    ) => {
-      state.password.password = action.payload.password
     },
     setManagerData: (
       state,
@@ -248,24 +233,6 @@ export const AdminSlice = createSlice({
       }>
     ) => {
       state.footer = action.payload.footer
-    },
-    updateCurPassword: (
-      state,
-      action: PayloadAction<{ curPassword: string }>
-    ) => {
-      state.updatePassword.curPassword = action.payload.curPassword
-    },
-    updateNewPassword: (
-      state,
-      action: PayloadAction<{ newPassword: string }>
-    ) => {
-      state.updatePassword.newPassword = action.payload.newPassword
-    },
-    updateNewPasswordCheck: (
-      state,
-      action: PayloadAction<{ newPasswordCheck: string }>
-    ) => {
-      state.updatePassword.newPasswordCheck = action.payload.newPasswordCheck
     },
     updateManagerPassword: (
       state,
@@ -355,7 +322,7 @@ export const AdminSlice = createSlice({
     },
     addBannerFile: (
       state,
-      action: PayloadAction<{ banner: {id: number, file: string, name: string } }>
+      action: PayloadAction<{ banner: { id: number, file: string, name: string } }>
     ) => {
       state.bannerFile = [...state.bannerFile, action.payload.banner];
     },
@@ -454,13 +421,9 @@ export const AdminSlice = createSlice({
 
 export const {
   changeMode,
-  setPassword,
   setManagerData,
   copyManagerData,
   setFooter,
-  updateCurPassword,
-  updateNewPassword,
-  updateNewPasswordCheck,
   updateManagerPassword,
   updateManagerSentMail,
   updateManagerReceivedMail,

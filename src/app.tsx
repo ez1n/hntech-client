@@ -45,6 +45,7 @@ import ProductMiddleCategoryModifyForm from "./components/productCategoryModifyF
 import ProductMainCategoryForm from "./components/productCategoryForm/productMainCategoryForm";
 import ProductMiddleCategoryForm from "./components/productCategoryForm/productMiddleCategoryForm";
 import ProductMainCategoryModifyForm from "./components/productCategoryModifyForm/productMainCategoryModifyForm";
+import Loading from "./components/loading";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -63,7 +64,7 @@ export default function App() {
       })
   };
 
-  // 로그인 여부 확인
+  // 로그인 확인
   useEffect(() => {
     api.getCheckLogin()
       .then(res => {
@@ -82,18 +83,22 @@ export default function App() {
     // 홈페이지 하단 정보
     adminApi.getFooter()
       .then(res => dispatch(setFooter({footer: res})))
+      .catch(error => console.log(error))
 
     // 메인 카테고리 목록
     categoryApi.getRepCategories()
       .then(res => dispatch(setMainCategories({categories: res})))
+      .catch(error => console.log(error))
 
     // 제품 카테고리 목록
     categoryApi.getMainProductCategory()
       .then(res => dispatch(setAllProductCategories({categories: res})))
+      .catch(error => console.log(error))
 
     // 카다록, 자재승인서, 시국세
     adminApi.getDocument()
       .then(res => dispatch(setDocument({document: res})))
+      .catch(error => console.log(error))
 
     // 회사 소개 정보, Banner, Logo
     adminApi.getCompany()
@@ -102,10 +107,12 @@ export default function App() {
         dispatch(setBanner({banner: res.bannerImages}));
         dispatch(setLogo({logo: res.logoImage}));
       })
+      .catch(error => console.log(error))
 
     // 인사말
     adminApi.getIntroduce()
       .then(res => dispatch(updateIntroduce({newIntroduce: res.newIntroduce})))
+      .catch(error => console.log(error))
   }, []);
 
   // 카다록, 자재승인서, 시국세
@@ -152,10 +159,7 @@ export default function App() {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <BrowserRouter>
         <Box className={'app'} sx={{display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw'}}>
-          <ToastContainer
-            position="top-center"
-            autoClose={1000}
-          />
+          <ToastContainer position="top-center" autoClose={1000}/>
 
           <Box sx={{flex: 1}}>
             <Header/>
@@ -270,10 +274,12 @@ export default function App() {
                 <NotFound/>
               }></Route></Routes>
 
-            <AdminPanel successModify={successModify}/>
+            <AdminPanel successModify={successModify} errorToast={errorToast}/>
           </Box>
           <Footer/>
         </Box>
+
+        <Loading/>
       </BrowserRouter>
     </ErrorBoundary>
   )
