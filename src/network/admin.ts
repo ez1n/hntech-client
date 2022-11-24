@@ -21,12 +21,12 @@ class AdminApi {
 
   // 배너 수정하기
   async postBanner(banner: FormData) {
-    const response = await axios.post(`/api/admin/banner`, banner, {
+    await axios.post(`/api/admin/banner`, banner, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data.bannerImages;
+    return 'banner';
   };
 
   // 배너, 회사연혁 삭제하기
@@ -37,12 +37,12 @@ class AdminApi {
 
   // 로고 수정하기
   async postLogo(logo: FormData) {
-    const response = await axios.post(`/api/admin/image`, logo, {
+    await axios.post(`/api/admin/image`, logo, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data.logoImage;
+    return 'logo';
   };
 
   // 카다록, 자재 승인서 받아오기

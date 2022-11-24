@@ -32,7 +32,7 @@ interface propsType {
 export default function AdminPanel({successModify, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
-  const [deleteBannerName, setDeleteBannerName] = useState<{ name: string }[]>([]);
+  const [deleteBannerName, setDeleteBannerName] = useState<string[]>([]);
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
@@ -61,7 +61,7 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
 
   // 기존 배너 삭제
   const deleteOriginBannerImage = (index: number, bannerName: string) => {
-    setDeleteBannerName(prev => [...prev, {name: bannerName}]);
+    setDeleteBannerName(prev => [...prev, bannerName]);
     dispatch(deleteOriginBanner({num: index}));
   };
 
@@ -81,11 +81,7 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
     logoForm.append('file', logoFile.file);
     logoForm.append('where', 'logo');
 
-    return new Promise((resolve, reject) => {
-      adminApi.postLogo(logoForm)
-        .then(() => resolve('logo'))
-        .catch(error => reject(error))
-    })
+    return adminApi.postLogo(logoForm)
   };
 
   // 배너 변경 요청
@@ -93,44 +89,29 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
     const bannerForm = new FormData();
     bannerFile.map((item: { id: number, file: string, name: string }) => bannerForm.append('files', item.file))
 
-    return new Promise((resolve, reject) => {
-      adminApi.postBanner(bannerForm)
-        .then(() => resolve('banner'))
-        .catch(error => reject(error))
-    })
+    return adminApi.postBanner(bannerForm);
   };
 
-  // 배너 삭제 요청
-  const deleteBanner = (banners: { name: string }[]) => {
-    banners.map((item: { name: string }) => (
-      adminApi.deleteImage(item.name)
-        .then(() => setDeleteBannerName([]))
-        .catch(error => {
-          errorToast('배너를 삭제할 수 없습니다.');
-          console.log(error);
-        })
-    ));
-  };
-
-  // 회사 이미지 요청
+  // 회사 이미지 요청 (로고, 배너)
   const getImages = (type: string | unknown) => {
-    if (type === 'logo') {
-      adminApi.getImages()
-        .then(res => {
-          dispatch(addLogoFile({logo: {file: '', name: ''}}));
-          dispatch(setLogo({logo: res.logoImage}));
-        })
-        .catch(console.log)
-    } else if (type === 'banner') {
-      adminApi.getImages()
-        .then(res => {
-          successModify();
-          dispatch(setBanner({banner: res.bannerImages}));
-          dispatch(resetBannerFile());
-        })
-        .catch(console.log)
-    } else {
-      throw new Error(`${type}: 요청할 수 없는 이미지 유형입니다.`)
+    switch (type) {
+      case 'logo':
+        return adminApi.getImages()
+          .then(res => {
+            dispatch(addLogoFile({logo: {file: '', name: ''}}));
+            dispatch(setLogo({logo: res.logoImage}));
+          })
+          .catch(console.log)
+      case 'banner':
+        return adminApi.getImages()
+          .then(res => {
+            successModify();
+            dispatch(setBanner({banner: res.bannerImages}));
+            dispatch(resetBannerFile());
+          })
+          .catch(console.log)
+      default:
+        throw new Error(`${type}: 요청할 수 없는 이미지 유형입니다.`);
     }
   };
 
@@ -147,11 +128,7 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
       documentForm.append('taxFile', new Blob()) :
       documentForm.append('taxFile', documentFile.tax.file);
 
-    return new Promise((resolve, reject) => {
-      adminApi.postDocument(documentForm)
-        .then(() => resolve(true))
-        .catch(error => reject(error))
-    })
+    return adminApi.postDocument(documentForm);
   };
 
   // 문서 요청
@@ -169,21 +146,22 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
   const putUpdatePanelInfo = () => {
     dispatch(onLoading());
 
-    adminApi.putUpdatePanelInfo({
-        emailSendingTime: emailSendingTime,
-        address: address,
-        afterService: afterService,
-        fax: fax,
-        phone: phone,
-        receiveEmailAccount: receiveEmailAccount,
-        sendEmailAccount: sendEmailAccount,
-        sendEmailPassword: sendEmailPassword,
-        sites: sites.map((item: { id: number, buttonName: string, link: string }) => (
-            {buttonName: item.buttonName, link: item.link}
-          )
+    const newPanelData = {
+      emailSendingTime: emailSendingTime,
+      address: address,
+      afterService: afterService,
+      fax: fax,
+      phone: phone,
+      receiveEmailAccount: receiveEmailAccount,
+      sendEmailAccount: sendEmailAccount,
+      sendEmailPassword: sendEmailPassword,
+      sites: sites.map((item: { id: number, buttonName: string, link: string }) => (
+          {buttonName: item.buttonName, link: item.link}
         )
-      }
-    )
+      )
+    };
+
+    adminApi.putUpdatePanelInfo(newPanelData)
       .then(res => {
         successModify();
         dispatch(setFooter({footer: res.footer}));
@@ -208,7 +186,14 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
       })
 
     // 배너 삭제
-    deleteBanner(deleteBannerName);
+    deleteBannerName.map((item: string) => (
+      adminApi.deleteImage(item)
+        .then(() => setDeleteBannerName([]))
+        .catch(error => {
+          errorToast('배너를 삭제할 수 없습니다.');
+          console.log(error);
+        })
+    ));
 
     // 배너 변경
     postBanner()

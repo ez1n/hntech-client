@@ -37,7 +37,7 @@ export default function Password({successModify, errorToast}: propsType) {
 
       <EditButton name='변경' onClick={changePassword}/>
 
-      <PasswordModifyModal open={open} onClose={changePassword} successModify={successModify}/>
+      <PasswordModifyModal open={open} onClose={changePassword} successModify={successModify} errorToast={errorToast}/>
     </ContentStack>
   );
 }
