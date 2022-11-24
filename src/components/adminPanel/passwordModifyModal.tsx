@@ -2,14 +2,7 @@ import React, {useState} from 'react';
 import {adminApi} from '../../network/admin';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {updateManagerPassword} from '../../app/reducers/adminSlice';
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  TextField
-} from '@mui/material';
+import {Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField} from '@mui/material';
 import EditButton from '../editButton';
 
 interface propsType {
@@ -18,13 +11,14 @@ interface propsType {
   successModify: () => void
 }
 
-export default function PasswordUpdate({open, onClose, successModify}: propsType) {
+export default function PasswordModifyModal({open, onClose, successModify}: propsType) {
   const dispatch = useAppDispatch();
 
   const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보 state
   const [password, setPassword] = useState({curPassword: '', newPassword: '', newPasswordCheck: ''});
   const [errorMessage, setErrorMessage] = useState({current: '', new: '', checked: ''});
 
+  // 검증
   const validate = () => {
     let isValid = true;
     if (password.curPassword === '' || password.curPassword !== adminPassword) {
@@ -42,8 +36,9 @@ export default function PasswordUpdate({open, onClose, successModify}: propsType
     return isValid;
   };
 
-  const changeValue = (e: any) => {
-    const {name, value} = e.target;
+  // 비밀번호 입력
+  const changeValue = (event: any) => {
+    const {name, value} = event.target;
     setPassword({...password, [name]: value});
   };
 
@@ -80,27 +75,27 @@ export default function PasswordUpdate({open, onClose, successModify}: propsType
       <DialogContent>
         <Stack spacing={1}>
           <TextField
-            type={'password'}
-            name={'curPassword'}
+            type='password'
+            name='curPassword'
+            placeholder='현재 비밀번호'
             onChange={changeValue}
-            placeholder={'현재 비밀번호'}
             error={!!errorMessage.current}
             helperText={errorMessage.current}/>
 
           <TextField
-            type={'password'}
-            name={'newPassword'}
+            type='password'
+            name='newPassword'
+            placeholder='새 비밀번호'
             onChange={changeValue}
-            placeholder={'새 비밀번호'}
             error={!!errorMessage.new}
             helperText={errorMessage.new}/>
 
           <TextField
-            type={'password'}
-            name={'newPasswordCheck'}
+            type='password'
+            name='newPasswordCheck'
+            placeholder='새 비밀번호 확인'
             onChange={changeValue}
             onKeyUp={onPutUpdatePasswordKeyUp}
-            placeholder={'새 비밀번호 확인'}
             error={!!errorMessage.checked}
             helperText={errorMessage.checked}/>
         </Stack>

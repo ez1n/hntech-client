@@ -16,21 +16,14 @@ import {
   changeMode,
   resetDocumentFile
 } from '../../app/reducers/adminSlice';
-import {
-  Drawer,
-  Fab,
-  TextField,
-  Typography,
-  Stack,
-  styled,
-} from '@mui/material';
+import {Drawer, Fab, Typography, Stack, styled, Box} from '@mui/material';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import EditButton from '../editButton';
-import PasswordUpdate from './passwordUpdate';
-import Company from "./company";
-import CompanyImage from "./companyImage";
-import Documents from "./documents";
+import Company from './company';
+import CompanyImage from './companyImage';
+import Documents from './documents';
+import Password from './password';
 
 interface propsType {
   successModify: () => void,
@@ -44,13 +37,11 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
 
   // state
   const managerMode = useAppSelector(state => state.manager.managerMode); // 관리자 모드
-  const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보
   const logoFile = useAppSelector(state => state.manager.logoFile); // 추가한 로고
   const bannerFile = useAppSelector(state => state.manager.bannerFile); // 새로 추가한 배너
   const documentFile = useAppSelector(state => state.manager.documentFile); // 새로 추가한 카다록, 자재 승인서
   const newPanelData = useAppSelector(state => state.manager.newPanelData); // 관리자 정보 변경
   const [onEdit, setOnEdit] = useState(false); // 관리자 정보 수정(drawer) open
-  const [openPassword, setOpenPassword] = useState(false);
   const {
     emailSendingTime,
     address,
@@ -68,9 +59,6 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
 
   // 관리자 패널 - close
   const closeOnEdit = () => setOnEdit(false);
-
-  // 비밀번호 변경 dialog
-  const changePassword = () => setOpenPassword(prev => !prev);
 
   // 기존 배너 삭제
   const deleteOriginBannerImage = (index: number, bannerName: string) => {
@@ -105,8 +93,8 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
         console.log(error);
         if (error.response.status === 401) {
           errorToast('로그인이 필요합니다.');
-          localStorage.removeItem("login");
-          const isLogin = localStorage.getItem("login");
+          localStorage.removeItem('login');
+          const isLogin = localStorage.getItem('login');
           dispatch(changeMode({login: isLogin}));
         }
       })
@@ -143,8 +131,8 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
           console.log(error);
 
           if (error.response.status === 401) {
-            localStorage.removeItem("login");
-            const isLogin = localStorage.getItem("login");
+            localStorage.removeItem('login');
+            const isLogin = localStorage.getItem('login');
             dispatch(changeMode({login: isLogin}));
           }
         })
@@ -164,8 +152,8 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
       .catch(error => {
         console.log(error);
         if (error.response.status === 401) {
-          localStorage.removeItem("login");
-          const isLogin = localStorage.getItem("login");
+          localStorage.removeItem('login');
+          const isLogin = localStorage.getItem('login');
           dispatch(changeMode({login: isLogin}));
         }
       })
@@ -199,8 +187,8 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
         console.log(error);
         dispatch(onLoading());
         if (error.response.status === 401) {
-          localStorage.removeItem("login");
-          const isLogin = localStorage.getItem("login");
+          localStorage.removeItem('login');
+          const isLogin = localStorage.getItem('login');
           dispatch(changeMode({login: isLogin}));
         }
       })
@@ -216,7 +204,7 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
         </AdminFab>
       }
 
-      {/* 슬라이딩 패널 */}
+      {/* 관리자 패널 */}
       <Drawer
         anchor='right'
         open={onEdit}
@@ -224,29 +212,8 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
         <Stack spacing={2} sx={{m: 5}}>
           <MainTitleTypography variant='h5'>관리자 비밀번호</MainTitleTypography>
 
-          {/* 관리자 비밀번호 */}
-          <ContentStack
-            direction='row'
-            spacing={5}
-            sx={{
-              pt: 2,
-              pb: 2,
-              borderTop: '2px solid rgba(46, 125, 50, 0.5)',
-              borderBottom: '2px solid rgba(46, 125, 50, 0.5)'
-            }}>
-            <TextField
-              type={'password'}
-              label={'관리자 비밀번호'}
-              value={adminPassword}
-              disabled
-              autoComplete='off'
-              placeholder={'현재 비밀번호'}
-            />
-
-            <EditButton name='변경' onClick={changePassword}/>
-
-            <PasswordUpdate open={openPassword} onClose={changePassword} successModify={successModify}/>
-          </ContentStack>
+          {/* 관리자 비밀번호 변경 */}
+          <Password successModify={successModify}/>
 
           {/* 관리자 / 회사 정보 */}
           <MainTitleTypography variant='h5'>관리자 / 회사 정보</MainTitleTypography>
@@ -268,17 +235,14 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
           <MainTitleTypography variant='h5' sx={{paddingBottom: 0}}>카다록 / 자재승인서</MainTitleTypography>
           <Documents/>
 
+          <Stack direction='row' sx={{justifyContent: 'center', mb: 3}}>
+            <EditButton name='변경' onClick={putUpdateDocumentInfo}/>
+          </Stack>
         </Stack>
 
-        <Stack direction='row' sx={{justifyContent: 'center', mb: 3}}>
-          <EditButton name='변경' onClick={putUpdateDocumentInfo}/>
-        </Stack>
-
-        <ExitStack direction='row'>
-          <ExitToAppRoundedIcon
-            onClick={closeOnEdit}
-            sx={{fontSize: 30, color: 'darkgreen'}}/>
-        </ExitStack>
+        <ExitBox>
+          <ExitToAppRoundedIcon onClick={closeOnEdit} sx={{fontSize: 30, color: 'darkgreen'}}/>
+        </ExitBox>
       </Drawer>
     </>
   )
@@ -313,12 +277,7 @@ const MainTitleTypography = styled(Typography)(({theme}) => ({
   width: 550
 })) as typeof Typography;
 
-const ContentStack = styled(Stack)(() => ({
-  alignItems: 'center',
-  justifyContent: 'center'
-})) as typeof Stack;
-
-const ExitStack = styled(Stack)(({theme}) => ({
+const ExitBox = styled(Box)(({theme}) => ({
   [theme.breakpoints.down('sm')]: {
     display: 'inline',
     position: 'fixed',
@@ -326,5 +285,4 @@ const ExitStack = styled(Stack)(({theme}) => ({
     right: 20
   },
   display: 'none'
-})) as typeof Stack;
-
+})) as typeof Box;

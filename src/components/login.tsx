@@ -36,6 +36,7 @@ export default function Login() {
         dispatch(setManagerData({panelData: res}));
         dispatch(copyManagerData({panelData: res}));
       })
+      .catch(error => console.log(error))
   };
 
   // 로그인
