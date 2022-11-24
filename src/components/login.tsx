@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {adminApi} from '../network/admin';
 import {useAppDispatch, useAppSelector} from '../app/hooks';
 import {clickManagerLogin} from '../app/reducers/dialogSlice';
-import {changeMode, copyManagerData, setManagerData} from '../app/reducers/adminSlice';
+import {changeMode, setManagerData} from '../app/reducers/adminSlice';
 import {
   Button,
   Dialog,
@@ -32,10 +32,7 @@ export default function Login() {
   // 관리자 패널 정보
   const getPanelInfo = () => {
     adminApi.getPanelInfo()
-      .then(res => {
-        dispatch(setManagerData({panelData: res}));
-        dispatch(copyManagerData({panelData: res}));
-      })
+      .then(res => dispatch(setManagerData({panelData: res})))
       .catch(error => console.log(error))
   };
 

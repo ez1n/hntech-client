@@ -8,7 +8,6 @@ import {useAppDispatch, useAppSelector} from './app/hooks';
 import {setAllProductCategories, setMainCategories} from './app/reducers/categorySlice';
 import {
   changeMode,
-  copyManagerData,
   setBanner,
   setDocument,
   setFooter,
@@ -58,10 +57,7 @@ export default function App() {
   // 관리자 패널 정보
   const getPanelInfo = () => {
     adminApi.getPanelInfo()
-      .then(res => {
-        dispatch(setManagerData({panelData: res}));
-        dispatch(copyManagerData({panelData: res}));
-      })
+      .then(res => dispatch(setManagerData({panelData: res})))
   };
 
   // 로그인 확인

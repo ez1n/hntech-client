@@ -5,7 +5,6 @@ import {useAppSelector, useAppDispatch} from '../../app/hooks';
 import {onLoading} from '../../app/reducers/dialogSlice';
 import {
   setManagerData,
-  copyManagerData,
   setBanner,
   deleteOriginBanner,
   setLogo,
@@ -66,8 +65,110 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
     dispatch(deleteOriginBanner({num: index}));
   };
 
-  // 관리자, 회사 정보 변경 요청
+  // 로그인 에러
+  const loginError = (code: number) => {
+    if (code === 401) {
+      errorToast('로그인이 필요합니다.');
+      localStorage.removeItem('login');
+      const isLogin = localStorage.getItem('login');
+      dispatch(changeMode({login: isLogin}));
+    }
+  };
+
+  // 로고 변경 요청
+  const postLogo = () => {
+    const logoForm = new FormData();
+    logoForm.append('file', logoFile.file);
+    logoForm.append('where', 'logo');
+
+    return new Promise((resolve, reject) => {
+      adminApi.postLogo(logoForm)
+        .then(() => resolve('logo'))
+        .catch(error => reject(error))
+    })
+  };
+
+  // 배너 변경 요청
+  const postBanner = () => {
+    const bannerForm = new FormData();
+    bannerFile.map((item: { id: number, file: string, name: string }) => bannerForm.append('files', item.file))
+
+    return new Promise((resolve, reject) => {
+      adminApi.postBanner(bannerForm)
+        .then(() => resolve('banner'))
+        .catch(error => reject(error))
+    })
+  };
+
+  // 배너 삭제 요청
+  const deleteBanner = (banners: { name: string }[]) => {
+    banners.map((item: { name: string }) => (
+      adminApi.deleteImage(item.name)
+        .then(() => setDeleteBannerName([]))
+        .catch(error => {
+          errorToast('배너를 삭제할 수 없습니다.');
+          console.log(error);
+        })
+    ));
+  };
+
+  // 회사 이미지 요청
+  const getImages = (type: string | unknown) => {
+    if (type === 'logo') {
+      adminApi.getImages()
+        .then(res => {
+          dispatch(addLogoFile({logo: {file: '', name: ''}}));
+          dispatch(setLogo({logo: res.logoImage}));
+        })
+        .catch(console.log)
+    } else if (type === 'banner') {
+      adminApi.getImages()
+        .then(res => {
+          successModify();
+          dispatch(setBanner({banner: res.bannerImages}));
+          dispatch(resetBannerFile());
+        })
+        .catch(console.log)
+    } else {
+      throw new Error(`${type}: 요청할 수 없는 이미지 유형입니다.`)
+    }
+  };
+
+  // 문서 변경 요청
+  const postDocument = () => {
+    const documentForm = new FormData();
+    documentFile.catalog.file === '' ?
+      documentForm.append('catalogFile', new Blob()) :
+      documentForm.append('catalogFile', documentFile.catalog.file);
+    documentFile.approval.file === '' ?
+      documentForm.append('materialFile', new Blob()) :
+      documentForm.append('materialFile', documentFile.approval.file);
+    documentFile.tax.file === '' ?
+      documentForm.append('taxFile', new Blob()) :
+      documentForm.append('taxFile', documentFile.tax.file);
+
+    return new Promise((resolve, reject) => {
+      adminApi.postDocument(documentForm)
+        .then(() => resolve(true))
+        .catch(error => reject(error))
+    })
+  };
+
+  // 문서 요청
+  const getDocument = () => {
+    adminApi.getDocument()
+      .then(res => {
+        dispatch(setDocument({document: res}));
+        dispatch(resetDocumentFile());
+        successModify();
+      })
+      .catch(console.log)
+  };
+
+  // 관리자, 회사 정보 변경 함수
   const putUpdatePanelInfo = () => {
+    dispatch(onLoading());
+
     adminApi.putUpdatePanelInfo({
         emailSendingTime: emailSendingTime,
         address: address,
@@ -86,112 +187,49 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
       .then(res => {
         successModify();
         dispatch(setFooter({footer: res.footer}));
-        dispatch(copyManagerData({panelData: res}));
         dispatch(setManagerData({panelData: res}));
       })
       .catch(error => {
         console.log(error);
-        if (error.response.status === 401) {
-          errorToast('로그인이 필요합니다.');
-          localStorage.removeItem('login');
-          const isLogin = localStorage.getItem('login');
-          dispatch(changeMode({login: isLogin}));
-        }
+        loginError(error.response.status);
       })
+      .finally(() => dispatch(onLoading()))
   };
 
-  // 로고, 배너 변경 요청
+  // 로고, 배너 변경 함수
   const putUpdateImageInfo = () => {
-    // 로고 사진
-    const logoForm = new FormData();
-    logoForm.append('file', logoFile.file);
-    logoForm.append('where', 'logo');
-
-    // 배너 사진
-    const bannerForm = new FormData();
-    bannerFile.map((item: { id: number, file: string, name: string }) => bannerForm.append('files', item.file))
-
-    // 로고 정보 변경 요청
-    adminApi.postLogo(logoForm)
-      .then(() => {
-        adminApi.getImages()
-          .then(res => {
-            dispatch(addLogoFile({logo: {file: '', name: ''}}));
-            dispatch(setLogo({logo: res.logoImage}));
-          })
-          .catch(error => console.log(error))
+    dispatch(onLoading());
+    // 로고 변경
+    postLogo()
+      .then(type => getImages(type))
+      .catch(error => {
+        console.log(error);
+        loginError(error.response.status);
       })
-      .catch(error => console.log(error))
 
     // 배너 삭제
-    deleteBannerName.map((item: { name: string }) => (
-      adminApi.deleteImage(item.name)
-        .then(() => setDeleteBannerName([]))
-        .catch(error => {
-          console.log(error);
+    deleteBanner(deleteBannerName);
 
-          if (error.response.status === 401) {
-            localStorage.removeItem('login');
-            const isLogin = localStorage.getItem('login');
-            dispatch(changeMode({login: isLogin}));
-          }
-        })
-    ));
-
-    // 배너 정보 변경 요청
-    adminApi.postBanner(bannerForm)
-      .then(() => {
-        adminApi.getImages()
-          .then(res => {
-            successModify();
-            dispatch(setBanner({banner: res.bannerImages}));
-            dispatch(resetBannerFile());
-          })
-          .catch(error => console.log(error))
-      })
+    // 배너 변경
+    postBanner()
+      .then(type => getImages(type))
       .catch(error => {
         console.log(error);
-        if (error.response.status === 401) {
-          localStorage.removeItem('login');
-          const isLogin = localStorage.getItem('login');
-          dispatch(changeMode({login: isLogin}));
-        }
+        loginError(error.response.status);
       })
+      .finally(() => dispatch(onLoading()))
   };
 
-  // 카다록, 자재승인서 변경 요청
+  // 문서 변경 함수
   const putUpdateDocumentInfo = () => {
     dispatch(onLoading());
-    const documentForm = new FormData();
-    documentFile.catalog.file === '' ?
-      documentForm.append('catalogFile', new Blob()) :
-      documentForm.append('catalogFile', documentFile.catalog.file);
-    documentFile.approval.file === '' ?
-      documentForm.append('materialFile', new Blob()) :
-      documentForm.append('materialFile', documentFile.approval.file);
-    documentFile.tax.file === '' ?
-      documentForm.append('taxFile', new Blob()) :
-      documentForm.append('taxFile', documentFile.tax.file);
-
-    adminApi.postDocument(documentForm)
-      .then(() => {
-        adminApi.getDocument()
-          .then(res => {
-            dispatch(onLoading());
-            dispatch(setDocument({document: res}));
-            dispatch(resetDocumentFile());
-            successModify();
-          })
-      })
+    postDocument()
+      .then(() => getDocument())
       .catch(error => {
         console.log(error);
-        dispatch(onLoading());
-        if (error.response.status === 401) {
-          localStorage.removeItem('login');
-          const isLogin = localStorage.getItem('login');
-          dispatch(changeMode({login: isLogin}));
-        }
+        loginError(error.response.status);
       })
+      .finally(() => dispatch(onLoading()))
   };
 
   return (
@@ -210,10 +248,9 @@ export default function AdminPanel({successModify, errorToast}: propsType) {
         open={onEdit}
         onClose={closeOnEdit}>
         <Stack spacing={2} sx={{m: 5}}>
-          <MainTitleTypography variant='h5'>관리자 비밀번호</MainTitleTypography>
-
           {/* 관리자 비밀번호 변경 */}
-          <Password successModify={successModify}/>
+          <MainTitleTypography variant='h5'>관리자 비밀번호</MainTitleTypography>
+          <Password successModify={successModify} errorToast={errorToast}/>
 
           {/* 관리자 / 회사 정보 */}
           <MainTitleTypography variant='h5'>관리자 / 회사 정보</MainTitleTypography>

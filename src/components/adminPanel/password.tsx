@@ -5,10 +5,11 @@ import EditButton from '../editButton';
 import PasswordModifyModal from './passwordModifyModal';
 
 interface propsType {
-  successModify: () => void
+  successModify: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function Password({successModify}: propsType) {
+export default function Password({successModify, errorToast}: propsType) {
   const [open, setOpen] = useState(false);
 
   const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보

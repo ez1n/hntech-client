@@ -12,7 +12,6 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 /**
  * ChangeMode : 관리자모드 state (boolean)
  * setManagerData : 관리자 정보 받아오기
- * copyManagerData : 관리자 정보 copy (변경용)
  * setFooter : footer 정보 받아오기
  * updateManagerPassword : 비밀번호 업데이트
  * updateManagerSentMail : 수신 메일 업데이트
@@ -187,27 +186,6 @@ export const AdminSlice = createSlice({
       }>
     ) => {
       state.panelData = action.payload.panelData;
-    },
-    copyManagerData: (
-      state,
-      action: PayloadAction<{
-        panelData: {
-          adminPassword: string,
-          emailSendingTime: string,
-          footer: {
-            address: string,
-            afterService: string,
-            fax: string,
-            phone: string,
-            sites: { id: number, buttonName: string, link: string }[]
-          },
-          receiveEmailAccount: string,
-          sendEmailAccount: string,
-          sendEmailPassword: string,
-          taxOriginalFilename: string
-        }
-      }>
-    ) => {
       state.newPanelData = {
         emailSendingTime: action.payload.panelData.emailSendingTime,
         address: action.payload.panelData.footer.address,
@@ -422,7 +400,6 @@ export const AdminSlice = createSlice({
 export const {
   changeMode,
   setManagerData,
-  copyManagerData,
   setFooter,
   updateManagerPassword,
   updateManagerSentMail,

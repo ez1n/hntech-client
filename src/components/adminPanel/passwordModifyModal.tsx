@@ -8,10 +8,11 @@ import EditButton from '../editButton';
 interface propsType {
   open: boolean,
   onClose: () => void,
-  successModify: () => void
+  successModify: () => void,
+  errorToast: (message: string) => void
 }
 
-export default function PasswordModifyModal({open, onClose, successModify}: propsType) {
+export default function PasswordModifyModal({open, onClose, successModify, errorToast}: propsType) {
   const dispatch = useAppDispatch();
 
   const adminPassword = useAppSelector(state => state.manager.panelData.adminPassword); // 관리자 정보 state
@@ -51,7 +52,10 @@ export default function PasswordModifyModal({open, onClose, successModify}: prop
         onClose();
         dispatch(updateManagerPassword({adminPassword: res}));
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error);
+        errorToast('비밀번호를 변경할 수 없습니다.');
+      })
   };
 
   const onPutUpdatePasswordKeyUp = (event: any) => {
